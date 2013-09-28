@@ -1,0 +1,6 @@
+docs/_build
+*.pyc
+build/
+dist/
+fut14.egg-info/
+
