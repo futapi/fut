@@ -7,4 +7,5 @@ headers = {
     'Connection': 'Keep-Alive, TE',
     'Keep-Alive': '300',
     'TE': 'deflate, gzip, chunked, identity, trailers',
+    'DNT': '1',
 }
