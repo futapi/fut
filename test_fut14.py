@@ -9,7 +9,20 @@ import fut14
 
 
 class Fut14TestCase(unittest.TestCase):
-    pass
+
+    #_multiprocess_can_split_ = True
+
+    def setUp(self):
+        pass
+
+    def tearDown(self):
+        pass
+
+    def testEntryPoints(self):
+        fut14.Core
+
+    def testInvalidAccount(self):
+        self.assertRaises(fut14.exceptions.Fut14Error, fut14.Core, 'test', 'test', 'test')
 
 
 if __name__ == '__main__':
