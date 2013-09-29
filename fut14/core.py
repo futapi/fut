@@ -17,7 +17,7 @@ except ImportError:
 
 from .config import headers
 from .urls import urls
-#from .exceptions import Fut14Error
+from .exceptions import Fut14Error
 from .EAHashingAlgorithm import EAHashingAlgorithm
 
 
@@ -44,8 +44,11 @@ class Core(object):
 
         # === lanuch futweb
         rc = self.r.get(urls['futweb']).content
+        if 'EASW_ID' not in rc:
+            raise Fut14Error('Invalid email or password.')
         self.nucleus_id = re.search("var EASW_ID = '([0-9]+)';", rc).group(1)
         urls['fut_base'] = re.search("var BASE_FUT_URL = '(https://.+?)';", rc).group(1)
+        #urls['fut_home'] = re.search("var GUEST_APP_URI = '(http://.+?)';", rc).group(1)
 
         # prepare headers for ut operations
         self.r.headers['Content-Type'] = 'application/json'
