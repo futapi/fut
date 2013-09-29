@@ -6,6 +6,7 @@
 import unittest
 
 import fut14
+from fut14.exceptions import Fut14Error
 
 
 class Fut14TestCase(unittest.TestCase):
@@ -22,7 +23,7 @@ class Fut14TestCase(unittest.TestCase):
         fut14.Core
 
     def testInvalidAccount(self):
-        self.assertRaises(fut14.exceptions.Fut14Error, fut14.Core, 'test', 'test', 'test')
+        self.assertRaises(Fut14Error, fut14.Core, 'test', 'test', 'test')
 
 
 if __name__ == '__main__':
