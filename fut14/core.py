@@ -58,7 +58,13 @@ class Core(object):
 
     def getClubs(self):
         """Returns all clubs info."""
+        # ony clubs with year 2014 (year==fifa version) ??
         self.r.headers['X-UT-Route'] = urls['home_pc']
         rc = self.r.get(urls['acc_info']).json()
+
+        # list of clubes (default sorted by id?)
         clubs = [i for i in rc['userAccountInfo']['personas'][0]['userClubList']]
+        # sorted by lastAccessTime
+        clubs.sort(key=lambda i: i['lastAccessTime'], reverse=True)
+
         return clubs
