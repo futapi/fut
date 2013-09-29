@@ -10,8 +10,10 @@ This module implements the fut14's basic methods.
 
 import requests
 import re
-import simplejson as json  # TODO: try json if simplejson is not avaible
-#from time import time
+try:
+    import simplejson as json
+except ImportError:
+    import json
 
 from .config import headers
 from .urls import urls
