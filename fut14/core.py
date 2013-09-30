@@ -23,6 +23,7 @@ from .EAHashingAlgorithm import EAHashingAlgorithm
 
 class Core(object):
     def __init__(self, email, passwd, secret_answer):
+        # TODO: dynamic create urls based on urls['fut_config']
         self.email = email
         self.passwd = passwd
         eahashor = EAHashingAlgorithm()
@@ -58,7 +59,6 @@ class Core(object):
         self.r.headers['X-UT-Route'] = urls['fut_host']
         #self.r.headers['X-UT-PHISHING-TOKEN'] = ?
         #self.r.headers['X-HTTP-Method-Override'] = ?
-        # TODO: dynamic create urls based on shards
 
         # acc info
         rc = self.r.get(urls['acc_info']).json()
@@ -86,8 +86,17 @@ class Core(object):
         self.r.headers['X-UT-SID'] = self.sid
 
         # validate (secret question)
+        rc = self.r.get(urls['fut_question']).content
+        # {"question":1,"attempts":5,"recoverAttempts":20}
+        # answer question
         data = {'answer': self.secret_answer_hash}
-        print self.r.post(urls['fut_validate'], data=json.dumps(data)).content
+        self.r.headers['Content-Type'] = 'application/x-www-form-urlencoded'  # requests bug?
+        rc = self.r.post(urls['fut_validate'], data=data).json()
+        self.r.headers['Content-Type'] = 'application/json'
+        #{"debug":"Answer is correct.","string":"OK","reason":"Answer is correct.","token":"0000000000000000000","code":"200"}
+        self.token = rc['token']
+        self.r.headers['X-UT-PHISHING-TOKEN'] = self.token
+
 
         #self.r.headers['Referer'] = 'http://www.easports.com/iframe/fut/bundles/futweb/web/flash/FifaUltimateTeam.swf'
 
