@@ -107,18 +107,24 @@ class Core(object):
         self.r.headers['X-UT-SID'] = self.sid
 
         # validate (secret question)
-        rc = self.r.get(self.urls['fut_question']).content
+        rc = self.r.get(self.urls['fut_question']).json()
         # {"question":1,"attempts":5,"recoverAttempts":20}
-        # answer question
-        data = {'answer': self.secret_answer_hash}
-        self.r.headers['Content-Type'] = 'application/x-www-form-urlencoded'  # requests bug?
-        rc = self.r.post(self.urls['fut_validate'], data=data).json()
-        self.r.headers['Content-Type'] = 'application/json'
-        #{"debug":"Answer is correct.","string":"OK","reason":"Answer is correct.","token":"0000000000000000000","code":"200"}
-        self.token = rc['token']
+        # {"debug":"Already answered question.","string":"Already answered question","reason":"Already answered question.","token":"0000000000000000000","code":"483"}
+        if rc.get('string') == 'Already answered question.':
+            self.token = rc['string']
+        else:
+            # answer question
+            data = {'answer': self.secret_answer_hash}
+            self.r.headers['Content-Type'] = 'application/x-www-form-urlencoded'  # requests bug?
+            rc = self.r.post(self.urls['fut_validate'], data=data).json()
+            #{"debug":"Answer is correct.","string":"OK","reason":"Answer is correct.","token":"0000000000000000000","code":"200"}
+            self.r.headers['Content-Type'] = 'application/json'
+            self.token = rc['token']
         self.r.headers['X-UT-PHISHING-TOKEN'] = self.token
 
-        #print self.r.get('http://www.easports.com/iframe/fut/p/ut/game/fifa14/settings').content
+        print self.r.get('http://www.easports.com/iframe/fut/p/ut/game/fifa14/item/resource').content
+        print self.r.get('http://www.easports.com/iframe/fut/p/ut/game/fifa14/item').content
+        print self.r.get('http://www.easports.com/iframe/fut/p/ut/game/fifa14/item/resource/1615614739').content
 
         #self.r.headers['Referer'] = 'http://www.easports.com/iframe/fut/bundles/futweb/web/flash/FifaUltimateTeam.swf'
 
