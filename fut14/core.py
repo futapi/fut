@@ -34,13 +34,17 @@ class Core(object):
 
     def getUrls(self):
         """Gets services urls."""
-        rc = xmltodict.parse(requests.get(self.urls['fut_config']).content)
         urls_fut = {}
+        rc = xmltodict.parse(requests.get(self.urls['fut_config']).content)
         services = rc['main']['services']['prod']
         host = self.urls['main_site'].replace('https', 'http')  # it's not working with ssl...
-        path = '/iframe/fut%s' % rc['main']['showOffServiceDestination']
+        path = '/iframe/fut%s' % rc['main']['httpServiceDestination']
+        path_game = '%sgame/fifa14/' % path
         for i in services:
-            urls_fut[i] = '%s%s%s' % (host, path, services[i])
+            if i == 'authentication':
+                urls_fut[i] = '%s%s%s' % (host, path, services[i])
+            else:
+                urls_fut[i] = '%s%s%s' % (host, path_game, services[i])
         return urls_fut
 
     def login(self, email, passwd, secret_answer_hash):
