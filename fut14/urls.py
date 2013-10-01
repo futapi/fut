@@ -5,7 +5,7 @@ from time import time
 # TODO: add timestamp dynamic (just right before every request)
 
 urls = {
-    'main_site':    'http://www.easports.com',
+    'main_site':    'https://www.easports.com',
     'futweb':       'http://www.easports.com/iframe/fut/?locale=en_GB&baseShowoffUrl=http%3A%2F%2Fwww.easports.com%2Fuk%2Ffifa%2Ffootball-club%2Fultimate-team%2Fshow-off&guest_app_uri=http%3A%2F%2Fwww.easports.com%2Fuk%2Ffifa%2Ffootball-club%2Fultimate-team',
     'fut_config':   'http://www.easports.com/iframe/fut/bundles/futweb/web/flash/xml/site_config.xml',
     'fut_home':     'http://www.easports.com/uk/fifa/football-club/ultimate-team',
