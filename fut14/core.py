@@ -37,18 +37,23 @@ class Core(object):
         urls_fut = {}
         rc = xmltodict.parse(requests.get(self.urls['fut_config']).content)
         services = rc['main']['services']['prod']
-        host = self.urls['main_site'].replace('https', 'http')  # it's not working with ssl...
-        path = '/iframe/fut%s' % rc['main']['httpServiceDestination']
-        path_game = '%sgame/fifa14/' % path
+        path = '{0}{1}game/fifa14/'.format(
+            self.urls['fut_host'], rc['main']['directHttpServiceDestination']
+        )
         for i in services:
             if i == 'authentication':
-                urls_fut[i] = '%s%s%s' % (host, path, services[i])
+                urls_fut[i] = '{0}/iframe/fut{1}{2}'.format(
+                    self.urls['main_site'].replace('https', 'http'),  # it's not working with ssl...
+                    rc['main']['httpServiceDestination'],
+                    services[i]
+                )
             else:
-                urls_fut[i] = '%s%s%s' % (host, path_game, services[i])
+                urls_fut[i] = '{0}{1}'.format(path, services[i])
         return urls_fut
 
     def login(self, email, passwd, secret_answer_hash):
         """Just log in."""
+        # TODO: update credits (acc info)
         self.r = requests.Session()  # init/reset requests session object
         self.r.headers = headers  # i'm chrome browser now ;-)
 
@@ -122,10 +127,11 @@ class Core(object):
             self.token = rc['token']
         self.r.headers['X-UT-PHISHING-TOKEN'] = self.token
 
-        print self.r.get('http://www.easports.com/iframe/fut/p/ut/game/fifa14/item/resource').content
-        print self.r.get('http://www.easports.com/iframe/fut/p/ut/game/fifa14/item').content
-        print self.r.get('http://www.easports.com/iframe/fut/p/ut/game/fifa14/item/resource/1615614739').content
+        #print self.r.get('http://www.easports.com/iframe/fut/p/ut/game/fifa14/item/resource').content
+        #print self.r.get('http://www.easports.com/iframe/fut/p/ut/game/fifa14/item').content
+        #print self.r.get('http://www.easports.com/iframe/fut/p/ut/game/fifa14/item/resource/1615614739').content
 
+        # http://cdn.content.easports.com/fifa/fltOnlineAssets/C74DDF38-0B11-49b0-B199-2E2A11D1CC13/2014/fut/items/web/5002003.json
         #self.r.headers['Referer'] = 'http://www.easports.com/iframe/fut/bundles/futweb/web/flash/FifaUltimateTeam.swf'
 
 #    def shards(self):
@@ -133,3 +139,35 @@ class Core(object):
 #        self.r.headers['X-UT-Route'] = self.urls['fut_base']
 #        return self.r.get(self.urls['shards']).json()
 #        # self.r.headers['X-UT-Route'] = self.urls['fut_pc']
+
+    def searchAuctions(self):
+        """Search specific cards on transfer market."""
+        # TODO: add "search" alias
+        #https://utas.s2.fut.ea.com/ut/game/fifa14/transfermarket?macr=150&lev=gold&type=development&start=0&num=16&cat=fitness
+        params = {'macr': 150, 'lev': 'gold', 'type': 'development', 'start': 0, 'num': 16, 'cat': 'fitness'}
+        rc = self.r.get(self.urls['fut']['SearchAuctions'], params=params).json()
+        self.credits = rc['credits']
+
+        cards = []
+        for i in rc['auctionInfo']:
+            cards.append({
+                'tradeId':        i['tradeId'],
+                'buyNowPrice':    i['buyNowPrice'],
+                'tradeState':     i['tradeState'],
+                'bidState':       i['bidState'],
+                'startingBid':    i['startingBid'],
+                'id':             i['itemData']['id'],
+                'timestamp':      i['itemData']['timestamp'],  # auction start
+                'rating':         i['itemData']['rating'],
+                'assetId':        i['itemData']['assetId'],
+                'resourceId':     i['itemData']['resourceId'],
+                'itemState':      i['itemData']['itemState'],
+                'rareflag':       i['itemData']['rareflag'],
+                'offers':         i['offers'],
+                'currentBid':     i['currentBid'],
+                'expires':        i['expires'],  # seconds left
+            })
+            print i['expires']
+
+        # id 5002003
+        # "resourceId": 1615614739
