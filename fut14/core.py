@@ -77,16 +77,12 @@ class Core(object):
         #self.urls['fut_base'] = re.search("var BASE_FUT_URL = '(https://.+?)';", rc).group(1)
         #self.urls['fut_home'] = re.search("var GUEST_APP_URI = '(http://.+?)';", rc).group(1)
 
-        # prepare headers for ut operations
+        # acc info
         self.r.headers['Content-Type'] = 'application/json'
         self.r.headers['Easw-Session-Data-Nucleus-Id'] = self.nucleus_id
         self.r.headers['X-UT-Embed-Error'] = 'true'
         self.r.headers['X-Requested-With'] = 'XMLHttpRequest'
         self.r.headers['X-UT-Route'] = self.urls['fut_host']
-        #self.r.headers['X-UT-PHISHING-TOKEN'] = ?
-        #self.r.headers['X-HTTP-Method-Override'] = ?
-
-        # acc info
         rc = self.r.get(self.urls['acc_info']).json()
         self.persona_id = rc['userAccountInfo']['personas'][0]['personaId']
         self.persona_name = rc['userAccountInfo']['personas'][0]['personaName']
@@ -132,7 +128,13 @@ class Core(object):
         #print self.r.get('http://www.easports.com/iframe/fut/p/ut/game/fifa14/item/resource/1615614739').content
 
         # http://cdn.content.easports.com/fifa/fltOnlineAssets/C74DDF38-0B11-49b0-B199-2E2A11D1CC13/2014/fut/items/web/5002003.json
-        #self.r.headers['Referer'] = 'http://www.easports.com/iframe/fut/bundles/futweb/web/flash/FifaUltimateTeam.swf'
+
+        # prepare headers for ut operations
+        del self.r.headers['Easw-Session-Data-Nucleus-Id']
+        del self.r.headers['X-Requested-With']
+        del self.r.headers['X-UT-Route']
+        self.r.headers['X-HTTP-Method-Override'] = 'GET'
+        self.r.headers['Referer'] = 'http://www.easports.com/iframe/fut/bundles/futweb/web/flash/FifaUltimateTeam.swf'
 
 #    def shards(self):
 #        """Returns shards info."""
@@ -140,11 +142,21 @@ class Core(object):
 #        return self.r.get(self.urls['shards']).json()
 #        # self.r.headers['X-UT-Route'] = self.urls['fut_pc']
 
-    def searchAuctions(self):
+    def searchAuctions(self, ctype, level=None, category=None, min_price=None, max_price=None, min_buy=None, max_buy=None, start=0, page_size=16):
         """Search specific cards on transfer market."""
         # TODO: add "search" alias
-        #https://utas.s2.fut.ea.com/ut/game/fifa14/transfermarket?macr=150&lev=gold&type=development&start=0&num=16&cat=fitness
-        params = {'macr': 150, 'lev': 'gold', 'type': 'development', 'start': 0, 'num': 16, 'cat': 'fitness'}
+        params = {
+            'start': start,
+            'num': page_size,
+            'type': ctype,  # "type" namespace is reserved in python
+        }
+        if level:       params['lev'] = level
+        if category:    params['cat'] = category
+        if min_price:   params['micr'] = min_price
+        if max_price:   params['macr'] = max_price
+        if min_buy:     params['minb'] = min_buy
+        if max_buy:     params['maxb'] = max_buy
+
         rc = self.r.get(self.urls['fut']['SearchAuctions'], params=params).json()
         self.credits = rc['credits']
 
@@ -167,7 +179,20 @@ class Core(object):
                 'currentBid':     i['currentBid'],
                 'expires':        i['expires'],  # seconds left
             })
-            print i['expires']
+        return cards
 
-        # id 5002003
-        # "resourceId": 1615614739
+    def bid(self, trade_id, bid):
+        """Make a bid."""
+        rc = self.r.get(self.urls['fut']['PostBid'], params={'tradeIds': trade_id}).json()
+        if rc['auctionInfo'][0]['currentBid'] < bid:
+            data = {'bid': bid}
+            url = '{0}/{1}/bid'.format(self.urls['fut']['PostBid'], trade_id)
+
+            self.r.headers['X-HTTP-Method-Override'] = 'PUT'
+            rc = self.r.post(url, data=json.dumps(data)).json()
+            self.r.headers['X-HTTP-Method-Override'] = 'GET'
+
+        if rc['auctionInfo'][0]['bidState'] == 'highest':
+            return True
+        else:
+            return False
