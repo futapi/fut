@@ -34,7 +34,7 @@ def base_id(resource_id):
 
 class Core(object):
     def __init__(self, email, passwd, secret_answer):
-        # TODO: dynamic create urls based on urls['fut_config']
+        # TODO: create "ask" method
         self.email = email
         self.passwd = passwd
         eahashor = EAHashingAlgorithm()
@@ -154,7 +154,7 @@ class Core(object):
 #        # self.r.headers['X-UT-Route'] = self.urls['fut_pc']
 
     def searchAuctions(self, ctype, level=None, category=None, min_price=None, max_price=None, min_buy=None, max_buy=None, start=0, page_size=16):
-        """Search specific cards on transfer market."""
+        """Search specific items on transfer market."""
         # TODO: add "search" alias
         params = {
             'start': start,
@@ -171,9 +171,9 @@ class Core(object):
         rc = self.r.get(self.urls['fut']['SearchAuctions'], params=params).json()
         self.credits = rc['credits']
 
-        cards = []
+        items = []
         for i in rc['auctionInfo']:
-            cards.append({
+            items.append({
                 'tradeId':        i['tradeId'],
                 'buyNowPrice':    i['buyNowPrice'],
                 'tradeState':     i['tradeState'],
@@ -189,8 +189,9 @@ class Core(object):
                 'offers':         i['offers'],
                 'currentBid':     i['currentBid'],
                 'expires':        i['expires'],  # seconds left
+                'tradeState':     i['tradeState'],
             })
-        return cards
+        return items
 
     def bid(self, trade_id, bid):
         """Make a bid."""
@@ -203,6 +204,7 @@ class Core(object):
             rc = self.r.post(url, data=json.dumps(data)).json()
             self.r.headers['X-HTTP-Method-Override'] = 'GET'
 
+        self.credits = rc['credits']  # update credits info
         if rc['auctionInfo'][0]['bidState'] == 'highest':
             return True
         else:
@@ -210,4 +212,28 @@ class Core(object):
 
     def trade_pile(self):
         """Returns trade pile."""
-        return self.r.get(urls['fut']['TradePile']).json()
+        rc = self.r.get(urls['fut']['TradePile']).json()
+        self.credits = rc['credits']  # update credits info
+
+        items = []
+        for i in rc['auctionInfo']:
+            items.apend({
+                'tradeId':        i['tradeId'],
+                'buyNowPrice':    i['buyNowPrice'],
+                'tradeState':     i['tradeState'],
+                'bidState':       i['bidState'],
+                'startingBid':    i['startingBid'],
+                'id':             i['itemData']['id'],
+                'timestamp':      i['itemData']['timestamp'],  # auction start
+                'rating':         i['itemData']['rating'],
+                'assetId':        i['itemData']['assetId'],
+                'resourceId':     i['itemData']['resourceId'],
+                'itemState':      i['itemData']['itemState'],
+                'rareflag':       i['itemData']['rareflag'],
+                'offers':         i['offers'],
+                'currentBid':     i['currentBid'],
+                'expires':        i['expires'],  # seconds left
+                'tradeState':     i['tradeState'],
+            })
+
+        return items
