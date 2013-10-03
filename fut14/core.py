@@ -22,6 +22,16 @@ from .exceptions import Fut14Error
 from .EAHashingAlgorithm import EAHashingAlgorithm
 
 
+def base_id(resource_id):
+    """Calculates base id."""
+    if resource_id > 1358954496:
+        resource_id -= 1342177280
+    if resource_id > 67108864:
+        resource_id -= 50331648
+    while resource_id > 16777216:
+        resource_id -= 16777216
+    return resource_id
+
 class Core(object):
     def __init__(self, email, passwd, secret_answer):
         # TODO: dynamic create urls based on urls['fut_config']
@@ -103,6 +113,7 @@ class Core(object):
                 'priorityLevel': 4,
                 'identification': {'AuthCode': ''}}
         rc = self.r.post(self.urls['fut']['authentication'], data=json.dumps(data)).json()
+        # {u'debug': u'', u'reason': u'multiple session', u'code': u'401', u'string': u'Unauthorized (ut)'}
         #self.urls['fut_host'] = '{0}://{1}'.format(rc['protocol']+rc['ipPort'])
         self.sid = rc['sid']
         self.r.headers['X-UT-SID'] = self.sid
@@ -196,3 +207,7 @@ class Core(object):
             return True
         else:
             return False
+
+    def trade_pile(self):
+        """Returns trade pile."""
+        return self.r.get(urls['fut']['TradePile']).json()
