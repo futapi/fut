@@ -189,7 +189,6 @@ class Core(object):
                 'offers':         i['offers'],
                 'currentBid':     i['currentBid'],
                 'expires':        i['expires'],  # seconds left
-                'tradeState':     i['tradeState'],
             })
         return items
 
@@ -217,7 +216,7 @@ class Core(object):
 
         items = []
         for i in rc['auctionInfo']:
-            items.apend({
+            items.append({
                 'tradeId':        i['tradeId'],
                 'buyNowPrice':    i['buyNowPrice'],
                 'tradeState':     i['tradeState'],
@@ -233,7 +232,20 @@ class Core(object):
                 'offers':         i['offers'],
                 'currentBid':     i['currentBid'],
                 'expires':        i['expires'],  # seconds left
-                'tradeState':     i['tradeState'],
             })
 
         return items
+
+#    def relistAll(self, item_id):
+#        """Relist all items in trade pile."""
+#        print self.r.get(urls['fut']['Item']+'/%s' % item_id).content
+
+    def sell(self, item_id, bid, buy_now=0, duration=3600):
+        """Starts auction."""
+        data = {'buyNowPrice': buy_now, 'startingBid': bid, 'duration': duration, 'itemData':{'id': item_id}}
+
+        self.r.headers['X-HTTP-Method-Override'] = 'POST'
+        rc = self.r.post(urls['fut']['SearchAuctionsListItem'], data=json.dumps(data)).json()
+        self.r.headers['X-HTTP-Method-Override'] = 'GET'
+
+        return rc['id']
