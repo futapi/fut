@@ -34,11 +34,10 @@ def base_id(resource_id):
 
 class Core(object):
     def __init__(self, email, passwd, secret_answer):
-        # TODO: create "ask" method
+        # TODO: better headers managment ("ask" method?)
         self.email = email
         self.passwd = passwd
-        eahashor = EAHashingAlgorithm()
-        self.secret_answer_hash = eahashor.EAHash(secret_answer)
+        self.secret_answer_hash = EAHashingAlgorithm().EAHash(secret_answer)
         self.urls = urls
         self.login(self.email, self.passwd, self.secret_answer_hash)
 
@@ -73,13 +72,14 @@ class Core(object):
 
         # === login
         self.urls['login'] = self.r.get(self.urls['fut_home']).url
-        self.r.headers['Referer'] = self.urls['main_site']
+        self.r.headers['Referer'] = self.urls['main_site']  # prepare headers
         data = {'email': email, 'password': passwd, '_rememberMe': 'on', 'rememberMe': 'on', '_eventId': 'submit', 'facebookAuth': ''}
         rc = self.r.post(self.urls['login'], data=data).content
         # TODO: catch invalid data exception
         #self.nucleus_id = re.search('userid : "([0-9]+)"', rc).group(1)  # we'll get it later
 
         # === lanuch futweb
+        self.r.headers['Referer'] = self.urls['fut_home']  # prepare headers
         rc = self.r.get(self.urls['futweb']).content
         if 'EASW_ID' not in rc:
             raise Fut14Error('Invalid email or password.')
@@ -88,11 +88,15 @@ class Core(object):
         #self.urls['fut_home'] = re.search("var GUEST_APP_URI = '(http://.+?)';", rc).group(1)
 
         # acc info
-        self.r.headers['Content-Type'] = 'application/json'
-        self.r.headers['Easw-Session-Data-Nucleus-Id'] = self.nucleus_id
-        self.r.headers['X-UT-Embed-Error'] = 'true'
-        self.r.headers['X-Requested-With'] = 'XMLHttpRequest'
-        self.r.headers['X-UT-Route'] = self.urls['fut_host']
+        self.r.headers.update({  # prepare headers
+            'Content-Type': 'application/json',
+            'Accept': 'text/json',
+            'Easw-Session-Data-Nucleus-Id': self.nucleus_id,
+            'X-UT-Embed-Error': 'true',
+            'X-Requested-With': 'XMLHttpRequest',
+            'X-UT-Route': self.urls['fut_host'],
+            'Referer': self.urls['futweb'],
+        })
         rc = self.r.get(self.urls['acc_info']).json()
         self.persona_id = rc['userAccountInfo']['personas'][0]['personaId']
         self.persona_name = rc['userAccountInfo']['personas'][0]['personaName']
@@ -101,6 +105,10 @@ class Core(object):
         self.clubs.sort(key=lambda i: i['lastAccessTime'], reverse=True)
 
         # authorization
+        self.r.headers.update({  # prepare headers
+            'Accept': 'application/json, text/javascript',
+            'Origin': 'http://www.easports.com',
+        })
         data = {'isReadOnly': False,
                 'sku': 'FUT14WEB',
                 'clientVersion': 1,
@@ -119,6 +127,8 @@ class Core(object):
         self.r.headers['X-UT-SID'] = self.sid
 
         # validate (secret question)
+        self.r.headers['Accept'] = 'text/json'  # prepare headers
+        del self.r.headers['Origin']
         rc = self.r.get(self.urls['fut_question']).json()
         # {"question":1,"attempts":5,"recoverAttempts":20}
         # {"debug":"Already answered question.","string":"Already answered question","reason":"Already answered question.","token":"0000000000000000000","code":"483"}
@@ -144,11 +154,17 @@ class Core(object):
         del self.r.headers['Easw-Session-Data-Nucleus-Id']
         del self.r.headers['X-Requested-With']
         del self.r.headers['X-UT-Route']
-        self.r.headers['X-HTTP-Method-Override'] = 'GET'
-        self.r.headers['Referer'] = 'http://www.easports.com/iframe/fut/bundles/futweb/web/flash/FifaUltimateTeam.swf'
+        self.r.headers.update({
+            'X-HTTP-Method-Override': 'GET',
+            'Referer': 'http://www.easports.com/iframe/fut/bundles/futweb/web/flash/FifaUltimateTeam.swf',
+            'Origin': 'http://www.easports.com',
+            #'Content-Type': 'application/json',  # already set
+            'Accept': 'application/json',
+        })
 
 #    def shards(self):
 #        """Returns shards info."""
+#        # TODO: headers
 #        self.r.headers['X-UT-Route'] = self.urls['fut_base']
 #        return self.r.get(self.urls['shards']).json()
 #        # self.r.headers['X-UT-Route'] = self.urls['fut_pc']
@@ -199,9 +215,9 @@ class Core(object):
             data = {'bid': bid}
             url = '{0}/{1}/bid'.format(self.urls['fut']['PostBid'], trade_id)
 
-            self.r.headers['X-HTTP-Method-Override'] = 'PUT'
+            self.r.headers['X-HTTP-Method-Override'] = 'PUT'  # prepare headers
             rc = self.r.post(url, data=json.dumps(data)).json()
-            self.r.headers['X-HTTP-Method-Override'] = 'GET'
+            self.r.headers['X-HTTP-Method-Override'] = 'GET'  # restore headers default
 
         self.credits = rc['credits']  # update credits info
         if rc['auctionInfo'][0]['bidState'] == 'highest':
@@ -244,8 +260,14 @@ class Core(object):
         """Starts auction."""
         data = {'buyNowPrice': buy_now, 'startingBid': bid, 'duration': duration, 'itemData':{'id': item_id}}
 
-        self.r.headers['X-HTTP-Method-Override'] = 'POST'
+        self.r.headers['X-HTTP-Method-Override'] = 'POST'  # prepare headers
         rc = self.r.post(urls['fut']['SearchAuctionsListItem'], data=json.dumps(data)).json()
-        self.r.headers['X-HTTP-Method-Override'] = 'GET'
+        self.r.headers['X-HTTP-Method-Override'] = 'GET'  # restore headers default
 
         return rc['id']
+
+    def watchlist_delete(self, trade_id):
+        """Removes card from watchlist(/tradepile?)."""
+        # https://utas.s2.fut.ea.com/ut/game/fifa14/watchlist?tradeId=136826808001
+        # method DELETE
+        pass
