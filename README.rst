@@ -19,9 +19,10 @@ Usage
     >>> fut = fut14.Core('email', 'password', 'secret answer')
 
     >>> items = fut.searchAuctions('development',  # search items
-                                   level='gold', category='fitness', min_price=300,  # optional parametrs
-                                   max_price=600, min_buy=300, max_buy=400,  # optional parametrs
-                                   start=0, page_size=60)  # optional parametrs
+    >>>     level='gold', category='fitness', min_price=300,  # optional parametrs
+    >>>     max_price=600, min_buy=300, max_buy=400,  # optional parametrs
+    >>>     start=0, page_size=60  # optional parametrs
+    >>> )
 
     >>> for item in items:
     >>>     trade_id = item['tradeId']
