@@ -211,7 +211,8 @@ class Core(object):
     def bid(self, trade_id, bid):
         """Make a bid."""
         rc = self.r.get(self.urls['fut']['PostBid'], params={'tradeIds': trade_id}).json()
-        if rc['auctionInfo'][0]['currentBid'] < bid:
+        if 'auctionInfo' not in rc: print rc  # DEBUG
+        if rc['auctionInfo'][0]['currentBid'] < bid and self.credits >= bid:
             data = {'bid': bid}
             url = '{0}/{1}/bid'.format(self.urls['fut']['PostBid'], trade_id)
 
@@ -219,6 +220,8 @@ class Core(object):
             rc = self.r.post(url, data=json.dumps(data)).json()
             self.r.headers['X-HTTP-Method-Override'] = 'GET'  # restore headers default
 
+        if 'credits' not in rc: print rc  # DEBUG
+        # {u'debug': u'', u'reason': u'', u'code': u'401', u'string': u'Unauthorized (ut)'}  # DEBUG
         self.credits = rc['credits']  # update credits info
         if rc['auctionInfo'][0]['bidState'] == 'highest':
             return True
@@ -249,6 +252,7 @@ class Core(object):
                 'currentBid':     i['currentBid'],
                 'expires':        i['expires'],  # seconds left
             })
+        if len(items) == 0: print rc  # DEBUG
 
         return items
 
@@ -267,7 +271,25 @@ class Core(object):
         return rc['id']
 
     def watchlist_delete(self, trade_id):
-        """Removes card from watchlist(/tradepile?)."""
+        """Removes card from watchlist."""
         # https://utas.s2.fut.ea.com/ut/game/fifa14/watchlist?tradeId=136826808001
         # method DELETE
-        pass
+        params = {'tradeId': trade_id}
+
+        self.r.headers['X-HTTP-Method-Override'] = 'DELETE'  # prepare headers
+        rc = self.r.post(urls['fut']['WatchList'], params=params).json()
+        self.r.headers['X-HTTP-Method-Override'] = 'GET'  # restore headers default
+
+        return rc
+
+    def tradepile_delete(self, trade_id):
+        """Removes card from tradepile."""
+        # https://utas.s2.fut.ea.com/ut/game/fifa14/trade/137005224869
+        # method DELETE
+        url = '{}/{}'.format(urls['fut']['TradeInfo'], trade_id)
+
+        self.r.headers['X-HTTP-Method-Override'] = 'DELETE'  # prepare headers
+        rc = self.r.post(url).json()
+        self.r.headers['X-HTTP-Method-Override'] = 'GET'  # restore headers default
+
+        return rc
