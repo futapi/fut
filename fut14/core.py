@@ -228,7 +228,7 @@ class Core(object):
         else:
             return False
 
-    def trade_pile(self):
+    def tradepile(self):
         """Returns trade pile."""
         rc = self.r.get(urls['fut']['TradePile']).json()
         self.credits = rc['credits']  # update credits info
