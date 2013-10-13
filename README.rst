@@ -43,7 +43,7 @@ Usage
 
     >>>     fut.bid(trade_id, 600)  # make a bid
 
-    >>> items = fut.trade_pile()  # get all items from trade pile
+    >>> items = fut.tradepile()  # get all items from trade pile
 
     >>> for item in items:
     >>>     fut.sell(item['item_id'], 150,  # put item on auction
