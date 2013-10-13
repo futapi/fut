@@ -277,10 +277,10 @@ class Core(object):
         params = {'tradeId': trade_id}
 
         self.r.headers['X-HTTP-Method-Override'] = 'DELETE'  # prepare headers
-        rc = self.r.post(urls['fut']['WatchList'], params=params).json()
+        self.r.post(urls['fut']['WatchList'], params=params)  # returns nothing
         self.r.headers['X-HTTP-Method-Override'] = 'GET'  # restore headers default
 
-        return rc
+        return True
 
     def tradepile_delete(self, trade_id):
         """Removes card from tradepile."""
@@ -289,7 +289,7 @@ class Core(object):
         url = '{}/{}'.format(urls['fut']['TradeInfo'], trade_id)
 
         self.r.headers['X-HTTP-Method-Override'] = 'DELETE'  # prepare headers
-        rc = self.r.post(url).json()
+        self.r.post(url)  # returns nothing
         self.r.headers['X-HTTP-Method-Override'] = 'GET'  # restore headers default
 
-        return rc
+        return True

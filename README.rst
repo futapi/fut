@@ -49,7 +49,8 @@ Usage
     >>>     fut.sell(item['item_id'], 150,  # put item on auction
                      buy_now=0, duration=3600)  # optional parametrs
 
-    >>> fut.watchlist_delete(item_id)  # removes item from watch list (not yet)
+    >>> fut.watchlist_delete(trade_id)  # removes item from watch list
+    >>> fut.tradepile_delete(trade_id)  # removes item from tradepile
 
     to be continued ;-)
     ...
