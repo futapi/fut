@@ -29,17 +29,25 @@ Usage
     >>>     buy_now_price = item['buyNowPrice']
     >>>     trade_state = item['tradeState']
     >>>     bid_state = item['bidState']
-    >>>     starting_bid = i['startingBid'],
-    >>>     item_id = i['id'],
-    >>>     timestamp = i['timestamp'],  # auction start
-    >>>     rating = i['rating'],
-    >>>     asset_id = i['assetId'],
-    >>>     resource_id = i['resourceId'],
-    >>>     item_state = i['itemState'],
-    >>>     rareflag = i['rareflag'],
-    >>>     offers = i['offers'],
-    >>>     current_bid = i['currentBid'],
-    >>>     expires = i['expires'],  # seconds left
+    >>>     starting_bid = i['startingBid']
+    >>>     item_id = i['id']
+    >>>     timestamp = i['timestamp']  # auction start
+    >>>     rating = i['rating']
+    >>>     asset_id = i['assetId']
+    >>>     resource_id = i['resourceId']
+    >>>     item_state = i['itemState']
+    >>>     rareflag = i['rareflag']
+    >>>     formation = i['formation']
+    >>>     injury_type = i['injuryType']
+    >>>     suspension = i['suspension']
+    >>>     contract = i['contract']
+    >>>     playStyle = i['playStyle']  # used only for players
+    >>>     discardValue = i['discardValue']
+    >>>     itemType = i['itemType']
+    >>>     owners = i['owners']
+    >>>     offers = i['offers']
+    >>>     current_bid = i['currentBid']
+    >>>     expires = i['expires']  # seconds left
 
     >>>     fut.bid(trade_id, 600)  # make a bid
 
@@ -49,8 +57,9 @@ Usage
     >>>     fut.sell(item['item_id'], 150,  # put item on auction
                      buy_now=0, duration=3600)  # optional parametrs
 
-    >>> fut.watchlist_delete(trade_id)  # removes item from watch list
-    >>> fut.tradepile_delete(trade_id)  # removes item from tradepile
+    >>> fut.send_to_tradepile(trade_id)  # add card to tradepile
+    >>> fut.tradepile_delete(trade_id)   # removes item from tradepile
+    >>> fut.watchlist_delete(trade_id)   # removes item from watch list
 
     to be continued ;-)
     ...
