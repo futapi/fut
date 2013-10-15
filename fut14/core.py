@@ -169,7 +169,7 @@ class Core(object):
 #        return self.r.get(self.urls['shards']).json()
 #        # self.r.headers['X-UT-Route'] = self.urls['fut_pc']
 
-    def searchAuctions(self, ctype, level=None, category=None, min_price=None, max_price=None, min_buy=None, max_buy=None, start=0, page_size=16):
+    def searchAuctions(self, ctype, level=None, category=None, min_price=None, max_price=None, min_buy=None, max_buy=None, start=0, page_size=16, league=None, club=None, position=None, nationality=None, playStyle=None):
         """Search specific items on transfer market."""
         # TODO: add "search" alias
         params = {
@@ -183,6 +183,11 @@ class Core(object):
         if max_price:   params['macr'] = max_price
         if min_buy:     params['minb'] = min_buy
         if max_buy:     params['maxb'] = max_buy
+        if league:      params['leag'] = league
+        if club:        params['team'] = club
+        if position:    params['pos'] = position
+        if nationality: params['nat'] = nationality
+        if playStyle:   params['playStyle'] = playStyle
 
         rc = self.r.get(self.urls['fut']['SearchAuctions'], params=params).json()
         self.credits = rc['credits']
@@ -205,6 +210,17 @@ class Core(object):
                 'offers':         i['offers'],
                 'currentBid':     i['currentBid'],
                 'expires':        i['expires'],  # seconds left
+                'formation':      i['itemData']['formation'],
+                'itemState':      i['itemData']['itemState'],
+                'injuryType':     i['itemData']['injuryType'],
+                'suspension':     i['itemData']['suspension'],
+                'contract':       i['itemData']['contract'],
+                'playStyle':      i['itemData']['playStyle'],
+                'discardValue':   i['itemData']['discardValue'],
+                'contract':       i['itemData']['contract'],                
+                'contract':       i['itemData']['contract'],
+                'itemType':       i['itemData']['itemType'],
+                'owners':         i['itemData']['owners'],
             })
         return items
 
