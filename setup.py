@@ -20,7 +20,7 @@ setup(
     #description='',
     long_description=open('README.rst').read(),
     author=fut14.__author__,
-    author_email='piotr.staroszczyk@get24.org',
+    author_email=fut14.__author_email__,
     packages=packages,
     package_data={'': ['LICENSE']},
     package_dir={'fut14': 'fut14'},

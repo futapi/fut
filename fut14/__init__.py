@@ -20,6 +20,7 @@ Usage:
 __title__ = 'fut14'
 __version__ = '0.0.1'
 __author__ = 'Piotr Staroszczyk'
+__author_email__ = 'piotr.staroszczyk@get24.org'
 __license__ = 'GNU GPL v3'
 __copyright__ = 'Copyright 2013 Piotr Staroszczyk'
 
