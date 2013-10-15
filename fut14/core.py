@@ -36,6 +36,7 @@ class Core(object):
     def __init__(self, email, passwd, secret_answer):
         # TODO: better headers managment ("ask" method?)
         # TODO: validate fut request response (200 OK)
+        # TODO: card parser method (+base_id calculation)
         self.email = email
         self.passwd = passwd
         self.secret_answer_hash = EAHashingAlgorithm().EAHash(secret_answer)
@@ -268,6 +269,17 @@ class Core(object):
                 'resourceId':     i['itemData']['resourceId'],
                 'itemState':      i['itemData']['itemState'],
                 'rareflag':       i['itemData']['rareflag'],
+                'formation':      i['itemData']['formation'],
+                'itemState':      i['itemData']['itemState'],
+                'injuryType':     i['itemData']['injuryType'],
+                'suspension':     i['itemData']['suspension'],
+                'contract':       i['itemData']['contract'],
+                'playStyle':      i['itemData'].get('playStyle'),  # used only for players
+                'discardValue':   i['itemData']['discardValue'],
+                'contract':       i['itemData']['contract'],
+                'contract':       i['itemData']['contract'],
+                'itemType':       i['itemData']['itemType'],
+                'owners':         i['itemData']['owners'],
                 'offers':         i['offers'],
                 'currentBid':     i['currentBid'],
                 'expires':        i['expires'],  # seconds left
