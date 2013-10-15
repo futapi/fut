@@ -177,6 +177,8 @@ class Core(object):
                        start=0, page_size=16):
         """Search specific items on transfer market."""
         # TODO: add "search" alias
+        if start > 0 and page_size == 16:
+            page_size = 13
         params = {
             'start': start,
             'num': page_size,
