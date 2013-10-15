@@ -35,6 +35,7 @@ def base_id(resource_id):
 class Core(object):
     def __init__(self, email, passwd, secret_answer):
         # TODO: better headers managment ("ask" method?)
+        # TODO: validate fut request response (200 OK)
         self.email = email
         self.passwd = passwd
         self.secret_answer_hash = EAHashingAlgorithm().EAHash(secret_answer)
@@ -169,7 +170,10 @@ class Core(object):
 #        return self.r.get(self.urls['shards']).json()
 #        # self.r.headers['X-UT-Route'] = self.urls['fut_pc']
 
-    def searchAuctions(self, ctype, level=None, category=None, min_price=None, max_price=None, min_buy=None, max_buy=None, start=0, page_size=16, league=None, club=None, position=None, nationality=None, playStyle=None):
+    def searchAuctions(self, ctype, level=None, category=None, min_price=None,
+                       max_price=None, min_buy=None, max_buy=None, league=None,
+                       club=None, position=None, nationality=None, playStyle=None,
+                       start=0, page_size=16):
         """Search specific items on transfer market."""
         # TODO: add "search" alias
         params = {
@@ -207,20 +211,20 @@ class Core(object):
                 'resourceId':     i['itemData']['resourceId'],
                 'itemState':      i['itemData']['itemState'],
                 'rareflag':       i['itemData']['rareflag'],
-                'offers':         i['offers'],
-                'currentBid':     i['currentBid'],
-                'expires':        i['expires'],  # seconds left
                 'formation':      i['itemData']['formation'],
                 'itemState':      i['itemData']['itemState'],
                 'injuryType':     i['itemData']['injuryType'],
                 'suspension':     i['itemData']['suspension'],
                 'contract':       i['itemData']['contract'],
-                'playStyle':      i['itemData']['playStyle'],
+                'playStyle':      i['itemData'].get('playStyle'),  # used only for players
                 'discardValue':   i['itemData']['discardValue'],
-                'contract':       i['itemData']['contract'],                
+                'contract':       i['itemData']['contract'],
                 'contract':       i['itemData']['contract'],
                 'itemType':       i['itemData']['itemType'],
                 'owners':         i['itemData']['owners'],
+                'offers':         i['offers'],
+                'currentBid':     i['currentBid'],
+                'expires':        i['expires'],  # seconds left
             })
         return items
 
