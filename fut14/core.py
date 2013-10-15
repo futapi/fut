@@ -211,9 +211,44 @@ class Core(object):
             return False
 
     def tradepile(self):
-        """Returns trade pile."""
-        rc = self.r.get(urls['fut']['TradePile']).json()
+        """Returns items in tradepile."""
+        rc = self.r.post(urls['fut']['TradePile']).json()
         self.credits = rc['credits']  # update credits info
+
+        items = []
+        for i in rc['auctionInfo']:
+            items.append({
+                'tradeId':        i['tradeId'],
+                'buyNowPrice':    i['buyNowPrice'],
+                'tradeState':     i['tradeState'],
+                'bidState':       i['bidState'],
+                'startingBid':    i['startingBid'],
+                'id':             i['itemData']['id'],
+                'timestamp':      i['itemData']['timestamp'],  # auction start
+                'rating':         i['itemData']['rating'],
+                'assetId':        i['itemData']['assetId'],
+                'resourceId':     i['itemData']['resourceId'],
+                'itemState':      i['itemData']['itemState'],
+                'rareflag':       i['itemData']['rareflag'],
+                'formation':      i['itemData']['formation'],
+                'injuryType':     i['itemData']['injuryType'],
+                'suspension':     i['itemData']['suspension'],
+                'contract':       i['itemData']['contract'],
+                'playStyle':      i['itemData'].get('playStyle'),  # used only for players
+                'discardValue':   i['itemData']['discardValue'],
+                'itemType':       i['itemData']['itemType'],
+                'owners':         i['itemData']['owners'],
+                'offers':         i['offers'],
+                'currentBid':     i['currentBid'],
+                'expires':        i['expires'],  # seconds left
+            })
+
+        return items
+
+    def watchlist(self):
+        """Returns items in watchlist."""
+        rc = self.r.post(urls['fut']['WatchList']).json()
+        self.credits = rc['credits']
 
         items = []
         for i in rc['auctionInfo']:
