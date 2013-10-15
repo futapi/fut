@@ -313,3 +313,15 @@ class Core(object):
         self.r.headers['X-HTTP-Method-Override'] = 'GET'  # restore headers default
 
         return True
+
+    def send_to_tradepile(self, trade_id):
+        """Sends to tradepile."""
+        # TODO: accept multiple trade_ids (just extend list below (+ extend params?))
+        data = {'auctionInfo': [{'id': trade_id}]}
+        params = {'tradeId': trade_id}
+
+        self.r.headers['X-HTTP-Method-Override'] = 'PUT'  # prepare headers
+        print self.r.post(urls['fut']['WatchList'], params=params, data=json.dumps(data)).content
+        self.r.headers['X-HTTP-Method-Override'] = 'GET'  # restore headers default
+
+        return True
