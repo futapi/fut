@@ -31,6 +31,14 @@ def base_id(resource_id):
         resource_id -= 16777216
     return resource_id
 
+
+def card_info(resource_id):
+    """Returns card info."""
+    # TODO: add referer to headers (futweb)
+    url = '{}{}.json'.format(urls['card_info'], base_id(resource_id))
+    return requests.get(url).json()
+
+
 class Core(object):
     def __init__(self, email, passwd, secret_answer):
         # TODO: better headers managment ("ask" method?)
