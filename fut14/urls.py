@@ -36,4 +36,5 @@ urls = updateUrls({
 
     'shards':       'http://www.easports.com/iframe/fut/p/ut/shards?_=%s' % time(),
     'acc_info':     'http://www.easports.com/iframe/fut/p/ut/game/fifa14/user/accountinfo?_=%s' % time(),
+    'card_info':    'http://cdn.content.easports.com/fifa/fltOnlineAssets/C74DDF38-0B11-49b0-B199-2E2A11D1CC13/2014/fut/items/web/',
 })

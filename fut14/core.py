@@ -21,15 +21,30 @@ from .exceptions import Fut14Error
 from .EAHashingAlgorithm import EAHashingAlgorithm
 
 
-def base_id(resource_id):
+def base_id(resource_id, version=False):
     """Calculates base id."""
+    v = 0
     if resource_id > 1358954496:
         resource_id -= 1342177280
+        v += 1
     if resource_id > 67108864:
         resource_id -= 50331648
+        v += 1
     while resource_id > 16777216:
         resource_id -= 16777216
+        v += 1
+
+    if version:
+        return resource_id, v
     return resource_id
+
+
+def card_info(resource_id):
+    """Returns card info."""
+    # TODO: add referer to headers (futweb)
+    url = '{}{}.json'.format(urls['card_info'], base_id(resource_id))
+    return requests.get(url).json()
+
 
 class Core(object):
     def __init__(self, email, passwd, secret_answer):
@@ -40,6 +55,14 @@ class Core(object):
         self.passwd = passwd
         self.secret_answer_hash = EAHashingAlgorithm().EAHash(secret_answer)
         self.login(self.email, self.passwd, self.secret_answer_hash)
+
+    def base_id(self, *args, **kwargs):
+        """Alias for base_id."""
+        return base_id(*args, **kwargs)
+
+    def card_info(self, *args, **kwargs):
+        """Alias for card_info."""
+        return card_info(*args, **kwargs)
 
     def login(self, email, passwd, secret_answer_hash):
         """Just log in."""
@@ -211,9 +234,44 @@ class Core(object):
             return False
 
     def tradepile(self):
-        """Returns trade pile."""
-        rc = self.r.get(urls['fut']['TradePile']).json()
+        """Returns items in tradepile."""
+        rc = self.r.post(urls['fut']['TradePile']).json()
         self.credits = rc['credits']  # update credits info
+
+        items = []
+        for i in rc['auctionInfo']:
+            items.append({
+                'tradeId':        i['tradeId'],
+                'buyNowPrice':    i['buyNowPrice'],
+                'tradeState':     i['tradeState'],
+                'bidState':       i['bidState'],
+                'startingBid':    i['startingBid'],
+                'id':             i['itemData']['id'],
+                'timestamp':      i['itemData']['timestamp'],  # auction start
+                'rating':         i['itemData']['rating'],
+                'assetId':        i['itemData']['assetId'],
+                'resourceId':     i['itemData']['resourceId'],
+                'itemState':      i['itemData']['itemState'],
+                'rareflag':       i['itemData']['rareflag'],
+                'formation':      i['itemData']['formation'],
+                'injuryType':     i['itemData']['injuryType'],
+                'suspension':     i['itemData']['suspension'],
+                'contract':       i['itemData']['contract'],
+                'playStyle':      i['itemData'].get('playStyle'),  # used only for players
+                'discardValue':   i['itemData']['discardValue'],
+                'itemType':       i['itemData']['itemType'],
+                'owners':         i['itemData']['owners'],
+                'offers':         i['offers'],
+                'currentBid':     i['currentBid'],
+                'expires':        i['expires'],  # seconds left
+            })
+
+        return items
+
+    def watchlist(self):
+        """Returns items in watchlist."""
+        rc = self.r.post(urls['fut']['WatchList']).json()
+        self.credits = rc['credits']
 
         items = []
         for i in rc['auctionInfo']:
@@ -279,14 +337,13 @@ class Core(object):
 
         return True
 
-    def send_to_tradepile(self, trade_id):
+    def send_to_tradepile(self, trade_id, item_id):
         """Sends to tradepile."""
         # TODO: accept multiple trade_ids (just extend list below (+ extend params?))
-        data = {'auctionInfo': [{'id': trade_id}]}
-        params = {'tradeId': trade_id}
+        data = {"itemData": [{"tradeId": trade_id, "pile": "trade", "id": str(item_id)}]}
 
         self.r.headers['X-HTTP-Method-Override'] = 'PUT'  # prepare headers
-        self.r.post(urls['fut']['WatchList'], params=params, data=json.dumps(data))  # returns nothing
+        rc = self.r.post(urls['fut']['Item'], data=json.dumps(data)).json()
         self.r.headers['X-HTTP-Method-Override'] = 'GET'  # restore headers default
 
-        return True
+        return rc['itemData'][0]['success']
