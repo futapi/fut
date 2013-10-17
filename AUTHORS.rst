@@ -15,3 +15,4 @@ EAHashingAlgorithm
 Patches and Suggestions
 ```````````````````````
 - mvillarejo
+- Mauro Marano
