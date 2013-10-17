@@ -56,6 +56,14 @@ class Core(object):
         self.secret_answer_hash = EAHashingAlgorithm().EAHash(secret_answer)
         self.login(self.email, self.passwd, self.secret_answer_hash)
 
+    def base_id(self, *args, **kwargs):
+        """Alias for base_id."""
+        return base_id(*args, **kwargs)
+
+    def card_info(self, *args, **kwargs):
+        """Alias for card_info."""
+        return card_info(*args, **kwargs)
+
     def login(self, email, passwd, secret_answer_hash):
         """Just log in."""
         # TODO: update credits (acc info)
