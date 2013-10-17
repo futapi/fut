@@ -21,14 +21,21 @@ from .exceptions import Fut14Error
 from .EAHashingAlgorithm import EAHashingAlgorithm
 
 
-def base_id(resource_id):
+def base_id(resource_id, version=False):
     """Calculates base id."""
+    v = 0
     if resource_id > 1358954496:
         resource_id -= 1342177280
+        v += 1
     if resource_id > 67108864:
         resource_id -= 50331648
+        v += 1
     while resource_id > 16777216:
         resource_id -= 16777216
+        v += 1
+
+    if version:
+        return resource_id, v
     return resource_id
 
 
