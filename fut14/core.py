@@ -143,6 +143,35 @@ class Core(object):
             'Accept': 'application/json',
         })
 
+#    def __shards__(self):
+#        """Returns shards info."""
+#        # TODO: headers
+#        self.r.headers['X-UT-Route'] = urls['fut_base']
+#        return self.r.get(urls['shards']).json()
+#        # self.r.headers['X-UT-Route'] = urls['fut_pc']
+
+    def __request__(self, method, url, *args, **kwargs):
+        """Prepares headers and sends request. Returns response as a json object."""
+        # TODO: update credtis?
+        self.r.headers['X-HTTP-Method-Override'] = method.upper()
+        return self.r.post(url, *args, **kwargs).json()
+
+    def __get__(self, url, *args, **kwargs):
+        """Sends get request. Returns response as a json object."""
+        return self.__request__('GET', url, *args, **kwargs)
+
+    def __post__(self, url, *args, **kwargs):
+        """Sends post request. Returns response as a json object."""
+        return self.__request__('POST', url, *args, **kwargs)
+
+    def __put__(self, url, *args, **kwargs):
+        """Sends put request. Returns response as a json object."""
+        return self.__request__('PUT', url, *args, **kwargs)
+
+    def __delete__(self, url, *args, **kwargs):
+        """Sends delete request. Returns response as a json object."""
+        return self.__request__('DELETE', url, *args, **kwargs)
+
     def base_id(self, *args, **kwargs):
         """Alias for base_id."""
         return base_id(*args, **kwargs)
@@ -150,13 +179,6 @@ class Core(object):
     def card_info(self, *args, **kwargs):
         """Alias for card_info."""
         return card_info(*args, **kwargs)
-
-#    def shards(self):
-#        """Returns shards info."""
-#        # TODO: headers
-#        self.r.headers['X-UT-Route'] = urls['fut_base']
-#        return self.r.get(urls['shards']).json()
-#        # self.r.headers['X-UT-Route'] = urls['fut_pc']
 
     def searchAuctions(self, ctype, level=None, category=None, min_price=None,
                        max_price=None, min_buy=None, max_buy=None, league=None,
@@ -183,7 +205,7 @@ class Core(object):
         if nationality: params['nat'] = nationality
         if playStyle:   params['playStyle'] = playStyle
 
-        rc = self.r.get(urls['fut']['SearchAuctions'], params=params).json()
+        rc = self.__get__(urls['fut']['SearchAuctions'], params=params)
         self.credits = rc['credits']
 
         items = []
@@ -217,14 +239,11 @@ class Core(object):
 
     def bid(self, trade_id, bid):
         """Make a bid."""
-        rc = self.r.get(urls['fut']['PostBid'], params={'tradeIds': trade_id}).json()
+        rc = self.__get__(urls['fut']['PostBid'], params={'tradeIds': trade_id})
         if rc['auctionInfo'][0]['currentBid'] < bid and self.credits >= bid:
             data = {'bid': bid}
             url = '{0}/{1}/bid'.format(urls['fut']['PostBid'], trade_id)
-
-            self.r.headers['X-HTTP-Method-Override'] = 'PUT'  # prepare headers
-            rc = self.r.post(url, data=json.dumps(data)).json()
-            self.r.headers['X-HTTP-Method-Override'] = 'GET'  # restore headers default
+            rc = self.__put__(url, data=json.dumps(data))
 
         self.credits = rc['credits']  # update credits info
         if rc['auctionInfo'][0]['bidState'] == 'highest':
@@ -234,7 +253,7 @@ class Core(object):
 
     def tradepile(self):
         """Returns items in tradepile."""
-        rc = self.r.post(urls['fut']['TradePile']).json()
+        rc = self.__get__(urls['fut']['TradePile'])
         self.credits = rc['credits']  # update credits info
 
         items = []
@@ -269,7 +288,7 @@ class Core(object):
 
     def watchlist(self):
         """Returns items in watchlist."""
-        rc = self.r.post(urls['fut']['WatchList']).json()
+        rc = self.__get__(urls['fut']['WatchList'])
         self.credits = rc['credits']
 
         items = []
@@ -309,40 +328,24 @@ class Core(object):
     def sell(self, item_id, bid, buy_now=0, duration=3600):
         """Starts auction."""
         data = {'buyNowPrice': buy_now, 'startingBid': bid, 'duration': duration, 'itemData':{'id': item_id}}
-
-        self.r.headers['X-HTTP-Method-Override'] = 'POST'  # prepare headers
-        rc = self.r.post(urls['fut']['SearchAuctionsListItem'], data=json.dumps(data)).json()
-        self.r.headers['X-HTTP-Method-Override'] = 'GET'  # restore headers default
-
+        rc = self.__post__(urls['fut']['SearchAuctionsListItem'], data=json.dumps(data))
         return rc['id']
 
     def watchlist_delete(self, trade_id):
         """Removes card from watchlist."""
         params = {'tradeId': trade_id}
-
-        self.r.headers['X-HTTP-Method-Override'] = 'DELETE'  # prepare headers
-        self.r.post(urls['fut']['WatchList'], params=params)  # returns nothing
-        self.r.headers['X-HTTP-Method-Override'] = 'GET'  # restore headers default
-
+        self.__delete__(urls['fut']['WatchList'], params=params)  # returns nothing
         return True
 
     def tradepile_delete(self, trade_id):
         """Removes card from tradepile."""
         url = '{}/{}'.format(urls['fut']['TradeInfo'], trade_id)
-
-        self.r.headers['X-HTTP-Method-Override'] = 'DELETE'  # prepare headers
-        self.r.post(url)  # returns nothing
-        self.r.headers['X-HTTP-Method-Override'] = 'GET'  # restore headers default
-
+        self.__delete__(url)  # returns nothing
         return True
 
     def send_to_tradepile(self, trade_id, item_id):
         """Sends to tradepile."""
         # TODO: accept multiple trade_ids (just extend list below (+ extend params?))
         data = {"itemData": [{"tradeId": trade_id, "pile": "trade", "id": str(item_id)}]}
-
-        self.r.headers['X-HTTP-Method-Override'] = 'PUT'  # prepare headers
-        rc = self.r.post(urls['fut']['Item'], data=json.dumps(data)).json()
-        self.r.headers['X-HTTP-Method-Override'] = 'GET'  # restore headers default
-
+        rc = self.__put__(urls['fut']['Item'], data=json.dumps(data))
         return rc['itemData'][0]['success']
