@@ -180,8 +180,12 @@ class Core(object):
         """Prepares headers and sends request. Returns response as a json object."""
         # TODO: update credtis?
         self.r.headers['X-HTTP-Method-Override'] = method.upper()
-        rc = self.r.post(url, *args, **kwargs).json()
-        self.credits = rc.get('credits', self.credits)  # update credits
+        rc = self.r.post(url, *args, **kwargs)
+        if rc.content == '':
+            rc = {}
+        else:
+            rc = rc.json()
+            self.credits = rc.get('credits', self.credits)  # update credits
         return rc
 
     def __get__(self, url, *args, **kwargs):

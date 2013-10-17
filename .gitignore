@@ -5,3 +5,4 @@ dist/
 fut14.egg-info/
 test.py
 log.log
+content.log
