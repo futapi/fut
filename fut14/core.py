@@ -76,17 +76,16 @@ def card_info(resource_id):
 class Core(object):
     def __init__(self, email, passwd, secret_answer):
         # TODO: validate fut request response (200 OK)
-        # TODO: card parser method (+base_id calculation)
         self.email = email
         self.passwd = passwd
         self.secret_answer_hash = EAHashingAlgorithm().EAHash(secret_answer)
         self.r = requests.Session()  # init/reset requests session object
         self.r.headers = headers  # i'm chrome browser now ;-)
+        self.credits = 0
         self.__login__(self.email, self.passwd, self.secret_answer_hash)
 
     def __login__(self, email, passwd, secret_answer_hash):
         """Just log in."""
-        # TODO: update credits (acc info)
         # === login
         urls['login'] = self.r.get(urls['fut_home']).url
         self.r.headers['Referer'] = urls['main_site']  # prepare headers
@@ -181,7 +180,9 @@ class Core(object):
         """Prepares headers and sends request. Returns response as a json object."""
         # TODO: update credtis?
         self.r.headers['X-HTTP-Method-Override'] = method.upper()
-        return self.r.post(url, *args, **kwargs).json()
+        rc = self.r.post(url, *args, **kwargs).json()
+        self.credits = rc.get('credits', self.credits)  # update credits
+        return rc
 
     def __get__(self, url, *args, **kwargs):
         """Sends get request. Returns response as a json object."""
@@ -233,7 +234,6 @@ class Core(object):
         if playStyle:   params['playStyle'] = playStyle
 
         rc = self.__get__(urls['fut']['SearchAuctions'], params=params)
-        self.credits = rc['credits']
 
         items = []
         for i in rc['auctionInfo']:
@@ -248,7 +248,6 @@ class Core(object):
             url = '{0}/{1}/bid'.format(urls['fut']['PostBid'], trade_id)
             rc = self.__put__(url, data=json.dumps(data))
 
-        self.credits = rc['credits']  # update credits info
         if rc['auctionInfo'][0]['bidState'] == 'highest':
             return True
         else:
@@ -257,7 +256,6 @@ class Core(object):
     def tradepile(self):
         """Returns items in tradepile."""
         rc = self.__get__(urls['fut']['TradePile'])
-        self.credits = rc['credits']  # update credits info
 
         items = []
         for i in rc['auctionInfo']:
@@ -268,7 +266,6 @@ class Core(object):
     def watchlist(self):
         """Returns items in watchlist."""
         rc = self.__get__(urls['fut']['WatchList'])
-        self.credits = rc['credits']
 
         items = []
         for i in rc['auctionInfo']:
