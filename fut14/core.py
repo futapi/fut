@@ -38,6 +38,33 @@ def base_id(resource_id, version=False):
         return resource_id, v
     return resource_id
 
+def item_parse(item_data):
+    """Parser for item data. Returns nice dictionary."""
+    return {
+            'tradeId':      item_data['tradeId'],
+            'buyNowPrice':  item_data['buyNowPrice'],
+            'tradeState':   item_data['tradeState'],
+            'bidState':     item_data['bidState'],
+            'startingBid':  item_data['startingBid'],
+            'id':           item_data['itemData']['id'],
+            'timestamp':    item_data['itemData']['timestamp'],  # auction start
+            'rating':       item_data['itemData']['rating'],
+            'assetId':      item_data['itemData']['assetId'],
+            'resourceId':   item_data['itemData']['resourceId'],
+            'itemState':    item_data['itemData']['itemState'],
+            'rareflag':     item_data['itemData']['rareflag'],
+            'formation':    item_data['itemData']['formation'],
+            'injuryType':   item_data['itemData']['injuryType'],
+            'suspension':   item_data['itemData']['suspension'],
+            'contract':     item_data['itemData']['contract'],
+            'playStyle':    item_data['itemData'].get('playStyle'),  # used only for players
+            'discardValue': item_data['itemData']['discardValue'],
+            'itemType':     item_data['itemData']['itemType'],
+            'owners':       item_data['itemData']['owners'],
+            'offers':       item_data['offers'],
+            'currentBid':   item_data['currentBid'],
+            'expires':      item_data['expires'],  # seconds left
+        }
 
 def card_info(resource_id):
     """Returns card info."""
@@ -210,31 +237,7 @@ class Core(object):
 
         items = []
         for i in rc['auctionInfo']:
-            items.append({
-                'tradeId':        i['tradeId'],
-                'buyNowPrice':    i['buyNowPrice'],
-                'tradeState':     i['tradeState'],
-                'bidState':       i['bidState'],
-                'startingBid':    i['startingBid'],
-                'id':             i['itemData']['id'],
-                'timestamp':      i['itemData']['timestamp'],  # auction start
-                'rating':         i['itemData']['rating'],
-                'assetId':        i['itemData']['assetId'],
-                'resourceId':     i['itemData']['resourceId'],
-                'itemState':      i['itemData']['itemState'],
-                'rareflag':       i['itemData']['rareflag'],
-                'formation':      i['itemData']['formation'],
-                'injuryType':     i['itemData']['injuryType'],
-                'suspension':     i['itemData']['suspension'],
-                'contract':       i['itemData']['contract'],
-                'playStyle':      i['itemData'].get('playStyle'),  # used only for players
-                'discardValue':   i['itemData']['discardValue'],
-                'itemType':       i['itemData']['itemType'],
-                'owners':         i['itemData']['owners'],
-                'offers':         i['offers'],
-                'currentBid':     i['currentBid'],
-                'expires':        i['expires'],  # seconds left
-            })
+            items.append(item_parse(i))
         return items
 
     def bid(self, trade_id, bid):
@@ -258,31 +261,7 @@ class Core(object):
 
         items = []
         for i in rc['auctionInfo']:
-            items.append({
-                'tradeId':        i['tradeId'],
-                'buyNowPrice':    i['buyNowPrice'],
-                'tradeState':     i['tradeState'],
-                'bidState':       i['bidState'],
-                'startingBid':    i['startingBid'],
-                'id':             i['itemData']['id'],
-                'timestamp':      i['itemData']['timestamp'],  # auction start
-                'rating':         i['itemData']['rating'],
-                'assetId':        i['itemData']['assetId'],
-                'resourceId':     i['itemData']['resourceId'],
-                'itemState':      i['itemData']['itemState'],
-                'rareflag':       i['itemData']['rareflag'],
-                'formation':      i['itemData']['formation'],
-                'injuryType':     i['itemData']['injuryType'],
-                'suspension':     i['itemData']['suspension'],
-                'contract':       i['itemData']['contract'],
-                'playStyle':      i['itemData'].get('playStyle'),  # used only for players
-                'discardValue':   i['itemData']['discardValue'],
-                'itemType':       i['itemData']['itemType'],
-                'owners':         i['itemData']['owners'],
-                'offers':         i['offers'],
-                'currentBid':     i['currentBid'],
-                'expires':        i['expires'],  # seconds left
-            })
+            items.append(item_parse(i))
 
         return items
 
@@ -293,31 +272,7 @@ class Core(object):
 
         items = []
         for i in rc['auctionInfo']:
-            items.append({
-                'tradeId':        i['tradeId'],
-                'buyNowPrice':    i['buyNowPrice'],
-                'tradeState':     i['tradeState'],
-                'bidState':       i['bidState'],
-                'startingBid':    i['startingBid'],
-                'id':             i['itemData']['id'],
-                'timestamp':      i['itemData']['timestamp'],  # auction start
-                'rating':         i['itemData']['rating'],
-                'assetId':        i['itemData']['assetId'],
-                'resourceId':     i['itemData']['resourceId'],
-                'itemState':      i['itemData']['itemState'],
-                'rareflag':       i['itemData']['rareflag'],
-                'formation':      i['itemData']['formation'],
-                'injuryType':     i['itemData']['injuryType'],
-                'suspension':     i['itemData']['suspension'],
-                'contract':       i['itemData']['contract'],
-                'playStyle':      i['itemData'].get('playStyle'),  # used only for players
-                'discardValue':   i['itemData']['discardValue'],
-                'itemType':       i['itemData']['itemType'],
-                'owners':         i['itemData']['owners'],
-                'offers':         i['offers'],
-                'currentBid':     i['currentBid'],
-                'expires':        i['expires'],  # seconds left
-            })
+            items.append(item_parse(i))
 
         return items
 
