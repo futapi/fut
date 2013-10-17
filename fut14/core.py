@@ -54,6 +54,10 @@ class Core(object):
         self.email = email
         self.passwd = passwd
         self.secret_answer_hash = EAHashingAlgorithm().EAHash(secret_answer)
+
+        self.r = requests.Session()  # init/reset requests session object
+        self.r.headers = headers  # i'm chrome browser now ;-)
+
         self.login(self.email, self.passwd, self.secret_answer_hash)
 
     def base_id(self, *args, **kwargs):
@@ -67,9 +71,6 @@ class Core(object):
     def login(self, email, passwd, secret_answer_hash):
         """Just log in."""
         # TODO: update credits (acc info)
-        self.r = requests.Session()  # init/reset requests session object
-        self.r.headers = headers  # i'm chrome browser now ;-)
-
         # === login
         urls['login'] = self.r.get(urls['fut_home']).url
         self.r.headers['Referer'] = urls['main_site']  # prepare headers
