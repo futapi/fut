@@ -48,33 +48,23 @@ def card_info(resource_id):
 
 class Core(object):
     def __init__(self, email, passwd, secret_answer):
-        # TODO: better headers managment ("ask" method?)
         # TODO: validate fut request response (200 OK)
         # TODO: card parser method (+base_id calculation)
         self.email = email
         self.passwd = passwd
         self.secret_answer_hash = EAHashingAlgorithm().EAHash(secret_answer)
-
         self.r = requests.Session()  # init/reset requests session object
         self.r.headers = headers  # i'm chrome browser now ;-)
+        self.__login__(self.email, self.passwd, self.secret_answer_hash)
 
-        self.login(self.email, self.passwd, self.secret_answer_hash)
-
-    def base_id(self, *args, **kwargs):
-        """Alias for base_id."""
-        return base_id(*args, **kwargs)
-
-    def card_info(self, *args, **kwargs):
-        """Alias for card_info."""
-        return card_info(*args, **kwargs)
-
-    def login(self, email, passwd, secret_answer_hash):
+    def __login__(self, email, passwd, secret_answer_hash):
         """Just log in."""
         # TODO: update credits (acc info)
         # === login
         urls['login'] = self.r.get(urls['fut_home']).url
         self.r.headers['Referer'] = urls['main_site']  # prepare headers
-        data = {'email': email, 'password': passwd, '_rememberMe': 'on', 'rememberMe': 'on', '_eventId': 'submit', 'facebookAuth': ''}
+        data = {'email': email, 'password': passwd, '_rememberMe': 'on',
+                'rememberMe': 'on', '_eventId': 'submit', 'facebookAuth': ''}
         rc = self.r.post(urls['login'], data=data).content
         # TODO: catch invalid data exception
         #self.nucleus_id = re.search('userid : "([0-9]+)"', rc).group(1)  # we'll get it later
@@ -146,12 +136,20 @@ class Core(object):
         del self.r.headers['X-Requested-With']
         del self.r.headers['X-UT-Route']
         self.r.headers.update({
-            'X-HTTP-Method-Override': 'GET',
+            #'X-HTTP-Method-Override': 'GET',  # __request__ method manages this
             'Referer': 'http://www.easports.com/iframe/fut/bundles/futweb/web/flash/FifaUltimateTeam.swf',
             'Origin': 'http://www.easports.com',
             #'Content-Type': 'application/json',  # already set
             'Accept': 'application/json',
         })
+
+    def base_id(self, *args, **kwargs):
+        """Alias for base_id."""
+        return base_id(*args, **kwargs)
+
+    def card_info(self, *args, **kwargs):
+        """Alias for card_info."""
+        return card_info(*args, **kwargs)
 
 #    def shards(self):
 #        """Returns shards info."""
