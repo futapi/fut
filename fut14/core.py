@@ -244,6 +244,11 @@ class Core(object):
             items.append(itemParse(i))
         return items
 
+    def get_trade(self, trade_id):
+        """ returns tradeId for cleaning"""
+        rc = self.__get__(urls['fut']['PostBid'], params={'tradeIds': trade_id})
+        return rc
+
     def bid(self, trade_id, bid):
         """Make a bid."""
         rc = self.__get__(urls['fut']['PostBid'], params={'tradeIds': trade_id})
@@ -251,8 +256,10 @@ class Core(object):
             data = {'bid': bid}
             url = '{0}/{1}/bid'.format(urls['fut']['PostBid'], trade_id)
             rc = self.__put__(url, data=json.dumps(data))
-
-        if rc['auctionInfo'][0]['bidState'] == 'highest':
+        #{"bidTokens":{"count":25,"updateTime":0},"auctionInfo":[{"tradeId":137158596525,"tradeState":"closed","bidState":"buyNow","itemData":{"id":105587793413,"timestamp":1381342769,"itemType":"player","discardValue":320,"resourceId":1610807501,"rating":80,"training":0,"untradeable":false,"itemState":"free","teamid":457,"cardsubtypeid":3,"injuryType":"none","injuryGames":0,"suspension":0,"morale":50,"fitness":99,"assists":0,"assetId":194765,"formation":"f343","preferredPosition":"LW","lastSalePrice":450,"owners":4,"attributeList":[{"value":81,"index":0},{"value":72,"index":1},{"value":77,"index":2},{"value":84,"index":3},{"value":42,"index":4},{"value":54,"index":5}],"statsList":[{"value":0,"index":0},{"value":0,"index":1},{"value":0,"index":2},{"value":0,"index":3},{"value":0,"index":4}],"lifetimeStats":[{"value":6,"index":0},{"value":4,"index":1},{"value":0,"index":2},{"value":0,"index":3},{"value":0,"index":4}],"contract":1,"rareflag":0,"playStyle":250,"lifetimeAssists":1,"loyaltyBonus":0},"offers":0,"buyNowPrice":450,"watched":false,"startingBid":400,"currentBid":450,"expires":-1,"sellerName":"La Academia","sellerEstablished":1295217958,"sellerId":0}],"credits":32523,"currencies":[{"name":"COINS","funds":32523,"finalFunds":32523},{"name":"TOKEN","funds":0,"finalFunds":0},{"name":"POINTS","funds":25,"finalFunds":25}],"duplicateItemIdList":[{"itemId":105587793413,"duplicateItemId":105542990638}],"errorState":null}
+        if rc['auctionInfo'][0]['tradeState'] == "closed" and rc['auctionInfo'][0]["bidState"] == "buyNow":
+        	return True
+        elif rc['auctionInfo'][0]['bidState'] == 'highest':
             return True
         else:
             return False
