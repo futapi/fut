@@ -91,13 +91,13 @@ class Core(object):
         self.r.headers['Referer'] = urls['main_site']  # prepare headers
         data = {'email': email, 'password': passwd, '_rememberMe': 'on',
                 'rememberMe': 'on', '_eventId': 'submit', 'facebookAuth': ''}
-        rc = self.r.post(urls['login'], data=data).content
+        rc = self.r.post(urls['login'], data=data).text
         # TODO: catch invalid data exception
         #self.nucleus_id = re.search('userid : "([0-9]+)"', rc).group(1)  # we'll get it later
 
         # === lanuch futweb
         self.r.headers['Referer'] = urls['fut_home']  # prepare headers
-        rc = self.r.get(urls['futweb']).content
+        rc = self.r.get(urls['futweb']).text
         if 'EASW_ID' not in rc:
             raise Fut14Error('Invalid email or password.')
         self.nucleus_id = re.search("var EASW_ID = '([0-9]+)';", rc).group(1)
@@ -181,7 +181,7 @@ class Core(object):
         # TODO: update credtis?
         self.r.headers['X-HTTP-Method-Override'] = method.upper()
         rc = self.r.post(url, *args, **kwargs)
-        if rc.content == '':
+        if rc.text == '':
             rc = {}
         else:
             rc = rc.json()
@@ -279,7 +279,7 @@ class Core(object):
 
 #    def relistAll(self, item_id):
 #        """Relist all items in trade pile."""
-#        print self.r.get(urls['fut']['Item']+'/%s' % item_id).content
+#        print(self.r.get(urls['fut']['Item']+'/%s' % item_id).text)
 
     def sell(self, item_id, bid, buy_now=0, duration=3600):
         """Starts auction."""
