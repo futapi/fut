@@ -33,7 +33,8 @@ setup(
     package_dir={'fut14': 'fut14'},
     include_package_data=True,
     install_requires=requires,
-    license=open('LICENSE').read(),
+    #license=open('LICENSE').read(),
+    license=__license__,
     classifiers=(
         'Development Status :: 3 - Alpha',
         #'Development Status :: 4 - Beta',
