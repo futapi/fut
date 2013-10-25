@@ -21,7 +21,7 @@ from .exceptions import Fut14Error
 from .EAHashingAlgorithm import EAHashingAlgorithm
 
 
-def base_id(resource_id, version=False):
+def baseId(resource_id, version=False):
     """Calculates base id."""
     v = 0
     if resource_id > 1358954496:
@@ -38,7 +38,7 @@ def base_id(resource_id, version=False):
         return resource_id, v
     return resource_id
 
-def item_parse(item_data):
+def itemParse(item_data):
     """Parser for item data. Returns nice dictionary."""
     return {
             'tradeId':      item_data['tradeId'],
@@ -66,10 +66,10 @@ def item_parse(item_data):
             'expires':      item_data['expires'],  # seconds left
         }
 
-def card_info(resource_id):
+def cardInfo(resource_id):
     """Returns card info."""
     # TODO: add referer to headers (futweb)
-    url = '{}{}.json'.format(urls['card_info'], base_id(resource_id))
+    url = '{}{}.json'.format(urls['card_info'], baseId(resource_id))
     return requests.get(url).json()
 
 
@@ -204,13 +204,13 @@ class Core(object):
         """Sends delete request. Returns response as a json object."""
         return self.__request__('DELETE', url, *args, **kwargs)
 
-    def base_id(self, *args, **kwargs):
-        """Alias for base_id."""
-        return base_id(*args, **kwargs)
+    def baseId(self, *args, **kwargs):
+        """Alias for baseId."""
+        return baseId(*args, **kwargs)
 
-    def card_info(self, *args, **kwargs):
-        """Alias for card_info."""
-        return card_info(*args, **kwargs)
+    def cardInfo(self, *args, **kwargs):
+        """Alias for cardInfo."""
+        return cardInfo(*args, **kwargs)
 
     def searchAuctions(self, ctype, level=None, category=None, min_price=None,
                        max_price=None, min_buy=None, max_buy=None, league=None,
@@ -241,7 +241,7 @@ class Core(object):
 
         items = []
         for i in rc['auctionInfo']:
-            items.append(item_parse(i))
+            items.append(itemParse(i))
         return items
 
     def bid(self, trade_id, bid):
@@ -263,7 +263,7 @@ class Core(object):
 
         items = []
         for i in rc['auctionInfo']:
-            items.append(item_parse(i))
+            items.append(itemParse(i))
 
         return items
 
@@ -273,7 +273,7 @@ class Core(object):
 
         items = []
         for i in rc['auctionInfo']:
-            items.append(item_parse(i))
+            items.append(itemParse(i))
 
         return items
 
@@ -287,19 +287,19 @@ class Core(object):
         rc = self.__post__(urls['fut']['SearchAuctionsListItem'], data=json.dumps(data))
         return rc['id']
 
-    def watchlist_delete(self, trade_id):
+    def watchlistDelete(self, trade_id):
         """Removes card from watchlist."""
         params = {'tradeId': trade_id}
         self.__delete__(urls['fut']['WatchList'], params=params)  # returns nothing
         return True
 
-    def tradepile_delete(self, trade_id):
+    def tradepileDelete(self, trade_id):
         """Removes card from tradepile."""
         url = '{}/{}'.format(urls['fut']['TradeInfo'], trade_id)
         self.__delete__(url)  # returns nothing
         return True
 
-    def send_to_tradepile(self, trade_id, item_id):
+    def sendToTradepile(self, trade_id, item_id):
         """Sends to tradepile."""
         # TODO: accept multiple trade_ids (just extend list below (+ extend params?))
         data = {"itemData": [{"tradeId": trade_id, "pile": "trade", "id": str(item_id)}]}

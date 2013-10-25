@@ -25,5 +25,5 @@ __license__ = 'GNU GPL v3'
 __copyright__ = 'Copyright 2013 Piotr Staroszczyk'
 
 
-#from .api import base_id, card_info
+#from .api import baseId, cardInfo
 from .core import Core
