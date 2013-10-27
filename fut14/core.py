@@ -247,7 +247,7 @@ class Core(object):
             data = {'bid': bid}
             url = '{0}/{1}/bid'.format(urls['fut']['PostBid'], trade_id)
             rc = self.__put__(url, data=json.dumps(data))['auctionInfo'][0]
-        if rc['tradeState'] == 'closed' and rc['bidState'] in ('buyNow', 'highest'):
+        if rc['bidState'] == 'highest' or (rc['tradeState'] == 'closed' and rc['bidState'] == 'buyNow'):  # checking 'tradeState' is required?
         	return True
         else:
             return False
