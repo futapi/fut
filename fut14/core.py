@@ -89,8 +89,12 @@ class Core(object):
         # === login
         urls['login'] = self.r.get(urls['fut_home']).url
         self.r.headers['Referer'] = urls['main_site']  # prepare headers
-        data = {'email': email, 'password': passwd, '_rememberMe': 'on',
-                'rememberMe': 'on', '_eventId': 'submit', 'facebookAuth': ''}
+        data = {'email': email,
+                'password': passwd,
+                '_rememberMe': 'on',
+                'rememberMe': 'on',
+                '_eventId':
+                'submit', 'facebookAuth': ''}
         rc = self.r.post(urls['login'], data=data).text
         # TODO: catch invalid data exception
         #self.nucleus_id = re.search('userid : "([0-9]+)"', rc).group(1)  # we'll get it later
@@ -114,10 +118,10 @@ class Core(object):
             'X-UT-Route': urls['fut_host'],
             'Referer': urls['futweb'],
         })
-        rc = self.r.get(urls['acc_info']).json()
-        self.persona_id = rc['userAccountInfo']['personas'][0]['personaId']
-        self.persona_name = rc['userAccountInfo']['personas'][0]['personaName']
-        self.clubs = [i for i in rc['userAccountInfo']['personas'][0]['userClubList']]
+        rc = self.r.get(urls['acc_info']).json()['userAccountInfo']['personas'][0]
+        self.persona_id = rc['personaId']
+        self.persona_name = rc['personaName']
+        self.clubs = [i for i in rc['userClubList']]
         # sort clubs by lastAccessTime (latest firts)
         self.clubs.sort(key=lambda i: i['lastAccessTime'], reverse=True)
 
@@ -139,23 +143,19 @@ class Core(object):
                 'identification': {'AuthCode': ''}}
         rc = self.r.post(urls['fut']['authentication'], data=json.dumps(data)).json()
         #urls['fut_host'] = '{0}://{1}'.format(rc['protocol']+rc['ipPort'])
-        self.sid = rc['sid']
-        self.r.headers['X-UT-SID'] = self.sid
+        self.r.headers['X-UT-SID'] = self.sid = rc['sid']
 
         # validate (secret question)
         self.r.headers['Accept'] = 'text/json'  # prepare headers
         del self.r.headers['Origin']
         rc = self.r.get(urls['fut_question']).json()
-        if rc.get('string') == 'Already answered question.':
-            self.token = rc['string']
-        else:
+        if rc.get('string') != 'Already answered question.':
             # answer question
             data = {'answer': self.secret_answer_hash}
             self.r.headers['Content-Type'] = 'application/x-www-form-urlencoded'  # requests bug?
             rc = self.r.post(urls['fut_validate'], data=data).json()
             self.r.headers['Content-Type'] = 'application/json'
-            self.token = rc['token']
-        self.r.headers['X-UT-PHISHING-TOKEN'] = self.token
+        self.r.headers['X-UT-PHISHING-TOKEN'] = self.token = rc['token']
 
         # prepare headers for ut operations
         del self.r.headers['Easw-Session-Data-Nucleus-Id']
@@ -238,11 +238,7 @@ class Core(object):
         if playStyle:   params['playStyle'] = playStyle
 
         rc = self.__get__(urls['fut']['SearchAuctions'], params=params)
-
-        items = []
-        for i in rc['auctionInfo']:
-            items.append(itemParse(i))
-        return items
+        return [itemParse(i) for i in rc['auctionInfo']]
 
     def bid(self, trade_id, bid):
         """Make a bid."""
@@ -259,29 +255,19 @@ class Core(object):
     def tradepile(self):
         """Returns items in tradepile."""
         rc = self.__get__(urls['fut']['TradePile'])
-
-        items = []
-        for i in rc['auctionInfo']:
-            items.append(itemParse(i))
-
-        return items
+        return [itemParse(i) for i in rc['auctionInfo']]
 
     def watchlist(self):
         """Returns items in watchlist."""
         rc = self.__get__(urls['fut']['WatchList'])
-
-        items = []
-        for i in rc['auctionInfo']:
-            items.append(itemParse(i))
-
-        return items
+        return [itemParse(i) for i in rc['auctionInfo']]
 
 #    def relistAll(self, item_id):
 #        """Relist all items in trade pile."""
 #        print(self.r.get(urls['fut']['Item']+'/%s' % item_id).text)
 
     def sell(self, item_id, bid, buy_now=0, duration=3600):
-        """Starts auction."""
+        """Starts auction. Returns trade_id."""
         data = {'buyNowPrice': buy_now, 'startingBid': bid, 'duration': duration, 'itemData':{'id': item_id}}
         rc = self.__post__(urls['fut']['SearchAuctionsListItem'], data=json.dumps(data))
         return rc['id']
