@@ -10,18 +10,14 @@ def updateUrls(urls):
         """Gets services urls."""
         rc = xmltodict.parse(requests.get(urls['fut_config']).content)
         services = rc['main']['services']['prod']
-        path = '{0}{1}game/fifa14/'.format(
-            urls['fut_host'], rc['main']['directHttpServiceDestination']
-        )
+        path = '{0}{1}game/fifa14/'.format(urls['fut_host'], rc['main']['directHttpServiceDestination'])
+        path_auth = '{0}/iframe/fut{1}{2}'.format(urls['main_site'].replace('https', 'http'),  # it's not working with ssl...
+                                                  rc['main']['httpServiceDestination'])
         for i in services:
             if i == 'authentication':
-                urls['fut'][i] = '{0}/iframe/fut{1}{2}'.format(
-                    urls['main_site'].replace('https', 'http'),  # it's not working with ssl...
-                    rc['main']['httpServiceDestination'],
-                    services[i]
-                )
+                urls['fut'][i] = path_auth+services[i]
             else:
-                urls['fut'][i] = '{0}{1}'.format(path, services[i])
+                urls['fut'][i] = path+services[i]
         return urls
 
 urls = updateUrls({
