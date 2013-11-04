@@ -220,6 +220,8 @@ class Core(object):
         # TODO: add "search" alias
         if start > 0 and page_size == 16:
             page_size = 13
+        elif page_size > 50:  # server restriction
+            page_size = 50
         params = {
             'start': start,
             'num': page_size,
