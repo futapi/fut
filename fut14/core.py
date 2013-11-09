@@ -46,8 +46,8 @@ def itemParse(item_data):
             'tradeState':   item_data['tradeState'],
             'bidState':     item_data['bidState'],
             'startingBid':  item_data['startingBid'],
-            'id':           item_data['itemData']['id'],
-            'timestamp':    item_data['itemData']['timestamp'],  # auction start
+            'id':           item_data['itemData']['id'],  # auction start
+            'timestamp':    item_data['itemData']['timestamp'],
             'rating':       item_data['itemData']['rating'],
             'assetId':      item_data['itemData']['assetId'],
             'resourceId':   item_data['itemData']['resourceId'],
@@ -65,6 +65,33 @@ def itemParse(item_data):
             'currentBid':   item_data['currentBid'],
             'expires':      item_data['expires'],  # seconds left
         }
+
+def auctionParse(auction_data):
+    """
+    auction paser
+    """
+    return {
+        'id':           auction_data['id'],  # auction start
+        'timestamp':    auction_data['timestamp'],
+        'rating':       auction_data['rating'],
+        'assetId':      auction_data['assetId'],
+        'resourceId':   auction_data['resourceId'],
+        'itemState':    auction_data['itemState'],
+        'rareflag':     auction_data['rareflag'],
+        'formation':    auction_data['formation'],
+        'injuryType':   auction_data['injuryType'],
+        'injuryGames':  auction_data['injuryGames'],
+        'lastSalePrice':auction_data['lastSalePrice'],
+        'fitness':      auction_data['fitness'],
+        'training':     auction_data['training'],
+        'discardValue': auction_data['discardValue'],
+        'suspension':   auction_data['suspension'],
+        'contract':     auction_data['contract'],
+        'playStyle':    auction_data.get('playStyle'),  # used only for players
+        'discardValue': auction_data['discardValue'],
+        'itemType':     auction_data['itemType'],
+        'owners':       auction_data['owners'],
+    }
 
 def cardInfo(resource_id):
     """Returns card info."""
@@ -257,12 +284,24 @@ class Core(object):
     def tradepile(self):
         """Returns items in tradepile."""
         rc = self.__get__(urls['fut']['TradePile'])
+        # {"duplicateItemIdList":[{"itemId":106141947333,"duplicateItemId":105507948593},{"itemId":106089292920,"duplicateItemId":105507948593},{"itemId":105997261642,"duplicateItemId":105507948593},{"itemId":106437259823,"duplicateItemId":105507948593},{"itemId":105830172434,"duplicateItemId":105507048043}],"auctionInfo":[{"itemData":{"id":106101707703,"timestamp":1382982319,"itemType":"player","formation":"f4321","untradeable":false,"teamid":240,"resourceId":1610756481,"assetId":143745,"itemState":"free","rating":84,"preferredPosition":"LM","injuryGames":0,"statsList":[{"value":5,"index":0},{"value":0,"index":1},{"value":0,"index":2},{"value":0,"index":3},{"value":0,"index":4}],"attributeList":[{"value":74,"index":0},{"value":75,"index":1},{"value":84,"index":2},{"value":88,"index":3},{"value":49,"index":4},{"value":70,"index":5}],"lifetimeStats":[{"value":38,"index":0},{"value":14,"index":1},{"value":0,"index":2},{"value":0,"index":3},{"value":0,"index":4}],"lastSalePrice":1800,"owners":5,"morale":50,"training":0,"injuryType":"shoulder","suspension":0,"fitness":99,"assists":0,"discardValue":672,"cardsubtypeid":2,"contract":16,"rareflag":1,"playStyle":259,"lifetimeAssists":8,"loyaltyBonus":0},"tradeId":137591211535,"startingBid":1800,"buyNowPrice":2200,"offers":0,"tradeState":"closed","watched":true,"bidState":"none","currentBid":1800,"expires":-1,"sellerName":"Bailen United","sellerEstablished":1288998842,"sellerId":0},{"itemData":{"id":106340770067,"timestamp":1383708120,"itemType":"player","formation":"f451","untradeable":false,"teamid":240,"resourceId":1610806483,"assetId":193747,"itemState":"free","rating":81,"preferredPosition":"CAM","injuryGames":0,"statsList":[{"value":0,"index":0},{"value":0,"index":1},{"value":0,"index":2},{"value":0,"index":3},{"value":0,"index":4}],"attributeList":[{"value":75,"index":0},{"value":72,"index":1},{"value":83,"index":2},{"value":81,"index":3},{"value":60,"index":4},{"value":62,"index":5}],"lifetimeStats":[{"value":0,"index":0},{"value":0,"index":1},{"value":0,"index":2},{"value":0,"index":3},{"value":0,"index":4}],"lastSalePrice":1900,"owners":4,"morale":50,"training":0,"injuryType":"none","suspension":0,"fitness":99,"assists":0,"discardValue":648,"cardsubtypeid":2,"contract":7,"rareflag":1,"playStyle":250,"lifetimeAssists":0,"loyaltyBonus":0},"tradeId":137604642922,"startingBid":1600,"buyNowPrice":1900,"offers":0,"tradeState":"closed","watched":true,"bidState":"none","currentBid":1900,"expires":-1,"sellerName":"Bailen United","sellerEstablished":1288998842,"sellerId":0},{"itemData":{"id":106341478475,"timestamp":1383712264,"itemType":"player","formation":"f4231","untradeable":false,"teamid":240,"resourceId":1610806483,"assetId":193747,"itemState":"free","rating":81,"preferredPosition":"CAM","injuryGames":0,"statsList":[{"value":0,"index":0},{"value":0,"index":1},{"value":0,"index":2},{"value":0,"index":3},{"value":0,"index":4}],"attributeList":[{"value":75,"index":0},{"value":72,"index":1},{"value":83,"index":2},{"value":81,"index":3},{"value":60,"index":4},{"value":62,"index":5}],"lifetimeStats":[{"value":0,"index":0},{"value":0,"index":1},{"value":0,"index":2},{"value":0,"index":3},{"value":0,"index":4}],"lastSalePrice":1900,"owners":4,"morale":50,"training":0,"injuryType":"none","suspension":0,"fitness":99,"assists":0,"discardValue":648,"cardsubtypeid":2,"contract":7,"rareflag":1,"playStyle":250,"lifetimeAssists":0,"loyaltyBonus":0},"tradeId":137604615652,"startingBid":1600,"buyNowPrice":1900,"offers":0,"tradeState":"closed","watched":true,"bidState":"none","currentBid":1900,"expires":-1,"sellerName":"Bailen United","sellerEstablished":1288998842,"sellerId":0},{"itemData":{"id":105997261642,"timestamp":1382675466,"itemType":"player","formation":"f442","untradeable":false,"teamid":240,"resourceId":1610806483,"assetId":193747,"itemState":"free","rating":81,"preferredPosition":"CAM","injuryGames":0,"statsList":[{"value":0,"index":0},{"value":0,"index":1},{"value":0,"index":2},{"value":0,"index":3},{"value":0,"index":4}],"attributeList":[{"value":75,"index":0},{"value":72,"index":1},{"value":83,"index":2},{"value":81,"index":3},{"value":60,"index":4},{"value":62,"index":5}],"lifetimeStats":[{"value":0,"index":0},{"value":0,"index":1},{"value":0,"index":2},{"value":0,"index":3},{"value":0,"index":4}],"lastSalePrice":1200,"owners":2,"morale":50,"training":0,"injuryType":"none","suspension":0,"fitness":99,"assists":0,"discardValue":648,"cardsubtypeid":2,"contract":7,"rareflag":1,"playStyle":250,"lifetimeAssists":0,"loyaltyBonus":0},"tradeId":137610216656,"startingBid":1600,"buyNowPrice":1900,"offers":0,"tradeState":"expired","watched":true,"bidState":"none","currentBid":0,"expires":-1,"sellerName":"Bailen United","sellerEstablished":1288998842,"sellerId":0},{"itemData":{"id":106089292920,"timestamp":1382950547,"itemType":"player","formation":"f4222","untradeable":false,"teamid":240,"resourceId":1610806483,"assetId":193747,"itemState":"free","rating":81,"preferredPosition":"CAM","injuryGames":0,"statsList":[{"value":0,"index":0},{"value":0,"index":1},{"value":0,"index":2},{"value":0,"index":3},{"value":0,"index":4}],"attributeList":[{"value":75,"index":0},{"value":72,"index":1},{"value":83,"index":2},{"value":81,"index":3},{"value":60,"index":4},{"value":62,"index":5}],"lifetimeStats":[{"value":2,"index":0},{"value":0,"index":1},{"value":0,"index":2},{"value":0,"index":3},{"value":0,"index":4}],"lastSalePrice":850,"owners":7,"morale":50,"training":0,"injuryType":"none","suspension":0,"fitness":95,"assists":0,"discardValue":648,"cardsubtypeid":2,"contract":5,"rareflag":1,"playStyle":250,"lifetimeAssists":1,"loyaltyBonus":0},"tradeId":137610155304,"startingBid":1600,"buyNowPrice":1900,"offers":0,"tradeState":"expired","watched":true,"bidState":"none","currentBid":0,"expires":-1,"sellerName":"Bailen United","sellerEstablished":1288998842,"sellerId":0},{"itemData":{"id":105830172434,"timestamp":1382120299,"itemType":"player","formation":"f41212","untradeable":false,"teamid":240,"resourceId":1610756481,"assetId":143745,"itemState":"free","rating":84,"preferredPosition":"LM","injuryGames":0,"statsList":[{"value":0,"index":0},{"value":0,"index":1},{"value":0,"index":2},{"value":0,"index":3},{"value":0,"index":4}],"attributeList":[{"value":74,"index":0},{"value":75,"index":1},{"value":84,"index":2},{"value":88,"index":3},{"value":49,"index":4},{"value":70,"index":5}],"lifetimeStats":[{"value":10,"index":0},{"value":2,"index":1},{"value":0,"index":2},{"value":0,"index":3},{"value":0,"index":4}],"lastSalePrice":1200,"owners":6,"morale":50,"training":0,"injuryType":"foot","suspension":0,"fitness":90,"assists":0,"discardValue":672,"cardsubtypeid":2,"contract":11,"rareflag":1,"playStyle":250,"lifetimeAssists":0,"loyaltyBonus":0},"tradeId":0,"startingBid":0,"buyNowPrice":0,"offers":0,"tradeState":null,"watched":false,"bidState":null,"currentBid":0,"expires":0,"sellerName":null,"sellerEstablished":0,"sellerId":0},{"itemData":{"id":106141947333,"timestamp":1383150444,"itemType":"player","formation":"f4231","untradeable":false,"teamid":240,"resourceId":1610806483,"assetId":193747,"itemState":"free","rating":81,"preferredPosition":"CAM","injuryGames":0,"statsList":[{"value":0,"index":0},{"value":0,"index":1},{"value":0,"index":2},{"value":0,"index":3},{"value":0,"index":4}],"attributeList":[{"value":75,"index":0},{"value":72,"index":1},{"value":83,"index":2},{"value":81,"index":3},{"value":60,"index":4},{"value":62,"index":5}],"lifetimeStats":[{"value":28,"index":0},{"value":5,"index":1},{"value":0,"index":2},{"value":0,"index":3},{"value":0,"index":4}],"lastSalePrice":950,"owners":5,"morale":50,"training":0,"injuryType":"none","suspension":0,"fitness":76,"assists":0,"discardValue":648,"cardsubtypeid":2,"contract":0,"rareflag":1,"playStyle":250,"lifetimeAssists":13,"loyaltyBonus":0},"tradeId":0,"startingBid":0,"buyNowPrice":0,"offers":0,"tradeState":null,"watched":false,"bidState":null,"currentBid":0,"expires":0,"sellerName":null,"sellerEstablished":0,"sellerId":0},{"itemData":{"id":106437259823,"timestamp":1383952994,"itemType":"player","formation":"f41212","untradeable":false,"teamid":240,"resourceId":1610806483,"assetId":193747,"itemState":"free","rating":81,"preferredPosition":"CAM","injuryGames":0,"statsList":[{"value":0,"index":0},{"value":0,"index":1},{"value":0,"index":2},{"value":0,"index":3},{"value":0,"index":4}],"attributeList":[{"value":75,"index":0},{"value":72,"index":1},{"value":83,"index":2},{"value":81,"index":3},{"value":60,"index":4},{"value":62,"index":5}],"lifetimeStats":[{"value":0,"index":0},{"value":0,"index":1},{"value":0,"index":2},{"value":0,"index":3},{"value":0,"index":4}],"lastSalePrice":1000,"owners":3,"morale":50,"training":0,"injuryType":"none","suspension":0,"fitness":99,"assists":0,"discardValue":648,"cardsubtypeid":2,"contract":7,"rareflag":1,"playStyle":250,"lifetimeAssists":0,"loyaltyBonus":0},"tradeId":0,"startingBid":0,"buyNowPrice":0,"offers":0,"tradeState":null,"watched":false,"bidState":null,"currentBid":0,"expires":0,"sellerName":null,"sellerEstablished":0,"sellerId":0}],"currencies":null,"credits":32766,"bidTokens":{},"errorState":null}
         return [itemParse(i) for i in rc['auctionInfo']]
 
     def watchlist(self):
         """Returns items in watchlist."""
         rc = self.__get__(urls['fut']['WatchList'])
+        # {"total":2,"duplicateItemIdList":[{"itemId":105967731721,"duplicateItemId":105507048043},{"itemId":105595815240,"duplicateItemId":105507948593}],"auctionInfo":[{"itemData":{"id":105967731721,"timestamp":1382568771,"itemType":"player","formation":"f343","untradeable":false,"teamid":240,"resourceId":1610756481,"assetId":143745,"itemState":"free","rating":84,"preferredPosition":"LM","injuryGames":0,"statsList":[{"value":0,"index":0},{"value":0,"index":1},{"value":0,"index":2},{"value":0,"index":3},{"value":0,"index":4}],"attributeList":[{"value":74,"index":0},{"value":75,"index":1},{"value":84,"index":2},{"value":88,"index":3},{"value":49,"index":4},{"value":70,"index":5}],"lifetimeStats":[{"value":16,"index":0},{"value":2,"index":1},{"value":1,"index":2},{"value":0,"index":3},{"value":0,"index":4}],"lastSalePrice":1200,"owners":3,"morale":50,"training":0,"injuryType":"foot","suspension":0,"fitness":99,"assists":0,"discardValue":672,"cardsubtypeid":2,"contract":4,"rareflag":1,"playStyle":264,"lifetimeAssists":1,"loyaltyBonus":0},"tradeId":137610675201,"startingBid":1100,"buyNowPrice":0,"offers":0,"tradeState":"closed","watched":true,"bidState":"highest","currentBid":1200,"expires":-1,"sellerName":"us bag","sellerEstablished":1380674038,"sellerId":0},{"itemData":{"id":105595815240,"timestamp":1381356304,"itemType":"player","formation":"f532","untradeable":false,"teamid":240,"resourceId":1610806483,"assetId":193747,"itemState":"free","rating":81,"preferredPosition":"CAM","injuryGames":0,"statsList":[{"value":0,"index":0},{"value":0,"index":1},{"value":0,"index":2},{"value":0,"index":3},{"value":0,"index":4}],"attributeList":[{"value":75,"index":0},{"value":72,"index":1},{"value":83,"index":2},{"value":81,"index":3},{"value":60,"index":4},{"value":62,"index":5}],"lifetimeStats":[{"value":87,"index":0},{"value":30,"index":1},{"value":0,"index":2},{"value":0,"index":3},{"value":0,"index":4}],"lastSalePrice":1100,"owners":4,"morale":50,"training":0,"injuryType":"none","suspension":0,"fitness":99,"assists":0,"discardValue":648,"cardsubtypeid":2,"contract":30,"rareflag":1,"playStyle":253,"lifetimeAssists":19,"loyaltyBonus":0},"tradeId":137602662812,"startingBid":150,"buyNowPrice":0,"offers":0,"tradeState":"closed","watched":true,"bidState":"highest","currentBid":1100,"expires":-1,"sellerName":"castillofc","sellerEstablished":1292195112,"sellerId":0}],"credits":32766}
         return [itemParse(i) for i in rc['auctionInfo']]
+
+    def unassigned(self):
+        """Returns Unassigned items (i.e. buyNow items)."""
+        rc = self.__get__(urls['fut']['Unassigned'])
+        #{"itemData":[{"id":105131466631,"timestamp":1380285149,"itemType":"player","formation":"f4312","untradeable":false,"teamid":111674,"resourceId":1610823657,"assetId":210921,"itemState":"free","rating":53,"preferredPosition":"CB","injuryGames":0,"statsList":[{"value":0,"index":0},{"value":0,"index":1},{"value":0,"index":2},{"value":0,"index":3},{"value":0,"index":4}],"attributeList":[{"value":50,"index":0},{"value":27,"index":1},{"value":27,"index":2},{"value":28,"index":3},{"value":55,"index":4},{"value":59,"index":5}],"lifetimeStats":[{"value":0,"index":0},{"value":0,"index":1},{"value":0,"index":2},{"value":0,"index":3},{"value":0,"index":4}],"lastSalePrice":200,"owners":2,"morale":50,"training":0,"injuryType":"none","suspension":0,"fitness":99,"assists":0,"discardValue":16,"cardsubtypeid":1,"contract":7,"rareflag":0,"playStyle":250,"lifetimeAssists":0,"loyaltyBonus":0}]}
+        print rc
+        if len(rc['itemData']) > 0:
+            return [auctionParse(i) for i in rc['itemData']]
+        else:
+            return []
 
 #    def relistAll(self, item_id):
 #        """Relist all items in trade pile."""
@@ -289,6 +328,27 @@ class Core(object):
     def sendToTradepile(self, trade_id, item_id):
         """Sends to tradepile."""
         # TODO: accept multiple trade_ids (just extend list below (+ extend params?))
-        data = {"itemData": [{"tradeId": trade_id, "pile": "trade", "id": str(item_id)}]}
+        if trade_id > 0 :
+            # won item
+            data = {"itemData": [{"tradeId": trade_id, "pile": "trade", "id": str(item_id)}]}
+        else:
+            # unassigned item
+            data = {"itemData": [{"pile": "trade", "id": str(item_id)}]}
+
         rc = self.__put__(urls['fut']['Item'], data=json.dumps(data))
         return rc['itemData'][0]['success']
+
+    def getCredits(self):
+        """Get credits."""
+        rc = self.__get__(urls['fut']['Credits'])
+        return rc['credits']
+
+    def keepalive(self):
+        """
+            keepalive ping.
+            GET http://www.easports.com/fifa/football-club/keepalive
+            response: OK
+        """
+        rc = self.__get__(urls['keepalive'])
+        print rc
+        return True
