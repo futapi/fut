@@ -46,8 +46,8 @@ def itemParse(item_data):
             'tradeState':   item_data['tradeState'],
             'bidState':     item_data['bidState'],
             'startingBid':  item_data['startingBid'],
-            'id':           item_data['itemData']['id'],  # auction start
-            'timestamp':    item_data['itemData']['timestamp'],
+            'id':           item_data['itemData']['id'],
+            'timestamp':    item_data['itemData']['timestamp'],  # auction start
             'rating':       item_data['itemData']['rating'],
             'assetId':      item_data['itemData']['assetId'],
             'resourceId':   item_data['itemData']['resourceId'],
@@ -67,12 +67,10 @@ def itemParse(item_data):
         }
 
 def auctionParse(auction_data):
-    """
-    auction paser
-    """
+    """Auction paser. Returns nice dictionary."""
     return {
-        'id':           auction_data['id'],  # auction start
-        'timestamp':    auction_data['timestamp'],
+        'id':           auction_data['id'],
+        'timestamp':    auction_data['timestamp'],  # auction start
         'rating':       auction_data['rating'],
         'assetId':      auction_data['assetId'],
         'resourceId':   auction_data['resourceId'],
@@ -294,7 +292,6 @@ class Core(object):
     def unassigned(self):
         """Returns Unassigned items (i.e. buyNow items)."""
         rc = self.__get__(urls['fut']['Unassigned'])
-        print rc
         if len(rc['itemData']) > 0:
             return [auctionParse(i) for i in rc['itemData']]
         else:
@@ -346,6 +343,5 @@ class Core(object):
             GET http://www.easports.com/fifa/football-club/keepalive
             response: OK
         """
-        rc = self.__get__(urls['keepalive'])
-        print rc
+        self.__get__(urls['keepalive'])
         return True

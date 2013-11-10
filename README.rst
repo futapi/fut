@@ -1,6 +1,5 @@
 fut14
 =====
-TEST
 
 .. image:: https://travis-ci.org/oczkers/fut14.png?branch=master
         :target: https://travis-ci.org/oczkers/fut14
