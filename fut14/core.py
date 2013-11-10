@@ -41,29 +41,33 @@ def baseId(resource_id, version=False):
 def itemParse(item_data):
     """Parser for item data. Returns nice dictionary."""
     return {
-            'tradeId':      item_data['tradeId'],
-            'buyNowPrice':  item_data['buyNowPrice'],
-            'tradeState':   item_data['tradeState'],
-            'bidState':     item_data['bidState'],
-            'startingBid':  item_data['startingBid'],
-            'id':           item_data['itemData']['id'],
-            'timestamp':    item_data['itemData']['timestamp'],  # auction start
-            'rating':       item_data['itemData']['rating'],
-            'assetId':      item_data['itemData']['assetId'],
-            'resourceId':   item_data['itemData']['resourceId'],
-            'itemState':    item_data['itemData']['itemState'],
-            'rareflag':     item_data['itemData']['rareflag'],
-            'formation':    item_data['itemData']['formation'],
-            'injuryType':   item_data['itemData']['injuryType'],
-            'suspension':   item_data['itemData']['suspension'],
-            'contract':     item_data['itemData']['contract'],
-            'playStyle':    item_data['itemData'].get('playStyle'),  # used only for players
-            'discardValue': item_data['itemData']['discardValue'],
-            'itemType':     item_data['itemData']['itemType'],
-            'owners':       item_data['itemData']['owners'],
-            'offers':       item_data['offers'],
-            'currentBid':   item_data['currentBid'],
-            'expires':      item_data['expires'],  # seconds left
+            'tradeId':       item_data.get('tradeId'),
+            'buyNowPrice':   item_data.get('buyNowPrice'),
+            'tradeState':    item_data.get('tradeState'),
+            'bidState':      item_data.get('bidState'),
+            'startingBid':   item_data.get('startingBid'),
+            'id':            item_data['itemData']['id'],
+            'timestamp':     item_data['itemData']['timestamp'],  # auction start
+            'rating':        item_data['itemData']['rating'],
+            'assetId':       item_data['itemData']['assetId'],
+            'resourceId':    item_data['itemData']['resourceId'],
+            'itemState':     item_data['itemData']['itemState'],
+            'rareflag':      item_data['itemData']['rareflag'],
+            'formation':     item_data['itemData']['formation'],
+            'injuryType':    item_data['itemData']['injuryType'],
+            'injuryGames':   item_data['itemData']['injuryGames'],
+            'lastSalePrice': item_data['itemData']['lastSalePrice'],
+            'fitness':       item_data['itemData']['fitness'],
+            'training':      item_data['itemData']['training'],
+            'suspension':    item_data['itemData']['suspension'],
+            'contract':      item_data['itemData']['contract'],
+            'playStyle':     item_data['itemData'].get('playStyle'),  # used only for players
+            'discardValue':  item_data['itemData']['discardValue'],
+            'itemType':      item_data['itemData']['itemType'],
+            'owners':        item_data['itemData']['owners'],
+            'offers':        item_data.get('offers'),
+            'currentBid':    item_data.get('currentBid'),
+            'expires':       item_data.get('expires'),  # seconds left
         }
 
 def cardInfo(resource_id):
@@ -169,6 +173,10 @@ class Core(object):
             'Accept': 'application/json',
         })
 
+        # get basic user info
+        # TODO: parse response (https://gist.github.com/oczkers/526577572c097eb8172f)
+        self.__get__(urls['fut']['user'])
+
 #    def __shards__(self):
 #        """Returns shards info."""
 #        # TODO: headers
@@ -264,6 +272,11 @@ class Core(object):
         rc = self.__get__(urls['fut']['WatchList'])
         return [itemParse(i) for i in rc['auctionInfo']]
 
+    def unassigned(self):
+        """Returns Unassigned items (i.e. buyNow items)."""
+        rc = self.__get__(urls['fut']['Unassigned'])
+        return [itemParse({'itemData': i}) for i in rc['itemData']]
+
 #    def relistAll(self, item_id):
 #        """Relist all items in trade pile."""
 #        print(self.r.get(urls['fut']['Item']+'/%s' % item_id).text)
@@ -289,6 +302,17 @@ class Core(object):
     def sendToTradepile(self, trade_id, item_id):
         """Sends to tradepile."""
         # TODO: accept multiple trade_ids (just extend list below (+ extend params?))
-        data = {"itemData": [{"tradeId": trade_id, "pile": "trade", "id": str(item_id)}]}
+        if trade_id > 0 :
+            # won item
+            data = {"itemData": [{"tradeId": trade_id, "pile": "trade", "id": str(item_id)}]}
+        else:
+            # unassigned item
+            data = {"itemData": [{"pile": "trade", "id": str(item_id)}]}
+
         rc = self.__put__(urls['fut']['Item'], data=json.dumps(data))
         return rc['itemData'][0]['success']
+
+    def keepalive(self):
+        """Just refresh credits ammount to let know that we're still online."""
+        self.__get__(urls['fut']['Credits'])
+        return True
