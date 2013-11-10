@@ -85,6 +85,7 @@ class Core(object):
         self.secret_answer_hash = EAHashingAlgorithm().EAHash(secret_answer)
         self.r = requests.Session()  # init/reset requests session object
         self.r.headers = headers  # i'm chrome browser now ;-)
+        self.credits = 0
         self.__login__(self.email, self.passwd, self.secret_answer_hash)
 
     def __login__(self, email, passwd, secret_answer_hash):
