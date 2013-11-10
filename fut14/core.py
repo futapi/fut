@@ -304,16 +304,7 @@ class Core(object):
         rc = self.__put__(urls['fut']['Item'], data=json.dumps(data))
         return rc['itemData'][0]['success']
 
-    def getCredits(self):
-        """Get credits."""
-        rc = self.__get__(urls['fut']['Credits'])
-        return rc['credits']
-
     def keepalive(self):
-        """
-            keepalive ping.
-            GET http://www.easports.com/fifa/football-club/keepalive
-            response: OK
-        """
-        self.__get__(urls['keepalive'])
+        """Just refresh credits ammount to let know that we're still online."""
+        self.__get__(urls['fut']['Credits'])
         return True
