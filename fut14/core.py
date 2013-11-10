@@ -41,29 +41,33 @@ def baseId(resource_id, version=False):
 def itemParse(item_data):
     """Parser for item data. Returns nice dictionary."""
     return {
-            'tradeId':      item_data.get('tradeId'),
-            'buyNowPrice':  item_data.get('buyNowPrice'),
-            'tradeState':   item_data.get('tradeState'),
-            'bidState':     item_data.get('bidState'),
-            'startingBid':  item_data.get('startingBid'),
-            'id':           item_data['itemData']['id'],
-            'timestamp':    item_data['itemData']['timestamp'],  # auction start
-            'rating':       item_data['itemData']['rating'],
-            'assetId':      item_data['itemData']['assetId'],
-            'resourceId':   item_data['itemData']['resourceId'],
-            'itemState':    item_data['itemData']['itemState'],
-            'rareflag':     item_data['itemData']['rareflag'],
-            'formation':    item_data['itemData']['formation'],
-            'injuryType':   item_data['itemData']['injuryType'],
-            'suspension':   item_data['itemData']['suspension'],
-            'contract':     item_data['itemData']['contract'],
-            'playStyle':    item_data['itemData'].get('playStyle'),  # used only for players
-            'discardValue': item_data['itemData']['discardValue'],
-            'itemType':     item_data['itemData']['itemType'],
-            'owners':       item_data['itemData']['owners'],
-            'offers':       item_data.get('offers'),
-            'currentBid':   item_data.get('currentBid'),
-            'expires':      item_data.get('expires'),  # seconds left
+            'tradeId':       item_data.get('tradeId'),
+            'buyNowPrice':   item_data.get('buyNowPrice'),
+            'tradeState':    item_data.get('tradeState'),
+            'bidState':      item_data.get('bidState'),
+            'startingBid':   item_data.get('startingBid'),
+            'id':            item_data['itemData']['id'],
+            'timestamp':     item_data['itemData']['timestamp'],  # auction start
+            'rating':        item_data['itemData']['rating'],
+            'assetId':       item_data['itemData']['assetId'],
+            'resourceId':    item_data['itemData']['resourceId'],
+            'itemState':     item_data['itemData']['itemState'],
+            'rareflag':      item_data['itemData']['rareflag'],
+            'formation':     item_data['itemData']['formation'],
+            'injuryType':    item_data['itemData']['injuryType'],
+            'injuryGames':   item_data['itemData']['injuryGames'],
+            'lastSalePrice': item_data['itemData']['lastSalePrice'],
+            'fitness':       item_data['itemData']['fitness'],
+            'training':      item_data['itemData']['training'],
+            'suspension':    item_data['itemData']['suspension'],
+            'contract':      item_data['itemData']['contract'],
+            'playStyle':     item_data['itemData'].get('playStyle'),  # used only for players
+            'discardValue':  item_data['itemData']['discardValue'],
+            'itemType':      item_data['itemData']['itemType'],
+            'owners':        item_data['itemData']['owners'],
+            'offers':        item_data.get('offers'),
+            'currentBid':    item_data.get('currentBid'),
+            'expires':       item_data.get('expires'),  # seconds left
         }
 
 def cardInfo(resource_id):
