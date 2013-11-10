@@ -66,31 +66,6 @@ def itemParse(item_data):
             'expires':      item_data.get('expires'),  # seconds left
         }
 
-def auctionParse(auction_data):
-    """Auction paser. Returns nice dictionary."""
-    return {
-        'id':           auction_data['id'],
-        'timestamp':    auction_data['timestamp'],  # auction start
-        'rating':       auction_data['rating'],
-        'assetId':      auction_data['assetId'],
-        'resourceId':   auction_data['resourceId'],
-        'itemState':    auction_data['itemState'],
-        'rareflag':     auction_data['rareflag'],
-        'formation':    auction_data['formation'],
-        'injuryType':   auction_data['injuryType'],
-        'injuryGames':  auction_data['injuryGames'],
-        'lastSalePrice':auction_data['lastSalePrice'],
-        'fitness':      auction_data['fitness'],
-        'training':     auction_data['training'],
-        'discardValue': auction_data['discardValue'],
-        'suspension':   auction_data['suspension'],
-        'contract':     auction_data['contract'],
-        'playStyle':    auction_data.get('playStyle'),  # used only for players
-        'discardValue': auction_data['discardValue'],
-        'itemType':     auction_data['itemType'],
-        'owners':       auction_data['owners'],
-    }
-
 def cardInfo(resource_id):
     """Returns card info."""
     # TODO: add referer to headers (futweb)
