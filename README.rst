@@ -56,6 +56,7 @@ Usage
     0
 
     >>> items = fut.tradepile()  # get all items from trade pile
+    >>> items = fut.unassigned()  # get all unassigned items
 
     >>> for item in items:
     ...     fut.sell(item['item_id'], 150,  # put item on auction
@@ -64,6 +65,8 @@ Usage
     >>> fut.sendToTradepile(trade_id)  # add card to tradepile
     >>> fut.tradepileDelete(trade_id)  # removes item from tradepile
     >>> fut.watchlistDelete(trade_id)  # removes item from watch list
+
+    >>> fut.keepalive()  # send keepalive ping to avoid timeout
 
     to be continued ;-)
     ...
