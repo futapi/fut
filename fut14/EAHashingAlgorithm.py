@@ -190,4 +190,4 @@ class EAHashingAlgorithm():
 
 if __name__ == '__main__':
     hashor = EAHashingAlgorithm()
-    print hashor.EAHash('secret answer')
+    print(hashor.EAHash('secret answer'))

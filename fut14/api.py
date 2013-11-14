@@ -8,7 +8,7 @@ This module implements the fut14's API.
 
 """
 
-from .core import base_id, card_info
+from .core import baseId, cardInfo
 
 
 pass

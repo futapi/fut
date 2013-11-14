@@ -1,2 +1,2 @@
-requests
-xmltodict<0.8
+requests>=1.0.0
+xmltodict

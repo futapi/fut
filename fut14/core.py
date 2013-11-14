@@ -21,7 +21,7 @@ from .exceptions import Fut14Error
 from .EAHashingAlgorithm import EAHashingAlgorithm
 
 
-def base_id(resource_id, version=False):
+def baseId(resource_id, version=False):
     """Calculates base id."""
     v = 0
     if resource_id > 1358954496:
@@ -38,38 +38,42 @@ def base_id(resource_id, version=False):
         return resource_id, v
     return resource_id
 
-def item_parse(item_data):
+def itemParse(item_data):
     """Parser for item data. Returns nice dictionary."""
     return {
-            'tradeId':      item_data['tradeId'],
-            'buyNowPrice':  item_data['buyNowPrice'],
-            'tradeState':   item_data['tradeState'],
-            'bidState':     item_data['bidState'],
-            'startingBid':  item_data['startingBid'],
-            'id':           item_data['itemData']['id'],
-            'timestamp':    item_data['itemData']['timestamp'],  # auction start
-            'rating':       item_data['itemData']['rating'],
-            'assetId':      item_data['itemData']['assetId'],
-            'resourceId':   item_data['itemData']['resourceId'],
-            'itemState':    item_data['itemData']['itemState'],
-            'rareflag':     item_data['itemData']['rareflag'],
-            'formation':    item_data['itemData']['formation'],
-            'injuryType':   item_data['itemData']['injuryType'],
-            'suspension':   item_data['itemData']['suspension'],
-            'contract':     item_data['itemData']['contract'],
-            'playStyle':    item_data['itemData'].get('playStyle'),  # used only for players
-            'discardValue': item_data['itemData']['discardValue'],
-            'itemType':     item_data['itemData']['itemType'],
-            'owners':       item_data['itemData']['owners'],
-            'offers':       item_data['offers'],
-            'currentBid':   item_data['currentBid'],
-            'expires':      item_data['expires'],  # seconds left
+            'tradeId':       item_data.get('tradeId'),
+            'buyNowPrice':   item_data.get('buyNowPrice'),
+            'tradeState':    item_data.get('tradeState'),
+            'bidState':      item_data.get('bidState'),
+            'startingBid':   item_data.get('startingBid'),
+            'id':            item_data['itemData']['id'],
+            'timestamp':     item_data['itemData']['timestamp'],  # auction start
+            'rating':        item_data['itemData']['rating'],
+            'assetId':       item_data['itemData']['assetId'],
+            'resourceId':    item_data['itemData']['resourceId'],
+            'itemState':     item_data['itemData']['itemState'],
+            'rareflag':      item_data['itemData']['rareflag'],
+            'formation':     item_data['itemData']['formation'],
+            'injuryType':    item_data['itemData']['injuryType'],
+            'injuryGames':   item_data['itemData']['injuryGames'],
+            'lastSalePrice': item_data['itemData']['lastSalePrice'],
+            'fitness':       item_data['itemData']['fitness'],
+            'training':      item_data['itemData']['training'],
+            'suspension':    item_data['itemData']['suspension'],
+            'contract':      item_data['itemData']['contract'],
+            'playStyle':     item_data['itemData'].get('playStyle'),  # used only for players
+            'discardValue':  item_data['itemData']['discardValue'],
+            'itemType':      item_data['itemData']['itemType'],
+            'owners':        item_data['itemData']['owners'],
+            'offers':        item_data.get('offers'),
+            'currentBid':    item_data.get('currentBid'),
+            'expires':       item_data.get('expires'),  # seconds left
         }
 
-def card_info(resource_id):
+def cardInfo(resource_id):
     """Returns card info."""
     # TODO: add referer to headers (futweb)
-    url = '{}{}.json'.format(urls['card_info'], base_id(resource_id))
+    url = '{}{}.json'.format(urls['card_info'], baseId(resource_id))
     return requests.get(url).json()
 
 
@@ -89,15 +93,19 @@ class Core(object):
         # === login
         urls['login'] = self.r.get(urls['fut_home']).url
         self.r.headers['Referer'] = urls['main_site']  # prepare headers
-        data = {'email': email, 'password': passwd, '_rememberMe': 'on',
-                'rememberMe': 'on', '_eventId': 'submit', 'facebookAuth': ''}
-        rc = self.r.post(urls['login'], data=data).content
+        data = {'email': email,
+                'password': passwd,
+                '_rememberMe': 'on',
+                'rememberMe': 'on',
+                '_eventId':
+                'submit', 'facebookAuth': ''}
+        rc = self.r.post(urls['login'], data=data).text
         # TODO: catch invalid data exception
         #self.nucleus_id = re.search('userid : "([0-9]+)"', rc).group(1)  # we'll get it later
 
         # === lanuch futweb
         self.r.headers['Referer'] = urls['fut_home']  # prepare headers
-        rc = self.r.get(urls['futweb']).content
+        rc = self.r.get(urls['futweb']).text
         if 'EASW_ID' not in rc:
             raise Fut14Error('Invalid email or password.')
         self.nucleus_id = re.search("var EASW_ID = '([0-9]+)';", rc).group(1)
@@ -114,10 +122,10 @@ class Core(object):
             'X-UT-Route': urls['fut_host'],
             'Referer': urls['futweb'],
         })
-        rc = self.r.get(urls['acc_info']).json()
-        self.persona_id = rc['userAccountInfo']['personas'][0]['personaId']
-        self.persona_name = rc['userAccountInfo']['personas'][0]['personaName']
-        self.clubs = [i for i in rc['userAccountInfo']['personas'][0]['userClubList']]
+        rc = self.r.get(urls['acc_info']).json()['userAccountInfo']['personas'][0]
+        self.persona_id = rc['personaId']
+        self.persona_name = rc['personaName']
+        self.clubs = [i for i in rc['userClubList']]
         # sort clubs by lastAccessTime (latest firts)
         self.clubs.sort(key=lambda i: i['lastAccessTime'], reverse=True)
 
@@ -139,23 +147,19 @@ class Core(object):
                 'identification': {'AuthCode': ''}}
         rc = self.r.post(urls['fut']['authentication'], data=json.dumps(data)).json()
         #urls['fut_host'] = '{0}://{1}'.format(rc['protocol']+rc['ipPort'])
-        self.sid = rc['sid']
-        self.r.headers['X-UT-SID'] = self.sid
+        self.r.headers['X-UT-SID'] = self.sid = rc['sid']
 
         # validate (secret question)
         self.r.headers['Accept'] = 'text/json'  # prepare headers
         del self.r.headers['Origin']
         rc = self.r.get(urls['fut_question']).json()
-        if rc.get('string') == 'Already answered question.':
-            self.token = rc['string']
-        else:
+        if rc.get('string') != 'Already answered question.':
             # answer question
             data = {'answer': self.secret_answer_hash}
             self.r.headers['Content-Type'] = 'application/x-www-form-urlencoded'  # requests bug?
             rc = self.r.post(urls['fut_validate'], data=data).json()
             self.r.headers['Content-Type'] = 'application/json'
-            self.token = rc['token']
-        self.r.headers['X-UT-PHISHING-TOKEN'] = self.token
+        self.r.headers['X-UT-PHISHING-TOKEN'] = self.token = rc['token']
 
         # prepare headers for ut operations
         del self.r.headers['Easw-Session-Data-Nucleus-Id']
@@ -169,6 +173,10 @@ class Core(object):
             'Accept': 'application/json',
         })
 
+        # get basic user info
+        # TODO: parse response (https://gist.github.com/oczkers/526577572c097eb8172f)
+        self.__get__(urls['fut']['user'])
+
 #    def __shards__(self):
 #        """Returns shards info."""
 #        # TODO: headers
@@ -181,7 +189,7 @@ class Core(object):
         # TODO: update credtis?
         self.r.headers['X-HTTP-Method-Override'] = method.upper()
         rc = self.r.post(url, *args, **kwargs)
-        if rc.content == '':
+        if rc.text == '':
             rc = {}
         else:
             rc = rc.json()
@@ -204,13 +212,13 @@ class Core(object):
         """Sends delete request. Returns response as a json object."""
         return self.__request__('DELETE', url, *args, **kwargs)
 
-    def base_id(self, *args, **kwargs):
-        """Alias for base_id."""
-        return base_id(*args, **kwargs)
+    def baseId(self, *args, **kwargs):
+        """Alias for baseId."""
+        return baseId(*args, **kwargs)
 
-    def card_info(self, *args, **kwargs):
-        """Alias for card_info."""
-        return card_info(*args, **kwargs)
+    def cardInfo(self, *args, **kwargs):
+        """Alias for cardInfo."""
+        return cardInfo(*args, **kwargs)
 
     def searchAuctions(self, ctype, level=None, category=None, min_price=None,
                        max_price=None, min_buy=None, max_buy=None, league=None,
@@ -220,6 +228,8 @@ class Core(object):
         # TODO: add "search" alias
         if start > 0 and page_size == 16:
             page_size = 13
+        elif page_size > 50:  # server restriction
+            page_size = 50
         params = {
             'start': start,
             'num': page_size,
@@ -238,70 +248,71 @@ class Core(object):
         if playStyle:   params['playStyle'] = playStyle
 
         rc = self.__get__(urls['fut']['SearchAuctions'], params=params)
-
-        items = []
-        for i in rc['auctionInfo']:
-            items.append(item_parse(i))
-        return items
+        return [itemParse(i) for i in rc['auctionInfo']]
 
     def bid(self, trade_id, bid):
         """Make a bid."""
-        rc = self.__get__(urls['fut']['PostBid'], params={'tradeIds': trade_id})
-        if rc['auctionInfo'][0]['currentBid'] < bid and self.credits >= bid:
+        rc = self.__get__(urls['fut']['PostBid'], params={'tradeIds': trade_id})['auctionInfo'][0]
+        if rc['currentBid'] < bid and self.credits >= bid:
             data = {'bid': bid}
             url = '{0}/{1}/bid'.format(urls['fut']['PostBid'], trade_id)
-            rc = self.__put__(url, data=json.dumps(data))
-
-        if rc['auctionInfo'][0]['bidState'] == 'highest':
-            return True
+            rc = self.__put__(url, data=json.dumps(data))['auctionInfo'][0]
+        if rc['bidState'] == 'highest' or (rc['tradeState'] == 'closed' and rc['bidState'] == 'buyNow'):  # checking 'tradeState' is required?
+        	return True
         else:
             return False
 
     def tradepile(self):
         """Returns items in tradepile."""
         rc = self.__get__(urls['fut']['TradePile'])
-
-        items = []
-        for i in rc['auctionInfo']:
-            items.append(item_parse(i))
-
-        return items
+        return [itemParse(i) for i in rc['auctionInfo']]
 
     def watchlist(self):
         """Returns items in watchlist."""
         rc = self.__get__(urls['fut']['WatchList'])
+        return [itemParse(i) for i in rc['auctionInfo']]
 
-        items = []
-        for i in rc['auctionInfo']:
-            items.append(item_parse(i))
-
-        return items
+    def unassigned(self):
+        """Returns Unassigned items (i.e. buyNow items)."""
+        rc = self.__get__(urls['fut']['Unassigned'])
+        return [itemParse({'itemData': i}) for i in rc['itemData']]
 
 #    def relistAll(self, item_id):
 #        """Relist all items in trade pile."""
-#        print self.r.get(urls['fut']['Item']+'/%s' % item_id).content
+#        print(self.r.get(urls['fut']['Item']+'/%s' % item_id).text)
 
     def sell(self, item_id, bid, buy_now=0, duration=3600):
-        """Starts auction."""
+        """Starts auction. Returns trade_id."""
         data = {'buyNowPrice': buy_now, 'startingBid': bid, 'duration': duration, 'itemData':{'id': item_id}}
         rc = self.__post__(urls['fut']['SearchAuctionsListItem'], data=json.dumps(data))
         return rc['id']
 
-    def watchlist_delete(self, trade_id):
+    def watchlistDelete(self, trade_id):
         """Removes card from watchlist."""
         params = {'tradeId': trade_id}
         self.__delete__(urls['fut']['WatchList'], params=params)  # returns nothing
         return True
 
-    def tradepile_delete(self, trade_id):
+    def tradepileDelete(self, trade_id):
         """Removes card from tradepile."""
         url = '{}/{}'.format(urls['fut']['TradeInfo'], trade_id)
         self.__delete__(url)  # returns nothing
         return True
 
-    def send_to_tradepile(self, trade_id, item_id):
+    def sendToTradepile(self, trade_id, item_id):
         """Sends to tradepile."""
         # TODO: accept multiple trade_ids (just extend list below (+ extend params?))
-        data = {"itemData": [{"tradeId": trade_id, "pile": "trade", "id": str(item_id)}]}
+        if trade_id > 0 :
+            # won item
+            data = {"itemData": [{"tradeId": trade_id, "pile": "trade", "id": str(item_id)}]}
+        else:
+            # unassigned item
+            data = {"itemData": [{"pile": "trade", "id": str(item_id)}]}
+
         rc = self.__put__(urls['fut']['Item'], data=json.dumps(data))
         return rc['itemData'][0]['success']
+
+    def keepalive(self):
+        """Just refresh credits ammount to let know that we're still online."""
+        self.__get__(urls['fut']['Credits'])
+        return True
