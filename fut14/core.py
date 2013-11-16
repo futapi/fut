@@ -22,7 +22,7 @@ from .EAHashingAlgorithm import EAHashingAlgorithm
 
 
 def baseId(resource_id, version=False):
-    """Calculates base id."""
+    """Calculates base id (assetId?)."""
     v = 0
     if resource_id > 1358954496:
         resource_id -= 1342177280
@@ -220,10 +220,10 @@ class Core(object):
         """Alias for cardInfo."""
         return cardInfo(*args, **kwargs)
 
-    def searchAuctions(self, ctype, level=None, category=None, min_price=None,
-                       max_price=None, min_buy=None, max_buy=None, league=None,
-                       club=None, position=None, nationality=None, playStyle=None,
-                       start=0, page_size=16):
+    def searchAuctions(self, ctype, level=None, category=None, assetId=None,
+                       min_price=None, max_price=None, min_buy=None, max_buy=None,
+                       league=None, club=None, position=None, nationality=None,
+                       playStyle=None, start=0, page_size=16):
         """Search specific items on transfer market."""
         # TODO: add "search" alias
         if start > 0 and page_size == 16:
@@ -237,6 +237,7 @@ class Core(object):
         }
         if level:       params['lev'] = level
         if category:    params['cat'] = category
+        if assetId:     params['maskedDefId'] = assetId
         if min_price:   params['micr'] = min_price
         if max_price:   params['macr'] = max_price
         if min_buy:     params['minb'] = min_buy
