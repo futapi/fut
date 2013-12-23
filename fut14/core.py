@@ -54,6 +54,7 @@ def itemParse(item_data):
             'itemState':     item_data['itemData']['itemState'],
             'rareflag':      item_data['itemData']['rareflag'],
             'formation':     item_data['itemData']['formation'],
+            'leagueId':      item_data['itemData']['leagueId'],
             'injuryType':    item_data['itemData']['injuryType'],
             'injuryGames':   item_data['itemData']['injuryGames'],
             'lastSalePrice': item_data['itemData']['lastSalePrice'],
