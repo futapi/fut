@@ -54,6 +54,10 @@ Usage
 
     >>> fut.credits  # it's updated automatically on every request
     0
+    >>> fut.tradepile_size
+    80
+    >>> fut.watchlist_size
+    30
 
     >>> items = fut.tradepile()  # get all items from trade pile
     >>> items = fut.unassigned()  # get all unassigned items

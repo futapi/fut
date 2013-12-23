@@ -22,7 +22,7 @@ from .EAHashingAlgorithm import EAHashingAlgorithm
 
 
 def baseId(resource_id, version=False):
-    """Calculates base id."""
+    """Calculates base id (assetId?)."""
     v = 0
     if resource_id > 1358954496:
         resource_id -= 1342177280
@@ -54,6 +54,7 @@ def itemParse(item_data):
             'itemState':     item_data['itemData']['itemState'],
             'rareflag':      item_data['itemData']['rareflag'],
             'formation':     item_data['itemData']['formation'],
+            'leagueId':      item_data['itemData']['leagueId'],
             'injuryType':    item_data['itemData']['injuryType'],
             'injuryGames':   item_data['itemData']['injuryGames'],
             'lastSalePrice': item_data['itemData']['lastSalePrice'],
@@ -90,6 +91,7 @@ class Core(object):
 
     def __login__(self, email, passwd, secret_answer_hash):
         """Just log in."""
+        # TODO: split into smaller methods
         # === login
         urls['login'] = self.r.get(urls['fut_home']).url
         self.r.headers['Referer'] = urls['main_site']  # prepare headers
@@ -176,6 +178,10 @@ class Core(object):
         # get basic user info
         # TODO: parse response (https://gist.github.com/oczkers/526577572c097eb8172f)
         self.__get__(urls['fut']['user'])
+        # size of piles
+        piles = self.pileSize()
+        self.tradepile_size = piles['tradepile']
+        self.watchlist_size = piles['watchlist']
 
 #    def __shards__(self):
 #        """Returns shards info."""
@@ -220,10 +226,10 @@ class Core(object):
         """Alias for cardInfo."""
         return cardInfo(*args, **kwargs)
 
-    def searchAuctions(self, ctype, level=None, category=None, min_price=None,
-                       max_price=None, min_buy=None, max_buy=None, league=None,
-                       club=None, position=None, nationality=None, playStyle=None,
-                       start=0, page_size=16):
+    def searchAuctions(self, ctype, level=None, category=None, assetId=None,
+                       min_price=None, max_price=None, min_buy=None, max_buy=None,
+                       league=None, club=None, position=None, nationality=None,
+                       playStyle=None, start=0, page_size=16):
         """Search specific items on transfer market."""
         # TODO: add "search" alias
         if start > 0 and page_size == 16:
@@ -237,6 +243,7 @@ class Core(object):
         }
         if level:       params['lev'] = level
         if category:    params['cat'] = category
+        if assetId:     params['maskedDefId'] = assetId
         if min_price:   params['micr'] = min_price
         if max_price:   params['macr'] = max_price
         if min_buy:     params['minb'] = min_buy
@@ -316,3 +323,9 @@ class Core(object):
         """Just refresh credits ammount to let know that we're still online."""
         self.__get__(urls['fut']['Credits'])
         return True
+
+    def pileSize(self):
+        """Returns size of tradepile and watchlist."""
+        rc = self.__get__(urls['fut']['PileSize'])['entries']
+        return {'tradepile': rc[0]['value'],
+                'watchlist': rc[2]['value']}
