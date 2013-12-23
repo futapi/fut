@@ -90,6 +90,7 @@ class Core(object):
 
     def __login__(self, email, passwd, secret_answer_hash):
         """Just log in."""
+        # TODO: split into smaller methods
         # === login
         urls['login'] = self.r.get(urls['fut_home']).url
         self.r.headers['Referer'] = urls['main_site']  # prepare headers
@@ -176,6 +177,10 @@ class Core(object):
         # get basic user info
         # TODO: parse response (https://gist.github.com/oczkers/526577572c097eb8172f)
         self.__get__(urls['fut']['user'])
+        # size of piles
+        piles = self.pileSize()
+        self.tradepile_size = piles['tradepile']
+        self.watchlist_size = piles['watchlist']
 
 #    def __shards__(self):
 #        """Returns shards info."""
@@ -317,3 +322,9 @@ class Core(object):
         """Just refresh credits ammount to let know that we're still online."""
         self.__get__(urls['fut']['Credits'])
         return True
+
+    def pileSize(self):
+        """Returns size of tradepile and watchlist."""
+        rc = self.__get__(urls['fut']['PileSize'])['entries']
+        return {'tradepile': rc[0]['value'],
+                'watchlist': rc[2]['value']}
