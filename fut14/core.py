@@ -79,8 +79,9 @@ def cardInfo(resource_id):
 
 
 class Core(object):
-    def __init__(self, email, passwd, secret_answer):
+    def __init__(self, email, passwd, secret_answer, debug=False):
         # TODO: validate fut request response (200 OK)
+        self.debug = debug
         self.email = email
         self.passwd = passwd
         self.secret_answer_hash = EAHashingAlgorithm().EAHash(secret_answer)
@@ -195,6 +196,7 @@ class Core(object):
         # TODO: update credtis?
         self.r.headers['X-HTTP-Method-Override'] = method.upper()
         rc = self.r.post(url, *args, **kwargs)
+        if self.debug: open('fut14.log', 'w').write(rc.content)
         if rc.text == '':
             rc = {}
         else:
