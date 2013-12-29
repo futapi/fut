@@ -102,13 +102,16 @@ class Core(object):
                 'rememberMe': 'on',
                 '_eventId':
                 'submit', 'facebookAuth': ''}
-        rc = self.r.post(urls['login'], data=data).text
+        rc = self.r.post(urls['login'], data=data)
+        if self.debug: open('fut14.log', 'w').write(rc.content)
         # TODO: catch invalid data exception
-        #self.nucleus_id = re.search('userid : "([0-9]+)"', rc).group(1)  # we'll get it later
+        #self.nucleus_id = re.search('userid : "([0-9]+)"', rc.text).group(1)  # we'll get it later
 
         # === lanuch futweb
         self.r.headers['Referer'] = urls['fut_home']  # prepare headers
-        rc = self.r.get(urls['futweb']).text
+        rc = self.r.get(urls['futweb'])
+        if self.debug: open('fut14.log', 'w').write(rc.content)
+        rc = rc.text
         if 'EASW_ID' not in rc:
             raise Fut14Error('Invalid email or password.')
         self.nucleus_id = re.search("var EASW_ID = '([0-9]+)';", rc).group(1)
@@ -125,7 +128,9 @@ class Core(object):
             'X-UT-Route': urls['fut_host'],
             'Referer': urls['futweb'],
         })
-        rc = self.r.get(urls['acc_info']).json()['userAccountInfo']['personas'][0]
+        rc = self.r.get(urls['acc_info'])
+        if self.debug: open('fut14.log', 'w').write(rc.content)
+        rc = rc.json()['userAccountInfo']['personas'][0]
         self.persona_id = rc['personaId']
         self.persona_name = rc['personaName']
         self.clubs = [i for i in rc['userClubList']]
@@ -148,19 +153,25 @@ class Core(object):
                 'method': 'authcode',
                 'priorityLevel': 4,
                 'identification': {'AuthCode': ''}}
-        rc = self.r.post(urls['fut']['authentication'], data=json.dumps(data)).json()
+        rc = self.r.post(urls['fut']['authentication'], data=json.dumps(data))
+        if self.debug: open('fut14.log', 'w').write(rc.content)
+        rc = rc.json()
         #urls['fut_host'] = '{0}://{1}'.format(rc['protocol']+rc['ipPort'])
         self.r.headers['X-UT-SID'] = self.sid = rc['sid']
 
         # validate (secret question)
         self.r.headers['Accept'] = 'text/json'  # prepare headers
         del self.r.headers['Origin']
-        rc = self.r.get(urls['fut_question']).json()
+        rc = self.r.get(urls['fut_question'])
+        if self.debug: open('fut14.log', 'w').write(rc.content)
+        rc = rc.json()
         if rc.get('string') != 'Already answered question.':
             # answer question
             data = {'answer': self.secret_answer_hash}
             self.r.headers['Content-Type'] = 'application/x-www-form-urlencoded'  # requests bug?
-            rc = self.r.post(urls['fut_validate'], data=data).json()
+            rc = self.r.post(urls['fut_validate'], data=data)
+            if self.debug: open('fut14.log', 'w').write(rc.content)
+            rc = rc.json()
             self.r.headers['Content-Type'] = 'application/json'
         self.r.headers['X-UT-PHISHING-TOKEN'] = self.token = rc['token']
 
