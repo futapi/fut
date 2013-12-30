@@ -16,3 +16,4 @@ Patches and Suggestions
 ```````````````````````
 - mvillarejo
 - Mauro Marano
+- John Nurseri <in.nursery@gmail.com>
