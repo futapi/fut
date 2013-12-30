@@ -7,7 +7,7 @@ except ImportError:
 
 
 __title__ = 'fut14'
-__version__ = '0.0.5'
+__version__ = '0.0.6'
 __author__ = 'Piotr Staroszczyk'
 __author_email__ = 'piotr.staroszczyk@get24.org'
 __license__ = 'GNU GPL v3'
@@ -32,7 +32,7 @@ setup(
     download_url='https://github.com/oczkers/%s/releases' % __title__,
     bugtrack_url='https://github.com/oczkers/%s/issues' % __title__,
     platforms='any',
-    keywords='fut fut14 fifa fifa14 fifa2014 ultimate team ut 14 2014',
+    keywords='fut fut14 fifa fifa14 fifa2014 ultimate team ut 14 2014 pc xbox android ios 360 ps3 playstation',
     packages=packages,
     package_data={'': ['LICENSE']},
     package_dir={'fut14': 'fut14'},
