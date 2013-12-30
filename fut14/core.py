@@ -71,20 +71,24 @@ def itemParse(item_data):
             'expires':       item_data.get('expires'),  # seconds left
         }
 
+'''  # different urls (platforms)
 def cardInfo(resource_id):
     """Returns card info."""
     # TODO: add referer to headers (futweb)
-    url = '{}{}.json'.format(urls['card_info'], baseId(resource_id))
+    url = '{}{}.json'.format(self.urls['card_info'], baseId(resource_id))
     return requests.get(url).json()
+'''
 
 
 class Core(object):
-    def __init__(self, email, passwd, secret_answer, debug=False):
+    def __init__(self, email, passwd, secret_answer, platform='pc', debug=False):
         # TODO: validate fut request response (200 OK)
         self.debug = debug
         self.email = email
         self.passwd = passwd
         self.secret_answer_hash = EAHashingAlgorithm().EAHash(secret_answer)
+        self.platform = platform
+        self.urls = urls(platform)
         self.r = requests.Session()  # init/reset requests session object
         self.r.headers = headers  # i'm chrome browser now ;-)
         self.credits = 0
@@ -94,29 +98,29 @@ class Core(object):
         """Just log in."""
         # TODO: split into smaller methods
         # === login
-        urls['login'] = self.r.get(urls['fut_home']).url
-        self.r.headers['Referer'] = urls['main_site']  # prepare headers
+        self.urls['login'] = self.r.get(self.urls['fut_home']).url
+        self.r.headers['Referer'] = self.urls['main_site']  # prepare headers
         data = {'email': email,
                 'password': passwd,
                 '_rememberMe': 'on',
                 'rememberMe': 'on',
                 '_eventId':
                 'submit', 'facebookAuth': ''}
-        rc = self.r.post(urls['login'], data=data)
+        rc = self.r.post(self.urls['login'], data=data)
         if self.debug: open('fut14.log', 'wb').write(rc.content)
         # TODO: catch invalid data exception
         #self.nucleus_id = re.search('userid : "([0-9]+)"', rc.text).group(1)  # we'll get it later
 
         # === lanuch futweb
-        self.r.headers['Referer'] = urls['fut_home']  # prepare headers
-        rc = self.r.get(urls['futweb'])
+        self.r.headers['Referer'] = self.urls['fut_home']  # prepare headers
+        rc = self.r.get(self.urls['futweb'])
         if self.debug: open('fut14.log', 'wb').write(rc.content)
         rc = rc.text
         if 'EASW_ID' not in rc:
             raise Fut14Error('Invalid email or password.')
         self.nucleus_id = re.search("var EASW_ID = '([0-9]+)';", rc).group(1)
-        #urls['fut_base'] = re.search("var BASE_FUT_URL = '(https://.+?)';", rc).group(1)
-        #urls['fut_home'] = re.search("var GUEST_APP_URI = '(http://.+?)';", rc).group(1)
+        #self.urls['fut_base'] = re.search("var BASE_FUT_URL = '(https://.+?)';", rc).group(1)
+        #self.urls['fut_home'] = re.search("var GUEST_APP_URI = '(http://.+?)';", rc).group(1)
 
         # acc info
         self.r.headers.update({  # prepare headers
@@ -125,10 +129,10 @@ class Core(object):
             'Easw-Session-Data-Nucleus-Id': self.nucleus_id,
             'X-UT-Embed-Error': 'true',
             'X-Requested-With': 'XMLHttpRequest',
-            'X-UT-Route': urls['fut_host'],
-            'Referer': urls['futweb'],
+            'X-UT-Route': self.urls['fut_host'],
+            'Referer': self.urls['futweb'],
         })
-        rc = self.r.get(urls['acc_info'])
+        rc = self.r.get(self.urls['acc_info'])
         if self.debug: open('fut14.log', 'wb').write(rc.content)
         rc = rc.json()['userAccountInfo']['personas'][0]
         self.persona_id = rc['personaId']
@@ -148,28 +152,28 @@ class Core(object):
                 'nuc': self.nucleus_id,
                 'nucleusPersonaId': self.persona_id,
                 'nucleusPersonaDisplayName': self.persona_name,
-                'nucleusPersonaPlatform': 'pc',  # TODO: multiplatform
+                'nucleusPersonaPlatform': self.platform,
                 'locale': 'en-GB',
                 'method': 'authcode',
                 'priorityLevel': 4,
                 'identification': {'AuthCode': ''}}
-        rc = self.r.post(urls['fut']['authentication'], data=json.dumps(data))
+        rc = self.r.post(self.urls['fut']['authentication'], data=json.dumps(data))
         if self.debug: open('fut14.log', 'wb').write(rc.content)
         rc = rc.json()
-        #urls['fut_host'] = '{0}://{1}'.format(rc['protocol']+rc['ipPort'])
+        #self.urls['fut_host'] = '{0}://{1}'.format(rc['protocol']+rc['ipPort'])
         self.r.headers['X-UT-SID'] = self.sid = rc['sid']
 
         # validate (secret question)
         self.r.headers['Accept'] = 'text/json'  # prepare headers
         del self.r.headers['Origin']
-        rc = self.r.get(urls['fut_question'])
+        rc = self.r.get(self.urls['fut_question'])
         if self.debug: open('fut14.log', 'wb').write(rc.content)
         rc = rc.json()
         if rc.get('string') != 'Already answered question.':
             # answer question
             data = {'answer': self.secret_answer_hash}
             self.r.headers['Content-Type'] = 'application/x-www-form-urlencoded'  # requests bug?
-            rc = self.r.post(urls['fut_validate'], data=data)
+            rc = self.r.post(self.urls['fut_validate'], data=data)
             if self.debug: open('fut14.log', 'wb').write(rc.content)
             rc = rc.json()
             self.r.headers['Content-Type'] = 'application/json'
@@ -189,7 +193,7 @@ class Core(object):
 
         # get basic user info
         # TODO: parse response (https://gist.github.com/oczkers/526577572c097eb8172f)
-        self.__get__(urls['fut']['user'])
+        self.__get__(self.urls['fut']['user'])
         # size of piles
         piles = self.pileSize()
         self.tradepile_size = piles['tradepile']
@@ -198,9 +202,9 @@ class Core(object):
 #    def __shards__(self):
 #        """Returns shards info."""
 #        # TODO: headers
-#        self.r.headers['X-UT-Route'] = urls['fut_base']
-#        return self.r.get(urls['shards']).json()
-#        # self.r.headers['X-UT-Route'] = urls['fut_pc']
+#        self.r.headers['X-UT-Route'] = self.urls['fut_base']
+#        return self.r.get(self.urls['shards']).json()
+#        # self.r.headers['X-UT-Route'] = self.urls['fut_pc']
 
     def __request__(self, method, url, *args, **kwargs):
         """Prepares headers and sends request. Returns response as a json object."""
@@ -235,9 +239,11 @@ class Core(object):
         """Alias for baseId."""
         return baseId(*args, **kwargs)
 
-    def cardInfo(self, *args, **kwargs):
-        """Alias for cardInfo."""
-        return cardInfo(*args, **kwargs)
+    def cardInfo(self, resource_id):
+        """Returns card info."""
+        # TODO: add referer to headers (futweb)
+        url = '{}{}.json'.format(self.urls['card_info'], baseId(resource_id))
+        return requests.get(url).json()
 
     def searchAuctions(self, ctype, level=None, category=None, assetId=None,
                        min_price=None, max_price=None, min_buy=None, max_buy=None,
@@ -267,15 +273,15 @@ class Core(object):
         if nationality: params['nat'] = nationality
         if playStyle:   params['playStyle'] = playStyle
 
-        rc = self.__get__(urls['fut']['SearchAuctions'], params=params)
+        rc = self.__get__(self.urls['fut']['SearchAuctions'], params=params)
         return [itemParse(i) for i in rc['auctionInfo']]
 
     def bid(self, trade_id, bid):
         """Make a bid."""
-        rc = self.__get__(urls['fut']['PostBid'], params={'tradeIds': trade_id})['auctionInfo'][0]
+        rc = self.__get__(self.urls['fut']['PostBid'], params={'tradeIds': trade_id})['auctionInfo'][0]
         if rc['currentBid'] < bid and self.credits >= bid:
             data = {'bid': bid}
-            url = '{0}/{1}/bid'.format(urls['fut']['PostBid'], trade_id)
+            url = '{0}/{1}/bid'.format(self.urls['fut']['PostBid'], trade_id)
             rc = self.__put__(url, data=json.dumps(data))['auctionInfo'][0]
         if rc['bidState'] == 'highest' or (rc['tradeState'] == 'closed' and rc['bidState'] == 'buyNow'):  # checking 'tradeState' is required?
         	return True
@@ -284,38 +290,38 @@ class Core(object):
 
     def tradepile(self):
         """Returns items in tradepile."""
-        rc = self.__get__(urls['fut']['TradePile'])
+        rc = self.__get__(self.urls['fut']['TradePile'])
         return [itemParse(i) for i in rc['auctionInfo']]
 
     def watchlist(self):
         """Returns items in watchlist."""
-        rc = self.__get__(urls['fut']['WatchList'])
+        rc = self.__get__(self.urls['fut']['WatchList'])
         return [itemParse(i) for i in rc['auctionInfo']]
 
     def unassigned(self):
         """Returns Unassigned items (i.e. buyNow items)."""
-        rc = self.__get__(urls['fut']['Unassigned'])
+        rc = self.__get__(self.urls['fut']['Unassigned'])
         return [itemParse({'itemData': i}) for i in rc['itemData']]
 
 #    def relistAll(self, item_id):
 #        """Relist all items in trade pile."""
-#        print(self.r.get(urls['fut']['Item']+'/%s' % item_id).text)
+#        print(self.r.get(self.urls['fut']['Item']+'/%s' % item_id).text)
 
     def sell(self, item_id, bid, buy_now=0, duration=3600):
         """Starts auction. Returns trade_id."""
         data = {'buyNowPrice': buy_now, 'startingBid': bid, 'duration': duration, 'itemData':{'id': item_id}}
-        rc = self.__post__(urls['fut']['SearchAuctionsListItem'], data=json.dumps(data))
+        rc = self.__post__(self.urls['fut']['SearchAuctionsListItem'], data=json.dumps(data))
         return rc['id']
 
     def watchlistDelete(self, trade_id):
         """Removes card from watchlist."""
         params = {'tradeId': trade_id}
-        self.__delete__(urls['fut']['WatchList'], params=params)  # returns nothing
+        self.__delete__(self.urls['fut']['WatchList'], params=params)  # returns nothing
         return True
 
     def tradepileDelete(self, trade_id):
         """Removes card from tradepile."""
-        url = '{}/{}'.format(urls['fut']['TradeInfo'], trade_id)
+        url = '{}/{}'.format(self.urls['fut']['TradeInfo'], trade_id)
         self.__delete__(url)  # returns nothing
         return True
 
@@ -329,16 +335,16 @@ class Core(object):
             # unassigned item
             data = {"itemData": [{"pile": "trade", "id": str(item_id)}]}
 
-        rc = self.__put__(urls['fut']['Item'], data=json.dumps(data))
+        rc = self.__put__(self.urls['fut']['Item'], data=json.dumps(data))
         return rc['itemData'][0]['success']
 
     def keepalive(self):
         """Just refresh credits ammount to let know that we're still online."""
-        self.__get__(urls['fut']['Credits'])
+        self.__get__(self.urls['fut']['Credits'])
         return True
 
     def pileSize(self):
         """Returns size of tradepile and watchlist."""
-        rc = self.__get__(urls['fut']['PileSize'])['entries']
+        rc = self.__get__(self.urls['fut']['PileSize'])['entries']
         return {'tradepile': rc[0]['value'],
                 'watchlist': rc[2]['value']}

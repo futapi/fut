@@ -15,7 +15,9 @@ Usage
 .. code-block:: pycon
 
     >>> import fut14
-    >>> fut = fut14.Core('email', 'password', 'secret answer', debug=True)  # DEBUG: save http response to fut14.log)
+    >>> fut = fut14.Core('email', 'password', 'secret answer', platform='xbox', debug=True)
+    >>> # PLATFORM: pc / ps3 / xbox / and / ios     (pc default)
+    >>> # DEBUG: save http response to fut14.log)
 
     >>> items = fut.searchAuctions('development',  # search items
     ...     level='gold', category='fitness', min_price=300,  # optional parametrs
