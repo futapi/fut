@@ -17,7 +17,7 @@ except ImportError:
 
 from .config import headers
 from .urls import urls
-from .exceptions import Fut14Error
+from .exceptions import Fut14Error, ExpiredSession, InternalServerError, UnknownError
 from .EAHashingAlgorithm import EAHashingAlgorithm
 
 
@@ -217,6 +217,14 @@ class Core(object):
         else:
             rc = rc.json()
             self.credits = rc.get('credits', self.credits)  # update credits
+            if 'code' and 'reason' in rc:  # error
+                print rc
+                if rc['reason'] == 'expired session':
+                    raise ExpiredSession
+                elif rc.get('string') == 'Internal Server Error (ut)':
+                    raise InternalServerError
+                else:
+                    raise UnknownError(rc.__str__())
         return rc
 
     def __get__(self, url, *args, **kwargs):
