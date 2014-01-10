@@ -218,7 +218,6 @@ class Core(object):
             rc = rc.json()
             self.credits = rc.get('credits', self.credits)  # update credits
             if 'code' and 'reason' in rc:  # error
-                print rc
                 if rc['reason'] == 'expired session':
                     raise ExpiredSession
                 elif rc.get('string') == 'Internal Server Error (ut)':
