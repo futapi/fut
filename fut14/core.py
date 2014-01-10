@@ -117,7 +117,7 @@ class Core(object):
         if self.debug: open('fut14.log', 'wb').write(rc.content)
         rc = rc.text
         if 'EASW_ID' not in rc:
-            raise Fut14Error('Invalid email or password.')
+            raise Fut14Error('Error during login process (probably invalid email or password).')
         self.nucleus_id = re.search("var EASW_ID = '([0-9]+)';", rc).group(1)
         #self.urls['fut_base'] = re.search("var BASE_FUT_URL = '(https://.+?)';", rc).group(1)
         #self.urls['fut_home'] = re.search("var GUEST_APP_URI = '(http://.+?)';", rc).group(1)
