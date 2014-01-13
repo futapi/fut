@@ -15,7 +15,7 @@ class Fut14Error(RuntimeError):
 
 class UnknownError(Fut14Error):
     """Unknown error, please report full log at
-    https://github.com/oczkers/fut14/issues"""
+    https://github.com/oczkers/fut14/issues/24"""
 
 class ExpiredSession(Fut14Error):
     """Session has expired,
