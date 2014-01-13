@@ -17,7 +17,8 @@ except ImportError:
 
 from .config import headers
 from .urls import urls
-from .exceptions import Fut14Error
+from .exceptions import (Fut14Error, ExpiredSession, InternalServerError,
+                         UnknownError, PermissionDenied)
 from .EAHashingAlgorithm import EAHashingAlgorithm
 
 
@@ -88,15 +89,16 @@ class Core(object):
         self.passwd = passwd
         self.secret_answer_hash = EAHashingAlgorithm().EAHash(secret_answer)
         self.platform = platform
-        self.urls = urls(platform)
-        self.r = requests.Session()  # init/reset requests session object
-        self.r.headers = headers  # i'm chrome browser now ;-)
         self.credits = 0
         self.__login__(self.email, self.passwd, self.secret_answer_hash)
 
     def __login__(self, email, passwd, secret_answer_hash):
         """Just log in."""
         # TODO: split into smaller methods
+        # create session
+        self.r = requests.Session()  # init/reset requests session object
+        self.r.headers = headers  # i'm chrome browser now ;-)
+        self.urls = urls(self.platform)
         # === login
         self.urls['login'] = self.r.get(self.urls['fut_home']).url
         self.r.headers['Referer'] = self.urls['main_site']  # prepare headers
@@ -117,7 +119,7 @@ class Core(object):
         if self.debug: open('fut14.log', 'wb').write(rc.content)
         rc = rc.text
         if 'EASW_ID' not in rc:
-            raise Fut14Error('Invalid email or password.')
+            raise Fut14Error('Error during login process (probably invalid email or password).')
         self.nucleus_id = re.search("var EASW_ID = '([0-9]+)';", rc).group(1)
         #self.urls['fut_base'] = re.search("var BASE_FUT_URL = '(https://.+?)';", rc).group(1)
         #self.urls['fut_home'] = re.search("var GUEST_APP_URI = '(http://.+?)';", rc).group(1)
@@ -211,12 +213,27 @@ class Core(object):
         # TODO: update credtis?
         self.r.headers['X-HTTP-Method-Override'] = method.upper()
         rc = self.r.post(url, *args, **kwargs)
-        if self.debug: open('fut14.log', 'wb').write(rc.content)
+        if self.debug: open('fut14.log', 'wb').write(rc.content)  # DEBUG
         if rc.text == '':
+            self.keepalive()  # credits not avaible in response, manualy updating
             rc = {}
         else:
             rc = rc.json()
-            self.credits = rc.get('credits', self.credits)  # update credits
+            # update credits
+            if 'credits' not in rc:
+                self.keepalive()  # credits not avaible in response, manualy updating
+            else:
+                self.credits = rc['credits']
+            # error control
+            if 'code' and 'reason' in rc:  # error
+                if rc['reason'] == 'expired session':
+                    raise ExpiredSession
+                elif rc.get('string') == 'Internal Server Error (ut)':
+                    raise InternalServerError
+                elif rc.get('string') == 'Permission Denied':
+                    raise PermissionDenied
+                else:
+                    raise UnknownError(rc.__str__())
         return rc
 
     def __get__(self, url, *args, **kwargs):
@@ -312,6 +329,12 @@ class Core(object):
         data = {'buyNowPrice': buy_now, 'startingBid': bid, 'duration': duration, 'itemData':{'id': item_id}}
         rc = self.__post__(self.urls['fut']['SearchAuctionsListItem'], data=json.dumps(data))
         return rc['id']
+
+    def quickSell(self, resource_id):
+        """Quick sell."""
+        params = {'resourceId': resource_id}
+        self.__delete__(self.urls['fut']['Item'], params=params)  # returns nothing
+        return True
 
     def watchlistDelete(self, trade_id):
         """Removes card from watchlist."""

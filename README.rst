@@ -72,7 +72,7 @@ Usage
     >>> fut.tradepileDelete(trade_id)  # removes item from tradepile
     >>> fut.watchlistDelete(trade_id)  # removes item from watch list
 
-    >>> fut.keepalive()  # send keepalive ping to avoid timeout
+    >>> fut.keepalive()  # send keepalive ping to avoid timeout (send at least one request every ~10 minutes)
 
     to be continued ;-)
     ...
