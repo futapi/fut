@@ -89,9 +89,6 @@ class Core(object):
         self.passwd = passwd
         self.secret_answer_hash = EAHashingAlgorithm().EAHash(secret_answer)
         self.platform = platform
-        self.urls = urls(platform)
-        self.r = requests.Session()  # init/reset requests session object
-        self.r.headers = headers  # i'm chrome browser now ;-)
         self.credits = 0
         self.__login__(self.email, self.passwd, self.secret_answer_hash)
 
@@ -99,6 +96,9 @@ class Core(object):
         """Just log in."""
         # TODO: split into smaller methods
         # === login
+        self.r = requests.Session()  # init/reset requests session object
+        self.r.headers = headers  # i'm chrome browser now ;-)
+        self.urls = urls(self.platform)
         self.urls['login'] = self.r.get(self.urls['fut_home']).url
         self.r.headers['Referer'] = self.urls['main_site']  # prepare headers
         data = {'email': email,
