@@ -17,7 +17,8 @@ except ImportError:
 
 from .config import headers
 from .urls import urls
-from .exceptions import Fut14Error, ExpiredSession, InternalServerError, UnknownError
+from .exceptions import (Fut14Error, ExpiredSession, InternalServerError,
+                         UnknownError, PermissionDenied)
 from .EAHashingAlgorithm import EAHashingAlgorithm
 
 
@@ -222,6 +223,8 @@ class Core(object):
                     raise ExpiredSession
                 elif rc.get('string') == 'Internal Server Error (ut)':
                     raise InternalServerError
+                elif rc.get('string') == 'Permission Denied':
+                    raise PermissionDenied
                 else:
                     raise UnknownError(rc.__str__())
         return rc

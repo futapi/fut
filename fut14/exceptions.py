@@ -22,4 +22,7 @@ class ExpiredSession(Fut14Error):
     you should send at least one request every ~10 minutes."""
 
 class InternalServerError(Fut14Error):
-    """Internal Server Error (ut)."""
+    """[500] Internal Server Error (ut)."""
+
+class PermissionDenied(Fut14Error):
+    """[461] Permission Denied (outbid?)."""
