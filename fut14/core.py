@@ -255,7 +255,7 @@ class Core(object):
     def searchAuctions(self, ctype, level=None, category=None, assetId=None,
                        min_price=None, max_price=None, min_buy=None, max_buy=None,
                        league=None, club=None, position=None, nationality=None,
-                       playStyle=None, start=0, page_size=16, maskedDefId=None):
+                       playStyle=None, start=0, page_size=16):
         """Search specific items on transfer market."""
         # TODO: add "search" alias
         if start > 0 and page_size == 16:
@@ -279,7 +279,6 @@ class Core(object):
         if position:    params['pos'] = position
         if nationality: params['nat'] = nationality
         if playStyle:   params['playStyle'] = playStyle
-        if maskedDefId:   params['maskedDefId'] = maskedDefId
 
         rc = self.__get__(self.urls['fut']['SearchAuctions'], params=params)
         return [itemParse(i) for i in rc['auctionInfo']]
