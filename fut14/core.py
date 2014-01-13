@@ -95,10 +95,11 @@ class Core(object):
     def __login__(self, email, passwd, secret_answer_hash):
         """Just log in."""
         # TODO: split into smaller methods
-        # === login
+        # create session
         self.r = requests.Session()  # init/reset requests session object
         self.r.headers = headers  # i'm chrome browser now ;-)
         self.urls = urls(self.platform)
+        # === login
         self.urls['login'] = self.r.get(self.urls['fut_home']).url
         self.r.headers['Referer'] = self.urls['main_site']  # prepare headers
         data = {'email': email,
