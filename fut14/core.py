@@ -213,12 +213,18 @@ class Core(object):
         # TODO: update credtis?
         self.r.headers['X-HTTP-Method-Override'] = method.upper()
         rc = self.r.post(url, *args, **kwargs)
-        if self.debug: open('fut14.log', 'wb').write(rc.content)
+        if self.debug: open('fut14.log', 'wb').write(rc.content)  # DEBUG
         if rc.text == '':
+            self.keepalive()  # credits not avaible in response, manualy updating
             rc = {}
         else:
             rc = rc.json()
-            self.credits = rc.get('credits', self.credits)  # update credits
+            # update credits
+            if 'credits' not in rc:
+                self.keepalive()  # credits not avaible in response, manualy updating
+            else:
+                self.credits = rc['credits']
+            # error control
             if 'code' and 'reason' in rc:  # error
                 if rc['reason'] == 'expired session':
                     raise ExpiredSession
