@@ -330,6 +330,12 @@ class Core(object):
         rc = self.__post__(self.urls['fut']['SearchAuctionsListItem'], data=json.dumps(data))
         return rc['id']
 
+    def quickSell(self, resource_id):
+        """Quick sell."""
+        params = {'resourceId': resource_id}
+        self.__delete__(self.urls['fut']['Item'], params=params)  # returns nothing
+        return True
+
     def watchlistDelete(self, trade_id):
         """Removes card from watchlist."""
         params = {'tradeId': trade_id}
