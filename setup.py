@@ -7,7 +7,7 @@ except ImportError:
 
 
 __title__ = 'fut14'
-__version__ = '0.0.5'
+__version__ = '0.0.7'
 __author__ = 'Piotr Staroszczyk'
 __author_email__ = 'piotr.staroszczyk@get24.org'
 __license__ = 'GNU GPL v3'
