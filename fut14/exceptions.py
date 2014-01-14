@@ -26,3 +26,6 @@ class InternalServerError(Fut14Error):
 
 class PermissionDenied(Fut14Error):
     """[461] Permission Denied. (outbid?)"""
+
+class Conflict(Fut14Error):
+    """[409] Conflict. (You'r trying to sell somebody's item, don't you ;-)?)"""

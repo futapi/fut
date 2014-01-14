@@ -18,7 +18,7 @@ except ImportError:
 from .config import headers
 from .urls import urls
 from .exceptions import (Fut14Error, ExpiredSession, InternalServerError,
-                         UnknownError, PermissionDenied)
+                         UnknownError, PermissionDenied, Conflict)
 from .EAHashingAlgorithm import EAHashingAlgorithm
 
 
@@ -237,6 +237,8 @@ class Core(object):
                     raise InternalServerError
                 elif rc.get('string') == 'Permission Denied':
                     raise PermissionDenied
+                elif rc.get('string') == 'Conflict':
+                    raise Conflict
                 else:
                     raise UnknownError(rc.__str__())
         return rc
