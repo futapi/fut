@@ -8,6 +8,7 @@ This module implements the fut14's basic methods.
 
 """
 
+import logging
 import requests
 import re
 try:
@@ -20,6 +21,9 @@ from .urls import urls
 from .exceptions import (Fut14Error, ExpiredSession, InternalServerError,
                          UnknownError, PermissionDenied)
 from .EAHashingAlgorithm import EAHashingAlgorithm
+
+# logger - core
+logger = logging.getLogger(__name__)
 
 
 def baseId(resource_id, version=False):
@@ -109,14 +113,14 @@ class Core(object):
                 '_eventId': 'submit',
                 'facebookAuth': ''}
         rc = self.r.post(self.urls['login'], data=data)
-        if self.debug: open('fut14.log', 'wb').write(rc.content)
+        logger.debug(rc.content)
         # TODO: catch invalid data exception
         #self.nucleus_id = re.search('userid : "([0-9]+)"', rc.text).group(1)  # we'll get it later
 
         # === lanuch futweb
         self.r.headers['Referer'] = self.urls['fut_home']  # prepare headers
         rc = self.r.get(self.urls['futweb'])
-        if self.debug: open('fut14.log', 'wb').write(rc.content)
+        logger.debug(rc.content)
         rc = rc.text
         if 'EASW_ID' not in rc:
             raise Fut14Error('Error during login process (probably invalid email or password).')
@@ -135,7 +139,7 @@ class Core(object):
             'Referer': self.urls['futweb'],
         })
         rc = self.r.get(self.urls['acc_info'])
-        if self.debug: open('fut14.log', 'wb').write(rc.content)
+        logger.debug(rc.content)
         rc = rc.json()['userAccountInfo']['personas'][0]
         self.persona_id = rc['personaId']
         self.persona_name = rc['personaName']
@@ -160,7 +164,7 @@ class Core(object):
                 'priorityLevel': 4,
                 'identification': {'AuthCode': ''}}
         rc = self.r.post(self.urls['fut']['authentication'], data=json.dumps(data))
-        if self.debug: open('fut14.log', 'wb').write(rc.content)
+        logger.debug(rc.content)
         rc = rc.json()
         #self.urls['fut_host'] = '{0}://{1}'.format(rc['protocol']+rc['ipPort'])
         self.r.headers['X-UT-SID'] = self.sid = rc['sid']
@@ -169,14 +173,14 @@ class Core(object):
         self.r.headers['Accept'] = 'text/json'  # prepare headers
         del self.r.headers['Origin']
         rc = self.r.get(self.urls['fut_question'])
-        if self.debug: open('fut14.log', 'wb').write(rc.content)
+        logger.debug(rc.content)
         rc = rc.json()
         if rc.get('string') != 'Already answered question.':
             # answer question
             data = {'answer': self.secret_answer_hash}
             self.r.headers['Content-Type'] = 'application/x-www-form-urlencoded'  # requests bug?
             rc = self.r.post(self.urls['fut_validate'], data=data)
-            if self.debug: open('fut14.log', 'wb').write(rc.content)
+            logger.debug(rc.content)
             rc = rc.json()
             if rc['string'] != 'OK':  # we've got error
                 if 'Answers do not match' in rc['reason']:
@@ -218,7 +222,7 @@ class Core(object):
         # TODO: update credtis?
         self.r.headers['X-HTTP-Method-Override'] = method.upper()
         rc = self.r.post(url, *args, **kwargs)
-        if self.debug: open('fut14.log', 'wb').write(rc.content)  # DEBUG
+        logger.debug(rc.content)
         if rc.text == '':
             self.keepalive()  # credits not avaible in response, manualy updating
             rc = {}
