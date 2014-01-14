@@ -106,8 +106,8 @@ class Core(object):
                 'password': passwd,
                 '_rememberMe': 'on',
                 'rememberMe': 'on',
-                '_eventId':
-                'submit', 'facebookAuth': ''}
+                '_eventId': 'submit',
+                'facebookAuth': ''}
         rc = self.r.post(self.urls['login'], data=data)
         if self.debug: open('fut14.log', 'wb').write(rc.content)
         # TODO: catch invalid data exception
