@@ -101,7 +101,7 @@ class Core(object):
         # TODO: split into smaller methods
         # create session
         self.r = requests.Session()  # init/reset requests session object
-        self.r.headers = headers  # i'm chrome browser now ;-)
+        self.r.headers = headers.copy()  # i'm chrome browser now ;-)
         self.urls = urls(self.platform)
         # === login
         self.urls['login'] = self.r.get(self.urls['fut_home']).url
