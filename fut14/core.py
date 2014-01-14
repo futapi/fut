@@ -87,8 +87,9 @@ def cardInfo(resource_id):
 
 class Core(object):
     def __init__(self, email, passwd, secret_answer, platform='pc', debug=False):
+        if debug:
+            print('DEBUG parameter is not working yet, please change main logger level flag in __init__.py')
         # TODO: validate fut request response (200 OK)
-        self.debug = debug
         self.email = email
         self.passwd = passwd
         self.secret_answer_hash = EAHashingAlgorithm().EAHash(secret_answer)

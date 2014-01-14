@@ -28,13 +28,14 @@ __copyright__ = 'Copyright 2013 Piotr Staroszczyk'
 # logging
 import logging
 log_file_path = 'fut14.log'  # TODO: define logpath
+open(log_file_path, 'w').write('')  # remove old logs
 
 logformat = '%(asctime)s [%(levelname)s] [%(name)s] %(funcName)s: %(message)s (line %(lineno)d)'
 
 logger = logging.getLogger()
-logger.setLevel(logging.DEBUG)
+#logger.setLevel(logging.DEBUG)
 #logger.setLevel(logging.INFO)
-#logget.setLevel(logging.WARNING)
+logger.setLevel(logging.WARNING)
 logger_handler = logging.FileHandler(log_file_path)
 logger_handler.setFormatter(logging.Formatter(logformat))
 logger.addHandler(logger_handler)
