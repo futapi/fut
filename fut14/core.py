@@ -176,7 +176,7 @@ class Core(object):
             data = {'answer': self.secret_answer_hash}
             self.r.headers['Content-Type'] = 'application/x-www-form-urlencoded'  # requests bug?
             rc = self.r.post(self.urls['fut_validate'], data=data)
-            if self.debug: open('fut14a.log', 'wb').write(rc.content)
+            if self.debug: open('fut14.log', 'wb').write(rc.content)
             rc = rc.json()
             if rc['string'] != 'OK':  # we've got error
                 if 'Answers do not match' in rc['reason']:
