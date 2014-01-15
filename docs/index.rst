@@ -34,7 +34,7 @@ User Guide
 This is basic part of the documentation, it's about installation and importing.
 
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 1
 
    user/install
 
@@ -46,7 +46,7 @@ If you are looking for information on a specific function, class or method,
 this part of the documentation is for you.
 
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 1
 
    api
 
@@ -60,6 +60,4 @@ you.
 .. toctree::
    :maxdepth: 1
 
-..   dev/philosophy
-..   dev/todo
    dev/authors
