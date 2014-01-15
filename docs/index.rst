@@ -6,17 +6,60 @@
 Welcome to fut14's documentation!
 =================================
 
-Contents:
+Release v\ |version|. (:ref:`Installation <install>`)
+
+fut14 is a simple library for managing Fifa 14 Ultimate Team.
+
+
+
+Feature Support
+---------------
+
+- Multi platform (pc, ps3, xbox, ios, android)
+- Searching auctions with filters
+- Biding
+- Selling
+- Quick selling
+- Full control of watchlist, tradepile and unassigned cards
+- Updating credits variable on every request
+- Simple keepalive function just to extend session life
+- Requesting any card info without login
+- Calculating baseID
+- Python 2.6-3.3, PyPy
+
+
+User Guide
+----------
+
+This is basic part of the documentation, it's about installation and importing.
 
 .. toctree::
    :maxdepth: 2
 
+   user/install
 
 
-Indices and tables
-==================
+API Documentation
+-----------------
 
-* :ref:`genindex`
-* :ref:`modindex`
-* :ref:`search`
+If you are looking for information on a specific function, class or method,
+this part of the documentation is for you.
 
+.. toctree::
+   :maxdepth: 2
+
+   api
+
+
+Contributor Guide
+-----------------
+
+If you want to contribute to the project, this part of the documentation is for
+you.
+
+.. toctree::
+   :maxdepth: 1
+
+..   dev/philosophy
+..   dev/todo
+   dev/authors
