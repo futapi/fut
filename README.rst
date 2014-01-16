@@ -9,6 +9,12 @@ It is written entirely in Python.
 
 
 
+Documentation
+-------------
+Documentation is available at http://fut14.readthedocs.org/.
+
+
+
 Usage
 -----
 
