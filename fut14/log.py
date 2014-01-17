@@ -1,4 +1,13 @@
-# logging
+# -*- coding: utf-8 -*-
+
+"""
+fut14.log
+~~~~~~~~~~~~~~~~~~~~~
+
+This module implements the fut14's logger.
+
+"""
+
 import logging
 
 
