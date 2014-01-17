@@ -29,3 +29,14 @@ class PermissionDenied(Fut14Error):
 
 class Conflict(Fut14Error):
     """[409] Conflict. (You'r trying to sell somebody's item, don't you ;-)?)"""
+
+'''
+class InvalidCookie(Fut14Error):
+    """[482] Invalid cookie."""
+
+class Unauthorized(Fut14Error):
+    """[401] Unauthorized (ut)."""
+
+class MultipleSession(Unauthorized):
+    """[401] Unauthorized (ut) - multiple session."""
+'''
