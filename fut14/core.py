@@ -371,6 +371,12 @@ class Core(object):
         rc = self.__put__(self.urls['fut']['Item'], data=json.dumps(data))
         return rc['itemData'][0]['success']
 
+    def relist(self):
+        """Relist all tradepile."""
+        self.__post__(self.urls['fut']['SearchAuctionsReListItem'])
+        #{"tradeIdList":[{"id":139632781208},{"id":139632796467}]}
+        return True
+
     def keepalive(self):
         """Just refresh credits ammount to let know that we're still online."""
         self.__get__(self.urls['fut']['Credits'])
