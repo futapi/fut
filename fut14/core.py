@@ -291,6 +291,7 @@ class Core(object):
                        playStyle=None, start=0, page_size=16):
         """Search specific items on transfer market."""
         # TODO: add "search" alias
+        # TODO: generator
         if start > 0 and page_size == 16:
             page_size = 13
         elif page_size > 50:  # server restriction
@@ -380,7 +381,8 @@ class Core(object):
 
     def relist(self):
         """Relist all tradepile."""
-        self.__post__(self.urls['fut']['SearchAuctionsReListItem'])
+        # TODO: return relisted ids
+        self.__put__(self.urls['fut']['SearchAuctionsReListItem'])
         #{"tradeIdList":[{"id":139632781208},{"id":139632796467}]}
         return True
 
