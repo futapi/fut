@@ -9,6 +9,12 @@ It is written entirely in Python.
 
 
 
+Documentation
+-------------
+Documentation is available at http://fut14.readthedocs.org/.
+
+
+
 Usage
 -----
 
@@ -52,7 +58,7 @@ Usage
     >>> fut.credits  # returns credits amount
     600
 
-    >>>     fut.bid(item[0]['trade_id'], 600)  # make a bid
+    >>> fut.bid(items[0]['trade_id'], 600)  # make a bid
 
     >>> fut.credits  # it's updated automatically on every request
     0
