@@ -368,8 +368,10 @@ class Core(object):
         self.__delete__(url)  # returns nothing
         return True
 
-    def sendToTradepile(self, trade_id, item_id):
+    def sendToTradepile(self, trade_id, item_id, safe=True):
         """Sends to tradepile (alias for __sendToPile__)."""
+        if safe and len(self.tradepile()) >= self.tradepile_size:  # TODO?: optimization (don't parse items in tradepile)
+            return False
         return self.__sendToPile__('trade', trade_id, item_id)
 
     def sendToClub(self, trade_id, item_id):
