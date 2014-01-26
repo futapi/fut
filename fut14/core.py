@@ -343,10 +343,6 @@ class Core(object):
         rc = self.__get__(self.urls['fut']['Unassigned'])
         return [itemParse({'itemData': i}) for i in rc['itemData']]
 
-#    def relistAll(self, item_id):
-#        """Relist all items in trade pile."""
-#        print(self.r.get(self.urls['fut']['Item']+'/%s' % item_id).text)
-
     def sell(self, item_id, bid, buy_now=0, duration=3600):
         """Starts auction. Returns trade_id."""
         # TODO: auto send to tradepile
