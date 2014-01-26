@@ -227,11 +227,6 @@ class Core(object):
             rc = {}
         else:
             rc = rc.json()
-            # update credits
-            if 'credits' not in rc:
-                self.keepalive()  # credits not avaible in response, manualy updating
-            else:
-                self.credits = rc['credits']
             # error control
             if 'code' and 'reason' in rc:  # error
                 if rc['reason'] == 'expired session':
@@ -244,6 +239,11 @@ class Core(object):
                     raise Conflict
                 else:
                     raise UnknownError(rc.__str__())
+            # update credits
+            if 'credits' not in rc:
+                self.keepalive()  # credits not avaible in response, manualy updating
+            else:
+                self.credits = rc['credits']
         return rc
 
     def __get__(self, url, *args, **kwargs):
