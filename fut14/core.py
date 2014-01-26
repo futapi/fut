@@ -262,6 +262,19 @@ class Core(object):
         """Sends delete request. Returns response as a json object."""
         return self.__request__('DELETE', url, *args, **kwargs)
 
+    def __sendToPile__(self, pile, trade_id, item_id):
+        """Sends to pile."""
+        # TODO: accept multiple trade_ids (just extend list below (+ extend params?))
+        if trade_id > 0 :
+            # won item
+            data = {"itemData": [{"tradeId": trade_id, "pile": pile, "id": str(item_id)}]}
+        else:
+            # unassigned item
+            data = {"itemData": [{"pile": pile, "id": str(item_id)}]}
+
+        rc = self.__put__(self.urls['fut']['Item'], data=json.dumps(data))
+        return rc['itemData'][0]['success']
+
     def baseId(self, *args, **kwargs):
         """Alias for baseId."""
         return baseId(*args, **kwargs)
@@ -336,6 +349,7 @@ class Core(object):
 
     def sell(self, item_id, bid, buy_now=0, duration=3600):
         """Starts auction. Returns trade_id."""
+        # TODO: auto send to tradepile
         data = {'buyNowPrice': buy_now, 'startingBid': bid, 'duration': duration, 'itemData':{'id': item_id}}
         rc = self.__post__(self.urls['fut']['SearchAuctionsListItem'], data=json.dumps(data))
         return rc['id']
@@ -359,17 +373,12 @@ class Core(object):
         return True
 
     def sendToTradepile(self, trade_id, item_id):
-        """Sends to tradepile."""
-        # TODO: accept multiple trade_ids (just extend list below (+ extend params?))
-        if trade_id > 0 :
-            # won item
-            data = {"itemData": [{"tradeId": trade_id, "pile": "trade", "id": str(item_id)}]}
-        else:
-            # unassigned item
-            data = {"itemData": [{"pile": "trade", "id": str(item_id)}]}
+        """Sends to tradepile (alias for __sendToPile__)."""
+        return self.__sendToPile__('trade', trade_id, item_id)
 
-        rc = self.__put__(self.urls['fut']['Item'], data=json.dumps(data))
-        return rc['itemData'][0]['success']
+    def sendToClub(self, trade_id, item_id):
+        """Sends to club (alias for __sendToPile__)."""
+        return self.__sendToPile__('club', trade_id, item_id)
 
     def relist(self):
         """Relist all tradepile."""
