@@ -75,6 +75,7 @@ Usage
     ...              buy_now=0, duration=3600)  # optional parametrs
 
     >>> fut.sendToTradepile(trade_id)  # add card to tradepile
+    >>> fut.sendToClub(trade_id)       # add card to club
     >>> fut.tradepileDelete(trade_id)  # removes item from tradepile
     >>> fut.watchlistDelete(trade_id)  # removes item from watch list
 
