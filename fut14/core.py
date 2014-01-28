@@ -379,11 +379,15 @@ class Core(object):
         """Sends to club (alias for __sendToPile__)."""
         return self.__sendToPile__('club', trade_id, item_id)
 
-    def relist(self):
+    def relist(self, clean=False):
         """Relist all tradepile."""
         # TODO: return relisted ids
         self.__put__(self.urls['fut']['SearchAuctionsReListItem'])
         #{"tradeIdList":[{"id":139632781208},{"id":139632796467}]}
+        if clean:  # remove sold cards
+            for i in self.tradepile():
+                if i['tradeState'] == 'closed':
+                    self.tradepileDelete(i['tradeId'])
         return True
 
     def keepalive(self):
