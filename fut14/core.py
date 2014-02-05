@@ -391,9 +391,8 @@ class Core(object):
         return True
 
     def keepalive(self):
-        """Just refresh credits ammount to let know that we're still online."""
-        self.__get__(self.urls['fut']['Credits'])
-        return True
+        """Just refresh credit amount to let know that we're still online. Returns credit amount."""
+        return self.__get__(self.urls['fut']['Credits'])
 
     def pileSize(self):
         """Returns size of tradepile and watchlist."""
