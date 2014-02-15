@@ -87,7 +87,6 @@ class Core(object):
     def __init__(self, email, passwd, secret_answer, platform='pc', debug=False):
         self.debug = debug
         if self.debug: self.logger = logger('DEBUG')
-        else: self.logger = logger()
         # TODO: validate fut request response (200 OK)
         self.email = email
         self.passwd = passwd
