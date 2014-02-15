@@ -87,6 +87,7 @@ class Core(object):
     def __init__(self, email, passwd, secret_answer, platform='pc', debug=False):
         self.debug = debug
         if self.debug: self.logger = logger('DEBUG')
+        else: self.logger = logger()
         # TODO: validate fut request response (200 OK)
         self.email = email
         self.passwd = passwd
@@ -379,17 +380,20 @@ class Core(object):
         """Sends to club (alias for __sendToPile__)."""
         return self.__sendToPile__('club', trade_id, item_id)
 
-    def relist(self):
+    def relist(self, clean=False):
         """Relist all tradepile."""
         # TODO: return relisted ids
         self.__put__(self.urls['fut']['SearchAuctionsReListItem'])
         #{"tradeIdList":[{"id":139632781208},{"id":139632796467}]}
+        if clean:  # remove sold cards
+            for i in self.tradepile():
+                if i['tradeState'] == 'closed':
+                    self.tradepileDelete(i['tradeId'])
         return True
 
     def keepalive(self):
-        """Just refresh credits ammount to let know that we're still online."""
-        self.__get__(self.urls['fut']['Credits'])
-        return True
+        """Just refresh credit amount to let know that we're still online. Returns credit amount."""
+        return self.__get__(self.urls['fut']['Credits'])
 
     def pileSize(self):
         """Returns size of tradepile and watchlist."""

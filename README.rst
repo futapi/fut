@@ -75,8 +75,11 @@ Usage
     ...              buy_now=0, duration=3600)  # optional parametrs
 
     >>> fut.sendToTradepile(trade_id)  # add card to tradepile
+    >>> fut.sendToClub(trade_id)       # add card to club
     >>> fut.tradepileDelete(trade_id)  # removes item from tradepile
     >>> fut.watchlistDelete(trade_id)  # removes item from watch list
+
+    >>> fut.relist()  # relist all expired cards in tradepile
 
     >>> fut.keepalive()  # send keepalive ping to avoid timeout (send at least one request every ~10 minutes)
 
