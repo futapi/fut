@@ -19,7 +19,8 @@ from .config import headers
 from .log import logger
 from .urls import urls
 from .exceptions import (Fut14Error, ExpiredSession, InternalServerError,
-                         UnknownError, PermissionDenied, Conflict)
+                         UnknownError, PermissionDenied, Conflict,
+                         MultipleSession)
 from .EAHashingAlgorithm import EAHashingAlgorithm
 
 
@@ -166,6 +167,8 @@ class Core(object):
         if self.debug: self.logger.debug(rc.content)
         rc = rc.json()
         #self.urls['fut_host'] = '{0}://{1}'.format(rc['protocol']+rc['ipPort'])
+        if rc.get('reason') == 'multiple session':
+            raise MultipleSession
         self.r.headers['X-UT-SID'] = self.sid = rc['sid']
 
         # validate (secret question)
