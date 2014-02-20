@@ -165,6 +165,8 @@ class Core(object):
                 'identification': {'AuthCode': ''}}
         rc = self.r.post(self.urls['fut']['authentication'], data=json.dumps(data))
         if self.debug: self.logger.debug(rc.content)
+        if rc.status_code == 500:
+            raise InternalServerError('Servers are probably temporary down.')
         rc = rc.json()
         #self.urls['fut_host'] = '{0}://{1}'.format(rc['protocol']+rc['ipPort'])
         if rc.get('reason') == 'multiple session':
