@@ -78,6 +78,7 @@ Usage
     >>> fut.sendToClub(trade_id)       # add card to club
     >>> fut.tradepileDelete(trade_id)  # removes item from tradepile
     >>> fut.watchlistDelete(trade_id)  # removes item from watch list
+    >>> fut.quickSell(item_id)         # quicksell item
 
     >>> fut.relist()  # relist all expired cards in tradepile
 

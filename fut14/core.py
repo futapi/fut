@@ -356,9 +356,9 @@ class Core(object):
         rc = self.__post__(self.urls['fut']['SearchAuctionsListItem'], data=json.dumps(data))
         return rc['id']
 
-    def quickSell(self, resource_id):
+    def quickSell(self, item_id):
         """Quick sell."""
-        params = {'resourceId': resource_id}
+        params = {'itemIds': item_id}
         self.__delete__(self.urls['fut']['Item'], params=params)  # returns nothing
         return True
 
