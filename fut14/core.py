@@ -19,7 +19,8 @@ from .config import headers
 from .log import logger
 from .urls import urls
 from .exceptions import (Fut14Error, ExpiredSession, InternalServerError,
-                         UnknownError, PermissionDenied, Conflict)
+                         UnknownError, PermissionDenied, Conflict,
+                         MultipleSession)
 from .EAHashingAlgorithm import EAHashingAlgorithm
 
 
@@ -164,8 +165,12 @@ class Core(object):
                 'identification': {'AuthCode': ''}}
         rc = self.r.post(self.urls['fut']['authentication'], data=json.dumps(data))
         if self.debug: self.logger.debug(rc.content)
+        if rc.status_code == 500:
+            raise InternalServerError('Servers are probably temporary down.')
         rc = rc.json()
         #self.urls['fut_host'] = '{0}://{1}'.format(rc['protocol']+rc['ipPort'])
+        if rc.get('reason') == 'multiple session':
+            raise MultipleSession
         self.r.headers['X-UT-SID'] = self.sid = rc['sid']
 
         # validate (secret question)
@@ -351,9 +356,9 @@ class Core(object):
         rc = self.__post__(self.urls['fut']['SearchAuctionsListItem'], data=json.dumps(data))
         return rc['id']
 
-    def quickSell(self, resource_id):
+    def quickSell(self, item_id):
         """Quick sell."""
-        params = {'resourceId': resource_id}
+        params = {'itemIds': item_id}
         self.__delete__(self.urls['fut']['Item'], params=params)  # returns nothing
         return True
 
