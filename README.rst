@@ -74,11 +74,12 @@ Usage
     ...     fut.sell(item['item_id'], 150,  # put item on auction
     ...              buy_now=0, duration=3600)  # optional parametrs
 
-    >>> fut.sendToTradepile(trade_id)  # add card to tradepile
-    >>> fut.sendToClub(trade_id)       # add card to club
-    >>> fut.tradepileDelete(trade_id)  # removes item from tradepile
-    >>> fut.watchlistDelete(trade_id)  # removes item from watch list
-    >>> fut.quickSell(item_id)         # quicksell item
+    >>> fut.sendToTradepile(trade_id, item_id)  # add card to tradepile
+    >>> fut.sendToClub(trade_id, item_id)       # add card to club
+    >>> fut.sendToWatchlist(trade_id)           # add card to watchlist
+    >>> fut.tradepileDelete(trade_id)           # removes item from tradepile
+    >>> fut.watchlistDelete(trade_id)           # removes item from watch list
+    >>> fut.quickSell(item_id)                  # quicksell item
 
     >>> fut.relist()  # relist all expired cards in tradepile
 
