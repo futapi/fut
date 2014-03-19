@@ -227,6 +227,8 @@ class Core(object):
         self.r.headers['X-HTTP-Method-Override'] = method.upper()
         rc = self.r.post(url, *args, **kwargs)
         if self.debug: self.logger.debug(rc.content)
+        if not rc.ok:  # status != 200
+            raise UnknownError(rc.content)
         if rc.text == '':
             self.keepalive()  # credits not avaible in response, manualy updating
             rc = {}
@@ -267,10 +269,16 @@ class Core(object):
         """Sends delete request. Returns response as a json object."""
         return self.__request__('DELETE', url, *args, **kwargs)
 
-    def __sendToPile__(self, pile, trade_id, item_id):
+    def __sendToPile__(self, pile, trade_id, item_id=None):
         """Sends to pile."""
         # TODO: accept multiple trade_ids (just extend list below (+ extend params?))
-        if trade_id > 0 :
+        if pile == 'watchlist':
+            params = {'tradeId': trade_id}
+            data = {'auctionInfo': [{'id': trade_id}]}
+            self.__put__(self.urls['fut']['WatchList'], params=params, data=json.dumps(data))
+            return True
+
+        if trade_id > 0:
             # won item
             data = {"itemData": [{"tradeId": trade_id, "pile": pile, "id": str(item_id)}]}
         else:
@@ -383,6 +391,10 @@ class Core(object):
     def sendToClub(self, trade_id, item_id):
         """Sends to club (alias for __sendToPile__)."""
         return self.__sendToPile__('club', trade_id, item_id)
+
+    def sendToWatchlist(self, trade_id):
+        """Sends to watchlist."""
+        return self.__sendToPile__('watchlist', trade_id)
 
     def relist(self, clean=False):
         """Relist all tradepile."""
