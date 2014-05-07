@@ -62,10 +62,14 @@ Usage
 
     >>> fut.credits  # it's updated automatically on every request
     0
-    >>> fut.tradepile_size
+    >>> fut.tradepile_size  # tradepile size (slots)
     80
-    >>> fut.watchlist_size
+    >> len(fut.tradepile())  # tradepile fulfilment (number of cards in tradepile)
+    20
+    >>> fut.watchlist_size  # watchlist size (slots)
     30
+    >> len(fut.watchlist())  # watchlist fulfilment (number of cards in watchlist)
+    10
 
     >>> items = fut.tradepile()  # get all items from trade pile
     >>> items = fut.unassigned()  # get all unassigned items
