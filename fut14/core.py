@@ -397,14 +397,17 @@ class Core(object):
         return self.__sendToPile__('watchlist', trade_id)
 
     def relist(self, clean=False):
-        """Relist all tradepile."""
+        """Relist all tradepile. Returns True or number of deleted (sold) if clean was set."""
         # TODO: return relisted ids
         self.__put__(self.urls['fut']['SearchAuctionsReListItem'])
         #{"tradeIdList":[{"id":139632781208},{"id":139632796467}]}
         if clean:  # remove sold cards
+            sold = 0
             for i in self.tradepile():
                 if i['tradeState'] == 'closed':
                     self.tradepileDelete(i['tradeId'])
+                    sold += 1
+            return sold
         return True
 
     def keepalive(self):
