@@ -20,7 +20,7 @@ from .log import logger
 from .urls import urls
 from .exceptions import (Fut14Error, ExpiredSession, InternalServerError,
                          UnknownError, PermissionDenied, Conflict,
-                         MultipleSession)
+                         MultipleSession, FeatureDisabled)
 from .EAHashingAlgorithm import EAHashingAlgorithm
 
 
@@ -244,6 +244,8 @@ class Core(object):
                     raise PermissionDenied
                 elif rc.get('string') == 'Conflict':
                     raise Conflict
+                elif rc.get('string') == 'Feature Disabled':
+                    raise FeatureDisabled
                 else:
                     raise UnknownError(rc.__str__())
             # update credits

@@ -24,6 +24,9 @@ class ExpiredSession(Fut14Error):
 class InternalServerError(Fut14Error):
     """[500] Internal Server Error (ut). (invalid parameters?)"""
 
+class FeatureDisabled(Fut14Error):
+    """[480] Feature Disabled."""
+
 class PermissionDenied(Fut14Error):
     """[461] Permission Denied. (outbid?)"""
 
