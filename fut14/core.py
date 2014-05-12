@@ -85,7 +85,7 @@ def cardInfo(resource_id):
 
 
 class Core(object):
-    def __init__(self, email, passwd, secret_answer, platform='pc', debug=False):
+    def __init__(self, email, passwd, secret_answer, platform='pc', emulate=None, debug=False):
         self.debug = debug
         if self.debug: self.logger = logger('DEBUG')
         # TODO: validate fut request response (200 OK)
@@ -93,6 +93,7 @@ class Core(object):
         self.passwd = passwd
         self.secret_answer_hash = EAHashingAlgorithm().EAHash(secret_answer)
         self.platform = platform
+        self.emulate = emulate
         self.credits = 0
         self.__login__(self.email, self.passwd, self.secret_answer_hash)
 
@@ -103,6 +104,26 @@ class Core(object):
         self.r = requests.Session()  # init/reset requests session object
         self.r.headers = headers.copy()  # i'm chrome browser now ;-)
         self.urls = urls(self.platform)
+        # emulate
+        # TODO: urls?
+        if self.emulate == 'xbox':
+            sku = 'FFA14XBX'  # FFA14CAP ?
+            clientVersion = 1  # ?
+        elif self.emulate == 'ps3':
+            sku = 'FFA14PS3'  # FFA14KTL ?
+            clientVersion = 1  # ?
+        elif self.emulate == 'ios':
+            sku = 'FUT14IOS'
+            clientVersion = 8
+#        elif self.emulate == 'android':
+#            sku = ''  # dunno
+#            clientVersion = 8  # ?
+#        elif self.emulate == 'pc':
+#            sku = ''  # dunno
+#            clientVersion = 1  # ?
+        else:
+            sku = 'FUT14WEB'
+            clientVersion = 1
         # === login
         self.urls['login'] = self.r.get(self.urls['fut_home']).url
         self.r.headers['Referer'] = self.urls['main_site']  # prepare headers
@@ -153,8 +174,8 @@ class Core(object):
             'Origin': 'http://www.easports.com',
         })
         data = {'isReadOnly': False,
-                'sku': 'FUT14WEB',
-                'clientVersion': 1,
+                'sku': sku,
+                'clientVersion': clientVersion,
                 'nuc': self.nucleus_id,
                 'nucleusPersonaId': self.persona_id,
                 'nucleusPersonaDisplayName': self.persona_name,
