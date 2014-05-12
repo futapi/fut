@@ -89,36 +89,32 @@ class Core(object):
         self.debug = debug
         if self.debug: self.logger = logger('DEBUG')
         # TODO: validate fut request response (200 OK)
-        self.email = email
-        self.passwd = passwd
-        self.secret_answer_hash = EAHashingAlgorithm().EAHash(secret_answer)
-        self.platform = platform
-        self.emulate = emulate
-        self.credits = 0
-        self.__login__(self.email, self.passwd, self.secret_answer_hash)
+        self.__login__(email, passwd, secret_answer, platform, emulate)
 
-    def __login__(self, email, passwd, secret_answer_hash):
+    def __login__(self, email, passwd, secret_answer, platform='pc', emulate=None):
         """Just log in."""
         # TODO: split into smaller methods
+        secret_answer_hash = EAHashingAlgorithm().EAHash(secret_answer)
+        self.credits = 0
         # create session
         self.r = requests.Session()  # init/reset requests session object
         self.r.headers = headers.copy()  # i'm chrome browser now ;-)
-        self.urls = urls(self.platform)
+        self.urls = urls(platform)
         # emulate
         # TODO: urls?
-        if self.emulate == 'xbox':
+        if emulate == 'xbox':
             sku = 'FFA14XBX'  # FFA14CAP ?
             clientVersion = 1  # ?
-        elif self.emulate == 'ps3':
+        elif emulate == 'ps3':
             sku = 'FFA14PS3'  # FFA14KTL ?
             clientVersion = 1  # ?
-        elif self.emulate == 'ios':
+        elif emulate == 'ios':
             sku = 'FUT14IOS'
             clientVersion = 8
-#        elif self.emulate == 'android':
+#        elif emulate == 'android':
 #            sku = ''  # dunno
 #            clientVersion = 8  # ?
-#        elif self.emulate == 'pc':
+#        elif emulate == 'pc':
 #            sku = ''  # dunno
 #            clientVersion = 1  # ?
         else:
@@ -179,7 +175,7 @@ class Core(object):
                 'nuc': self.nucleus_id,
                 'nucleusPersonaId': self.persona_id,
                 'nucleusPersonaDisplayName': self.persona_name,
-                'nucleusPersonaPlatform': self.platform,
+                'nucleusPersonaPlatform': platform,
                 'locale': 'en-GB',
                 'method': 'authcode',
                 'priorityLevel': 4,
@@ -202,7 +198,7 @@ class Core(object):
         rc = rc.json()
         if rc.get('string') != 'Already answered question.':
             # answer question
-            data = {'answer': self.secret_answer_hash}
+            data = {'answer': secret_answer_hash}
             self.r.headers['Content-Type'] = 'application/x-www-form-urlencoded'  # requests bug?
             rc = self.r.post(self.urls['fut_validate'], data=data)
             if self.debug: self.logger.debug(rc.content)
