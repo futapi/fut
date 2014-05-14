@@ -117,9 +117,11 @@ class Core(object):
 #        elif emulate == 'pc':
 #            sku = ''  # dunno
 #            clientVersion = 1
-        else:
+        elif not emulate:
             sku = 'FUT14WEB'
             clientVersion = 1
+        else:
+            raise Fut14Error('Invalid emulate parameter. (Valid ones are and/ios).')  # pc/ps3/xbox/
         # === login
         self.urls['login'] = self.r.get(self.urls['fut_home']).url
         self.r.headers['Referer'] = self.urls['main_site']  # prepare headers
