@@ -4,6 +4,7 @@ build/
 dist/
 fut14.egg-info/
 test.py
+testemu.py
 log.log
 content.log
 error.log
