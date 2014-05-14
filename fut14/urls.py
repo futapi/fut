@@ -47,10 +47,8 @@ def urls(platform):
         'card_info':     'http://cdn.content.easports.com/fifa/fltOnlineAssets/C74DDF38-0B11-49b0-B199-2E2A11D1CC13/2014/fut/items/web/',
     }
 
-    if platform in ('pc', 'ps3'):
-        urls['fut_host'] = 'https://utas.s2.fut.ea.com:443'
-    elif platform in ('xbox', 'ios', 'and'):
-        urls['fut_host'] = 'https://utas.fut.ea.com:443'
+    if platform in urls['fut_host']:
+        urls['fut_host'] = urls['fut_host'][platform]
     else:
         raise Fut14Error('Invalid platform. (Valid ones are pc/ps3/xbox/and/ios).')
 
