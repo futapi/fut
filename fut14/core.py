@@ -104,7 +104,7 @@ class Core(object):
         if emulate == 'ios':
             sku = 'FUT14IOS'
             clientVersion = 8
-        elif emulate == 'android':
+        elif emulate == 'and':
             sku = 'FUT14AND'
             clientVersion = 8
 #        TODO: need more info about log in procedure in game
