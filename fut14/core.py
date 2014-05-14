@@ -101,22 +101,22 @@ class Core(object):
         self.r.headers = headers.copy()  # i'm chrome browser now ;-)
         self.urls = urls(platform)
         # emulate
-        # TODO: urls?
-        if emulate == 'xbox':
-            sku = 'FFA14XBX'  # FFA14CAP ?
-            clientVersion = 1  # ?
-        elif emulate == 'ps3':
-            sku = 'FFA14PS3'  # FFA14KTL ?
-            clientVersion = 1  # ?
-        elif emulate == 'ios':
+        if emulate == 'ios':
             sku = 'FUT14IOS'
             clientVersion = 8
-#        elif emulate == 'android':
-#            sku = ''  # dunno
-#            clientVersion = 8  # ?
+        elif emulate == 'android':
+            sku = 'FUT14AND'
+            clientVersion = 8
+#        TODO: need more info about log in procedure in game
+#        elif emulate == 'xbox':
+#            sku = 'FFA14XBX'  # FFA14CAP ?
+#            clientVersion = 1
+#        elif emulate == 'ps3':
+#            sku = 'FFA14PS3'  # FFA14KTL ?
+#            clientVersion = 1
 #        elif emulate == 'pc':
 #            sku = ''  # dunno
-#            clientVersion = 1  # ?
+#            clientVersion = 1
         else:
             sku = 'FUT14WEB'
             clientVersion = 1
