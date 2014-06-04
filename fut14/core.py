@@ -15,7 +15,7 @@ try:
 except ImportError:
     import json
 
-from .config import headers, headers_and
+from .config import headers, headers_and, headers_ios
 from .log import logger
 from .urls import urls
 from .exceptions import (Fut14Error, ExpiredSession, InternalServerError,
@@ -100,6 +100,8 @@ class Core(object):
         self.r = requests.Session()  # init/reset requests session object
         if emulate == 'and':
             self.r.headers = headers_and.copy()  # i'm android now ;-)
+        elif emulate == 'ios':
+            self.r.headers = headers_ios.copy()  # i'm ios phone now ;-)
         else:
             self.r.headers = headers.copy()  # i'm chrome browser now ;-)
         self.urls = urls(platform)
