@@ -66,6 +66,7 @@ def itemParse(item_data):
             'training':      item_data['itemData']['training'],
             'suspension':    item_data['itemData']['suspension'],
             'contract':      item_data['itemData']['contract'],
+            #'position':      item_data['itemData']['preferredPosition'],
             'playStyle':     item_data['itemData'].get('playStyle'),  # used only for players
             'discardValue':  item_data['itemData']['discardValue'],
             'itemType':      item_data['itemData']['itemType'],
@@ -73,6 +74,10 @@ def itemParse(item_data):
             'offers':        item_data.get('offers'),
             'currentBid':    item_data.get('currentBid'),
             'expires':       item_data.get('expires'),  # seconds left
+            #'sellerEstablished': item_data.get('sellerEstablished'),
+            #'sellerId':      item_data.get('sellerId'),
+            #'sellerName':    item_data.get('sellerName'),
+            #'watched':    item_data.get('watched'),
         }
 
 '''  # different urls (platforms)
