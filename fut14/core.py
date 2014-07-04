@@ -427,13 +427,33 @@ class Core(object):
         return {'tradepile': rc[0]['value'],
                 'watchlist': rc[2]['value']}
 
-    def getUserId(self):
-        '''Returns user id.'''
+    def stats(self):
+        """Returns all stats."""
+        # won-draw-loss
         rc = self.__get__(self.urls['fut']['user'])
-        return rc['personaId']
+        data = {
+            'won': rc['won'],
+            'draw': rc['draw'],
+            'loss': rc['loss'],
+            'matchUnfinishedTime': rc['reliability']['matchUnfinishedTime'],
+            'finishedMatches': rc['reliability']['finishedMatches'],
+            'reliability': rc['reliability']['reliability'],
+            'startedMatches': rc['reliability']['startedMatches'],
+        }
+        # leaderboard
+        url = '{}/alltime/user/{}'.format(self.urls['fut']['LeaderboardEntry'], self.persona_id)
+        rc = self.__get__(url)
+        data.update({
+            'earnings': rc['category'][0]['score']['value'],   #competitor
+            'transfer': rc['category'][1]['score']['value'],   #trader
+            'club_value': rc['category'][2]['score']['value'], #collector
+            'top_squad': rc['category'][3]['score']['value']   #builder
+            })
+        return data
 
-    def getClubInfo(self):
-        '''Returns getReliability'''
+    def clubInfo(self):
+        """Returns getReliability"""
+        # TODO?: return specific club
         rc = self.__get__(self.urls['fut']['user'])
         return {
             'personaName': rc['personaName'],
@@ -446,48 +466,13 @@ class Core(object):
             'seasonTicket': rc['seasonTicket']
         }
 
-    def getLeaderboardStats(self):
-        """Returns leaderboard stats for user"""
-        userId = self.getUserId()
-        url = '{}/alltime/user/{}'.format(self.urls['fut']['LeaderboardEntry'], userId)
-        rc = self.__get__(url)
-
-        return {
-            'earnings': rc['category'][0]['score']['value'], #competitor
-            'transfer': rc['category'][1]['score']['value'], #trader
-            'club_value': rc['category'][2]['score']['value'], #collector
-            'top_squad': rc['category'][3]['score']['value'] #builder
-        }
-
-    def getMatchesStats(self):
-        """Returns match stats won-draw-loss."""
-        userId = self.getUserId()
-        rc = self.__get__(self.urls['fut']['user'])
-
-        return {
-            'won': rc['won'],
-            'draw': rc['draw'],
-            'loss': rc['loss']
-        }
-
-    def getReliability(self):
-        '''Returns Reliability details.'''
-        rc = self.__get__(self.urls['fut']['user'])
-        return {
-            'matchUnfinishedTime': rc['reliability']['matchUnfinishedTime'],
-            'finishedMatches': rc['reliability']['finishedMatches'],
-            'reliability': rc['reliability']['reliability'],
-            'startedMatches': rc['reliability']['startedMatches']
-
-        }
-
-    def getSquad(self,squad_num):
+    def squad(self, squad_num=0):
         """return a squad."""
         url = '{}/{}'.format(self.urls['fut']['Squad'], squad_num)
         rc = self.__get__(url)
         return rc
 
-    def getClub(self ,count=10, level=10, type=1, start=0):
+    def club(self, count=10, level=10, type=1, start=0):
         """
             returns items in your club, excluding consumables
 
