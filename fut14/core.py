@@ -349,6 +349,28 @@ class Core(object):
         else:
             return False
 
+    def club(self, count=10, level=10, type=1, start=0):
+        """
+            Returns items in your club, excluding consumables
+
+            count - the number of cards you want to request
+            level - Not quite sure, It always seems to be 10
+            type - the type of card that you need:
+                set to 1 for players
+                set to 100 for staff
+                set to 142 for club items
+            start - position to start from
+        """
+        data = {'count': count, 'level': level, 'type': type, 'start': start}
+        rc = self.__get__(self.urls['fut']['Club'], data=json.dumps(data))
+        return [itemParse({'itemData': i}) for i in rc['itemData']]
+
+    def squad(self, squad_num=0):
+        """Return a squad."""
+        url = '{}/{}'.format(self.urls['fut']['Squad'], squad_num)
+        rc = self.__get__(url)
+        return rc
+
     def tradepile(self):
         """Returns items in tradepile."""
         rc = self.__get__(self.urls['fut']['TradePile'])
@@ -465,25 +487,3 @@ class Core(object):
             'trophies': rc['trophies'],
             'seasonTicket': rc['seasonTicket']
         }
-
-    def squad(self, squad_num=0):
-        """return a squad."""
-        url = '{}/{}'.format(self.urls['fut']['Squad'], squad_num)
-        rc = self.__get__(url)
-        return rc
-
-    def club(self, count=10, level=10, type=1, start=0):
-        """
-            returns items in your club, excluding consumables
-
-            count - the number of cards you want to request
-            level - Not quite sure, It always seems to be 10
-            type - the type of card that you need:
-                set to 1 for players
-                set to 100 for staff
-                set to 142 for club items
-            start - position to start from
-        """
-        data = {'count': count, 'level': level, 'type': type, 'start': start}
-        rc = self.__get__(self.urls['fut']['Club'], data=json.dumps(data))
-        return [itemParse({'itemData': i}) for i in rc['itemData']]
