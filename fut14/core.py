@@ -426,3 +426,79 @@ class Core(object):
         rc = self.__get__(self.urls['fut']['PileSize'])['entries']
         return {'tradepile': rc[0]['value'],
                 'watchlist': rc[2]['value']}
+
+    def getUserId(self):
+        '''Returns user id.'''
+        rc = self.__get__(self.urls['fut']['user'])
+        return rc['personaId']
+
+    def getClubInfo(self):
+        '''Returns getReliability'''
+        rc = self.__get__(self.urls['fut']['user'])
+        return {
+            'personaName': rc['personaName'],
+            'clubName': rc['clubName'],
+            'clubAbbr': rc['clubAbbr'],
+            'established': rc['established'],
+            'divisionOffline': rc['divisionOffline'],
+            'divisionOnline': rc['divisionOnline'],
+            'trophies': rc['trophies'],
+            'seasonTicket': rc['seasonTicket']
+        }
+
+    def getLeaderboardStats(self):
+        """Returns leaderboard stats for user"""
+        userId = self.getUserId()
+        url = '{}/alltime/user/{}'.format(self.urls['fut']['LeaderboardEntry'], userId)
+        rc = self.__get__(url)
+
+        return {
+            'earnings': rc['category'][0]['score']['value'], #competitor
+            'transfer': rc['category'][1]['score']['value'], #trader
+            'club_value': rc['category'][2]['score']['value'], #collector
+            'top_squad': rc['category'][3]['score']['value'] #builder
+        }
+
+    def getMatchesStats(self):
+        """Returns match stats won-draw-loss."""
+        userId = self.getUserId()
+        rc = self.__get__(self.urls['fut']['user'])
+
+        return {
+            'won': rc['won'],
+            'draw': rc['draw'],
+            'loss': rc['loss']
+        }
+
+    def getReliability(self):
+        '''Returns Reliability details.'''
+        rc = self.__get__(self.urls['fut']['user'])
+        return {
+            'matchUnfinishedTime': rc['reliability']['matchUnfinishedTime'],
+            'finishedMatches': rc['reliability']['finishedMatches'],
+            'reliability': rc['reliability']['reliability'],
+            'startedMatches': rc['reliability']['startedMatches']
+
+        }
+
+    def getSquad(self,squad_num):
+        """return a squad."""
+        url = '{}/{}'.format(self.urls['fut']['Squad'], squad_num)
+        rc = self.__get__(url)
+        return rc
+
+    def getClub(self ,count=10, level=10, type=1, start=0):
+        """
+            returns items in your club, excluding consumables
+
+            count - the number of cards you want to request
+            level - Not quite sure, It always seems to be 10
+            type - the type of card that you need:
+                set to 1 for players
+                set to 100 for staff
+                set to 142 for club items
+            start - position to start from
+        """
+        data = {'count': count, 'level': level, 'type': type, 'start': start}
+        rc = self.__get__(self.urls['fut']['Club'], data=json.dumps(data))
+        return [itemParse({'itemData': i}) for i in rc['itemData']]
