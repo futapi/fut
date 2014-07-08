@@ -23,8 +23,9 @@ Usage
 .. code-block:: pycon
 
     >>> import fut14
-    >>> fut = fut14.Core('email', 'password', 'secret answer', platform='xbox', debug=True)
+    >>> fut = fut14.Core('email', 'password', 'secret answer', platform='xbox', emulate='and', debug=True)
     >>> # PLATFORM: pc / ps3 / xbox / and / ios     (pc default)
+    >>> # EMULATE: and / ios (use this feature to avoid webapp errors [feature disabled])
     >>> # DEBUG: save http response to fut14.log)
 
     >>> items = fut.searchAuctions('development',  # search items
