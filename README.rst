@@ -13,6 +13,8 @@ Documentation
 -------------
 Documentation is available at http://fut14.readthedocs.org/.
 
+Players database: http://cdn.content.easports.com/fifa/fltOnlineAssets/C74DDF38-0B11-49b0-B199-2E2A11D1CC13/2014/fut/items/web/players.json
+
 
 
 Usage
@@ -21,8 +23,9 @@ Usage
 .. code-block:: pycon
 
     >>> import fut14
-    >>> fut = fut14.Core('email', 'password', 'secret answer', platform='xbox', debug=True)
+    >>> fut = fut14.Core('email', 'password', 'secret answer', platform='xbox', emulate='and', debug=True)
     >>> # PLATFORM: pc / ps3 / xbox / and / ios     (pc default)
+    >>> # EMULATE: and / ios (use this feature to avoid webapp errors [feature disabled])
     >>> # DEBUG: save http response to fut14.log)
 
     >>> items = fut.searchAuctions('development',  # search items
@@ -62,10 +65,14 @@ Usage
 
     >>> fut.credits  # it's updated automatically on every request
     0
-    >>> fut.tradepile_size
+    >>> fut.tradepile_size  # tradepile size (slots)
     80
-    >>> fut.watchlist_size
+    >> len(fut.tradepile())  # tradepile fulfilment (number of cards in tradepile)
+    20
+    >>> fut.watchlist_size  # watchlist size (slots)
     30
+    >> len(fut.watchlist())  # watchlist fulfilment (number of cards in watchlist)
+    10
 
     >>> items = fut.tradepile()  # get all items from trade pile
     >>> items = fut.unassigned()  # get all unassigned items

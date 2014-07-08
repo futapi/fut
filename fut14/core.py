@@ -15,12 +15,12 @@ try:
 except ImportError:
     import json
 
-from .config import headers
+from .config import headers, headers_and, headers_ios
 from .log import logger
 from .urls import urls
 from .exceptions import (Fut14Error, ExpiredSession, InternalServerError,
                          UnknownError, PermissionDenied, Conflict,
-                         MultipleSession)
+                         MultipleSession, FeatureDisabled)
 from .EAHashingAlgorithm import EAHashingAlgorithm
 
 
@@ -66,6 +66,7 @@ def itemParse(item_data):
             'training':      item_data['itemData']['training'],
             'suspension':    item_data['itemData']['suspension'],
             'contract':      item_data['itemData']['contract'],
+            #'position':      item_data['itemData']['preferredPosition'],
             'playStyle':     item_data['itemData'].get('playStyle'),  # used only for players
             'discardValue':  item_data['itemData']['discardValue'],
             'itemType':      item_data['itemData']['itemType'],
@@ -73,6 +74,10 @@ def itemParse(item_data):
             'offers':        item_data.get('offers'),
             'currentBid':    item_data.get('currentBid'),
             'expires':       item_data.get('expires'),  # seconds left
+            #'sellerEstablished': item_data.get('sellerEstablished'),
+            #'sellerId':      item_data.get('sellerId'),
+            #'sellerName':    item_data.get('sellerName'),
+            #'watched':    item_data.get('watched'),
         }
 
 '''  # different urls (platforms)
@@ -85,24 +90,48 @@ def cardInfo(resource_id):
 
 
 class Core(object):
-    def __init__(self, email, passwd, secret_answer, platform='pc', debug=False):
+    def __init__(self, email, passwd, secret_answer, platform='pc', emulate=None, debug=False):
         self.debug = debug
         if self.debug: self.logger = logger('DEBUG')
         # TODO: validate fut request response (200 OK)
-        self.email = email
-        self.passwd = passwd
-        self.secret_answer_hash = EAHashingAlgorithm().EAHash(secret_answer)
-        self.platform = platform
-        self.credits = 0
-        self.__login__(self.email, self.passwd, self.secret_answer_hash)
+        self.__login__(email, passwd, secret_answer, platform, emulate)
 
-    def __login__(self, email, passwd, secret_answer_hash):
+    def __login__(self, email, passwd, secret_answer, platform='pc', emulate=None):
         """Just log in."""
         # TODO: split into smaller methods
+        secret_answer_hash = EAHashingAlgorithm().EAHash(secret_answer)
+        self.credits = 0
         # create session
         self.r = requests.Session()  # init/reset requests session object
-        self.r.headers = headers.copy()  # i'm chrome browser now ;-)
-        self.urls = urls(self.platform)
+        if emulate == 'and':
+            self.r.headers = headers_and.copy()  # i'm android now ;-)
+        elif emulate == 'ios':
+            self.r.headers = headers_ios.copy()  # i'm ios phone now ;-)
+        else:
+            self.r.headers = headers.copy()  # i'm chrome browser now ;-)
+        self.urls = urls(platform)
+        # emulate
+        if emulate == 'ios':
+            sku = 'FUT14IOS'
+            clientVersion = 8
+        elif emulate == 'and':
+            sku = 'FUT14AND'
+            clientVersion = 8
+#        TODO: need more info about log in procedure in game
+#        elif emulate == 'xbox':
+#            sku = 'FFA14XBX'  # FFA14CAP ?
+#            clientVersion = 1
+#        elif emulate == 'ps3':
+#            sku = 'FFA14PS3'  # FFA14KTL ?
+#            clientVersion = 1
+#        elif emulate == 'pc':
+#            sku = ''  # dunno
+#            clientVersion = 1
+        elif not emulate:
+            sku = 'FUT14WEB'
+            clientVersion = 1
+        else:
+            raise Fut14Error('Invalid emulate parameter. (Valid ones are and/ios).')  # pc/ps3/xbox/
         # === login
         self.urls['login'] = self.r.get(self.urls['fut_home']).url
         self.r.headers['Referer'] = self.urls['main_site']  # prepare headers
@@ -153,12 +182,12 @@ class Core(object):
             'Origin': 'http://www.easports.com',
         })
         data = {'isReadOnly': False,
-                'sku': 'FUT14WEB',
-                'clientVersion': 1,
+                'sku': sku,
+                'clientVersion': clientVersion,
                 'nuc': self.nucleus_id,
                 'nucleusPersonaId': self.persona_id,
                 'nucleusPersonaDisplayName': self.persona_name,
-                'nucleusPersonaPlatform': self.platform,
+                'nucleusPersonaPlatform': platform,
                 'locale': 'en-GB',
                 'method': 'authcode',
                 'priorityLevel': 4,
@@ -181,7 +210,7 @@ class Core(object):
         rc = rc.json()
         if rc.get('string') != 'Already answered question.':
             # answer question
-            data = {'answer': self.secret_answer_hash}
+            data = {'answer': secret_answer_hash}
             self.r.headers['Content-Type'] = 'application/x-www-form-urlencoded'  # requests bug?
             rc = self.r.post(self.urls['fut_validate'], data=data)
             if self.debug: self.logger.debug(rc.content)
@@ -244,6 +273,8 @@ class Core(object):
                     raise PermissionDenied
                 elif rc.get('string') == 'Conflict':
                     raise Conflict
+                elif rc.get('string') == 'Feature Disabled':
+                    raise FeatureDisabled
                 else:
                     raise UnknownError(rc.__str__())
             # update credits
@@ -342,6 +373,28 @@ class Core(object):
         else:
             return False
 
+    def club(self, count=10, level=10, type=1, start=0):
+        """
+            Returns items in your club, excluding consumables
+
+            count - the number of cards you want to request
+            level - Not quite sure, It always seems to be 10
+            type - the type of card that you need:
+                set to 1 for players
+                set to 100 for staff
+                set to 142 for club items
+            start - position to start from
+        """
+        data = {'count': count, 'level': level, 'type': type, 'start': start}
+        rc = self.__get__(self.urls['fut']['Club'], data=json.dumps(data))
+        return [itemParse({'itemData': i}) for i in rc['itemData']]
+
+    def squad(self, squad_num=0):
+        """Return a squad."""
+        url = '{}/{}'.format(self.urls['fut']['Squad'], squad_num)
+        rc = self.__get__(url)
+        return rc
+
     def tradepile(self):
         """Returns items in tradepile."""
         rc = self.__get__(self.urls['fut']['TradePile'])
@@ -397,14 +450,17 @@ class Core(object):
         return self.__sendToPile__('watchlist', trade_id)
 
     def relist(self, clean=False):
-        """Relist all tradepile."""
+        """Relist all tradepile. Returns True or number of deleted (sold) if clean was set."""
         # TODO: return relisted ids
         self.__put__(self.urls['fut']['SearchAuctionsReListItem'])
         #{"tradeIdList":[{"id":139632781208},{"id":139632796467}]}
         if clean:  # remove sold cards
+            sold = 0
             for i in self.tradepile():
                 if i['tradeState'] == 'closed':
                     self.tradepileDelete(i['tradeId'])
+                    sold += 1
+            return sold
         return True
 
     def keepalive(self):
@@ -416,3 +472,42 @@ class Core(object):
         rc = self.__get__(self.urls['fut']['PileSize'])['entries']
         return {'tradepile': rc[0]['value'],
                 'watchlist': rc[2]['value']}
+
+    def stats(self):
+        """Returns all stats."""
+        # won-draw-loss
+        rc = self.__get__(self.urls['fut']['user'])
+        data = {
+            'won': rc['won'],
+            'draw': rc['draw'],
+            'loss': rc['loss'],
+            'matchUnfinishedTime': rc['reliability']['matchUnfinishedTime'],
+            'finishedMatches': rc['reliability']['finishedMatches'],
+            'reliability': rc['reliability']['reliability'],
+            'startedMatches': rc['reliability']['startedMatches'],
+        }
+        # leaderboard
+        url = '{}/alltime/user/{}'.format(self.urls['fut']['LeaderboardEntry'], self.persona_id)
+        rc = self.__get__(url)
+        data.update({
+            'earnings': rc['category'][0]['score']['value'],   #competitor
+            'transfer': rc['category'][1]['score']['value'],   #trader
+            'club_value': rc['category'][2]['score']['value'], #collector
+            'top_squad': rc['category'][3]['score']['value']   #builder
+            })
+        return data
+
+    def clubInfo(self):
+        """Returns getReliability"""
+        # TODO?: return specific club
+        rc = self.__get__(self.urls['fut']['user'])
+        return {
+            'personaName': rc['personaName'],
+            'clubName': rc['clubName'],
+            'clubAbbr': rc['clubAbbr'],
+            'established': rc['established'],
+            'divisionOffline': rc['divisionOffline'],
+            'divisionOnline': rc['divisionOnline'],
+            'trophies': rc['trophies'],
+            'seasonTicket': rc['seasonTicket']
+        }
