@@ -24,6 +24,9 @@ class ExpiredSession(Fut14Error):
 class InternalServerError(Fut14Error):
     """[500] Internal Server Error (ut). (invalid parameters?)"""
 
+class MaxSessions(Fut14Error):
+    """[503] Service Unavailable (ut) - max session."""
+
 class FeatureDisabled(Fut14Error):
     """[480] Feature Disabled."""
 
@@ -38,6 +41,10 @@ class Unauthorized(Fut14Error):
 
 class MultipleSession(Unauthorized):
     """[401] Unauthorized (ut) - multiple session."""
+
+#class doLoginFail(Forbidden):
+class doLoginFail(Unauthorized):
+    """[403] Forbidden (ut)."""
 
 '''
 class InvalidCookie(Fut14Error):
