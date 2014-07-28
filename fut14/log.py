@@ -30,7 +30,7 @@ def logger(save=False):
         logger_handler = logging.FileHandler(log_file_path)
         logger_handler.setFormatter(logging.Formatter(logformat))
     else:
-        logger_handler = logging.NullHandler()
+        logger_handler = NullHandler()
 
     logger.addHandler(logger_handler)
 
