@@ -9,6 +9,12 @@ This module implements the fut14's logger.
 """
 
 import logging
+try:
+    from logging import NullHandler
+except ImportError:
+    class NullHandler(logging.Handler):
+        def emit(self, record):
+            pass
 
 
 def logger(save=False):
