@@ -325,7 +325,7 @@ class Core(object):
             data = {"itemData": [{"pile": pile, "id": str(item_id)}]}
 
         rc = self.__put__(self.urls['fut']['Item'], data=json.dumps(data))
-        return rc
+        return rc['itemData'][0]['success']
 
     def baseId(self, *args, **kwargs):
         """Alias for baseId."""
@@ -377,9 +377,9 @@ class Core(object):
             url = '{0}/{1}/bid'.format(self.urls['fut']['PostBid'], trade_id)
             rc = self.__put__(url, data=json.dumps(data))['auctionInfo'][0]
         if rc['bidState'] == 'highest' or (rc['tradeState'] == 'closed' and rc['bidState'] == 'buyNow'):  # checking 'tradeState' is required?
-            return True,rc
+            return True
         else:
-            return False,rc
+            return False
 
     def club(self, count=10, level=10, type=1, start=0):
         """
@@ -447,8 +447,7 @@ class Core(object):
         """Sends to tradepile (alias for __sendToPile__)."""
         if safe and len(self.tradepile()) >= self.tradepile_size:  # TODO?: optimization (don't parse items in tradepile)
             return False
-        rc = self.__sendToPile__('trade', trade_id, item_id)
-        return rc
+        return self.__sendToPile__('trade', trade_id, item_id)
 
     def sendToClub(self, trade_id, item_id):
         """Sends to club (alias for __sendToPile__)."""
