@@ -92,8 +92,10 @@ def cardInfo(resource_id):
 
 class Core(object):
     def __init__(self, email, passwd, secret_answer, platform='pc', emulate=None, debug=False):
-        self.debug = debug
-        if self.debug: self.logger = logger('DEBUG')
+        if debug:  # save full log to file (fut14.log)
+            self.logger = logger(save=True)
+        else:  # NullHandler
+            self.logger = logger()
         # TODO: validate fut request response (200 OK)
         self.__login__(email, passwd, secret_answer, platform, emulate)
 
@@ -143,14 +145,14 @@ class Core(object):
                 '_eventId': 'submit',
                 'facebookAuth': ''}
         rc = self.r.post(self.urls['login'], data=data)
-        if self.debug: self.logger.debug(rc.content)
+        self.logger.debug(rc.content)
         # TODO: catch invalid data exception
         #self.nucleus_id = re.search('userid : "([0-9]+)"', rc.text).group(1)  # we'll get it later
 
         # === lanuch futweb
         self.r.headers['Referer'] = self.urls['fut_home']  # prepare headers
         rc = self.r.get(self.urls['futweb'])
-        if self.debug: self.logger.debug(rc.content)
+        self.logger.debug(rc.content)
         rc = rc.text
         if 'EASW_ID' not in rc:
             raise Fut14Error('Error during login process (probably invalid email or password).')
@@ -169,7 +171,7 @@ class Core(object):
             'Referer': self.urls['futweb'],
         })
         rc = self.r.get(self.urls['acc_info'])
-        if self.debug: self.logger.debug(rc.content)
+        self.logger.debug(rc.content)
         rc = rc.json()['userAccountInfo']['personas'][0]
         self.persona_id = rc['personaId']
         self.persona_name = rc['personaName']
@@ -194,7 +196,7 @@ class Core(object):
                 'priorityLevel': 4,
                 'identification': {'AuthCode': ''}}
         rc = self.r.post(self.urls['fut']['authentication'], data=json.dumps(data))
-        if self.debug: self.logger.debug(rc.content)
+        self.logger.debug(rc.content)
         if rc.status_code == 500:
             raise InternalServerError('Servers are probably temporary down.')
         rc = rc.json()
@@ -213,14 +215,14 @@ class Core(object):
         self.r.headers['Accept'] = 'text/json'  # prepare headers
         del self.r.headers['Origin']
         rc = self.r.get(self.urls['fut_question'])
-        if self.debug: self.logger.debug(rc.content)
+        self.logger.debug(rc.content)
         rc = rc.json()
         if rc.get('string') != 'Already answered question.':
             # answer question
             data = {'answer': secret_answer_hash}
             self.r.headers['Content-Type'] = 'application/x-www-form-urlencoded'  # requests bug?
             rc = self.r.post(self.urls['fut_validate'], data=data)
-            if self.debug: self.logger.debug(rc.content)
+            self.logger.debug(rc.content)
             rc = rc.json()
             if rc['string'] != 'OK':  # we've got error
                 if 'Answers do not match' in rc['reason']:
@@ -261,9 +263,9 @@ class Core(object):
         """Prepares headers and sends request. Returns response as a json object."""
         # TODO: update credtis?
         self.r.headers['X-HTTP-Method-Override'] = method.upper()
-        if self.debug: self.logger.debug("request: {0} args={1};  kwargs={2}".format(url, args, kwargs))
+        self.logger.debug("request: {0} args={1};  kwargs={2}".format(url, args, kwargs))
         rc = self.r.post(url, *args, **kwargs)
-        if self.debug: self.logger.debug("response: {0}".format(rc.content))
+        self.logger.debug("response: {0}".format(rc.content))
         if not rc.ok:  # status != 200
             raise UnknownError(rc.content)
         if rc.text == '':
