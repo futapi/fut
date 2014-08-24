@@ -19,9 +19,9 @@ from .config import headers, headers_and, headers_ios
 from .log import logger
 from .urls import urls
 from .exceptions import (Fut14Error, ExpiredSession, InternalServerError,
-                         UnknownError, PermissionDenied, Conflict,
-                         MaxSessions, MultipleSession, FeatureDisabled,
-                         doLoginFail)
+                         UnknownError, PermissionDenied, Captcha,
+                         Conflict, MaxSessions, MultipleSession,
+                         FeatureDisabled, doLoginFail)
 from .EAHashingAlgorithm import EAHashingAlgorithm
 
 
@@ -281,6 +281,8 @@ class Core(object):
                     raise InternalServerError
                 elif rc.get('string') == 'Permission Denied':
                     raise PermissionDenied
+                elif rc.get('string') == 'Captcha Triggered':
+                    raise Captcha
                 elif rc.get('string') == 'Conflict':
                     raise Conflict
                 elif rc.get('string') == 'Feature Disabled':

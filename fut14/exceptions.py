@@ -33,6 +33,9 @@ class FeatureDisabled(Fut14Error):
 class PermissionDenied(Fut14Error):
     """[461] Permission Denied. (outbid?)"""
 
+class Captcha(Fut14Error):
+    """[459] Captcha Triggered."""
+
 class Conflict(Fut14Error):
     """[409] Conflict. (You'r trying to sell somebody's item, don't you ;-)?)"""
 
