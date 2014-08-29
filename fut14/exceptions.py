@@ -24,11 +24,17 @@ class ExpiredSession(Fut14Error):
 class InternalServerError(Fut14Error):
     """[500] Internal Server Error (ut). (invalid parameters?)"""
 
+class MaxSessions(Fut14Error):
+    """[503] Service Unavailable (ut) - max session."""
+
 class FeatureDisabled(Fut14Error):
     """[480] Feature Disabled."""
 
 class PermissionDenied(Fut14Error):
     """[461] Permission Denied. (outbid?)"""
+
+class Captcha(Fut14Error):
+    """[459] Captcha Triggered."""
 
 class Conflict(Fut14Error):
     """[409] Conflict. (You'r trying to sell somebody's item, don't you ;-)?)"""
@@ -38,6 +44,10 @@ class Unauthorized(Fut14Error):
 
 class MultipleSession(Unauthorized):
     """[401] Unauthorized (ut) - multiple session."""
+
+#class doLoginFail(Forbidden):
+class doLoginFail(Unauthorized):
+    """[403] Forbidden (ut)."""
 
 '''
 class InvalidCookie(Fut14Error):

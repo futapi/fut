@@ -7,7 +7,7 @@ except ImportError:
 
 
 __title__ = 'fut14'
-__version__ = '0.0.14'
+__version__ = '0.0.15'
 __author__ = 'Piotr Staroszczyk'
 __author_email__ = 'piotr.staroszczyk@get24.org'
 __license__ = 'GNU GPL v3'
@@ -21,11 +21,15 @@ packages = [
 with open('requirements.txt') as f:
     requires = f.read().splitlines()
 
+with open('README.rst') as f1:
+    with open('CHANGELOG.rst') as f2:
+        long_desc = f1.read() + '\n\n' + f2.read()
+
 setup(
     name=__title__,
     version=__version__,
     description='fut14 is a simple library for managing Fifa 14 Ultimate Team.',
-    long_description=open('README.rst').read(),
+    long_description=long_desc,
     author=__author__,
     author_email=__author_email__,
     url='https://github.com/oczkers/%s' % __title__,
