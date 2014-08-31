@@ -17,3 +17,4 @@ Patches and Suggestions
 - mvillarejo
 - Mauro Marano
 - Innursery
+- Arthur Nogueira Neves @arthurnn
