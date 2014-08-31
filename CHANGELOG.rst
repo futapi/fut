@@ -4,6 +4,11 @@ Changelog
 ---------
 
 
+0.0.16 (2014-08-31)
+++++++++++++++++++
+* #76 fix buying (thanks to arthurnn)
+
+
 0.0.15 (2014-08-29)
 ++++++++++++++++++
 * add new exceptions: doLoginFail, MaxSessions, Captcha
