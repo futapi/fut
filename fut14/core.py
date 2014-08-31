@@ -375,7 +375,7 @@ class Core(object):
 
     def bid(self, trade_id, bid):
         """Make a bid."""
-        rc = self.__get__(self.urls['fut']['PostBid'], params={'tradeIds': trade_id})['auctionInfo'][0]
+        rc = self.__get__(self.urls['fut']['TradeStatus'], params={'tradeIds': trade_id})['auctionInfo'][0]
         if rc['currentBid'] < bid and self.credits >= bid:
             data = {'bid': bid}
             url = '{0}/{1}/bid'.format(self.urls['fut']['PostBid'], trade_id)
