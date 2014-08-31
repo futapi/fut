@@ -4,6 +4,14 @@ Changelog
 ---------
 
 
+0.0.15 (2014-08-29)
+++++++++++++++++++
+* add new exceptions: doLoginFail, MaxSessions, Captcha
+* add changelog
+* NullHandler is default logging handler
+* core: bump clientVersion (8->9)
+
+
 0.0.14 (2014-07-06)
 ++++++++++++++++++
 
