@@ -7,7 +7,7 @@ test-deps:
 	pip install -r requirements.txt
 
 six:
-	python test_fut14.py
+	python test_fut.py
 
 deps: requests
 

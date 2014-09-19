@@ -4,7 +4,7 @@ import requests
 import xmltodict
 from time import time
 
-from .exceptions import Fut14Error
+from .exceptions import FutError
 
 # TODO: add timestamp dynamic (just right before every request)
 
@@ -12,7 +12,7 @@ def __updateUrls__(urls):
         """Gets services urls."""
         rc = xmltodict.parse(requests.get(urls['fut_config']).content)
         services = rc['main']['services']['prod']
-        path = '{0}{1}game/fifa14/'.format(urls['fut_host'], rc['main']['directHttpServiceDestination'])
+        path = '{0}{1}game/fifa/'.format(urls['fut_host'], rc['main']['directHttpServiceDestination'])
         path_auth = '{0}/iframe/fut{1}'.format(urls['main_site'].replace('https', 'http'),  # it's not working with ssl...
                                                   rc['main']['httpServiceDestination'])
         for i in services:
@@ -50,6 +50,6 @@ def urls(platform):
     if platform in urls['fut_host']:
         urls['fut_host'] = urls['fut_host'][platform]
     else:
-        raise Fut14Error('Invalid platform. (Valid ones are pc/ps3/xbox/and/ios).')
+        raise FutError('Invalid platform. (Valid ones are pc/ps3/xbox/and/ios).')
 
     return __updateUrls__(urls)

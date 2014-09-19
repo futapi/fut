@@ -1,19 +1,19 @@
-fut14
+fut
 =====
 
-.. image:: https://travis-ci.org/oczkers/fut14.png?branch=master
-        :target: https://travis-ci.org/oczkers/fut14
+.. image:: https://travis-ci.org/oczkers/fut.png?branch=master
+        :target: https://travis-ci.org/oczkers/fut
 
-fut14 is a simple library for managing Fifa 14 Ultimate Team.
+fut is a simple library for managing Fifa Ultimate Team.
 It is written entirely in Python.
 
 
 
 Documentation
 -------------
-Documentation is available at http://fut14.readthedocs.org/.
+Documentation is available at http://fut.readthedocs.org/.
 
-Players database: http://cdn.content.easports.com/fifa/fltOnlineAssets/C74DDF38-0B11-49b0-B199-2E2A11D1CC13/2014/fut/items/web/players.json
+Players database: http://cdn.content.easports.com/fifa/fltOnlineAssets/8D941B48-51BB-4B87-960A-06A61A62EBC0/2015/fut/items/web/players.json
 
 
 
@@ -22,11 +22,11 @@ Usage
 
 .. code-block:: pycon
 
-    >>> import fut14
-    >>> fut = fut14.Core('email', 'password', 'secret answer', platform='xbox', emulate='and', debug=True)
+    >>> import fut
+    >>> fut = fut.Core('email', 'password', 'secret answer', platform='xbox', emulate='and', debug=True)
     >>> # PLATFORM: pc / ps3 / xbox / and / ios     (pc default)
     >>> # EMULATE: and / ios (use this feature to avoid webapp errors [BE WARE IT'S HIGH RISK])
-    >>> # DEBUG: save http response to fut14.log)
+    >>> # DEBUG: save http response to fut.log)
 
     >>> items = fut.searchAuctions('development',  # search items
     ...     level='gold', category='fitness', min_price=300,  # optional parametrs

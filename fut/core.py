@@ -1,10 +1,10 @@
 # -*- coding: utf-8 -*-
 
 """
-fut14.core
+fut.core
 ~~~~~~~~~~~~~~~~~~~~~
 
-This module implements the fut14's basic methods.
+This module implements the fut's basic methods.
 
 """
 
@@ -18,7 +18,7 @@ except ImportError:
 from .config import headers, headers_and, headers_ios
 from .log import logger
 from .urls import urls
-from .exceptions import (Fut14Error, ExpiredSession, InternalServerError,
+from .exceptions import (FutError, ExpiredSession, InternalServerError,
                          UnknownError, PermissionDenied, Captcha,
                          Conflict, MaxSessions, MultipleSession,
                          FeatureDisabled, doLoginFail)
@@ -92,7 +92,7 @@ def cardInfo(resource_id):
 
 class Core(object):
     def __init__(self, email, passwd, secret_answer, platform='pc', emulate=None, debug=False):
-        if debug:  # save full log to file (fut14.log)
+        if debug:  # save full log to file (fut.log)
             self.logger = logger(save=True)
         else:  # NullHandler
             self.logger = logger()
@@ -134,7 +134,7 @@ class Core(object):
             sku = 'FUT14WEB'
             clientVersion = 1
         else:
-            raise Fut14Error('Invalid emulate parameter. (Valid ones are and/ios).')  # pc/ps3/xbox/
+            raise FutError('Invalid emulate parameter. (Valid ones are and/ios).')  # pc/ps3/xbox/
         # === login
         self.urls['login'] = self.r.get(self.urls['fut_home']).url
         self.r.headers['Referer'] = self.urls['main_site']  # prepare headers
@@ -155,7 +155,7 @@ class Core(object):
         self.logger.debug(rc.content)
         rc = rc.text
         if 'EASW_ID' not in rc:
-            raise Fut14Error('Error during login process (probably invalid email or password).')
+            raise FutError('Error during login process (probably invalid email or password).')
         self.nucleus_id = re.search("var EASW_ID = '([0-9]+)';", rc).group(1)
         #self.urls['fut_base'] = re.search("var BASE_FUT_URL = '(https://.+?)';", rc).group(1)
         #self.urls['fut_home'] = re.search("var GUEST_APP_URI = '(http://.+?)';", rc).group(1)
@@ -226,7 +226,7 @@ class Core(object):
             rc = rc.json()
             if rc['string'] != 'OK':  # we've got error
                 if 'Answers do not match' in rc['reason']:
-                    raise Fut14Error('Error during login process (invalid secret answer).')
+                    raise FutError('Error during login process (invalid secret answer).')
                 else:
                     raise UnknownError
             self.r.headers['Content-Type'] = 'application/json'

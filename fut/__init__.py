@@ -1,14 +1,14 @@
 # -*- coding: utf-8 -*-
 
 """
-fut14
+fut
 ~~~~~~~~~~~~~~~~~~~~~
 
-fut14 is a simple library for managing Fifa 14 Ultimate Team.
+fut is a simple library for managing Fifa Ultimate Team.
 
 Usage:
 
-    >>> import fut14
+    >>> import fut
     to be continued ;-)
 
 
@@ -17,7 +17,7 @@ Usage:
 
 """
 
-__title__ = 'fut14'
+__title__ = 'fut'
 __version__ = '0.0.16'
 __author__ = 'Piotr Staroszczyk'
 __author_email__ = 'piotr.staroszczyk@get24.org'

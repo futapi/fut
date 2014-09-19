@@ -2,12 +2,12 @@ docs/_build
 *.pyc
 build/
 dist/
-fut14.egg-info/
+fut.egg-info/
 test.py
 testemu.py
 log.log
 content.log
 error.log
-fut14.log
+fut.log
 test.log
 testemu.py

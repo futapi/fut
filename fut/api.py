@@ -1,10 +1,10 @@
 # -*- coding: utf-8 -*-
 
 """
-fut14.api
+fut.api
 ~~~~~~~~~~~~~~~~~~~~~
 
-This module implements the fut14's API.
+This module implements the fut's API.
 
 """
 

@@ -1,15 +1,15 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-"""Tests for fut14."""
+"""Tests for fut."""
 
 import unittest
 
-import fut14
-from fut14.exceptions import Fut14Error
+import fut
+from fut.exceptions import FutError
 
 
-class Fut14TestCase(unittest.TestCase):
+class FutTestCase(unittest.TestCase):
 
     #_multiprocess_can_split_ = True
 
@@ -20,10 +20,10 @@ class Fut14TestCase(unittest.TestCase):
         pass
 
     def testEntryPoints(self):
-        fut14.Core
+        fut.Core
 
     def testInvalidAccount(self):
-        self.assertRaises(Fut14Error, fut14.Core, 'test', 'test', 'test')
+        self.assertRaises(FutError, fut.Core, 'test', 'test', 'test')
 
 
 if __name__ == '__main__':

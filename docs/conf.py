@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# fut14 documentation build configuration file, created by
+# fut documentation build configuration file, created by
 # sphinx-quickstart on Thu Jan 16 00:01:22 2014.
 #
 # This file is execfile()d with the current directory set to its containing dir.
@@ -17,7 +17,7 @@ import sys, os
 # add these directories to sys.path here. If the directory is relative to the
 # documentation root, use os.path.abspath to make it absolute, like shown here.
 sys.path.insert(0, os.path.abspath('..'))
-from fut14 import __title__, __version__, __author__
+from fut import __title__, __version__, __author__
 
 # -- General configuration -----------------------------------------------------
 
