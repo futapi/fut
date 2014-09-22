@@ -6,16 +6,16 @@ except ImportError:
     from distutils.core import setup
 
 
-__title__ = 'fut14'
-__version__ = '0.0.16'
+__title__ = 'fut'
+__version__ = '0.0.17'
 __author__ = 'Piotr Staroszczyk'
 __author_email__ = 'piotr.staroszczyk@get24.org'
 __license__ = 'GNU GPL v3'
 __copyright__ = 'Copyright 2013 Piotr Staroszczyk'
 
 packages = [
-    'fut14',
-    #'fut14.modules',
+    'fut',
+    #'fut.modules',
 ]
 
 with open('requirements.txt') as f:
@@ -28,7 +28,7 @@ with open('README.rst') as f1:
 setup(
     name=__title__,
     version=__version__,
-    description='fut14 is a simple library for managing Fifa 14 Ultimate Team.',
+    description='fut is a simple library for managing Fifa Ultimate Team.',
     long_description=long_desc,
     author=__author__,
     author_email=__author_email__,
@@ -36,10 +36,10 @@ setup(
     download_url='https://github.com/oczkers/%s/releases' % __title__,
     bugtrack_url='https://github.com/oczkers/%s/issues' % __title__,
     platforms='any',
-    keywords='fut fut14 fifa fifa14 fifa2014 ultimate team ut 14 2014 pc xbox android ios 360 ps3 playstation',
+    keywords='fut fifa ultimate team ut pc xbox android ios 360 ps3 playstation',
     packages=packages,
     package_data={'': ['LICENSE']},
-    package_dir={'fut14': 'fut14'},
+    package_dir={'fut': 'fut'},
     include_package_data=True,
     install_requires=requires,
     #license=open('LICENSE').read(),
@@ -66,7 +66,7 @@ setup(
     ),
 #    entry_points={
 #        'console_scripts': [
-#            'fut14 = fut14.cli:main',
+#            'fut = fut.cli:main',
 #        ]
 #    }
 )

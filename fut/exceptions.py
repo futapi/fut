@@ -1,45 +1,45 @@
 # -*- coding: utf-8 -*-
 
 """
-fut14.exceptions
+fut.exceptions
 ~~~~~~~~~~~~~~~~~~~
 
-This module contains the set of fut14's exceptions.
+This module contains the set of fut's exceptions.
 
 """
 
 
-class Fut14Error(RuntimeError):
+class FutError(RuntimeError):
     """There was an ambiguous exception that occurred while handling
     your request."""
 
-class UnknownError(Fut14Error):
+class UnknownError(FutError):
     """Unknown error, please report full log at
-    https://github.com/oczkers/fut14/issues/24"""
+    https://github.com/oczkers/fut/issues/24"""
 
-class ExpiredSession(Fut14Error):
+class ExpiredSession(FutError):
     """Session has expired,
     you should send at least one request every ~10 minutes."""
 
-class InternalServerError(Fut14Error):
+class InternalServerError(FutError):
     """[500] Internal Server Error (ut). (invalid parameters?)"""
 
-class MaxSessions(Fut14Error):
+class MaxSessions(FutError):
     """[503] Service Unavailable (ut) - max session."""
 
-class FeatureDisabled(Fut14Error):
+class FeatureDisabled(FutError):
     """[480] Feature Disabled."""
 
-class PermissionDenied(Fut14Error):
+class PermissionDenied(FutError):
     """[461] Permission Denied. (outbid?)"""
 
-class Captcha(Fut14Error):
+class Captcha(FutError):
     """[459] Captcha Triggered."""
 
-class Conflict(Fut14Error):
+class Conflict(FutError):
     """[409] Conflict. (You'r trying to sell somebody's item, don't you ;-)?)"""
 
-class Unauthorized(Fut14Error):
+class Unauthorized(FutError):
     """[401] Unauthorized (ut)."""
 
 class MultipleSession(Unauthorized):
@@ -50,6 +50,6 @@ class doLoginFail(Unauthorized):
     """[403] Forbidden (ut)."""
 
 '''
-class InvalidCookie(Fut14Error):
+class InvalidCookie(FutError):
     """[482] Invalid cookie."""
 '''

@@ -1,14 +1,14 @@
-.. fut14 documentation master file, created by
+.. fut documentation master file, created by
    sphinx-quickstart on Thu Jan 16 00:01:22 2014.
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
-Welcome to fut14's documentation!
+Welcome to fut's documentation!
 =================================
 
 Release v\ |version|. (:ref:`Installation <install>`)
 
-fut14 is a simple library for managing Fifa 14 Ultimate Team.
+fut is a simple library for managing Fifa 14 Ultimate Team.
 
 
 

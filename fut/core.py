@@ -1,10 +1,10 @@
 # -*- coding: utf-8 -*-
 
 """
-fut14.core
+fut.core
 ~~~~~~~~~~~~~~~~~~~~~
 
-This module implements the fut14's basic methods.
+This module implements the fut's basic methods.
 
 """
 
@@ -18,7 +18,7 @@ except ImportError:
 from .config import headers, headers_and, headers_ios
 from .log import logger
 from .urls import urls
-from .exceptions import (Fut14Error, ExpiredSession, InternalServerError,
+from .exceptions import (FutError, ExpiredSession, InternalServerError,
                          UnknownError, PermissionDenied, Captcha,
                          Conflict, MaxSessions, MultipleSession,
                          FeatureDisabled, doLoginFail)
@@ -92,7 +92,7 @@ def cardInfo(resource_id):
 
 class Core(object):
     def __init__(self, email, passwd, secret_answer, platform='pc', emulate=None, debug=False):
-        if debug:  # save full log to file (fut14.log)
+        if debug:  # save full log to file (fut.log)
             self.logger = logger(save=True)
         else:  # NullHandler
             self.logger = logger()
@@ -115,29 +115,29 @@ class Core(object):
         self.urls = urls(platform)
         # emulate
         if emulate == 'ios':
-            sku = 'FUT14IOS'
+            sku = 'FUT15IOS'
             clientVersion = 9
         elif emulate == 'and':
-            sku = 'FUT14AND'
+            sku = 'FUT15AND'
             clientVersion = 9
 #        TODO: need more info about log in procedure in game
 #        elif emulate == 'xbox':
-#            sku = 'FFA14XBX'  # FFA14CAP ?
+#            sku = 'FFA15XBX'  # FFA14CAP ?
 #            clientVersion = 1
 #        elif emulate == 'ps3':
-#            sku = 'FFA14PS3'  # FFA14KTL ?
+#            sku = 'FFA15PS3'  # FFA14KTL ?
 #            clientVersion = 1
 #        elif emulate == 'pc':
 #            sku = ''  # dunno
 #            clientVersion = 1
         elif not emulate:
-            sku = 'FUT14WEB'
+            sku = 'FUT15WEB'
             clientVersion = 1
         else:
-            raise Fut14Error('Invalid emulate parameter. (Valid ones are and/ios).')  # pc/ps3/xbox/
+            raise FutError('Invalid emulate parameter. (Valid ones are and/ios).')  # pc/ps3/xbox/
         # === login
         self.urls['login'] = self.r.get(self.urls['fut_home']).url
-        self.r.headers['Referer'] = self.urls['main_site']  # prepare headers
+        self.r.headers['Referer'] = self.urls['login']  # prepare headers
         data = {'email': email,
                 'password': passwd,
                 '_rememberMe': 'on',
@@ -146,6 +146,8 @@ class Core(object):
                 'facebookAuth': ''}
         rc = self.r.post(self.urls['login'], data=data)
         self.logger.debug(rc.content)
+        if self.r.get(self.urls['main_site']+'/fifa/api/isUserLoggedIn').json()['isLoggedIn'] is not True:
+            raise FutError('Error during login process (probably invalid email or password).')
         # TODO: catch invalid data exception
         #self.nucleus_id = re.search('userid : "([0-9]+)"', rc.text).group(1)  # we'll get it later
 
@@ -154,11 +156,14 @@ class Core(object):
         rc = self.r.get(self.urls['futweb'])
         self.logger.debug(rc.content)
         rc = rc.text
-        if 'EASW_ID' not in rc:
-            raise Fut14Error('Error during login process (probably invalid email or password).')
+#        if 'EASW_ID' not in rc:
+#            raise FutError('Error during login process (probably invalid email or password).')
         self.nucleus_id = re.search("var EASW_ID = '([0-9]+)';", rc).group(1)
+        self.build_cl = re.search("var BUILD_CL = '([0-9]+)';", rc).group(1)
         #self.urls['fut_base'] = re.search("var BASE_FUT_URL = '(https://.+?)';", rc).group(1)
         #self.urls['fut_home'] = re.search("var GUEST_APP_URI = '(http://.+?)';", rc).group(1)
+
+        self.urls = urls(platform, self.build_cl)
 
         # acc info
         self.r.headers.update({  # prepare headers
@@ -187,7 +192,7 @@ class Core(object):
         data = {'isReadOnly': False,
                 'sku': sku,
                 'clientVersion': clientVersion,
-                'nuc': self.nucleus_id,
+                #'nuc': self.nucleus_id,
                 'nucleusPersonaId': self.persona_id,
                 'nucleusPersonaDisplayName': self.persona_name,
                 'nucleusPersonaPlatform': platform,
@@ -226,7 +231,7 @@ class Core(object):
             rc = rc.json()
             if rc['string'] != 'OK':  # we've got error
                 if 'Answers do not match' in rc['reason']:
-                    raise Fut14Error('Error during login process (invalid secret answer).')
+                    raise FutError('Error during login process (invalid secret answer).')
                 else:
                     raise UnknownError
             self.r.headers['Content-Type'] = 'application/json'

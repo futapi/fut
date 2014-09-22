@@ -1,4 +1,4 @@
-Fut14 is written and maintained by Piotr Staroszczyk and various contributors:
+Fut is written and maintained by Piotr Staroszczyk and various contributors:
 
 Development Lead
 ````````````````
