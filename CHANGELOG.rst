@@ -4,6 +4,12 @@ Changelog
 ---------
 
 
+0.0.17 (2014-09-22)
+++++++++++++++++++
+* rename project (fut14->fut)
+* fut15 (drop support for fifa 14)
+
+
 0.0.16 (2014-08-31)
 ++++++++++++++++++
 * #76 fix buying (thanks to arthurnn)
