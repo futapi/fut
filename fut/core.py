@@ -528,3 +528,16 @@ class Core(object):
             'trophies': rc['trophies'],
             'seasonTicket': rc['seasonTicket']
         }
+
+    def messages(self):
+        """Return active messages."""
+        rc = self.__get__(self.urls['fut']['ActiveMessage'])
+        try:
+            return rc['activeMessage']
+        except:
+            raise UnknownError('Invalid activeMessage response')
+
+    def messageDelete(self, message_id):
+        """Deletes the specified message, by id."""
+        url = '{}/{}'.format(self.urls['fut']['ActiveMessage'], message_id)
+        rc = self.__delete__(url)
