@@ -116,7 +116,7 @@ class Core(object):
         # emulate
         if emulate == 'ios':
             sku = 'FUT15IOS'
-            clientVersion = 9
+            clientVersion = 11
         elif emulate == 'and':
             sku = 'FUT15AND'
             clientVersion = 9
