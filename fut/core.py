@@ -120,7 +120,7 @@ class Core(object):
             clientVersion = 11
         elif emulate == 'and':
             sku = 'FUT15AND'
-            clientVersion = 9
+            clientVersion = 11
 #        TODO: need more info about log in procedure in game
 #        elif emulate == 'xbox':
 #            sku = 'FFA15XBX'  # FFA14CAP ?
