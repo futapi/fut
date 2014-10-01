@@ -4,6 +4,13 @@ Changelog
 ---------
 
 
+0.0.18 (2014-10-01)
+++++++++++++++++++
+* core: add methods to list and delete available messages (thanks to jamslater)
+* core: rework base id from resource id calculation, use new constant (thanks to jamslater)
+* core: update android * ios clientVersion (9->11)
+
+
 0.0.17 (2014-09-22)
 ++++++++++++++++++
 * rename project (fut14->fut)

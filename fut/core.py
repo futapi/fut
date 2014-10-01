@@ -26,21 +26,22 @@ from .EAHashingAlgorithm import EAHashingAlgorithm
 
 
 
-def baseId(resource_id, version=False):
-    """Calculates base id (assetId?)."""
-    v = 0
-    if resource_id > 1358954496:
-        resource_id -= 1342177280
-        v += 1
-    if resource_id > 67108864:
-        resource_id -= 50331648
-        v += 1
-    while resource_id > 16777216:
-        resource_id -= 16777216
-        v += 1
+def baseId(resource_id, return_version=False):
+    """Calculates base id and version from a resource id."""
+    version = 0
 
-    if version:
-        return resource_id, v
+    while resource_id > 0x01000000:
+        version += 1
+        if version == 1:
+            resource_id -= 0x70000000
+        elif version == 2:
+            resource_id -= 0x03000000
+        else:
+            resource_id -= 0x01000000
+
+    if return_version:
+        return resource_id, version
+
     return resource_id
 
 def itemParse(item_data):
@@ -116,10 +117,10 @@ class Core(object):
         # emulate
         if emulate == 'ios':
             sku = 'FUT15IOS'
-            clientVersion = 9
+            clientVersion = 11
         elif emulate == 'and':
             sku = 'FUT15AND'
-            clientVersion = 9
+            clientVersion = 11
 #        TODO: need more info about log in procedure in game
 #        elif emulate == 'xbox':
 #            sku = 'FFA15XBX'  # FFA14CAP ?
@@ -528,3 +529,16 @@ class Core(object):
             'trophies': rc['trophies'],
             'seasonTicket': rc['seasonTicket']
         }
+
+    def messages(self):
+        """Return active messages."""
+        rc = self.__get__(self.urls['fut']['ActiveMessage'])
+        try:
+            return rc['activeMessage']
+        except:
+            raise UnknownError('Invalid activeMessage response')
+
+    def messageDelete(self, message_id):
+        """Deletes the specified message, by id."""
+        url = '{}/{}'.format(self.urls['fut']['ActiveMessage'], message_id)
+        rc = self.__delete__(url)

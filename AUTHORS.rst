@@ -18,3 +18,4 @@ Patches and Suggestions
 - Mauro Marano
 - Innursery
 - Arthur Nogueira Neves @arthurnn
+- jamslater
