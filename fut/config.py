@@ -35,3 +35,5 @@ headers_ios = {
     #'DNT': '1',
     #'X-Requested-With': 'com.ea.fifaultimate_row',  # ultimate app identifier?
 }
+
+remember_filename = 'cookies.txt'

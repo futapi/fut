@@ -10,12 +10,13 @@ This module implements the fut's basic methods.
 
 import requests
 import re
+import pickle
 try:
     import simplejson as json
 except ImportError:
     import json
 
-from .config import headers, headers_and, headers_ios
+from .config import headers, headers_and, headers_ios, remember_filename
 from .log import logger
 from .urls import urls
 from .exceptions import (FutError, ExpiredSession, InternalServerError,
@@ -92,7 +93,8 @@ def cardInfo(resource_id):
 
 
 class Core(object):
-    def __init__(self, email, passwd, secret_answer, platform='pc', emulate=None, debug=False):
+    def __init__(self, email, passwd, secret_answer, platform='pc', emulate=None, debug=False, remember=False):
+        self.remember = remember
         if debug:  # save full log to file (fut.log)
             self.logger = logger(save=True)
         else:  # NullHandler
@@ -107,6 +109,10 @@ class Core(object):
         self.credits = 0
         # create session
         self.r = requests.Session()  # init/reset requests session object
+        # load saved cookies/session
+        if self.remember:
+            with open(remember_filename, 'r') as f:
+                self.r.cookies = requests.utils.cookiejar_from_dict(pickle.load(f))
         if emulate == 'and':
             self.r.headers = headers_and.copy()  # i'm android now ;-)
         elif emulate == 'ios':
@@ -258,6 +264,8 @@ class Core(object):
         self.tradepile_size = piles['tradepile']
         self.watchlist_size = piles['watchlist']
 
+        self.saveSession()
+
 #    def __shards__(self):
 #        """Returns shards info."""
 #        # TODO: headers
@@ -300,6 +308,7 @@ class Core(object):
                 self.keepalive()  # credits not avaible in response, manualy updating
             else:
                 self.credits = rc['credits']
+        self.saveSession()
         return rc
 
     def __get__(self, url, *args, **kwargs):
@@ -336,6 +345,12 @@ class Core(object):
 
         rc = self.__put__(self.urls['fut']['Item'], data=json.dumps(data))
         return rc['itemData'][0]['success']
+
+    def saveSession(self):
+        '''Saves cookies/session.'''
+        if self.remeber:
+            with open(remember_filename, 'w') as f:
+                pickle.dump(requests.utils.dict_from_cookiejar(self.r.cookies), f)
 
     def baseId(self, *args, **kwargs):
         """Alias for baseId."""
