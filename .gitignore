@@ -3,6 +3,7 @@ docs/_build
 build/
 dist/
 fut.egg-info/
+cookies.txt
 test.py
 testemu.py
 log.log
