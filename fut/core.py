@@ -378,7 +378,7 @@ class Core(object):
             raise UnknownError('Invalid definition response')
         return rc
 
-    def searchAuctions(self, ctype, level=None, category=None, assetId=None,
+    def searchAuctions(self, ctype, level=None, category=None, assetId=None, defId=None,
                        min_price=None, max_price=None, min_buy=None, max_buy=None,
                        league=None, club=None, position=None, nationality=None,
                        playStyle=None, start=0, page_size=16):
@@ -397,6 +397,7 @@ class Core(object):
         if level:       params['lev'] = level
         if category:    params['cat'] = category
         if assetId:     params['maskedDefId'] = assetId
+        if defId:       params['definitionId'] = defId
         if min_price:   params['micr'] = min_price
         if max_price:   params['macr'] = max_price
         if min_buy:     params['minb'] = min_buy
