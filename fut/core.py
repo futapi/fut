@@ -362,6 +362,22 @@ class Core(object):
         url = '{}{}.json'.format(self.urls['card_info'], baseId(resource_id))
         return requests.get(url).json()
 
+    def searchDefinition(self, asset_id, start=0, count=35):
+        """Returns variations of the given asset id, e.g. IF cards."""
+        params = {
+            'defId': asset_id,
+            'start': start,
+            'type': 'player',
+            'count': count
+        }
+
+        rc = self.__get__(self.urls['fut']['Search'], params=params)
+        try:
+            return rc['itemData']
+        except:
+            raise UnknownError('Invalid definition response')
+        return rc
+
     def searchAuctions(self, ctype, level=None, category=None, assetId=None,
                        min_price=None, max_price=None, min_buy=None, max_buy=None,
                        league=None, club=None, position=None, nationality=None,
