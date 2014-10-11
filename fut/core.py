@@ -348,7 +348,7 @@ class Core(object):
 
     def saveSession(self):
         '''Saves cookies/session.'''
-        if self.remeber:
+        if self.remember:
             with open(remember_filename, 'w') as f:
                 pickle.dump(requests.utils.dict_from_cookiejar(self.r.cookies), f)
 
