@@ -348,7 +348,7 @@ class Core(object):
 
     def saveSession(self):
         '''Saves cookies/session.'''
-        if self.remeber:
+        if self.remember:
             with open(remember_filename, 'w') as f:
                 pickle.dump(requests.utils.dict_from_cookiejar(self.r.cookies), f)
 
@@ -362,7 +362,23 @@ class Core(object):
         url = '{}{}.json'.format(self.urls['card_info'], baseId(resource_id))
         return requests.get(url).json()
 
-    def searchAuctions(self, ctype, level=None, category=None, assetId=None,
+    def searchDefinition(self, asset_id, start=0, count=35):
+        """Returns variations of the given asset id, e.g. IF cards."""
+        params = {
+            'defId': asset_id,
+            'start': start,
+            'type': 'player',
+            'count': count
+        }
+
+        rc = self.__get__(self.urls['fut']['Search'], params=params)
+        try:
+            return rc['itemData']
+        except:
+            raise UnknownError('Invalid definition response')
+        return rc
+
+    def searchAuctions(self, ctype, level=None, category=None, assetId=None, defId=None,
                        min_price=None, max_price=None, min_buy=None, max_buy=None,
                        league=None, club=None, position=None, nationality=None,
                        playStyle=None, start=0, page_size=16):
@@ -381,6 +397,7 @@ class Core(object):
         if level:       params['lev'] = level
         if category:    params['cat'] = category
         if assetId:     params['maskedDefId'] = assetId
+        if defId:       params['definitionId'] = defId
         if min_price:   params['micr'] = min_price
         if max_price:   params['macr'] = max_price
         if min_buy:     params['minb'] = min_buy
