@@ -33,8 +33,8 @@ def urls(platform, cl=None):
         'fut_config':    'http://www.easports.com/iframe/fut15/bundles/futweb/web/flash/xml/site_config.xml',
         'fut_home':      'https://www.easports.com/uk/fifa/ultimate-team/web-app',
         'fut':           {},  # it's updated dynamicly (based on fut_config)
-        'fut_question':  'http://www.easports.com/iframe/fut15/p/ut/game/fifa14/phishing/question?_=%s' % time(),
-        'fut_validate':  'http://www.easports.com/iframe/fut15/p/ut/game/fifa14/phishing/validate',
+        'fut_question':  'http://www.easports.com/iframe/fut15/p/ut/game/fifa15/phishing/question?_=%s' % time(),
+        'fut_validate':  'http://www.easports.com/iframe/fut15/p/ut/game/fifa15/phishing/validate',
 
         'fut_host':      {'pc':   'https://utas.s2.fut.ea.com:443',
                           'ps3':  'https://utas.s2.fut.ea.com:443',
@@ -44,7 +44,7 @@ def urls(platform, cl=None):
                          },
 
         'shards':        'http://www.easports.com/iframe/fut15/p/ut/shards?_=%s' % time(),
-        'acc_info':      'http://www.easports.com/iframe/fut15/p/ut/game/fifa14/user/accountinfo?_=%s' % time(),
+        'acc_info':      'http://www.easports.com/iframe/fut15/p/ut/game/fifa15/user/accountinfo?_=%s' % time(),
         'card_info':     'https://fifa15.content.easports.com/fifa/fltOnlineAssets/8D941B48-51BB-4B87-960A-06A61A62EBC0/2015/fut/items/web/',
     }
     #urls['login'] = requests.get(urls['fut_home']).url
