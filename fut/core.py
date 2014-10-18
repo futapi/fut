@@ -345,6 +345,10 @@ class Core(object):
             data = {"itemData": [{"pile": pile, "id": str(item_id)}]}
 
         rc = self.__put__(self.urls['fut']['Item'], data=json.dumps(data))
+        if rc['itemData'][0]['success']:
+            logger.info("{0} (itemId: {1}) moved to {2} Pile".format(trade_id, item_id, pile))
+        else:
+            logger.error("{0} (itemId: {1}) NOT MOVED to {2} Pile. REASON: {3}".format(trade_id, item_id, pile, rc['itemData'][0]['reason']))
         return rc['itemData'][0]['success']
 
     def saveSession(self):
