@@ -11,6 +11,7 @@ This module implements the fut's basic methods.
 import requests
 import re
 import pickle
+import os.path
 try:
     import simplejson as json
 except ImportError:
@@ -110,7 +111,7 @@ class Core(object):
         # create session
         self.r = requests.Session()  # init/reset requests session object
         # load saved cookies/session
-        if self.remember:
+        if self.remember and os.path.isfile(remember_filename):
             with open(remember_filename, 'r') as f:
                 self.r.cookies = requests.utils.cookiejar_from_dict(pickle.load(f))
         if emulate == 'and':
