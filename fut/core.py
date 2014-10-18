@@ -251,8 +251,8 @@ class Core(object):
         del self.r.headers['X-UT-Route']
         self.r.headers.update({
             #'X-HTTP-Method-Override': 'GET',  # __request__ method manages this
-            'Referer': 'http://www.easports.com/iframe/fut/bundles/futweb/web/flash/FifaUltimateTeam.swf',
-            'Origin': 'http://www.easports.com',
+            'Referer': 'https://www.easports.com/iframe/fut15/bundles/futweb/web/flash/FifaUltimateTeam.swf',
+            'Origin': 'https://www.easports.com',
             #'Content-Type': 'application/json',  # already set
             'Accept': 'application/json',
         })
