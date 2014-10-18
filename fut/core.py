@@ -94,7 +94,7 @@ def cardInfo(resource_id):
 
 
 class Core(object):
-    def __init__(self, email, passwd, secret_answer, platform='pc', emulate=None, debug=False, remember=False):
+    def __init__(self, email, passwd, secret_answer, platform='pc', emulate=None, debug=False, remember=True):
         self.remember = remember
         if debug:  # save full log to file (fut.log)
             self.logger = logger(save=True)
