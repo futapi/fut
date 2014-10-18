@@ -31,7 +31,7 @@ def urls(platform, cl=None):
         'main_site':     'https://www.easports.com',
         'futweb':        'https://www.easports.com/iframe/fut15/?baseShowoffUrl=https%3A%2F%2Fwww.easports.com%2Ffifa%2Fultimate-team%2Fweb-app%2Fshow-off&guest_app_uri=http%3A%2F%2Fwww.easports.com%2Ffifa%2Fultimate-team%2Fweb-app&locale=en_US',
         'fut_config':    'http://www.easports.com/iframe/fut15/bundles/futweb/web/flash/xml/site_config.xml',
-        'fut_home':      'https://www.easports.com/uk/fifa/ultimate-team/web-app',
+        'fut_home':      'http://www.easports.com/uk/fifa/football-club/ultimate-team',
         'fut':           {},  # it's updated dynamicly (based on fut_config)
         'fut_question':  'http://www.easports.com/iframe/fut15/p/ut/game/fifa15/phishing/question?_=%s' % time(),
         'fut_validate':  'http://www.easports.com/iframe/fut15/p/ut/game/fifa15/phishing/validate',
