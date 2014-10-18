@@ -574,4 +574,4 @@ class Core(object):
     def messageDelete(self, message_id):
         """Deletes the specified message, by id."""
         url = '{}/{}'.format(self.urls['fut']['ActiveMessage'], message_id)
-        rc = self.__delete__(url)
+        self.__delete__(url)
