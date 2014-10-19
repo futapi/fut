@@ -23,11 +23,11 @@ Usage
 .. code-block:: pycon
 
     >>> import fut
-    >>> fut = fut.Core('email', 'password', 'secret answer', platform='xbox', emulate='and', debug=True, remember=True)
+    >>> fut = fut.Core('email', 'password', 'secret answer', platform='xbox', emulate='and', debug=True, cookies='cookies.txt')
     >>> # PLATFORM: pc / ps3 / xbox / and / ios     (pc default)
     >>> # EMULATE: and / ios (use this feature to avoid webapp errors [BE WARE IT'S HIGH RISK])
     >>> # DEBUG: save http response to fut.log)
-    >>> # REMEMBER: save cookies after every request and load it when restaring app (just like browser)
+    >>> # COOKIES: save cookies after every request and load it from given file when restaring app (just like browser)
 
     >>> items = fut.searchAuctions('development',  # search items
     ...     level='gold', category='fitness', min_price=300,  # optional parametrs

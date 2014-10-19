@@ -17,7 +17,7 @@ try:
 except ImportError:
     import json
 
-from .config import headers, headers_and, headers_ios, remember_filename
+from .config import headers, headers_and, headers_ios, cookies_file
 from .log import logger
 from .urls import urls
 from .exceptions import (FutError, ExpiredSession, InternalServerError,
@@ -94,8 +94,8 @@ def cardInfo(resource_id):
 
 
 class Core(object):
-    def __init__(self, email, passwd, secret_answer, platform='pc', emulate=None, debug=False, remember=True):
-        self.remember = remember
+    def __init__(self, email, passwd, secret_answer, platform='pc', emulate=None, debug=False, cookies=cookies_file):
+        self.cookies_file = cookies_file  # TODO: map self.cookies to requests.Session.cookies?
         if debug:  # save full log to file (fut.log)
             self.logger = logger(save=True)
         else:  # NullHandler
@@ -111,8 +111,8 @@ class Core(object):
         # create session
         self.r = requests.Session()  # init/reset requests session object
         # load saved cookies/session
-        if self.remember and os.path.isfile(remember_filename):
-            with open(remember_filename, 'r') as f:
+        if self.cookies_file and os.path.isfile(cookies_file):
+            with open(cookies_file, 'r') as f:
                 self.r.cookies = requests.utils.cookiejar_from_dict(pickle.load(f))
         if emulate == 'and':
             self.r.headers = headers_and.copy()  # i'm android now ;-)
@@ -353,8 +353,8 @@ class Core(object):
 
     def saveSession(self):
         '''Saves cookies/session.'''
-        if self.remember:
-            with open(remember_filename, 'w') as f:
+        if self.cookies_file:
+            with open(cookies_file, 'w') as f:
                 pickle.dump(requests.utils.dict_from_cookiejar(self.r.cookies), f)
 
     def baseId(self, *args, **kwargs):

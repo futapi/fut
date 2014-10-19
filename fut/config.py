@@ -36,4 +36,4 @@ headers_ios = {
     #'X-Requested-With': 'com.ea.fifaultimate_row',  # ultimate app identifier?
 }
 
-remember_filename = 'cookies.txt'
+cookies_file = 'cookies.txt'
