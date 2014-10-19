@@ -95,7 +95,7 @@ def cardInfo(resource_id):
 
 class Core(object):
     def __init__(self, email, passwd, secret_answer, platform='pc', emulate=None, debug=False, cookies=cookies_file):
-        self.cookies_file = cookies_file  # TODO: map self.cookies to requests.Session.cookies?
+        self.cookies_file = cookies  # TODO: map self.cookies to requests.Session.cookies?
         if debug:  # save full log to file (fut.log)
             self.logger = logger(save=True)
         else:  # NullHandler
