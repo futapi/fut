@@ -10,12 +10,14 @@ This module implements the fut's basic methods.
 
 import requests
 import re
+import pickle
+import os.path
 try:
     import simplejson as json
 except ImportError:
     import json
 
-from .config import headers, headers_and, headers_ios
+from .config import headers, headers_and, headers_ios, cookies_file
 from .log import logger
 from .urls import urls
 from .exceptions import (FutError, ExpiredSession, InternalServerError,
@@ -92,7 +94,8 @@ def cardInfo(resource_id):
 
 
 class Core(object):
-    def __init__(self, email, passwd, secret_answer, platform='pc', emulate=None, debug=False):
+    def __init__(self, email, passwd, secret_answer, platform='pc', emulate=None, debug=False, cookies=cookies_file):
+        self.cookies_file = cookies_file  # TODO: map self.cookies to requests.Session.cookies?
         if debug:  # save full log to file (fut.log)
             self.logger = logger(save=True)
         else:  # NullHandler
@@ -107,6 +110,10 @@ class Core(object):
         self.credits = 0
         # create session
         self.r = requests.Session()  # init/reset requests session object
+        # load saved cookies/session
+        if self.cookies_file and os.path.isfile(cookies_file):
+            with open(cookies_file, 'r') as f:
+                self.r.cookies = requests.utils.cookiejar_from_dict(pickle.load(f))
         if emulate == 'and':
             self.r.headers = headers_and.copy()  # i'm android now ;-)
         elif emulate == 'ios':
@@ -244,8 +251,8 @@ class Core(object):
         del self.r.headers['X-UT-Route']
         self.r.headers.update({
             #'X-HTTP-Method-Override': 'GET',  # __request__ method manages this
-            'Referer': 'http://www.easports.com/iframe/fut/bundles/futweb/web/flash/FifaUltimateTeam.swf',
-            'Origin': 'http://www.easports.com',
+            'Referer': 'https://www.easports.com/iframe/fut15/bundles/futweb/web/flash/FifaUltimateTeam.swf',
+            'Origin': 'https://www.easports.com',
             #'Content-Type': 'application/json',  # already set
             'Accept': 'application/json',
         })
@@ -257,6 +264,8 @@ class Core(object):
         piles = self.pileSize()
         self.tradepile_size = piles['tradepile']
         self.watchlist_size = piles['watchlist']
+
+        self.saveSession()
 
 #    def __shards__(self):
 #        """Returns shards info."""
@@ -300,6 +309,7 @@ class Core(object):
                 self.keepalive()  # credits not avaible in response, manualy updating
             else:
                 self.credits = rc['credits']
+        self.saveSession()
         return rc
 
     def __get__(self, url, *args, **kwargs):
@@ -335,7 +345,17 @@ class Core(object):
             data = {"itemData": [{"pile": pile, "id": str(item_id)}]}
 
         rc = self.__put__(self.urls['fut']['Item'], data=json.dumps(data))
+        if rc['itemData'][0]['success']:
+            logger.info("{0} (itemId: {1}) moved to {2} Pile".format(trade_id, item_id, pile))
+        else:
+            logger.error("{0} (itemId: {1}) NOT MOVED to {2} Pile. REASON: {3}".format(trade_id, item_id, pile, rc['itemData'][0]['reason']))
         return rc['itemData'][0]['success']
+
+    def saveSession(self):
+        '''Saves cookies/session.'''
+        if self.cookies_file:
+            with open(cookies_file, 'w') as f:
+                pickle.dump(requests.utils.dict_from_cookiejar(self.r.cookies), f)
 
     def baseId(self, *args, **kwargs):
         """Alias for baseId."""
@@ -347,7 +367,23 @@ class Core(object):
         url = '{}{}.json'.format(self.urls['card_info'], baseId(resource_id))
         return requests.get(url).json()
 
-    def searchAuctions(self, ctype, level=None, category=None, assetId=None,
+    def searchDefinition(self, asset_id, start=0, count=35):
+        """Returns variations of the given asset id, e.g. IF cards."""
+        params = {
+            'defId': asset_id,
+            'start': start,
+            'type': 'player',
+            'count': count
+        }
+
+        rc = self.__get__(self.urls['fut']['Search'], params=params)
+        try:
+            return rc['itemData']
+        except:
+            raise UnknownError('Invalid definition response')
+        return rc
+
+    def searchAuctions(self, ctype, level=None, category=None, assetId=None, defId=None,
                        min_price=None, max_price=None, min_buy=None, max_buy=None,
                        league=None, club=None, position=None, nationality=None,
                        playStyle=None, start=0, page_size=16):
@@ -366,6 +402,7 @@ class Core(object):
         if level:       params['lev'] = level
         if category:    params['cat'] = category
         if assetId:     params['maskedDefId'] = assetId
+        if defId:       params['definitionId'] = defId
         if min_price:   params['micr'] = min_price
         if max_price:   params['macr'] = max_price
         if min_buy:     params['minb'] = min_buy
@@ -541,4 +578,4 @@ class Core(object):
     def messageDelete(self, message_id):
         """Deletes the specified message, by id."""
         url = '{}/{}'.format(self.urls['fut']['ActiveMessage'], message_id)
-        rc = self.__delete__(url)
+        self.__delete__(url)

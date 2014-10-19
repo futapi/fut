@@ -4,6 +4,14 @@ Changelog
 ---------
 
 
+0.0.19 (2014-10-19)
+++++++++++++++++++
+* core: update old fut14 urls
+* core: add cookies feature (save cookies after every request and load it when restaring app like browser)
+* core: add saveSession, searchDefinition
+* core: log sendToPile action
+
+
 0.0.18 (2014-10-01)
 ++++++++++++++++++
 * core: add methods to list and delete available messages (thanks to jamslater)

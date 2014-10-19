@@ -23,10 +23,11 @@ Usage
 .. code-block:: pycon
 
     >>> import fut
-    >>> fut = fut.Core('email', 'password', 'secret answer', platform='xbox', emulate='and', debug=True)
+    >>> fut = fut.Core('email', 'password', 'secret answer', platform='xbox', emulate='and', debug=True, cookies='cookies.txt')
     >>> # PLATFORM: pc / ps3 / xbox / and / ios     (pc default)
     >>> # EMULATE: and / ios (use this feature to avoid webapp errors [BE WARE IT'S HIGH RISK])
     >>> # DEBUG: save http response to fut.log)
+    >>> # COOKIES: save cookies after every request and load it from given file when restaring app (just like browser)
 
     >>> items = fut.searchAuctions('development',  # search items
     ...     level='gold', category='fitness', min_price=300,  # optional parametrs
@@ -81,12 +82,13 @@ Usage
     ...     fut.sell(item['item_id'], 150,  # put item on auction
     ...              buy_now=0, duration=3600)  # optional parametrs
 
-    >>> fut.sendToTradepile(trade_id, item_id)  # add card to tradepile
-    >>> fut.sendToClub(trade_id, item_id)       # add card to club
-    >>> fut.sendToWatchlist(trade_id)           # add card to watchlist
-    >>> fut.tradepileDelete(trade_id)           # removes item from tradepile
-    >>> fut.watchlistDelete(trade_id)           # removes item from watch list
-    >>> fut.quickSell(item_id)                  # quicksell item
+    >>> fut.sendToTradepile(trade_id, item_id)               # add card to tradepile
+    >>> fut.sendToClub(trade_id, item_id)                    # add card to club
+    >>> fut.sendToWatchlist(trade_id)                        # add card to watchlist
+    >>> fut.tradepileDelete(trade_id)                        # removes item from tradepile
+    >>> fut.watchlistDelete(trade_id)                        # removes item from watch list
+    >>> fut.quickSell(item_id)                               # quicksell item
+    >>> fut.searchDefinition(asset_id, start=0, count=35)    # returns stats and definition IDs for each card variation
 
     >>> fut.relist()  # relist all expired cards in tradepile
 
