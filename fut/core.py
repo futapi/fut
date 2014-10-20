@@ -124,6 +124,9 @@ class Core(object):
         else:
             self.r.headers = headers.copy()  # i'm chrome browser now ;-)
         self.urls = urls(platform)
+        # TODO: urls won't be loaded if we drop here
+        #if self.r.get(self.urls['main_site']+'/fifa/api/isUserLoggedIn').json()['isLoggedIn']:
+        #    return True  # no need to log in again
         # emulate
         if emulate == 'ios':
             sku = 'FUT15IOS'
