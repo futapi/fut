@@ -10,7 +10,10 @@ This module implements the fut's basic methods.
 
 import requests
 import re
-from cookielib import LWPCookieJar
+try:
+    from cookielib import LWPCookieJar
+except ImportError:
+    from http.cookiejar import LWPCookieJar
 try:
     import simplejson as json
 except ImportError:
