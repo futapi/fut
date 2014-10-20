@@ -112,7 +112,7 @@ class Core(object):
         self.r = requests.Session()  # init/reset requests session object
         # load saved cookies/session
         if self.cookies_file and os.path.isfile(self.cookies_file):
-            with open(self.cookies_file, 'r') as f:
+            with open(self.cookies_file, 'rb') as f:
                 self.r.cookies = requests.utils.cookiejar_from_dict(pickle.load(f))
         if emulate == 'and':
             self.r.headers = headers_and.copy()  # i'm android now ;-)
