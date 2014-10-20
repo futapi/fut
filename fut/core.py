@@ -10,8 +10,7 @@ This module implements the fut's basic methods.
 
 import requests
 import re
-import pickle
-import os.path
+from cookielib import LWPCookieJar
 try:
     import simplejson as json
 except ImportError:
@@ -111,9 +110,13 @@ class Core(object):
         # create session
         self.r = requests.Session()  # init/reset requests session object
         # load saved cookies/session
-        if self.cookies_file and os.path.isfile(self.cookies_file):
-            with open(self.cookies_file, 'rb') as f:
-                self.r.cookies = requests.utils.cookiejar_from_dict(pickle.load(f))
+        if self.cookies_file:
+            self.r.cookies = LWPCookieJar(self.cookies_file)
+            try:
+                self.r.cookies.load(ignore_discard=True)  # is it good idea to load discarded cookies after long time?
+            except IOError:
+                pass
+                #self.r.cookies.save(ignore_discard=True)  # create empty file for cookies
         if emulate == 'and':
             self.r.headers = headers_and.copy()  # i'm android now ;-)
         elif emulate == 'ios':
@@ -354,8 +357,7 @@ class Core(object):
     def saveSession(self):
         '''Saves cookies/session.'''
         if self.cookies_file:
-            with open(self.cookies_file, 'w') as f:
-                pickle.dump(requests.utils.dict_from_cookiejar(self.r.cookies), f)
+            self.r.cookies.save(ignore_discard=True)
 
     def baseId(self, *args, **kwargs):
         """Alias for baseId."""
