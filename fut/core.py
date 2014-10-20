@@ -111,8 +111,8 @@ class Core(object):
         # create session
         self.r = requests.Session()  # init/reset requests session object
         # load saved cookies/session
-        if self.cookies_file and os.path.isfile(cookies_file):
-            with open(cookies_file, 'r') as f:
+        if self.cookies_file and os.path.isfile(self.cookies_file):
+            with open(self.cookies_file, 'r') as f:
                 self.r.cookies = requests.utils.cookiejar_from_dict(pickle.load(f))
         if emulate == 'and':
             self.r.headers = headers_and.copy()  # i'm android now ;-)
@@ -354,7 +354,7 @@ class Core(object):
     def saveSession(self):
         '''Saves cookies/session.'''
         if self.cookies_file:
-            with open(cookies_file, 'w') as f:
+            with open(self.cookies_file, 'w') as f:
                 pickle.dump(requests.utils.dict_from_cookiejar(self.r.cookies), f)
 
     def baseId(self, *args, **kwargs):
