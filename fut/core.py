@@ -96,16 +96,16 @@ def cardInfo(resource_id):
 
 
 class Core(object):
-    def __init__(self, email, passwd, secret_answer, platform='pc', emulate=None, debug=False, cookies=cookies_file):
+    def __init__(self, email, passwd, secret_answer, platform='pc', code=None, emulate=None, debug=False, cookies=cookies_file):
         self.cookies_file = cookies  # TODO: map self.cookies to requests.Session.cookies?
         if debug:  # save full log to file (fut.log)
             self.logger = logger(save=True)
         else:  # NullHandler
             self.logger = logger()
         # TODO: validate fut request response (200 OK)
-        self.__login__(email, passwd, secret_answer, platform, emulate)
+        self.__login__(email, passwd, secret_answer, platform, code, emulate)
 
-    def __login__(self, email, passwd, secret_answer, platform='pc', emulate=None):
+    def __login__(self, email, passwd, secret_answer, platform='pc', code=None, emulate=None):
         """Just log in."""
         # TODO: split into smaller methods
         secret_answer_hash = EAHashingAlgorithm().EAHash(secret_answer)
@@ -163,8 +163,25 @@ class Core(object):
                 'facebookAuth': ''}
         rc = self.r.post(self.urls['login'], data=data)
         self.logger.debug(rc.content)
-        if self.r.get(self.urls['main_site']+'/fifa/api/isUserLoggedIn').json()['isLoggedIn'] is not True:
-            raise FutError('Error during login process (probably invalid email or password).')
+
+        '''  # pops out only on first launch
+        if 'FIFA Ultimate Team</strong> needs to update your Account to help protect your gameplay experience.' in rc:  # request email/sms code
+            self.r.headers['Referer'] = rc.url  # s2
+            rc = self.r.post(rc.url.replace('s2', 's3'), {'_eventId': 'submit'}).content
+            self.r.headers['Referer'] = rc.url  # s3
+            rc = self.r.post(rc.url, {'twofactorType': 'EMAIL', 'country': 0, 'phoneNumber': '', '_eventId': 'submit'}.content
+        '''
+        if 'We sent a security code to your' in rc.content:  # post code
+            # TODO: 'We sent a security code to your email' / 'We sent a security code to your ?'
+            # TODO: pick code from codes.txt?
+            if not code:
+                raise FutError('Error during login process - code is required.')
+            self.r.headers['Referer'] = rc.url
+            rc = self.r.post(rc.url, {'twoFactorCode': code, '_eventId': 'submit'}).content
+
+        self.r.headers['Referer'] = self.urls['login']
+        if self.r.get(self.urls['main_site']+'/fifa/api/isUserLoggedIn').json()['isLoggedIn'] is not True:  # TODO: parse error?
+            raise FutError('Error during login process (probably invalid email, password or code).')
         # TODO: catch invalid data exception
         #self.nucleus_id = re.search('userid : "([0-9]+)"', rc.text).group(1)  # we'll get it later
 
