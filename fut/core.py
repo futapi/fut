@@ -178,6 +178,8 @@ class Core(object):
                 raise FutError('Error during login process - code is required.')
             self.r.headers['Referer'] = rc.url
             rc = self.r.post(rc.url, {'twoFactorCode': code, '_eventId': 'submit'}).content
+            if 'Incorrect code entered' in rc:
+                raise FutError('Error during login process - provided code is incorrect.')
             self.logger.debug(rc)
 
         self.r.headers['Referer'] = self.urls['login']
