@@ -178,6 +178,7 @@ class Core(object):
                 raise FutError('Error during login process - code is required.')
             self.r.headers['Referer'] = rc.url
             rc = self.r.post(rc.url, {'twoFactorCode': code, '_eventId': 'submit'}).content
+            self.logger.debug(rc)
 
         self.r.headers['Referer'] = self.urls['login']
         if self.r.get(self.urls['main_site']+'/fifa/api/isUserLoggedIn').json()['isLoggedIn'] is not True:  # TODO: parse error?
