@@ -6,7 +6,7 @@ Changelog
 
 0.0.21 (2014-12-13)
 ++++++++++++++++++
-* two-setp verification
+* two-step verification
 * fix cookies parameter not working (#99)
 * core: use LWPCookieJar instead of pickle
 * core: fix logging in __sendToPile__
