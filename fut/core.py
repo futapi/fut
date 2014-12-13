@@ -165,11 +165,11 @@ class Core(object):
         self.logger.debug(rc.content)
 
         '''  # pops out only on first launch
-        if 'FIFA Ultimate Team</strong> needs to update your Account to help protect your gameplay experience.' in rc:  # request email/sms code
+        if 'FIFA Ultimate Team</strong> needs to update your Account to help protect your gameplay experience.' in rc.text:  # request email/sms code
             self.r.headers['Referer'] = rc.url  # s2
             rc = self.r.post(rc.url.replace('s2', 's3'), {'_eventId': 'submit'}).content
             self.r.headers['Referer'] = rc.url  # s3
-            rc = self.r.post(rc.url, {'twofactorType': 'EMAIL', 'country': 0, 'phoneNumber': '', '_eventId': 'submit'}.content
+            rc = self.r.post(rc.url, {'twofactorType': 'EMAIL', 'country': 0, 'phoneNumber': '', '_eventId': 'submit'}
         '''
         if 'We sent a security code to your' in rc.text or 'Your security code was sent to' in rc.text:  # post code
             # TODO: 'We sent a security code to your email' / 'We sent a security code to your ?'
@@ -177,7 +177,7 @@ class Core(object):
             if not code:
                 raise FutError('Error during login process - code is required.')
             self.r.headers['Referer'] = rc.url
-            rc = self.r.post(rc.url, {'twoFactorCode': code, '_eventId': 'submit'}).content
+            rc = self.r.post(rc.url, {'twoFactorCode': code, '_eventId': 'submit'}).text
             if 'Incorrect code entered' in rc:
                 raise FutError('Error during login process - provided code is incorrect.')
             self.logger.debug(rc)
