@@ -10,8 +10,10 @@ This module implements the fut's basic methods.
 
 import requests
 import re
-import pickle
-import os.path
+try:
+    from cookielib import LWPCookieJar
+except ImportError:
+    from http.cookiejar import LWPCookieJar
 try:
     import simplejson as json
 except ImportError:
@@ -32,14 +34,14 @@ def baseId(resource_id, return_version=False):
     """Calculates base id and version from a resource id."""
     version = 0
 
-    while resource_id > 0x01000000:
+    while resource_id > 0x01000000:  # 16777216
         version += 1
         if version == 1:
-            resource_id -= 0x70000000
+            resource_id -= 0x70000000  # 1879048192
         elif version == 2:
-            resource_id -= 0x03000000
+            resource_id -= 0x03000000  # 50331648
         else:
-            resource_id -= 0x01000000
+            resource_id -= 0x01000000  # 16777216
 
     if return_version:
         return resource_id, version
@@ -94,16 +96,16 @@ def cardInfo(resource_id):
 
 
 class Core(object):
-    def __init__(self, email, passwd, secret_answer, platform='pc', emulate=None, debug=False, cookies=cookies_file):
+    def __init__(self, email, passwd, secret_answer, platform='pc', code=None, emulate=None, debug=False, cookies=cookies_file):
         self.cookies_file = cookies  # TODO: map self.cookies to requests.Session.cookies?
         if debug:  # save full log to file (fut.log)
             self.logger = logger(save=True)
         else:  # NullHandler
             self.logger = logger()
         # TODO: validate fut request response (200 OK)
-        self.__login__(email, passwd, secret_answer, platform, emulate)
+        self.__login__(email, passwd, secret_answer, platform, code, emulate)
 
-    def __login__(self, email, passwd, secret_answer, platform='pc', emulate=None):
+    def __login__(self, email, passwd, secret_answer, platform='pc', code=None, emulate=None):
         """Just log in."""
         # TODO: split into smaller methods
         secret_answer_hash = EAHashingAlgorithm().EAHash(secret_answer)
@@ -111,9 +113,13 @@ class Core(object):
         # create session
         self.r = requests.Session()  # init/reset requests session object
         # load saved cookies/session
-        if self.cookies_file and os.path.isfile(cookies_file):
-            with open(cookies_file, 'r') as f:
-                self.r.cookies = requests.utils.cookiejar_from_dict(pickle.load(f))
+        if self.cookies_file:
+            self.r.cookies = LWPCookieJar(self.cookies_file)
+            try:
+                self.r.cookies.load(ignore_discard=True)  # is it good idea to load discarded cookies after long time?
+            except IOError:
+                pass
+                #self.r.cookies.save(ignore_discard=True)  # create empty file for cookies
         if emulate == 'and':
             self.r.headers = headers_and.copy()  # i'm android now ;-)
         elif emulate == 'ios':
@@ -121,6 +127,9 @@ class Core(object):
         else:
             self.r.headers = headers.copy()  # i'm chrome browser now ;-)
         self.urls = urls(platform)
+        # TODO: urls won't be loaded if we drop here
+        #if self.r.get(self.urls['main_site']+'/fifa/api/isUserLoggedIn').json()['isLoggedIn']:
+        #    return True  # no need to log in again
         # emulate
         if emulate == 'ios':
             sku = 'FUT15IOS'
@@ -154,8 +163,28 @@ class Core(object):
                 'facebookAuth': ''}
         rc = self.r.post(self.urls['login'], data=data)
         self.logger.debug(rc.content)
-        if self.r.get(self.urls['main_site']+'/fifa/api/isUserLoggedIn').json()['isLoggedIn'] is not True:
-            raise FutError('Error during login process (probably invalid email or password).')
+
+        '''  # pops out only on first launch
+        if 'FIFA Ultimate Team</strong> needs to update your Account to help protect your gameplay experience.' in rc.text:  # request email/sms code
+            self.r.headers['Referer'] = rc.url  # s2
+            rc = self.r.post(rc.url.replace('s2', 's3'), {'_eventId': 'submit'}).content
+            self.r.headers['Referer'] = rc.url  # s3
+            rc = self.r.post(rc.url, {'twofactorType': 'EMAIL', 'country': 0, 'phoneNumber': '', '_eventId': 'submit'}
+        '''
+        if 'We sent a security code to your' in rc.text or 'Your security code was sent to' in rc.text:  # post code
+            # TODO: 'We sent a security code to your email' / 'We sent a security code to your ?'
+            # TODO: pick code from codes.txt?
+            if not code:
+                raise FutError('Error during login process - code is required.')
+            self.r.headers['Referer'] = rc.url
+            rc = self.r.post(rc.url, {'twoFactorCode': code, '_eventId': 'submit'}).text
+            if 'Incorrect code entered' in rc:
+                raise FutError('Error during login process - provided code is incorrect.')
+            self.logger.debug(rc)
+
+        self.r.headers['Referer'] = self.urls['login']
+        if self.r.get(self.urls['main_site']+'/fifa/api/isUserLoggedIn').json()['isLoggedIn'] is not True:  # TODO: parse error?
+            raise FutError('Error during login process (probably invalid email, password or code).')
         # TODO: catch invalid data exception
         #self.nucleus_id = re.search('userid : "([0-9]+)"', rc.text).group(1)  # we'll get it later
 
@@ -346,16 +375,15 @@ class Core(object):
 
         rc = self.__put__(self.urls['fut']['Item'], data=json.dumps(data))
         if rc['itemData'][0]['success']:
-            logger.info("{0} (itemId: {1}) moved to {2} Pile".format(trade_id, item_id, pile))
+            self.logger.info("{0} (itemId: {1}) moved to {2} Pile".format(trade_id, item_id, pile))
         else:
-            logger.error("{0} (itemId: {1}) NOT MOVED to {2} Pile. REASON: {3}".format(trade_id, item_id, pile, rc['itemData'][0]['reason']))
+            self.logger.error("{0} (itemId: {1}) NOT MOVED to {2} Pile. REASON: {3}".format(trade_id, item_id, pile, rc['itemData'][0]['reason']))
         return rc['itemData'][0]['success']
 
     def saveSession(self):
         '''Saves cookies/session.'''
         if self.cookies_file:
-            with open(cookies_file, 'w') as f:
-                pickle.dump(requests.utils.dict_from_cookiejar(self.r.cookies), f)
+            self.r.cookies.save(ignore_discard=True)
 
     def baseId(self, *args, **kwargs):
         """Alias for baseId."""

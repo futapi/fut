@@ -13,7 +13,9 @@ Documentation
 -------------
 Documentation is available at http://fut.readthedocs.org/.
 
-Players database: http://cdn.content.easports.com/fifa/fltOnlineAssets/8D941B48-51BB-4B87-960A-06A61A62EBC0/2015/fut/items/web/players.json
+Players database: https://www.easports.com/uk/fifa/ultimate-team/fut/database
+
+Players database (json): http://cdn.content.easports.com/fifa/fltOnlineAssets/8D941B48-51BB-4B87-960A-06A61A62EBC0/2015/fut/items/web/players.json
 
 
 
@@ -23,7 +25,8 @@ Usage
 .. code-block:: pycon
 
     >>> import fut
-    >>> fut = fut.Core('email', 'password', 'secret answer', platform='xbox', emulate='and', debug=True, cookies='cookies.txt')
+    >>> fut = fut.Core('email', 'password', 'secret answer', code='012345', platform='xbox', emulate='and', debug=True, cookies='cookies.txt')
+    >>> # CODE: make sure you use backup code for first launch.
     >>> # PLATFORM: pc / ps3 / xbox / and / ios     (pc default)
     >>> # EMULATE: and / ios (use this feature to avoid webapp errors [BE WARE IT'S HIGH RISK])
     >>> # DEBUG: save http response to fut.log)
