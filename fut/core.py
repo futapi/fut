@@ -175,6 +175,7 @@ class Core(object):
             # TODO: 'We sent a security code to your email' / 'We sent a security code to your ?'
             # TODO: pick code from codes.txt?
             if not code:
+                self.saveSession()
                 raise FutError('Error during login process - code is required.')
             self.r.headers['Referer'] = rc.url
             rc = self.r.post(rc.url, {'twoFactorCode': code, '_eventId': 'submit'}).text
