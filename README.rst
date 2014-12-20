@@ -22,7 +22,7 @@ Players database (json): http://cdn.content.easports.com/fifa/fltOnlineAssets/8D
 Usage
 -----
 
-.. code-block:: pycon
+.. code-block:: python
 
     >>> import fut
     >>> fut = fut.Core('email', 'password', 'secret answer', code='012345', platform='xbox', emulate='and', debug=True, cookies='cookies.txt')
