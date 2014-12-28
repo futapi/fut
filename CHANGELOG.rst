@@ -4,6 +4,12 @@ Changelog
 ---------
 
 
+0.0.22 (2014-12-28)
+++++++++++++++++++
+* setup: fix manifest
+* core: save session if code is not provided but required
+
+
 0.0.21 (2014-12-13)
 ++++++++++++++++++
 * two-step verification
@@ -11,9 +17,11 @@ Changelog
 * core: use LWPCookieJar instead of pickle
 * core: fix logging in __sendToPile__
 
+
 0.0.20 (2014-10-19)
 ++++++++++++++++++
 * fix typo
+
 
 0.0.19 (2014-10-19)
 ++++++++++++++++++
