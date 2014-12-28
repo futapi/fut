@@ -180,7 +180,7 @@ class Core(object):
                 raise FutError('Error during login process - code is required.')
             self.r.headers['Referer'] = rc.url
             rc = self.r.post(rc.url, {'twoFactorCode': code, '_eventId': 'submit'}).text
-            if 'Incorrect code entered' in rc:
+            if 'Incorrect code entered' in rc or 'Please enter a valid security code' in rc:
                 raise FutError('Error during login process - provided code is incorrect.')
             self.logger.debug(rc)
 
@@ -214,7 +214,7 @@ class Core(object):
             'X-UT-Route': self.urls['fut_host'],
             'Referer': self.urls['futweb'],
         })
-        rc = self.r.get(self.urls['acc_info'], {'_': int(time()*1000)})
+        rc = self.r.get(self.urls['acc_info'], params={'_': int(time()*1000)})
         self.logger.debug(rc.content)
         rc = rc.json()['userAccountInfo']['personas'][0]
         self.persona_id = rc['personaId']
@@ -258,7 +258,7 @@ class Core(object):
         # validate (secret question)
         self.r.headers['Accept'] = 'text/json'  # prepare headers
         del self.r.headers['Origin']
-        rc = self.r.get(self.urls['fut_question'], {'_': int(time()*1000)})
+        rc = self.r.get(self.urls['fut_question'], params={'_': int(time()*1000)})
         self.logger.debug(rc.content)
         rc = rc.json()
         if rc.get('string') != 'Already answered question.':
@@ -302,7 +302,7 @@ class Core(object):
 #        """Returns shards info."""
 #        # TODO: headers
 #        self.r.headers['X-UT-Route'] = self.urls['fut_base']
-#        return self.r.get(self.urls['shards'], {'_': int(time()*1000)}).json()
+#        return self.r.get(self.urls['shards'], params={'_': int(time()*1000)}).json()
 #        # self.r.headers['X-UT-Route'] = self.urls['fut_pc']
 
     def __request__(self, method, url, *args, **kwargs):
@@ -318,6 +318,7 @@ class Core(object):
             self.keepalive()  # credits not avaible in response, manualy updating
             rc = {}
         else:
+            captcha_token = rc.headers.get('Proxy-Authorization', '').replace('captcha=', '')  # captcha token (always AAAA ?)
             rc = rc.json()
             # error control
             if 'code' and 'reason' in rc:  # error
@@ -328,7 +329,9 @@ class Core(object):
                 elif rc.get('string') == 'Permission Denied':
                     raise PermissionDenied
                 elif rc.get('string') == 'Captcha Triggered':
-                    raise Captcha
+                    #img = self.r.get(self.urls['fut_captcha_img'], params={'_': int(time()*1000), 'token': captcha_token}).content  # doesnt work - check headers
+                    img = None
+                    raise Captcha(captcha_token, img)
                 elif rc.get('string') == 'Conflict':
                     raise Conflict
                 elif rc.get('string') == 'Feature Disabled':

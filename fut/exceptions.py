@@ -35,6 +35,9 @@ class PermissionDenied(FutError):
 
 class Captcha(FutError):
     """[459] Captcha Triggered."""
+    def __init__(self, token=None, img=None):
+        self.token = token
+        self.img = img
 
 class Conflict(FutError):
     """[409] Conflict. (You'r trying to sell somebody's item, don't you ;-)?)"""
