@@ -2,11 +2,9 @@
 
 import requests
 import xmltodict
-from time import time
 
 from .exceptions import FutError
 
-# TODO: add timestamp dynamic (just right before every request)
 
 def __updateUrls__(urls, cl):
         """Gets services urls."""
@@ -33,7 +31,7 @@ def urls(platform, cl=None):
         'fut_config':    'http://www.easports.com/iframe/fut15/bundles/futweb/web/flash/xml/site_config.xml',
         'fut_home':      'http://www.easports.com/uk/fifa/football-club/ultimate-team',
         'fut':           {},  # it's updated dynamicly (based on fut_config)
-        'fut_question':  'http://www.easports.com/iframe/fut15/p/ut/game/fifa15/phishing/question?_=%s' % int(time()*1000),
+        'fut_question':  'http://www.easports.com/iframe/fut15/p/ut/game/fifa15/phishing/question',
         'fut_validate':  'http://www.easports.com/iframe/fut15/p/ut/game/fifa15/phishing/validate',
 
         'fut_host':      {'pc':   'https://utas.s2.fut.ea.com:443',
@@ -43,8 +41,8 @@ def urls(platform, cl=None):
                           'and':  'https://utas.fut.ea.com:443',
                          },
 
-        'shards':        'http://www.easports.com/iframe/fut15/p/ut/shards?_=%s' % int(time()*1000),
-        'acc_info':      'http://www.easports.com/iframe/fut15/p/ut/game/fifa15/user/accountinfo?_=%s' % int(time()*1000),
+        'shards':        'http://www.easports.com/iframe/fut15/p/ut/shards',
+        'acc_info':      'http://www.easports.com/iframe/fut15/p/ut/game/fifa15/user/accountinfo',
         'card_info':     'https://fifa15.content.easports.com/fifa/fltOnlineAssets/8D941B48-51BB-4B87-960A-06A61A62EBC0/2015/fut/items/web/',
     }
     #urls['login'] = requests.get(urls['fut_home']).url

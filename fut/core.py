@@ -10,6 +10,7 @@ This module implements the fut's basic methods.
 
 import requests
 import re
+from time import time
 try:
     from cookielib import LWPCookieJar
 except ImportError:
@@ -213,7 +214,7 @@ class Core(object):
             'X-UT-Route': self.urls['fut_host'],
             'Referer': self.urls['futweb'],
         })
-        rc = self.r.get(self.urls['acc_info'])
+        rc = self.r.get(self.urls['acc_info'], {'_': int(time()*1000)})
         self.logger.debug(rc.content)
         rc = rc.json()['userAccountInfo']['personas'][0]
         self.persona_id = rc['personaId']
@@ -257,7 +258,7 @@ class Core(object):
         # validate (secret question)
         self.r.headers['Accept'] = 'text/json'  # prepare headers
         del self.r.headers['Origin']
-        rc = self.r.get(self.urls['fut_question'])
+        rc = self.r.get(self.urls['fut_question'], {'_': int(time()*1000)})
         self.logger.debug(rc.content)
         rc = rc.json()
         if rc.get('string') != 'Already answered question.':
@@ -301,7 +302,7 @@ class Core(object):
 #        """Returns shards info."""
 #        # TODO: headers
 #        self.r.headers['X-UT-Route'] = self.urls['fut_base']
-#        return self.r.get(self.urls['shards']).json()
+#        return self.r.get(self.urls['shards'], {'_': int(time()*1000)}).json()
 #        # self.r.headers['X-UT-Route'] = self.urls['fut_pc']
 
     def __request__(self, method, url, *args, **kwargs):
