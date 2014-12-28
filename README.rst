@@ -14,6 +14,7 @@ Documentation
 Documentation will be available soon at http://fut.readthedocs.org/.
 
 Players database: https://www.easports.com/uk/fifa/ultimate-team/fut/database
+
 Players database (json): http://cdn.content.easports.com/fifa/fltOnlineAssets/8D941B48-51BB-4B87-960A-06A61A62EBC0/2015/fut/items/web/players.json
 
 
@@ -24,11 +25,13 @@ Usage
 Login
 `````````````
 Optional parameters:
+
 - CODE: [string] email/sms code for two-step verification (make sure to use string if your codes starts with 0).
 - PLATFORM: [pc/ps3/xbox/and/ios] pc default.
 - EMULATE: [and/ios] use this feature to avoid webapp errors (BE WARE IT'S HIGH RISK).
 - DEBUG: [True/False] enables debug.
 - COOKIES: [filename] saves cookies after every request and load it from given file when restaring app (just like browser).
+
 .. code-block:: python
 
     >>> import fut
@@ -37,6 +40,7 @@ Optional parameters:
 Search
 `````````````
 Optional parameters:
+
 - LEVEL: ['?'/'?'/gold'] Card level.
 - CATEGORY: ['fitness'/'?'] Card category.
 - MIN_PRICE: [int] Minimal price.
@@ -45,30 +49,41 @@ Optional parameters:
 - MAX_BUY: [int] Maximum buy now price.
 - START: [int] Start page number.
 - PAGE_SIZE: [int] Amount of cards on single page (changing this might be risky).
+
 .. code-block:: python
+
     >>> items = fut.searchAuctions('development')
 
 Bid
 `````````````
+
 .. code-block:: python
+
     >>> fut.bid(items[0]['trade_id'], 600)
 
 Sell
 `````````````
 Optional parameters:
+
 - BUY_NOW: [int] Buy now price.
 - DURATION: [int] Auction duration in seconds (3600 default).
+
 .. code-block:: python
+
     >>>     fut.sell(item['item_id'], 150)
 
 Quick sell
 `````````````
+
 .. code-block:: python
+
     >>> fut.quickSell(item_id)
 
 Piles (Watchlist / Tradepile / Unassigned)
 `````````````
+
 .. code-block:: python
+
     >>> items = fut.tradepile()
     >>> items = fut.unassigned()
     >>> fut.sendToTradepile(trade_id, item_id)               # add card to tradepile
@@ -89,32 +104,42 @@ Piles (Watchlist / Tradepile / Unassigned)
 Credits
 `````````````
 It's updated automatically on every request.
+
 .. code-block:: python
+
     >>> fut.credits
     600
 
 Relist
 `````````````
 Relists all expired cards in tradepile.
+
 .. code-block:: python
+
     >>> fut.relist()  # relist all expired cards in tradepile
 
 Card stats and definiction IDs
 `````````````
 Returns stats and definition IDs for each card variation.
+
 .. code-block:: python
+
     >>> fut.searchDefinition(asset_id, start=0, count=35)
 
 Keepalive
 `````````````
 Send keepalive ping (you have to make at least one request every ~10 minutes to avoid session expire/logout).
+
 .. code-block:: python
+
     >>> fut.keepalive()
 
 
 Item object (dict) structure
 `````````````
+
 .. code-block:: python
+
     >>> for item in items:
     ...     trade_id = item['tradeId']
     ...     buy_now_price = item['buyNowPrice']
@@ -139,6 +164,7 @@ Item object (dict) structure
     ...     offers = i['offers']
     ...     current_bid = i['currentBid']
     ...     expires = i['expires']  # seconds left
+
 
 to be continued ;-)
 
