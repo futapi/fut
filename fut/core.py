@@ -90,7 +90,7 @@ def itemParse(item_data):
 def cardInfo(resource_id):
     """Returns card info."""
     # TODO: add referer to headers (futweb)
-    url = '{}{}.json'.format(self.urls['card_info'], baseId(resource_id))
+    url = '{0}{1}.json'.format(self.urls['card_info'], baseId(resource_id))
     return requests.get(url).json()
 '''
 
@@ -175,6 +175,7 @@ class Core(object):
             # TODO: 'We sent a security code to your email' / 'We sent a security code to your ?'
             # TODO: pick code from codes.txt?
             if not code:
+                self.saveSession()
                 raise FutError('Error during login process - code is required.')
             self.r.headers['Referer'] = rc.url
             rc = self.r.post(rc.url, {'twoFactorCode': code, '_eventId': 'submit'}).text
@@ -392,7 +393,7 @@ class Core(object):
     def cardInfo(self, resource_id):
         """Returns card info."""
         # TODO: add referer to headers (futweb)
-        url = '{}{}.json'.format(self.urls['card_info'], baseId(resource_id))
+        url = '{0}{1}.json'.format(self.urls['card_info'], baseId(resource_id))
         return requests.get(url).json()
 
     def searchDefinition(self, asset_id, start=0, count=35):
@@ -474,7 +475,7 @@ class Core(object):
 
     def squad(self, squad_num=0):
         """Return a squad."""
-        url = '{}/{}'.format(self.urls['fut']['Squad'], squad_num)
+        url = '{0}/{1}'.format(self.urls['fut']['Squad'], squad_num)
         rc = self.__get__(url)
         return rc
 
@@ -514,7 +515,7 @@ class Core(object):
 
     def tradepileDelete(self, trade_id):
         """Removes card from tradepile."""
-        url = '{}/{}'.format(self.urls['fut']['TradeInfo'], trade_id)
+        url = '{0}/{1}'.format(self.urls['fut']['TradeInfo'], trade_id)
         self.__delete__(url)  # returns nothing
         return True
 
@@ -570,7 +571,7 @@ class Core(object):
             'startedMatches': rc['reliability']['startedMatches'],
         }
         # leaderboard
-        url = '{}/alltime/user/{}'.format(self.urls['fut']['LeaderboardEntry'], self.persona_id)
+        url = '{0}/alltime/user/{1}'.format(self.urls['fut']['LeaderboardEntry'], self.persona_id)
         rc = self.__get__(url)
         data.update({
             'earnings': rc['category'][0]['score']['value'],   #competitor
@@ -605,5 +606,5 @@ class Core(object):
 
     def messageDelete(self, message_id):
         """Deletes the specified message, by id."""
-        url = '{}/{}'.format(self.urls['fut']['ActiveMessage'], message_id)
+        url = '{0}/{1}'.format(self.urls['fut']['ActiveMessage'], message_id)
         self.__delete__(url)

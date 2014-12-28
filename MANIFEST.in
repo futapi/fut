@@ -1,1 +1,1 @@
-include README.rst LICENSE AUTHORS.rst requirements.txt test_fut.py
+include README.rst LICENSE CHANGELOG.rst AUTHORS.rst requirements.txt test_fut.py

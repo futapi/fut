@@ -7,15 +7,15 @@ except ImportError:
 
 
 __title__ = 'fut'
-__version__ = '0.0.21'
+__version__ = '0.0.22'
 __author__ = 'Piotr Staroszczyk'
 __author_email__ = 'piotr.staroszczyk@get24.org'
 __license__ = 'GNU GPL v3'
 __copyright__ = 'Copyright 2013 Piotr Staroszczyk'
 
 packages = [
-    'fut',
-    #'fut.modules',
+    __title__,
+    #'%s.modules' % __title__,
 ]
 
 with open('requirements.txt') as f:
@@ -28,7 +28,7 @@ with open('README.rst') as f1:
 setup(
     name=__title__,
     version=__version__,
-    description='fut is a simple library for managing Fifa Ultimate Team.',
+    description='%s is a simple library for managing Fifa Ultimate Team.' % __title__,
     long_description=long_desc,
     author=__author__,
     author_email=__author_email__,
@@ -36,10 +36,10 @@ setup(
     download_url='https://github.com/oczkers/%s/releases' % __title__,
     bugtrack_url='https://github.com/oczkers/%s/issues' % __title__,
     platforms='any',
-    keywords='fut fifa ultimate team ut pc xbox android ios 360 ps3 playstation',
+    keywords='%s fifa ultimate team ut pc xbox android ios 360 ps3 playstation' % __title__,
     packages=packages,
     package_data={'': ['LICENSE']},
-    package_dir={'fut': 'fut'},
+    package_dir={__title__: __title__},
     include_package_data=True,
     install_requires=requires,
     #license=open('LICENSE').read(),
