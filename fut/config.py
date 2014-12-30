@@ -4,9 +4,9 @@ headers = {
     'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
     'Accept-Encoding': 'gzip,deflate,sdch',
     'Accept-Language': 'en-US,en;q=0.8',
-    #'Accept-Charset': 'utf-8, iso-8859-1, utf-16, *;q=0.1',
+    # 'Accept-Charset': 'utf-8, iso-8859-1, utf-16, *;q=0.1',
     'Connection': 'keep-alive',
-    #'Keep-Alive': '300',
+    # 'Keep-Alive': '300',
     'DNT': '1',
 }
 
@@ -18,8 +18,8 @@ headers_and = {
     'Accept-Language': 'en-US',
     'Accept-Charset': 'utf-8, iso-8859-1, utf-16, *;q=0.7',
     'Connection': 'keep-alive',
-    #'Keep-Alive': '300',
-    #'DNT': '1',
+    # 'Keep-Alive': '300',
+    # 'DNT': '1',
     'X-Requested-With': 'com.ea.fifaultimate_row',  # ultimate app identifier?
 }
 
@@ -31,9 +31,9 @@ headers_ios = {
     'Accept-Language': 'en-US',
     'Accept-Charset': 'utf-8, iso-8859-1, utf-16, *;q=0.7',
     'Connection': 'keep-alive',
-    #'Keep-Alive': '300',
-    #'DNT': '1',
-    #'X-Requested-With': 'com.ea.fifaultimate_row',  # ultimate app identifier?
+    # 'Keep-Alive': '300',
+    # 'DNT': '1',
+    # 'X-Requested-With': 'com.ea.fifaultimate_row',  # ultimate app identifier?
 }
 
 cookies_file = 'cookies.txt'

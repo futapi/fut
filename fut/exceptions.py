@@ -13,25 +13,32 @@ class FutError(RuntimeError):
     """There was an ambiguous exception that occurred while handling
     your request."""
 
+
 class UnknownError(FutError):
     """Unknown error, please report full log at
     https://github.com/oczkers/fut/issues/24"""
+
 
 class ExpiredSession(FutError):
     """Session has expired,
     you should send at least one request every ~10 minutes."""
 
+
 class InternalServerError(FutError):
     """[500] Internal Server Error (ut). (invalid parameters?)"""
+
 
 class MaxSessions(FutError):
     """[503] Service Unavailable (ut) - max session."""
 
+
 class FeatureDisabled(FutError):
     """[480] Feature Disabled."""
 
+
 class PermissionDenied(FutError):
     """[461] Permission Denied. (outbid?)"""
+
 
 class Captcha(FutError):
     """[459] Captcha Triggered."""
@@ -39,16 +46,20 @@ class Captcha(FutError):
         self.token = token
         self.img = img
 
+
 class Conflict(FutError):
     """[409] Conflict. (You'r trying to sell somebody's item, don't you ;-)?)"""
+
 
 class Unauthorized(FutError):
     """[401] Unauthorized (ut)."""
 
+
 class MultipleSession(Unauthorized):
     """[401] Unauthorized (ut) - multiple session."""
 
-#class doLoginFail(Forbidden):
+
+# class doLoginFail(Forbidden):
 class doLoginFail(Unauthorized):
     """[403] Forbidden (ut)."""
 

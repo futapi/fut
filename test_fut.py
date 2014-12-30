@@ -11,7 +11,7 @@ from fut.exceptions import FutError
 
 class FutTestCase(unittest.TestCase):
 
-    #_multiprocess_can_split_ = True
+    # _multiprocess_can_split_ = True
 
     def setUp(self):
         pass

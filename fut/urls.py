@@ -8,18 +8,17 @@ from .exceptions import FutError
 
 def __updateUrls__(urls, cl):
         """Gets services urls."""
-        urls['fut_config'] = '%s?cl=%s' %(urls['fut_config'], cl)
+        urls['fut_config'] = '%s?cl=%s' % (urls['fut_config'], cl)
         rc = xmltodict.parse(requests.get(urls['fut_config']).content)
         services = rc['main']['services']['prod']
         path = '{0}{1}game/fifa/'.format(urls['fut_host'], rc['main']['directHttpServiceDestination'])
         path_auth = '{0}/iframe/fut15{1}'.format(urls['main_site'], rc['main']['httpServiceDestination'])
         for i in services:
             if i == 'authentication':
-                urls['fut'][i] = path_auth+services[i]
+                urls['fut'][i] = path_auth + services[i]
             else:
-                urls['fut'][i] = path+services[i]
+                urls['fut'][i] = path + services[i]
         return urls
-
 
 
 def urls(platform, cl=None):
@@ -39,14 +38,13 @@ def urls(platform, cl=None):
                                   'ps3':  'https://utas.s2.fut.ea.com:443',
                                   'xbox': 'https://utas.fut.ea.com:443',
                                   'ios':  'https://utas.fut.ea.com:443',
-                                  'and':  'https://utas.fut.ea.com:443',
-                                 },
+                                  'and':  'https://utas.fut.ea.com:443'},
 
         'shards':                'https://www.easports.com/iframe/fut15/p/ut/shards',  # add timestamp
         'acc_info':              'https://www.easports.com/iframe/fut15/p/ut/game/fifa15/user/accountinfo',
         'card_info':             'https://fifa15.content.easports.com/fifa/fltOnlineAssets/8D941B48-51BB-4B87-960A-06A61A62EBC0/2015/fut/items/web/',
     }
-    #urls['login'] = requests.get(urls['fut_home']).url
+    # urls['login'] = requests.get(urls['fut_home']).url
 
     if platform in urls['fut_host']:
         urls['fut_host'] = urls['fut_host'][platform]
