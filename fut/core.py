@@ -385,9 +385,11 @@ class Core(object):
             self.logger.error("{0} (itemId: {1}) NOT MOVED to {2} Pile. REASON: {3}".format(trade_id, item_id, pile, rc['itemData'][0]['reason']))
         return rc['itemData'][0]['success']
 
-    def logout(self):
+    def logout(self, save=True):
         """Logs out nicely (like clicking on logout button)."""
         self.r.get('https://www.easports.com/fifa/logout')
+        if save:
+            self.saveSession()
         return True
 
     def saveSession(self):
