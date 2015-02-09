@@ -74,9 +74,16 @@ Optional parameters:
 
 Quick sell
 `````````````
-
+single item:
 .. code-block:: python
 
+    >>> item_id = 123456789
+    >>> fut.quickSell(item_id)
+
+multiple items:
+.. code-block:: python
+
+    >>> item_id = [123456789, 987654321]
     >>> fut.quickSell(item_id)
 
 Piles (Watchlist / Tradepile / Unassigned)
@@ -90,7 +97,7 @@ Piles (Watchlist / Tradepile / Unassigned)
     >>> fut.sendToClub(trade_id, item_id)                    # add card to club
     >>> fut.sendToWatchlist(trade_id)                        # add card to watchlist
     >>> fut.tradepileDelete(trade_id)                        # removes item from tradepile
-    >>> fut.watchlistDelete(trade_id)                        # removes item from watch list
+    >>> fut.watchlistDelete(trade_id)                        # removes item from watch list (you can pass single str/ing or list/tuple of ids - like in quickSell)
 
     >>> fut.tradepile_size  # tradepile size (slots)
     80
@@ -133,6 +140,13 @@ Send keepalive ping (you have to make at least one request every ~10 minutes to 
 .. code-block:: python
 
     >>> fut.keepalive()
+
+Logout
+`````````````
+"""Logs out nicely (like clicking on logout button)."""
+.. code-block:: python
+    >>> fut.logout()
+
 
 
 Item object (dict) structure
