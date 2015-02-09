@@ -18,12 +18,12 @@ Usage:
 """
 
 __title__ = 'fut'
-__version__ = '0.0.22'
+__version__ = '0.0.23'
 __author__ = 'Piotr Staroszczyk'
 __author_email__ = 'piotr.staroszczyk@get24.org'
 __license__ = 'GNU GPL v3'
 __copyright__ = 'Copyright 2013 Piotr Staroszczyk'
 
 
-#from .api import baseId, cardInfo
+# from .api import baseId, cardInfo
 from .core import Core

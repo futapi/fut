@@ -4,6 +4,15 @@ Changelog
 ---------
 
 
+0.0.23 (2015-02-09)
+++++++++++++++++++
+* urls: fix #131
+* Captcha exception got img & token parameter
+* core: add logout
+* core: quickSell & watchlistDelete accepts now int/str or tuple/list with multiple ids
+* urls: enable ssl for all urls
+* core & urls: add timestamp dynamically (just right before every request)
+
 0.0.22 (2014-12-28)
 ++++++++++++++++++
 * setup: fix manifest

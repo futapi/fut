@@ -10,6 +10,7 @@ This module implements the fut's basic methods.
 
 import requests
 import re
+from time import time
 try:
     from cookielib import LWPCookieJar
 except ImportError:
@@ -27,7 +28,6 @@ from .exceptions import (FutError, ExpiredSession, InternalServerError,
                          Conflict, MaxSessions, MultipleSession,
                          FeatureDisabled, doLoginFail)
 from .EAHashingAlgorithm import EAHashingAlgorithm
-
 
 
 def baseId(resource_id, return_version=False):
@@ -48,43 +48,44 @@ def baseId(resource_id, return_version=False):
 
     return resource_id
 
+
 def itemParse(item_data):
     """Parser for item data. Returns nice dictionary."""
     return {
-            'tradeId':       item_data.get('tradeId'),
-            'buyNowPrice':   item_data.get('buyNowPrice'),
-            'tradeState':    item_data.get('tradeState'),
-            'bidState':      item_data.get('bidState'),
-            'startingBid':   item_data.get('startingBid'),
-            'id':            item_data['itemData']['id'],
-            'timestamp':     item_data['itemData']['timestamp'],  # auction start
-            'rating':        item_data['itemData']['rating'],
-            'assetId':       item_data['itemData']['assetId'],
-            'resourceId':    item_data['itemData']['resourceId'],
-            'itemState':     item_data['itemData']['itemState'],
-            'rareflag':      item_data['itemData']['rareflag'],
-            'formation':     item_data['itemData']['formation'],
-            'leagueId':      item_data['itemData']['leagueId'],
-            'injuryType':    item_data['itemData']['injuryType'],
-            'injuryGames':   item_data['itemData']['injuryGames'],
-            'lastSalePrice': item_data['itemData']['lastSalePrice'],
-            'fitness':       item_data['itemData']['fitness'],
-            'training':      item_data['itemData']['training'],
-            'suspension':    item_data['itemData']['suspension'],
-            'contract':      item_data['itemData']['contract'],
-            #'position':      item_data['itemData']['preferredPosition'],
-            'playStyle':     item_data['itemData'].get('playStyle'),  # used only for players
-            'discardValue':  item_data['itemData']['discardValue'],
-            'itemType':      item_data['itemData']['itemType'],
-            'owners':        item_data['itemData']['owners'],
-            'offers':        item_data.get('offers'),
-            'currentBid':    item_data.get('currentBid'),
-            'expires':       item_data.get('expires'),  # seconds left
-            'sellerEstablished': item_data.get('sellerEstablished'),
-            'sellerId':      item_data.get('sellerId'),
-            'sellerName':    item_data.get('sellerName'),
-            'watched':    item_data.get('watched'),
-        }
+        'tradeId':           item_data.get('tradeId'),
+        'buyNowPrice':       item_data.get('buyNowPrice'),
+        'tradeState':        item_data.get('tradeState'),
+        'bidState':          item_data.get('bidState'),
+        'startingBid':       item_data.get('startingBid'),
+        'id':                item_data['itemData']['id'],
+        'timestamp':         item_data['itemData']['timestamp'],  # auction start
+        'rating':            item_data['itemData']['rating'],
+        'assetId':           item_data['itemData']['assetId'],
+        'resourceId':        item_data['itemData']['resourceId'],
+        'itemState':         item_data['itemData']['itemState'],
+        'rareflag':          item_data['itemData']['rareflag'],
+        'formation':         item_data['itemData']['formation'],
+        'leagueId':          item_data['itemData']['leagueId'],
+        'injuryType':        item_data['itemData']['injuryType'],
+        'injuryGames':       item_data['itemData']['injuryGames'],
+        'lastSalePrice':     item_data['itemData']['lastSalePrice'],
+        'fitness':           item_data['itemData']['fitness'],
+        'training':          item_data['itemData']['training'],
+        'suspension':        item_data['itemData']['suspension'],
+        'contract':          item_data['itemData']['contract'],
+        # 'position':         item_data['itemData']['preferredPosition'],
+        'playStyle':         item_data['itemData'].get('playStyle'),  # used only for players
+        'discardValue':      item_data['itemData']['discardValue'],
+        'itemType':          item_data['itemData']['itemType'],
+        'owners':            item_data['itemData']['owners'],
+        'offers':            item_data.get('offers'),
+        'currentBid':        item_data.get('currentBid'),
+        'expires':           item_data.get('expires'),  # seconds left
+        'sellerEstablished': item_data.get('sellerEstablished'),
+        'sellerId':          item_data.get('sellerId'),
+        'sellerName':        item_data.get('sellerName'),
+        'watched':           item_data.get('watched'),
+    }
 
 '''  # different urls (platforms)
 def cardInfo(resource_id):
@@ -108,6 +109,7 @@ class Core(object):
     def __login__(self, email, passwd, secret_answer, platform='pc', code=None, emulate=None):
         """Just log in."""
         # TODO: split into smaller methods
+        # TODO: check first if login is needed (https://www.easports.com/fifa/api/isUserLoggedIn)
         secret_answer_hash = EAHashingAlgorithm().EAHash(secret_answer)
         self.credits = 0
         # create session
@@ -119,7 +121,7 @@ class Core(object):
                 self.r.cookies.load(ignore_discard=True)  # is it good idea to load discarded cookies after long time?
             except IOError:
                 pass
-                #self.r.cookies.save(ignore_discard=True)  # create empty file for cookies
+                # self.r.cookies.save(ignore_discard=True)  # create empty file for cookies
         if emulate == 'and':
             self.r.headers = headers_and.copy()  # i'm android now ;-)
         elif emulate == 'ios':
@@ -128,7 +130,7 @@ class Core(object):
             self.r.headers = headers.copy()  # i'm chrome browser now ;-)
         self.urls = urls(platform)
         # TODO: urls won't be loaded if we drop here
-        #if self.r.get(self.urls['main_site']+'/fifa/api/isUserLoggedIn').json()['isLoggedIn']:
+        # if self.r.get(self.urls['main_site']+'/fifa/api/isUserLoggedIn').json()['isLoggedIn']:
         #    return True  # no need to log in again
         # emulate
         if emulate == 'ios':
@@ -179,15 +181,15 @@ class Core(object):
                 raise FutError('Error during login process - code is required.')
             self.r.headers['Referer'] = rc.url
             rc = self.r.post(rc.url, {'twoFactorCode': code, '_eventId': 'submit'}).text
-            if 'Incorrect code entered' in rc:
+            if 'Incorrect code entered' in rc or 'Please enter a valid security code' in rc:
                 raise FutError('Error during login process - provided code is incorrect.')
             self.logger.debug(rc)
 
         self.r.headers['Referer'] = self.urls['login']
-        if self.r.get(self.urls['main_site']+'/fifa/api/isUserLoggedIn').json()['isLoggedIn'] is not True:  # TODO: parse error?
+        if self.r.get(self.urls['main_site'] + '/fifa/api/isUserLoggedIn').json()['isLoggedIn'] is not True:  # TODO: parse error?
             raise FutError('Error during login process (probably invalid email, password or code).')
         # TODO: catch invalid data exception
-        #self.nucleus_id = re.search('userid : "([0-9]+)"', rc.text).group(1)  # we'll get it later
+        # self.nucleus_id = re.search('userid : "([0-9]+)"', rc.text).group(1)  # we'll get it later
 
         # === lanuch futweb
         self.r.headers['Referer'] = self.urls['fut_home']  # prepare headers
@@ -198,8 +200,8 @@ class Core(object):
 #            raise FutError('Error during login process (probably invalid email or password).')
         self.nucleus_id = re.search("var EASW_ID = '([0-9]+)';", rc).group(1)
         self.build_cl = re.search("var BUILD_CL = '([0-9]+)';", rc).group(1)
-        #self.urls['fut_base'] = re.search("var BASE_FUT_URL = '(https://.+?)';", rc).group(1)
-        #self.urls['fut_home'] = re.search("var GUEST_APP_URI = '(http://.+?)';", rc).group(1)
+        # self.urls['fut_base'] = re.search("var BASE_FUT_URL = '(https://.+?)';", rc).group(1)
+        # self.urls['fut_home'] = re.search("var GUEST_APP_URI = '(http://.+?)';", rc).group(1)
 
         self.urls = urls(platform, self.build_cl)
 
@@ -213,7 +215,7 @@ class Core(object):
             'X-UT-Route': self.urls['fut_host'],
             'Referer': self.urls['futweb'],
         })
-        rc = self.r.get(self.urls['acc_info'])
+        rc = self.r.get(self.urls['acc_info'], params={'_': int(time() * 1000)})
         self.logger.debug(rc.content)
         rc = rc.json()['userAccountInfo']['personas'][0]
         self.persona_id = rc['personaId']
@@ -230,7 +232,7 @@ class Core(object):
         data = {'isReadOnly': False,
                 'sku': sku,
                 'clientVersion': clientVersion,
-                #'nuc': self.nucleus_id,
+                # 'nuc': self.nucleus_id,
                 'nucleusPersonaId': self.persona_id,
                 'nucleusPersonaDisplayName': self.persona_name,
                 'nucleusPersonaPlatform': platform,
@@ -243,7 +245,7 @@ class Core(object):
         if rc.status_code == 500:
             raise InternalServerError('Servers are probably temporary down.')
         rc = rc.json()
-        #self.urls['fut_host'] = '{0}://{1}'.format(rc['protocol']+rc['ipPort'])
+        # self.urls['fut_host'] = '{0}://{1}'.format(rc['protocol']+rc['ipPort'])
         if rc.get('reason') == 'multiple session':
             raise MultipleSession
         elif rc.get('reason') == 'max sessions':
@@ -257,7 +259,7 @@ class Core(object):
         # validate (secret question)
         self.r.headers['Accept'] = 'text/json'  # prepare headers
         del self.r.headers['Origin']
-        rc = self.r.get(self.urls['fut_question'])
+        rc = self.r.get(self.urls['fut_question'], params={'_': int(time() * 1000)})
         self.logger.debug(rc.content)
         rc = rc.json()
         if rc.get('string') != 'Already answered question.':
@@ -280,10 +282,10 @@ class Core(object):
         del self.r.headers['X-Requested-With']
         del self.r.headers['X-UT-Route']
         self.r.headers.update({
-            #'X-HTTP-Method-Override': 'GET',  # __request__ method manages this
+            # 'X-HTTP-Method-Override': 'GET',  # __request__ method manages this
             'Referer': 'https://www.easports.com/iframe/fut15/bundles/futweb/web/flash/FifaUltimateTeam.swf',
             'Origin': 'https://www.easports.com',
-            #'Content-Type': 'application/json',  # already set
+            # 'Content-Type': 'application/json',  # already set
             'Accept': 'application/json',
         })
 
@@ -301,7 +303,7 @@ class Core(object):
 #        """Returns shards info."""
 #        # TODO: headers
 #        self.r.headers['X-UT-Route'] = self.urls['fut_base']
-#        return self.r.get(self.urls['shards']).json()
+#        return self.r.get(self.urls['shards'], params={'_': int(time()*1000)}).json()
 #        # self.r.headers['X-UT-Route'] = self.urls['fut_pc']
 
     def __request__(self, method, url, *args, **kwargs):
@@ -317,6 +319,7 @@ class Core(object):
             self.keepalive()  # credits not avaible in response, manualy updating
             rc = {}
         else:
+            captcha_token = rc.headers.get('Proxy-Authorization', '').replace('captcha=', '')  # captcha token (always AAAA ?)
             rc = rc.json()
             # error control
             if 'code' and 'reason' in rc:  # error
@@ -327,7 +330,9 @@ class Core(object):
                 elif rc.get('string') == 'Permission Denied':
                     raise PermissionDenied
                 elif rc.get('string') == 'Captcha Triggered':
-                    raise Captcha
+                    # img = self.r.get(self.urls['fut_captcha_img'], params={'_': int(time()*1000), 'token': captcha_token}).content  # doesnt work - check headers
+                    img = None
+                    raise Captcha(captcha_token, img)
                 elif rc.get('string') == 'Conflict':
                     raise Conflict
                 elif rc.get('string') == 'Feature Disabled':
@@ -380,6 +385,13 @@ class Core(object):
         else:
             self.logger.error("{0} (itemId: {1}) NOT MOVED to {2} Pile. REASON: {3}".format(trade_id, item_id, pile, rc['itemData'][0]['reason']))
         return rc['itemData'][0]['success']
+
+    def logout(self, save=True):
+        """Logs out nicely (like clicking on logout button)."""
+        self.r.get('https://www.easports.com/fifa/logout')
+        if save:
+            self.saveSession()
+        return True
 
     def saveSession(self):
         '''Saves cookies/session.'''
@@ -497,19 +509,25 @@ class Core(object):
     def sell(self, item_id, bid, buy_now=0, duration=3600):
         """Starts auction. Returns trade_id."""
         # TODO: auto send to tradepile
-        data = {'buyNowPrice': buy_now, 'startingBid': bid, 'duration': duration, 'itemData':{'id': item_id}}
+        data = {'buyNowPrice': buy_now, 'startingBid': bid, 'duration': duration, 'itemData': {'id': item_id}}
         rc = self.__post__(self.urls['fut']['SearchAuctionsListItem'], data=json.dumps(data))
         return rc['id']
 
     def quickSell(self, item_id):
         """Quick sell."""
-        params = {'itemIds': item_id}
+        if not isinstance(item_id, (list, tuple)):
+            item_id = (item_id)
+        item_id = (str(i) for i in item_id)
+        params = {'itemIds': ','.join(item_id)}
         self.__delete__(self.urls['fut']['Item'], params=params)  # returns nothing
         return True
 
     def watchlistDelete(self, trade_id):
-        """Removes card from watchlist."""
-        params = {'tradeId': trade_id}
+        """Removes cards from watchlist."""
+        if not isinstance(trade_id, (list, tuple)):
+            trade_id = (trade_id)
+        trade_id = (str(i) for i in trade_id)
+        params = {'tradeId': ','.join(trade_id)}
         self.__delete__(self.urls['fut']['WatchList'], params=params)  # returns nothing
         return True
 
@@ -537,7 +555,7 @@ class Core(object):
         """Relist all tradepile. Returns True or number of deleted (sold) if clean was set."""
         # TODO: return relisted ids
         self.__put__(self.urls['fut']['SearchAuctionsReListItem'])
-        #{"tradeIdList":[{"id":139632781208},{"id":139632796467}]}
+        # {"tradeIdList":[{"id":139632781208},{"id":139632796467}]}
         if clean:  # remove sold cards
             sold = 0
             for i in self.tradepile():
@@ -574,11 +592,11 @@ class Core(object):
         url = '{0}/alltime/user/{1}'.format(self.urls['fut']['LeaderboardEntry'], self.persona_id)
         rc = self.__get__(url)
         data.update({
-            'earnings': rc['category'][0]['score']['value'],   #competitor
-            'transfer': rc['category'][1]['score']['value'],   #trader
-            'club_value': rc['category'][2]['score']['value'], #collector
-            'top_squad': rc['category'][3]['score']['value']   #builder
-            })
+            'earnings': rc['category'][0]['score']['value'],    # competitor
+            'transfer': rc['category'][1]['score']['value'],    # trader
+            'club_value': rc['category'][2]['score']['value'],  # collector
+            'top_squad': rc['category'][3]['score']['value']    # builder
+        })
         return data
 
     def clubInfo(self):
