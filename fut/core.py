@@ -109,6 +109,7 @@ class Core(object):
     def __login__(self, email, passwd, secret_answer, platform='pc', code=None, emulate=None):
         """Just log in."""
         # TODO: split into smaller methods
+        # TODO: check first if login is needed (https://www.easports.com/fifa/api/isUserLoggedIn)
         secret_answer_hash = EAHashingAlgorithm().EAHash(secret_answer)
         self.credits = 0
         # create session
