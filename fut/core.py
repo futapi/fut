@@ -515,13 +515,19 @@ class Core(object):
 
     def quickSell(self, item_id):
         """Quick sell."""
-        params = {'itemIds': item_id}
+        if not isinstance(item_id, (list, tuple)):
+            item_id = (item_id)
+        item_id = (str(i) for i in item_id)
+        params = {'itemIds': ','.join(item_id)}
         self.__delete__(self.urls['fut']['Item'], params=params)  # returns nothing
         return True
 
     def watchlistDelete(self, trade_id):
-        """Removes card from watchlist."""
-        params = {'tradeId': trade_id}
+        """Removes cards from watchlist."""
+        if not isinstance(trade_id, (list, tuple)):
+            trade_id = (trade_id)
+        trade_id = (str(i) for i in trade_id)
+        params = {'tradeId': ','.join(trade_id)}
         self.__delete__(self.urls['fut']['WatchList'], params=params)  # returns nothing
         return True
 
