@@ -11,7 +11,7 @@ def __updateUrls__(urls, cl):
         urls['fut_config'] = '%s?cl=%s' % (urls['fut_config'], cl)
         rc = xmltodict.parse(requests.get(urls['fut_config']).content)
         services = rc['main']['services']['prod']
-        path = '{0}{1}game/fifa/'.format(urls['fut_host'], rc['main']['directHttpServiceDestination'])
+        path = '{0}{1}game/fifa15/'.format(urls['fut_host'], rc['main']['directHttpServiceDestination'])
         path_auth = '{0}/iframe/fut15{1}'.format(urls['main_site'], rc['main']['httpServiceDestination'])
         for i in services:
             if i == 'authentication':
