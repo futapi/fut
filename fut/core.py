@@ -65,8 +65,8 @@ def itemParse(item_data):
         'itemState':         item_data['itemData']['itemState'],
         'rareflag':          item_data['itemData']['rareflag'],
         'formation':         item_data['itemData']['formation'],
-        'leagueId':          item_data['itemData']['leagueId'],
-        'injuryType':        item_data['itemData']['injuryType'],
+        'leagueId':          item_data['itemData'].get('leagueId'),
+        'injuryType':        item_data['itemData'].get('injuryType'),
         'injuryGames':       item_data['itemData']['injuryGames'],
         'lastSalePrice':     item_data['itemData']['lastSalePrice'],
         'fitness':           item_data['itemData']['fitness'],
@@ -487,9 +487,18 @@ class Core(object):
 
     def squad(self, squad_id=0):
         """Return a squad."""
+        # TODO: ability to return other info than players only
         url = '{0}/{1}'.format(self.urls['fut']['Squad'], squad_id)
         rc = self.__get__(url)
-        return rc
+        # return rc
+        return [itemParse(i) for i in rc['players']]
+
+    '''
+    def squads(self):
+        """Return squads list."""
+        # TODO: ability to get full squad info (full=True)
+        return self.squad(squad_id='list')
+    '''
 
     def tradepile(self):
         """Returns items in tradepile."""
