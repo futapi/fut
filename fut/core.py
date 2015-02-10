@@ -485,9 +485,9 @@ class Core(object):
         rc = self.__get__(self.urls['fut']['Club'], data=json.dumps(data))
         return [itemParse({'itemData': i}) for i in rc['itemData']]
 
-    def squad(self, squad_num=0):
+    def squad(self, squad_id=0):
         """Return a squad."""
-        url = '{0}/{1}'.format(self.urls['fut']['Squad'], squad_num)
+        url = '{0}/{1}'.format(self.urls['fut']['Squad'], squad_id)
         rc = self.__get__(url)
         return rc
 
