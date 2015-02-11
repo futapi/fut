@@ -4,6 +4,10 @@ Changelog
 ---------
 
 
+0.0.23 (2015-02-11)
+++++++++++++++++++
+* core: fix #135 type conversion in quickSell & watchlistDelete
+
 0.0.23 (2015-02-09)
 ++++++++++++++++++
 * urls: fix #131

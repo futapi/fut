@@ -19,3 +19,4 @@ Patches and Suggestions
 - Innursery
 - Arthur Nogueira Neves @arthurnn
 - jamslater
+- rjansen

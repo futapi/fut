@@ -86,13 +86,14 @@ multiple items:
     >>> item_id = [123456789, 987654321]
     >>> fut.quickSell(item_id)
 
-Piles (Watchlist / Tradepile / Unassigned)
+Piles (Watchlist / Tradepile / Unassigned / Squad)
 `````````````
 
 .. code-block:: python
 
     >>> items = fut.tradepile()
     >>> items = fut.unassigned()
+    >>> items = fut.squad()
     >>> fut.sendToTradepile(trade_id, item_id)               # add card to tradepile
     >>> fut.sendToClub(trade_id, item_id)                    # add card to club
     >>> fut.sendToWatchlist(trade_id)                        # add card to watchlist

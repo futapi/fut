@@ -65,8 +65,8 @@ def itemParse(item_data):
         'itemState':         item_data['itemData']['itemState'],
         'rareflag':          item_data['itemData']['rareflag'],
         'formation':         item_data['itemData']['formation'],
-        'leagueId':          item_data['itemData']['leagueId'],
-        'injuryType':        item_data['itemData']['injuryType'],
+        'leagueId':          item_data['itemData'].get('leagueId'),
+        'injuryType':        item_data['itemData'].get('injuryType'),
         'injuryGames':       item_data['itemData']['injuryGames'],
         'lastSalePrice':     item_data['itemData']['lastSalePrice'],
         'fitness':           item_data['itemData']['fitness'],
@@ -485,11 +485,20 @@ class Core(object):
         rc = self.__get__(self.urls['fut']['Club'], data=json.dumps(data))
         return [itemParse({'itemData': i}) for i in rc['itemData']]
 
-    def squad(self, squad_num=0):
+    def squad(self, squad_id=0):
         """Return a squad."""
-        url = '{0}/{1}'.format(self.urls['fut']['Squad'], squad_num)
+        # TODO: ability to return other info than players only
+        url = '{0}/{1}'.format(self.urls['fut']['Squad'], squad_id)
         rc = self.__get__(url)
-        return rc
+        # return rc
+        return [itemParse(i) for i in rc['players']]
+
+    '''
+    def squads(self):
+        """Return squads list."""
+        # TODO: ability to get full squad info (full=True)
+        return self.squad(squad_id='list')
+    '''
 
     def tradepile(self):
         """Returns items in tradepile."""
@@ -516,7 +525,7 @@ class Core(object):
     def quickSell(self, item_id):
         """Quick sell."""
         if not isinstance(item_id, (list, tuple)):
-            item_id = (item_id)
+            item_id = (item_id,)
         item_id = (str(i) for i in item_id)
         params = {'itemIds': ','.join(item_id)}
         self.__delete__(self.urls['fut']['Item'], params=params)  # returns nothing
@@ -525,7 +534,7 @@ class Core(object):
     def watchlistDelete(self, trade_id):
         """Removes cards from watchlist."""
         if not isinstance(trade_id, (list, tuple)):
-            trade_id = (trade_id)
+            trade_id = (trade_id,)
         trade_id = (str(i) for i in trade_id)
         params = {'tradeId': ','.join(trade_id)}
         self.__delete__(self.urls['fut']['WatchList'], params=params)  # returns nothing
