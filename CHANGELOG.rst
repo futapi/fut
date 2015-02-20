@@ -6,7 +6,7 @@ Changelog
 
 0.0.25 (????-??-??)
 ++++++++++++++++++
-# core: update credits only on demand
+* core: update credits only on demand
 
 0.0.24 (2015-02-11)
 ++++++++++++++++++
