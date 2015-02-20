@@ -111,7 +111,6 @@ class Core(object):
         # TODO: split into smaller methods
         # TODO: check first if login is needed (https://www.easports.com/fifa/api/isUserLoggedIn)
         secret_answer_hash = EAHashingAlgorithm().EAHash(secret_answer)
-        self.credits = 0
         # create session
         self.r = requests.Session()  # init/reset requests session object
         # load saved cookies/session
@@ -316,7 +315,6 @@ class Core(object):
         if not rc.ok:  # status != 200
             raise UnknownError(rc.content)
         if rc.text == '':
-            self.keepalive()  # credits not avaible in response, manualy updating
             rc = {}
         else:
             captcha_token = rc.headers.get('Proxy-Authorization', '').replace('captcha=', '')  # captcha token (always AAAA ?)
@@ -339,11 +337,6 @@ class Core(object):
                     raise FeatureDisabled
                 else:
                     raise UnknownError(rc.__str__())
-            # update credits
-            if 'credits' not in rc:
-                self.keepalive()  # credits not avaible in response, manualy updating
-            else:
-                self.credits = rc['credits']
         self.saveSession()
         return rc
 
@@ -392,6 +385,11 @@ class Core(object):
         if save:
             self.saveSession()
         return True
+
+    @property
+    def credits(self):
+        """Returns credit amount."""
+        return self.__get__(self.urls['fut']['Credits'])['credits']
 
     def saveSession(self):
         '''Saves cookies/session.'''
@@ -576,7 +574,7 @@ class Core(object):
 
     def keepalive(self):
         """Just refresh credit amount to let know that we're still online. Returns credit amount."""
-        return self.__get__(self.urls['fut']['Credits'])
+        return self.credits
 
     def pileSize(self):
         """Returns size of tradepile and watchlist."""
