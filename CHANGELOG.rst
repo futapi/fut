@@ -4,11 +4,11 @@ Changelog
 ---------
 
 
-0.0.24 (????-??-??)
+0.0.25 (????-??-??)
 ++++++++++++++++++
 # core: update credits only on demand
 
-0.0.23 (2015-02-11)
+0.0.24 (2015-02-11)
 ++++++++++++++++++
 * core: fix #135 type conversion in quickSell & watchlistDelete
 * core: rename parameter squad_num to squad_id
