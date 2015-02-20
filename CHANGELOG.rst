@@ -4,6 +4,10 @@ Changelog
 ---------
 
 
+0.0.24 (????-??-??)
+++++++++++++++++++
+# core: update credits only on demand
+
 0.0.23 (2015-02-11)
 ++++++++++++++++++
 * core: fix #135 type conversion in quickSell & watchlistDelete
