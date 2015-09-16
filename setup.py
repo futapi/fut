@@ -7,7 +7,7 @@ except ImportError:
 
 
 __title__ = 'fut'
-__version__ = '0.0.24'
+__version__ = '0.1.0'
 __author__ = 'Piotr Staroszczyk'
 __author_email__ = 'piotr.staroszczyk@get24.org'
 __license__ = 'GNU GPL v3'
@@ -58,6 +58,7 @@ setup(
         # 'Programming Language :: Python :: 3.1',  # not tested
         'Programming Language :: Python :: 3.2',
         'Programming Language :: Python :: 3.3',
+        # 'Programming Language :: Python :: 3.4',  # not tested
         # 'Programming Language :: Python :: Implementation :: CPython',  # not tested
         # 'Programming Language :: Python :: Implementation :: IronPython',  # not tested
         'Programming Language :: Python :: Implementation :: PyPy',

@@ -4,9 +4,11 @@ Changelog
 ---------
 
 
-0.0.25 (????-??-??)
+0.1.0 (2015-09-1?)
 ++++++++++++++++++
+* fifa 16
 * core: update credits only on demand
+* config: update user-agent (chrome 45 @ win10)
 
 0.0.24 (2015-02-11)
 ++++++++++++++++++
