@@ -132,9 +132,9 @@ class Core(object):
         if platform == 'pc':
             gameSku = 'FFA16PCC'
         elif platform == 'xbox':
-            gameSku == 'FFA16XBO'
+            gameSku = 'FFA16XBO'
         elif platform == 'ps3':
-            gameSku == 'FFA16PS3'  # not tested
+            gameSku = 'FFA16PS3'  # not tested
         else:
             raise FutError('Wrong platform. (Valid ones are pc/xbox/ps3)')
         # if self.r.get(self.urls['main_site']+'/fifa/api/isUserLoggedIn').json()['isLoggedIn']:
