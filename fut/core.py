@@ -129,6 +129,14 @@ class Core(object):
             self.r.headers = headers.copy()  # i'm chrome browser now ;-)
         self.urls = urls(platform)
         # TODO: urls won't be loaded if we drop here
+        if platform == 'pc':
+            gameSku = 'FFA16PCC'
+        elif platform == 'xbox':
+            gameSku == 'FFA16XBO'
+        elif platform == 'ps3':
+            gameSku == 'FFA16PS3'  # not tested
+        else:
+            raise FutError('Wrong platform. (Valid ones are pc/xbox/ps3)')
         # if self.r.get(self.urls['main_site']+'/fifa/api/isUserLoggedIn').json()['isLoggedIn']:
         #    return True  # no need to log in again
         # emulate
@@ -238,6 +246,7 @@ class Core(object):
                 # 'nuc': self.nucleus_id,
                 'nucleusPersonaId': self.persona_id,
                 'nucleusPersonaDisplayName': self.persona_name,
+                'gameSku': gameSku,
                 'nucleusPersonaPlatform': platform,
                 'locale': 'en-GB',
                 'method': 'authcode',
