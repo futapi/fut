@@ -36,7 +36,7 @@ def urls(platform, cl=None):
 
         'fut_host':              {'pc':   'https://utas.s2.fut.ea.com:443',
                                   'ps3':  'https://utas.s2.fut.ea.com:443',
-                                  'xbox': 'https://utas.fut.ea.com:443',
+                                  'xbox': 'https://utas.s3.fut.ea.com:443',
                                   'ios':  'https://utas.fut.ea.com:443',
                                   'and':  'https://utas.fut.ea.com:443'},
 
