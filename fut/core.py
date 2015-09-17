@@ -232,7 +232,7 @@ class Core(object):
         self.persona_id = rc['personaId']
         self.persona_name = rc['personaName']
         self.clubs = [i for i in rc['userClubList']]
-        # sort clubs by lastAccessTime (latest firts)
+        # sort clubs by lastAccessTime (latest first)
         self.clubs.sort(key=lambda i: i['lastAccessTime'], reverse=True)
 
         # authorization
@@ -295,6 +295,7 @@ class Core(object):
         del self.r.headers['X-UT-Route']
         self.r.headers.update({
             # 'X-HTTP-Method-Override': 'GET',  # __request__ method manages this
+            'X-Requested-With': 'ShockwaveFlash/19.0.0.162',
             'Referer': 'https://www.easports.com/iframe/fut16/bundles/futweb/web/flash/FifaUltimateTeam.swf',
             'Origin': 'https://www.easports.com',
             # 'Content-Type': 'application/json',  # already set
