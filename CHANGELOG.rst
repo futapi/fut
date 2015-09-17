@@ -4,9 +4,16 @@ Changelog
 ---------
 
 
-0.0.23 (2015-02-11)
+0.1.0 (2015-09-1?)
+++++++++++++++++++
+* fifa 16
+* core: update credits only on demand
+* config: update user-agent (chrome 45 @ win10)
+
+0.0.24 (2015-02-11)
 ++++++++++++++++++
 * core: fix #135 type conversion in quickSell & watchlistDelete
+* core: rename parameter squad_num to squad_id
 
 0.0.23 (2015-02-09)
 ++++++++++++++++++

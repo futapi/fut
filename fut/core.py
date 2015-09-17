@@ -111,7 +111,6 @@ class Core(object):
         # TODO: split into smaller methods
         # TODO: check first if login is needed (https://www.easports.com/fifa/api/isUserLoggedIn)
         secret_answer_hash = EAHashingAlgorithm().EAHash(secret_answer)
-        self.credits = 0
         # create session
         self.r = requests.Session()  # init/reset requests session object
         # load saved cookies/session
@@ -130,27 +129,35 @@ class Core(object):
             self.r.headers = headers.copy()  # i'm chrome browser now ;-)
         self.urls = urls(platform)
         # TODO: urls won't be loaded if we drop here
+        if platform == 'pc':
+            gameSku = 'FFA16PCC'
+        elif platform == 'xbox':
+            gameSku = 'FFA16XBO'
+        elif platform == 'ps3':
+            gameSku = 'FFA16PS3'  # not tested
+        else:
+            raise FutError('Wrong platform. (Valid ones are pc/xbox/ps3)')
         # if self.r.get(self.urls['main_site']+'/fifa/api/isUserLoggedIn').json()['isLoggedIn']:
         #    return True  # no need to log in again
         # emulate
         if emulate == 'ios':
-            sku = 'FUT15IOS'
+            sku = 'FUT16IOS'
             clientVersion = 11
         elif emulate == 'and':
-            sku = 'FUT15AND'
+            sku = 'FUT16AND'
             clientVersion = 11
 #        TODO: need more info about log in procedure in game
 #        elif emulate == 'xbox':
-#            sku = 'FFA15XBX'  # FFA14CAP ?
+#            sku = 'FFA16XBX'  # FFA14CAP ?
 #            clientVersion = 1
 #        elif emulate == 'ps3':
-#            sku = 'FFA15PS3'  # FFA14KTL ?
+#            sku = 'FFA16PS3'  # FFA14KTL ?
 #            clientVersion = 1
 #        elif emulate == 'pc':
 #            sku = ''  # dunno
 #            clientVersion = 1
         elif not emulate:
-            sku = 'FUT15WEB'
+            sku = 'FUT16WEB'
             clientVersion = 1
         else:
             raise FutError('Invalid emulate parameter. (Valid ones are and/ios).')  # pc/ps3/xbox/
@@ -161,8 +168,7 @@ class Core(object):
                 'password': passwd,
                 '_rememberMe': 'on',
                 'rememberMe': 'on',
-                '_eventId': 'submit',
-                'facebookAuth': ''}
+                '_eventId': 'submit'}
         rc = self.r.post(self.urls['login'], data=data)
         self.logger.debug(rc.content)
 
@@ -179,10 +185,15 @@ class Core(object):
             if not code:
                 self.saveSession()
                 raise FutError('Error during login process - code is required.')
-            self.r.headers['Referer'] = rc.url
-            rc = self.r.post(rc.url, {'twoFactorCode': code, '_eventId': 'submit'}).text
+            self.r.headers['Referer'] = url = rc.url
+            # self.r.headers['Upgrade-Insecure-Requests'] = 1  # ?
+            # self.r.headers['Origin'] = 'https://signin.ea.com'
+            rc = self.r.post(url, {'twofactorCode': code, '_trustThisDevice': 'on', 'trustThisDevice': 'on', '_eventId': 'submit'}).text
             if 'Incorrect code entered' in rc or 'Please enter a valid security code' in rc:
                 raise FutError('Error during login process - provided code is incorrect.')
+            self.logger.debug(rc)
+            if 'Set Up an App Authenticator' in rc:
+                rc = self.r.post(url.replace('s2', 's3'), {'_eventId': 'cancel', 'appDevice': 'IPHONE'}).text
             self.logger.debug(rc)
 
         self.r.headers['Referer'] = self.urls['login']
@@ -221,7 +232,7 @@ class Core(object):
         self.persona_id = rc['personaId']
         self.persona_name = rc['personaName']
         self.clubs = [i for i in rc['userClubList']]
-        # sort clubs by lastAccessTime (latest firts)
+        # sort clubs by lastAccessTime (latest first)
         self.clubs.sort(key=lambda i: i['lastAccessTime'], reverse=True)
 
         # authorization
@@ -235,6 +246,7 @@ class Core(object):
                 # 'nuc': self.nucleus_id,
                 'nucleusPersonaId': self.persona_id,
                 'nucleusPersonaDisplayName': self.persona_name,
+                'gameSku': gameSku,
                 'nucleusPersonaPlatform': platform,
                 'locale': 'en-GB',
                 'method': 'authcode',
@@ -283,7 +295,8 @@ class Core(object):
         del self.r.headers['X-UT-Route']
         self.r.headers.update({
             # 'X-HTTP-Method-Override': 'GET',  # __request__ method manages this
-            'Referer': 'https://www.easports.com/iframe/fut15/bundles/futweb/web/flash/FifaUltimateTeam.swf',
+            'X-Requested-With': 'ShockwaveFlash/19.0.0.162',
+            'Referer': 'https://www.easports.com/iframe/fut16/bundles/futweb/web/flash/FifaUltimateTeam.swf',
             'Origin': 'https://www.easports.com',
             # 'Content-Type': 'application/json',  # already set
             'Accept': 'application/json',
@@ -316,7 +329,6 @@ class Core(object):
         if not rc.ok:  # status != 200
             raise UnknownError(rc.content)
         if rc.text == '':
-            self.keepalive()  # credits not avaible in response, manualy updating
             rc = {}
         else:
             captcha_token = rc.headers.get('Proxy-Authorization', '').replace('captcha=', '')  # captcha token (always AAAA ?)
@@ -339,11 +351,6 @@ class Core(object):
                     raise FeatureDisabled
                 else:
                     raise UnknownError(rc.__str__())
-            # update credits
-            if 'credits' not in rc:
-                self.keepalive()  # credits not avaible in response, manualy updating
-            else:
-                self.credits = rc['credits']
         self.saveSession()
         return rc
 
@@ -392,6 +399,11 @@ class Core(object):
         if save:
             self.saveSession()
         return True
+
+    @property
+    def credits(self):
+        """Returns credit amount."""
+        return self.__get__(self.urls['fut']['Credits'])['credits']
 
     def saveSession(self):
         '''Saves cookies/session.'''
@@ -576,7 +588,7 @@ class Core(object):
 
     def keepalive(self):
         """Just refresh credit amount to let know that we're still online. Returns credit amount."""
-        return self.__get__(self.urls['fut']['Credits'])
+        return self.credits
 
     def pileSize(self):
         """Returns size of tradepile and watchlist."""
