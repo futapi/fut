@@ -4,7 +4,7 @@ Changelog
 ---------
 
 
-0.1.0 (2015-09-1?)
+0.1.0 (2015-09-17)
 ++++++++++++++++++
 * fifa 16
 * core: update credits only on demand
