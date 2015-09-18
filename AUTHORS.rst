@@ -20,3 +20,4 @@ Patches and Suggestions
 - Arthur Nogueira Neves @arthurnn
 - jamslater
 - rjansen
+- ricklhp7

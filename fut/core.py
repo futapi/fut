@@ -110,6 +110,7 @@ class Core(object):
         """Just log in."""
         # TODO: split into smaller methods
         # TODO: check first if login is needed (https://www.easports.com/fifa/api/isUserLoggedIn)
+        # TODO: get gamesku, url from shards !!
         secret_answer_hash = EAHashingAlgorithm().EAHash(secret_answer)
         # create session
         self.r = requests.Session()  # init/reset requests session object
@@ -130,13 +131,18 @@ class Core(object):
         self.urls = urls(platform)
         # TODO: urls won't be loaded if we drop here
         if platform == 'pc':
-            gameSku = 'FFA16PCC'
+            game_sku = 'FFA16PCC'
         elif platform == 'xbox':
-            gameSku = 'FFA16XBO'
+            game_sku = 'FFA16XBO'
+        elif platform == 'xbox360':
+            game_sku = 'FFA16XBX'
         elif platform == 'ps3':
-            gameSku = 'FFA16PS3'  # not tested
+            game_sku = 'FFA16PS3'  # not tested
+        elif platform == 'ps4':
+            game_sku = 'FFA16PS4'
+            platform = 'ps3'  # ps4 not available?
         else:
-            raise FutError('Wrong platform. (Valid ones are pc/xbox/ps3)')
+            raise FutError('Wrong platform. (Valid ones are pc/xbox/xbox360/ps3/ps4)')
         # if self.r.get(self.urls['main_site']+'/fifa/api/isUserLoggedIn').json()['isLoggedIn']:
         #    return True  # no need to log in again
         # emulate
@@ -246,7 +252,7 @@ class Core(object):
                 # 'nuc': self.nucleus_id,
                 'nucleusPersonaId': self.persona_id,
                 'nucleusPersonaDisplayName': self.persona_name,
-                'gameSku': gameSku,
+                'gameSku': game_sku,
                 'nucleusPersonaPlatform': platform,
                 'locale': 'en-GB',
                 'method': 'authcode',

@@ -34,15 +34,17 @@ def urls(platform, cl=None):
         'fut_captcha_img':       'https://www.easports.com/iframe/fut16/p/ut/captcha/img',  # add timestamp
         'fut_captcha_validate':  'https://www.easports.com/iframe/fut16/p/ut/captcha/validate',
 
-        'fut_host':              {'pc':   'https://utas.s2.fut.ea.com:443',
-                                  'ps3':  'https://utas.s2.fut.ea.com:443',
-                                  'xbox': 'https://utas.s3.fut.ea.com:443',
-                                  'ios':  'https://utas.fut.ea.com:443',
-                                  'and':  'https://utas.fut.ea.com:443'},
+        'fut_host':              {'pc':      'https://utas.s2.fut.ea.com:443',
+                                  'ps3':     'https://utas.s2.fut.ea.com:443',
+                                  'ps4':     'https://utas.s2.fut.ea.com:443',
+                                  'xbox':    'https://utas.s3.fut.ea.com:443',
+                                  'xbox360': 'https://utas.s3.fut.ea.com:443',
+                                  'ios':     'https://utas.fut.ea.com:443',
+                                  'and':     'https://utas.fut.ea.com:443'},
 
         'shards':                'https://www.easports.com/iframe/fut16/p/ut/shards',  # add timestamp
         'acc_info':              'https://www.easports.com/iframe/fut16/p/ut/game/fifa16/user/accountinfo',
-        'card_info':             'https://fifa15.content.easports.com/fifa/fltOnlineAssets/B488919F-23B5-497F-9FC0-CACFB38863D0/2016/fut/items/web/',
+        'card_info':             'https://fifa16.content.easports.com/fifa/fltOnlineAssets/B488919F-23B5-497F-9FC0-CACFB38863D0/2016/fut/items/web/',
     }
     # urls['login'] = requests.get(urls['fut_home']).url
 

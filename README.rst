@@ -15,7 +15,7 @@ Documentation will be available soon at http://fut.readthedocs.org/.
 
 Players database: https://www.easports.com/uk/fifa/ultimate-team/fut/database
 
-Players database (json): http://cdn.content.easports.com/fifa/fltOnlineAssets/8D941B48-51BB-4B87-960A-06A61A62EBC0/2015/fut/items/web/players.json
+Players database (json): http://cdn.content.easports.com/fifa/fltOnlineAssets/B488919F-23B5-497F-9FC0-CACFB38863D0/2016/fut/items/web/players.json
 
 
 
@@ -27,7 +27,7 @@ Login
 Optional parameters:
 
 - CODE: [string] email/sms code for two-step verification (make sure to use string if your codes starts with 0).
-- PLATFORM: [pc/ps3/xbox/and/ios] pc default.
+- PLATFORM: [pc/ps3/ps4/xbox/xbox360] pc default.
 - EMULATE: [and/ios] use this feature to avoid webapp errors (BE WARE IT'S HIGH RISK).
 - DEBUG: [True/False] enables debug.
 - COOKIES: [filename] saves cookies after every request and load it from given file when restaring app (just like browser).
