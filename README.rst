@@ -27,7 +27,7 @@ Login
 Optional parameters:
 
 - CODE: [string] email/sms code for two-step verification (make sure to use string if your codes starts with 0).
-- PLATFORM: [pc/ps3/xbox/and/ios] pc default.
+- PLATFORM: [pc/ps3/ps4/xbox/xbox360] pc default.
 - EMULATE: [and/ios] use this feature to avoid webapp errors (BE WARE IT'S HIGH RISK).
 - DEBUG: [True/False] enables debug.
 - COOKIES: [filename] saves cookies after every request and load it from given file when restaring app (just like browser).
