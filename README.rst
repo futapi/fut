@@ -75,12 +75,14 @@ Optional parameters:
 Quick sell
 `````````````
 single item:
+
 .. code-block:: python
 
     >>> item_id = 123456789
     >>> fut.quickSell(item_id)
 
 multiple items:
+
 .. code-block:: python
 
     >>> item_id = [123456789, 987654321]
@@ -144,8 +146,10 @@ Send keepalive ping (you have to make at least one request every ~10 minutes to 
 
 Logout
 `````````````
-"""Logs out nicely (like clicking on logout button)."""
+Logs out nicely (like clicking on logout button).
+
 .. code-block:: python
+
     >>> fut.logout()
 
 
@@ -191,14 +195,18 @@ Problems
 Somehow i've sent card to full tradepile and it disappeared
 `````````````
 Make space in tradepile and just call one command to restore it:
+
 .. code-block:: python
+
     fut.sendToTradepile(-1, id)
 
 
 I've card with None tradeId so cannot move/trade it
 `````````````
 Make space in tradepile and just call one command to restore it:
+
 .. code-block:: python
+
     fut.sendToTradepile(-1, id)
 
 
