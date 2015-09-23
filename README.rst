@@ -184,12 +184,32 @@ Item object (dict) structure
 to be continued ;-)
 
 
+
+Problems
+-----
+
+Somehow i've sent card to full tradepile and it disappeared
+`````````````
+Make space in tradepile and just call one command to restore it:
+.. code-block:: python
+    fut.sendToTradepile(-1, id)
+
+
+I've card with None tradeId so cannot move/trade it
+`````````````
+Make space in tradepile and just call one command to restore it:
+.. code-block:: python
+    fut.sendToTradepile(-1, id)
+
+
+
 CLI examples
 ------------
 .. code-block:: bash
 
     not yet
     ...
+
 
 
 License
