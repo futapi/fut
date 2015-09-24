@@ -136,6 +136,18 @@ Returns stats and definition IDs for each card variation.
 
     >>> fut.searchDefinition(asset_id, start=0, count=35)
 
+Convert Team/League/Nation id to name
+`````````````
+
+.. code-block:: python
+
+    >>> fut.nations[1]
+    Albania
+    >>> fut.leagues[1]
+    Alka Superliga
+    >>> fut.teams[1]
+    Arsenal
+
 Keepalive
 `````````````
 Send keepalive ping (you have to make at least one request every ~10 minutes to avoid session expire/logout).

@@ -95,6 +95,30 @@ def cardInfo(resource_id):
     return requests.get(url).json()
 '''
 
+# TODO: optimize messages, xml parser might be faster
+def nations():
+    rc = requests.get(urls('pc')['messages']).content
+    data = re.findall('<trans-unit resname="search.nationName.nation([0-9]+)">\n        <source>(.+)</source>', rc)
+    nations = {}
+    for i in data:
+        nations[int(i[0])] = i[1]
+    return nations
+
+def leagues(year=2016):
+    rc = requests.get(urls('pc')['messages']).content
+    data = re.findall('<trans-unit resname="global.leagueFull.%s.league([0-9]+)">\n        <source>(.+)</source>' % year, rc)
+    leagues = {}
+    for i in data:
+        leagues[int(i[0])] = i[1]
+    return leagues
+
+def teams(year=2016):
+    rc = requests.get(urls('pc')['messages']).content
+    data = re.findall('<trans-unit resname="global.teamFull.%s.team([0-9]+)">\n        <source>(.+)</source>' % year, rc)
+    teams = {}
+    for i in data:
+        teams[int(i[0])] = i[1]
+    return teams
 
 class Core(object):
     def __init__(self, email, passwd, secret_answer, platform='pc', code=None, emulate=None, debug=False, cookies=cookies_file):
@@ -405,6 +429,19 @@ class Core(object):
         if save:
             self.saveSession()
         return True
+
+    # TODO: probably there is no need to refresh on every call?
+    @property
+    def nations(self):
+        return nations()
+
+    @property
+    def leagues(self, year=2016):
+        return leagues(year)
+
+    @property
+    def teams(self, year=2016):
+        return teams(year)
 
     @property
     def credits(self):
