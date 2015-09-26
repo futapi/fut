@@ -4,6 +4,10 @@ Changelog
 ---------
 
 
+0.1.2 (2015-09-?)
+++++++++++++++++++
+* core: fix baseId calculation
+
 0.1.1 (2015-09-19)
 ++++++++++++++++++
 * fix for ps/xbox
