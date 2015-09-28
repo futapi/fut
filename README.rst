@@ -75,12 +75,14 @@ Optional parameters:
 Quick sell
 `````````````
 single item:
+
 .. code-block:: python
 
     >>> item_id = 123456789
     >>> fut.quickSell(item_id)
 
 multiple items:
+
 .. code-block:: python
 
     >>> item_id = [123456789, 987654321]
@@ -134,6 +136,18 @@ Returns stats and definition IDs for each card variation.
 
     >>> fut.searchDefinition(asset_id, start=0, count=35)
 
+Convert Team/League/Nation id to name
+`````````````
+
+.. code-block:: python
+
+    >>> fut.nations[1]
+    Albania
+    >>> fut.leagues[1]
+    Alka Superliga
+    >>> fut.teams[1]
+    Arsenal
+
 Keepalive
 `````````````
 Send keepalive ping (you have to make at least one request every ~10 minutes to avoid session expire/logout).
@@ -144,8 +158,10 @@ Send keepalive ping (you have to make at least one request every ~10 minutes to 
 
 Logout
 `````````````
-"""Logs out nicely (like clicking on logout button)."""
+Logs out nicely (like clicking on logout button).
+
 .. code-block:: python
+
     >>> fut.logout()
 
 
@@ -184,12 +200,36 @@ Item object (dict) structure
 to be continued ;-)
 
 
+
+Problems
+-----
+
+Somehow i've sent card to full tradepile and it disappeared
+`````````````
+Make space in tradepile and just call one command to restore it:
+
+.. code-block:: python
+
+    fut.sendToTradepile(-1, id)
+
+
+I've card with None tradeId so cannot move/trade it
+`````````````
+Make space in tradepile and just call one command to restore it:
+
+.. code-block:: python
+
+    fut.sendToTradepile(-1, id)
+
+
+
 CLI examples
 ------------
 .. code-block:: bash
 
     not yet
     ...
+
 
 
 License

@@ -33,20 +33,21 @@ from .EAHashingAlgorithm import EAHashingAlgorithm
 def baseId(resource_id, return_version=False):
     """Calculates base id and version from a resource id."""
     version = 0
+    resource_id = abs(resource_id)
 
     while resource_id > 0x01000000:  # 16777216
         version += 1
         if version == 1:
-            resource_id -= 0x70000000  # 1879048192
+            resource_id -= 0x80000000  # 2147483648
         elif version == 2:
             resource_id -= 0x03000000  # 50331648
         else:
             resource_id -= 0x01000000  # 16777216
 
     if return_version:
-        return resource_id, version
+        return abs(resource_id), version
 
-    return resource_id
+    return abs(resource_id)
 
 
 def itemParse(item_data):
@@ -95,6 +96,30 @@ def cardInfo(resource_id):
     return requests.get(url).json()
 '''
 
+# TODO: optimize messages, xml parser might be faster
+def nations():
+    rc = requests.get(urls('pc')['messages']).content
+    data = re.findall('<trans-unit resname="search.nationName.nation([0-9]+)">\n        <source>(.+)</source>', rc)
+    nations = {}
+    for i in data:
+        nations[int(i[0])] = i[1]
+    return nations
+
+def leagues(year=2016):
+    rc = requests.get(urls('pc')['messages']).content
+    data = re.findall('<trans-unit resname="global.leagueFull.%s.league([0-9]+)">\n        <source>(.+)</source>' % year, rc)
+    leagues = {}
+    for i in data:
+        leagues[int(i[0])] = i[1]
+    return leagues
+
+def teams(year=2016):
+    rc = requests.get(urls('pc')['messages']).content
+    data = re.findall('<trans-unit resname="global.teamFull.%s.team([0-9]+)">\n        <source>(.+)</source>' % year, rc)
+    teams = {}
+    for i in data:
+        teams[int(i[0])] = i[1]
+    return teams
 
 class Core(object):
     def __init__(self, email, passwd, secret_answer, platform='pc', code=None, emulate=None, debug=False, cookies=cookies_file):
@@ -185,7 +210,7 @@ class Core(object):
             self.r.headers['Referer'] = rc.url  # s3
             rc = self.r.post(rc.url, {'twofactorType': 'EMAIL', 'country': 0, 'phoneNumber': '', '_eventId': 'submit'}
         '''
-        if 'We sent a security code to your' in rc.text or 'Your security code was sent to' in rc.text:  # post code
+        if 'We sent a security code to your' in rc.text or 'Your security code was sent to' in rc.text or 'Enter the 6-digit verification code' in rc.text:  # post code
             # TODO: 'We sent a security code to your email' / 'We sent a security code to your ?'
             # TODO: pick code from codes.txt?
             if not code:
@@ -405,6 +430,19 @@ class Core(object):
         if save:
             self.saveSession()
         return True
+
+    # TODO: probably there is no need to refresh on every call?
+    @property
+    def nations(self):
+        return nations()
+
+    @property
+    def leagues(self, year=2016):
+        return leagues(year)
+
+    @property
+    def teams(self, year=2016):
+        return teams(year)
 
     @property
     def credits(self):
