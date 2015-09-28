@@ -4,9 +4,10 @@ Changelog
 ---------
 
 
-0.1.2 (2015-09-?)
+0.1.2 (2015-09-28)
 ++++++++++++++++++
 * core: fix baseId calculation
+* support app authentication (#147)
 
 0.1.1 (2015-09-19)
 ++++++++++++++++++
