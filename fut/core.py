@@ -210,7 +210,7 @@ class Core(object):
             self.r.headers['Referer'] = rc.url  # s3
             rc = self.r.post(rc.url, {'twofactorType': 'EMAIL', 'country': 0, 'phoneNumber': '', '_eventId': 'submit'}
         '''
-        if 'We sent a security code to your' in rc.text or 'Your security code was sent to' in rc.text:  # post code
+        if 'We sent a security code to your' in rc.text or 'Your security code was sent to' in rc.text or 'Enter the 6-digit verification code' in rc.text:  # post code
             # TODO: 'We sent a security code to your email' / 'We sent a security code to your ?'
             # TODO: pick code from codes.txt?
             if not code:
