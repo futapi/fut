@@ -4,6 +4,10 @@ Changelog
 ---------
 
 
+0.1.3 (2015-10-?)
+++++++++++++++++++
+* core: bump clientversion for android/ios emulation
+
 0.1.2 (2015-09-28)
 ++++++++++++++++++
 * core: fix baseId calculation
