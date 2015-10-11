@@ -372,7 +372,7 @@ class Core(object):
                     raise ExpiredSession
                 elif rc.get('string') == 'Internal Server Error (ut)':
                     raise InternalServerError
-                elif rc.get('string') == 'Permission Denied':
+                elif rc.get('code') == '461' or rc.get('string') == 'Permission Denied':
                     raise PermissionDenied
                 elif rc.get('string') == 'Captcha Triggered':
                     # img = self.r.get(self.urls['fut_captcha_img'], params={'_': int(time()*1000), 'token': captcha_token}).content  # doesnt work - check headers
