@@ -20,7 +20,7 @@ try:
 except ImportError:
     import json
 
-from .config import headers, headers_and, headers_ios, cookies_file
+from .config import headers, headers_and, headers_ios, flash_agent, cookies_file
 from .log import logger
 from .urls import urls
 from .exceptions import (FutError, ExpiredSession, InternalServerError,
@@ -96,6 +96,7 @@ def cardInfo(resource_id):
     return requests.get(url).json()
 '''
 
+
 # TODO: optimize messages, xml parser might be faster
 def nations():
     rc = requests.get(urls('pc')['messages']).content
@@ -105,6 +106,7 @@ def nations():
         nations[int(i[0])] = i[1]
     return nations
 
+
 def leagues(year=2016):
     rc = requests.get(urls('pc')['messages']).content
     data = re.findall('<trans-unit resname="global.leagueFull.%s.league([0-9]+)">\n        <source>(.+)</source>' % year, rc)
@@ -113,6 +115,7 @@ def leagues(year=2016):
         leagues[int(i[0])] = i[1]
     return leagues
 
+
 def teams(year=2016):
     rc = requests.get(urls('pc')['messages']).content
     data = re.findall('<trans-unit resname="global.teamFull.%s.team([0-9]+)">\n        <source>(.+)</source>' % year, rc)
@@ -120,6 +123,7 @@ def teams(year=2016):
     for i in data:
         teams[int(i[0])] = i[1]
     return teams
+
 
 class Core(object):
     def __init__(self, email, passwd, secret_answer, platform='pc', code=None, emulate=None, debug=False, cookies=cookies_file):
@@ -260,7 +264,7 @@ class Core(object):
         rc = self.r.get(self.urls['acc_info'], params={'_': int(time() * 1000)})
         self.logger.debug(rc.content)
         # pick persona (first valid for given platform)
-        #rc = rc.json()['userAccountInfo']['personas'][0]
+        # rc = rc.json()['userAccountInfo']['personas'][0]
         rc = [i for i in rc.json()['userAccountInfo']['personas'] if i['userClubList'][0]['platform'] == platform][0]
         self.persona_id = rc['personaId']
         self.persona_name = rc['personaName']
@@ -328,7 +332,7 @@ class Core(object):
         del self.r.headers['X-UT-Route']
         self.r.headers.update({
             # 'X-HTTP-Method-Override': 'GET',  # __request__ method manages this
-            'X-Requested-With': 'ShockwaveFlash/19.0.0.162',
+            'X-Requested-With': flash_agent,
             'Referer': 'https://www.easports.com/iframe/fut16/bundles/futweb/web/flash/FifaUltimateTeam.swf',
             'Origin': 'https://www.easports.com',
             # 'Content-Type': 'application/json',  # already set
