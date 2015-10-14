@@ -78,6 +78,7 @@ def itemParse(item_data):
         'playStyle':         item_data['itemData'].get('playStyle'),  # used only for players
         'discardValue':      item_data['itemData']['discardValue'],
         'itemType':          item_data['itemData']['itemType'],
+        'cardType':          item_data['itemData'].get("cardsubtypeid"),  # used only for cards
         'owners':            item_data['itemData']['owners'],
         'offers':            item_data.get('offers'),
         'currentBid':        item_data.get('currentBid'),
