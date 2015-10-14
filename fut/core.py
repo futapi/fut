@@ -264,8 +264,9 @@ class Core(object):
         rc = self.r.get(self.urls['acc_info'], params={'_': int(time() * 1000)})
         self.logger.debug(rc.content)
         # pick persona (first valid for given platform)
-        # rc = rc.json()['userAccountInfo']['personas'][0]
-        rc = [i for i in rc.json()['userAccountInfo']['personas'] if i['userClubList'][0]['platform'] == platform][0]
+        # TODO: different platform strings in useraccinfo (for exmaple xbox360 -> 360)
+        # rc = [i for i in rc.json()['userAccountInfo']['personas'] if i['userClubList'][0]['platform'] == platform][0]
+        rc = rc.json()['userAccountInfo']['personas'][0]
         self.persona_id = rc['personaId']
         self.persona_name = rc['personaName']
         self.clubs = [i for i in rc['userClubList']]
