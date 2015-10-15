@@ -264,15 +264,17 @@ class Core(object):
         })
         rc = self.r.get(self.urls['acc_info'], params={'_': int(time() * 1000)})
         self.logger.debug(rc.content)
-        # pick persona (first valid for given platform)
-        # TODO: different platform strings in useraccinfo (for exmaple xbox360 -> 360)
-        # rc = [i for i in rc.json()['userAccountInfo']['personas'] if i['userClubList'][0]['platform'] == platform][0]
-        rc = rc.json()['userAccountInfo']['personas'][0]
-        self.persona_id = rc['personaId']
-        self.persona_name = rc['personaName']
-        self.clubs = [i for i in rc['userClubList']]
-        # sort clubs by lastAccessTime (latest first)
-        self.clubs.sort(key=lambda i: i['lastAccessTime'], reverse=True)
+        # pick persona (first valid for given game_sku)
+        personas = rc.json()['userAccountInfo']['personas']
+        for p in personas:
+            # self.clubs = [i for i in p['userClubList']]
+            # sort clubs by lastAccessTime (latest first)
+            # self.clubs.sort(key=lambda i: i['lastAccessTime'], reverse=True)
+            for c in p['userClubList']:
+                if game_sku in c['skuAccessList']:
+                    self.persona_id = p['personaId']
+                    self.persona_name = p['personaName']
+                    break
 
         # authorization
         self.r.headers.update({  # prepare headers
