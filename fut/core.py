@@ -178,7 +178,7 @@ class Core(object):
             game_sku = 'FFA16PS4'
             platform = 'ps3'  # ps4 not available?
         else:
-            raise FutError('Wrong platform. (Valid ones are pc/xbox/xbox360/ps3/ps4)')
+            raise FutError(reason='Wrong platform. (Valid ones are pc/xbox/xbox360/ps3/ps4)')
         # if self.r.get(self.urls['main_site']+'/fifa/api/isUserLoggedIn').json()['isLoggedIn']:
         #    return True  # no need to log in again
         # emulate
@@ -202,7 +202,7 @@ class Core(object):
             sku = 'FUT16WEB'
             clientVersion = 1
         else:
-            raise FutError('Invalid emulate parameter. (Valid ones are and/ios).')  # pc/ps3/xbox/
+            raise FutError(reason='Invalid emulate parameter. (Valid ones are and/ios).')  # pc/ps3/xbox/
         # === login
         self.urls['login'] = self.r.get(self.urls['fut_home']).url
         self.r.headers['Referer'] = self.urls['login']  # prepare headers
@@ -226,13 +226,13 @@ class Core(object):
             # TODO: pick code from codes.txt?
             if not code:
                 self.saveSession()
-                raise FutError('Error during login process - code is required.')
+                raise FutError(reason='Error during login process - code is required.')
             self.r.headers['Referer'] = url = rc.url
             # self.r.headers['Upgrade-Insecure-Requests'] = 1  # ?
             # self.r.headers['Origin'] = 'https://signin.ea.com'
             rc = self.r.post(url, {'twofactorCode': code, '_trustThisDevice': 'on', 'trustThisDevice': 'on', '_eventId': 'submit'}).text
             if 'Incorrect code entered' in rc or 'Please enter a valid security code' in rc:
-                raise FutError('Error during login process - provided code is incorrect.')
+                raise FutError(reason='Error during login process - provided code is incorrect.')
             self.logger.debug(rc)
             if 'Set Up an App Authenticator' in rc:
                 rc = self.r.post(url.replace('s2', 's3'), {'_eventId': 'cancel', 'appDevice': 'IPHONE'}).text
@@ -240,7 +240,7 @@ class Core(object):
 
         self.r.headers['Referer'] = self.urls['login']
         if self.r.get(self.urls['main_site'] + '/fifa/api/isUserLoggedIn').json()['isLoggedIn'] is not True:  # TODO: parse error?
-            raise FutError('Error during login process (probably invalid email, password or code).')
+            raise FutError(reason='Error during login process (probably invalid email, password or code).')
         # TODO: catch invalid data exception
         # self.nucleus_id = re.search('userid : "([0-9]+)"', rc.text).group(1)  # we'll get it later
 
@@ -250,7 +250,7 @@ class Core(object):
         self.logger.debug(rc.content)
         rc = rc.text
 #        if 'EASW_ID' not in rc:
-#            raise FutError('Error during login process (probably invalid email or password).')
+#            raise FutError(reason='Error during login process (probably invalid email or password).')
         self.nucleus_id = re.search("var EASW_ID = '([0-9]+)';", rc).group(1)
         self.build_cl = re.search("var BUILD_CL = '([0-9]+)';", rc).group(1)
         # self.urls['fut_base'] = re.search("var BASE_FUT_URL = '(https://.+?)';", rc).group(1)
@@ -330,7 +330,7 @@ class Core(object):
             rc = rc.json()
             if rc['string'] != 'OK':  # we've got error
                 if 'Answers do not match' in rc['reason']:
-                    raise FutError('Error during login process (invalid secret answer).')
+                    raise FutError(reason='Error during login process (invalid secret answer).')
                 else:
                     raise UnknownError
             self.r.headers['Content-Type'] = 'application/json'
