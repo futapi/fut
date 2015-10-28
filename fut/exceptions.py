@@ -12,6 +12,10 @@ This module contains the set of fut's exceptions.
 class FutError(RuntimeError):
     """There was an ambiguous exception that occurred while handling
     your request."""
+    def __init__(self, code=None, reason=None, string=None):
+        self.code = code
+        self.reason = reason
+        self.string = string
 
 
 class UnknownError(FutError):
@@ -24,16 +28,26 @@ class ExpiredSession(FutError):
     you should send at least one request every ~10 minutes."""
 
 
-class InternalServerError(FutError):
-    """[500] Internal Server Error (ut). (invalid parameters?)"""
-
-
 class MaxSessions(FutError):
     """[503] Service Unavailable (ut) - max session."""
 
 
+class InternalServerError(FutError):
+    """[500] Internal Server Error (ut). (invalid parameters?)"""
+
+
+'''
+class InvalidCookie(FutError):
+    """[482] Invalid cookie."""
+'''
+
+
 class FeatureDisabled(FutError):
     """[480] Feature Disabled."""
+
+
+class NoUltimateTeam(FutError):
+    """[465] No Ultimate Team."""
 
 
 class PermissionDenied(FutError):
@@ -62,8 +76,3 @@ class MultipleSession(Unauthorized):
 # class doLoginFail(Forbidden):
 class doLoginFail(Unauthorized):
     """[403] Forbidden (ut)."""
-
-'''
-class InvalidCookie(FutError):
-    """[482] Invalid cookie."""
-'''
