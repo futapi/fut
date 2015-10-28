@@ -8,6 +8,7 @@ Changelog
 ++++++++++++++++++
 * core: bump clientversion for android/ios emulation
 * core: add tradeStatus (thanks to hunterjm #161)
+* exceptions: add code, reason, string to FutError
 
 0.1.2 (2015-09-28)
 ++++++++++++++++++
