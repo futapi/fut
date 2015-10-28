@@ -26,7 +26,7 @@ from .urls import urls
 from .exceptions import (FutError, ExpiredSession, InternalServerError,
                          UnknownError, PermissionDenied, Captcha,
                          Conflict, MaxSessions, MultipleSession,
-                         FeatureDisabled, doLoginFail)
+                         FeatureDisabled, doLoginFail, NoUltimateTeam)
 from .EAHashingAlgorithm import EAHashingAlgorithm
 
 
@@ -391,6 +391,8 @@ class Core(object):
                     raise InternalServerError(err_code, err_reason, err_string)
                 elif err_code == '489' or err_string == 'Feature Disabled':
                     raise FeatureDisabled(err_code, err_reason, err_string)
+                elif err_code == '465' or err_string == 'No User':
+                    raise NoUltimateTeam(err_code, err_reason, err_string)
                 elif err_code == '461' or err_string == 'Permission Denied':
                     raise PermissionDenied(err_code, err_reason, err_string)
                 elif err_code == '459' or err_string == 'Captcha Triggered':
@@ -669,6 +671,7 @@ class Core(object):
 
     def stats(self):
         """Returns all stats."""
+        # TODO: add self.urls['fut']['Stats']
         # won-draw-loss
         rc = self.__get__(self.urls['fut']['user'])
         data = {

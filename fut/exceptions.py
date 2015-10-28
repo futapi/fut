@@ -46,6 +46,10 @@ class FeatureDisabled(FutError):
     """[480] Feature Disabled."""
 
 
+class NoUltimateTeam(FutError):
+    """[465] No Ultimate Team."""
+
+
 class PermissionDenied(FutError):
     """[461] Permission Denied. (outbid?)"""
 
