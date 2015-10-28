@@ -21,3 +21,4 @@ Patches and Suggestions
 - jamslater
 - rjansen
 - ricklhp7
+- hunterjm
