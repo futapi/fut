@@ -382,20 +382,23 @@ class Core(object):
             rc = rc.json()
             # error control
             if 'code' and 'reason' in rc:  # error
-                if rc['reason'] == 'expired session':
-                    raise ExpiredSession
-                elif rc.get('string') == 'Internal Server Error (ut)':
-                    raise InternalServerError
-                elif rc.get('code') == '461' or rc.get('string') == 'Permission Denied':
-                    raise PermissionDenied
-                elif rc.get('string') == 'Captcha Triggered':
+                err_code = rc['code']
+                err_reason = rc['reason']
+                err_string = rc.get('string')  # "human readable" reason?
+                if err_reason == 'expired session':  # code?
+                    raise ExpiredSession(err_code, err_reason, err_string)
+                elif err_code == '500' or err_string == 'Internal Server Error (ut)':
+                    raise InternalServerError(err_code, err_reason, err_string)
+                elif err_code == '489' or err_string == 'Feature Disabled':
+                    raise FeatureDisabled(err_code, err_reason, err_string)
+                elif err_code == '461' or err_string == 'Permission Denied':
+                    raise PermissionDenied(err_code, err_reason, err_string)
+                elif err_code == '459' or err_string == 'Captcha Triggered':
                     # img = self.r.get(self.urls['fut_captcha_img'], params={'_': int(time()*1000), 'token': captcha_token}).content  # doesnt work - check headers
                     img = None
-                    raise Captcha(captcha_token, img)
-                elif rc.get('string') == 'Conflict':
-                    raise Conflict
-                elif rc.get('string') == 'Feature Disabled':
-                    raise FeatureDisabled
+                    raise Captcha(err_code, err_reason, err_string, captcha_token, img)
+                elif err_code == '409' or err_string == 'Conflict':
+                    raise Conflict(err_code, err_reason, err_string)
                 else:
                     raise UnknownError(rc.__str__())
         self.saveSession()
