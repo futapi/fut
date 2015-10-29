@@ -53,7 +53,7 @@ def baseId(resource_id, return_version=False):
 def itemParse(item_data, full=True):
     """Parser for item data. Returns nice dictionary."""
     # TODO: parse all data
-    item_data = {
+    return_data = {
         'tradeId':           item_data.get('tradeId'),
         'buyNowPrice':       item_data.get('buyNowPrice'),
         'tradeState':        item_data.get('tradeState'),
@@ -69,7 +69,7 @@ def itemParse(item_data, full=True):
         'watched':           item_data.get('watched'),
     }
     if full:
-        item_data.update({
+        return_data.update({
             'timestamp':     item_data['itemData']['timestamp'],  # auction start
             'rating':        item_data['itemData']['rating'],
             'assetId':       item_data['itemData']['assetId'],
@@ -92,7 +92,7 @@ def itemParse(item_data, full=True):
             'cardType':      item_data['itemData'].get("cardsubtypeid"),  # used only for cards
             'owners':        item_data['itemData']['owners'],
         })
-    return item_data
+    return return_data
 
 
 '''  # different urls (platforms)
