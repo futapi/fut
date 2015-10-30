@@ -15,7 +15,6 @@ class Delayed(Core):
     def __request__(self, method, url, *args, **kwargs):
         """Prepares headers and sends request. Returns response as a json object."""
         # Rate Limit requests based on delay interval
-        print('sending request...')
         if self.delay > time():
             sleep(self.delay - time())
         self.delay = time() + (self.delayInterval * random.uniform(0.75, 2))
