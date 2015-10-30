@@ -27,3 +27,4 @@ __copyright__ = 'Copyright 2013 Piotr Staroszczyk'
 
 # from .api import baseId, cardInfo
 from .core import Core
+from .delayed import Delayed

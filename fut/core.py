@@ -10,8 +10,7 @@ This module implements the fut's basic methods.
 
 import requests
 import re
-import random
-from time import time, sleep
+from time import time
 try:
     from cookielib import LWPCookieJar
 except ImportError:
@@ -140,9 +139,6 @@ class Core(object):
             self.logger = logger(save=True)
         else:  # NullHandler
             self.logger = logger()
-        # Set initial delay
-        self.delayInterval = 1.3
-        self.delay = time()
         # TODO: validate fut request response (200 OK)
         self.__login__(email, passwd, secret_answer, platform, code, emulate)
 
@@ -363,9 +359,6 @@ class Core(object):
 
         self.saveSession()
 
-    def setRequestDelay(self, delay):
-        self.delayInterval = delay
-
 #    def __shards__(self):
 #        """Returns shards info."""
 #        # TODO: headers
@@ -375,10 +368,6 @@ class Core(object):
 
     def __request__(self, method, url, *args, **kwargs):
         """Prepares headers and sends request. Returns response as a json object."""
-        # Rate Limit requests based on delay interval
-        if self.delay > time():
-            sleep(self.delay - time())
-        self.delay = time() + (self.delayInterval * random.uniform(0.75, 2))
         # TODO: update credtis?
         self.r.headers['X-HTTP-Method-Override'] = method.upper()
         self.logger.debug("request: {0} args={1};  kwargs={2}".format(url, args, kwargs))
@@ -549,8 +538,6 @@ class Core(object):
         """Make a bid."""
         rc = self.tradeStatus(trade_id)[0]
         if rc['currentBid'] < bid and self.credits >= bid:
-            # no delay between getting trade info and bidding
-            self.delay = time()
             data = {'bid': bid}
             url = '{0}/{1}/bid'.format(self.urls['fut']['PostBid'], trade_id)
             rc = self.__put__(url, data=json.dumps(data))['auctionInfo'][0]
@@ -678,6 +665,7 @@ class Core(object):
 
     def pileSize(self):
         """Returns size of tradepile and watchlist."""
+        print(self.__get__(self.urls['fut']['PileSize']))
         rc = self.__get__(self.urls['fut']['PileSize'])['entries']
         return {'tradepile': rc[0]['value'],
                 'watchlist': rc[2]['value']}
