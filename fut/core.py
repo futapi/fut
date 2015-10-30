@@ -665,7 +665,6 @@ class Core(object):
 
     def pileSize(self):
         """Returns size of tradepile and watchlist."""
-        print(self.__get__(self.urls['fut']['PileSize']))
         rc = self.__get__(self.urls['fut']['PileSize'])['entries']
         return {'tradepile': rc[0]['value'],
                 'watchlist': rc[2]['value']}
