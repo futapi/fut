@@ -22,6 +22,11 @@ Players database (json): http://cdn.content.easports.com/fifa/fltOnlineAssets/B4
 Usage
 -----
 
+AutoBuyer GUI
+`````````````
+If You're looking for "user friendly" autobuyer take a look at hunterjm's project:
+https://github.com/hunterjm/futgui/releases
+
 Login
 `````````````
 Optional parameters:

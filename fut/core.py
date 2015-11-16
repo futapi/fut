@@ -551,15 +551,15 @@ class Core(object):
             Returns items in your club, excluding consumables
 
             count - the number of cards you want to request
-            level - Not quite sure, It always seems to be 10
+            level - 10 for ALL, 3 for gold, 2 for silver, 1 for bronze
             type - the type of card that you need:
                 set to 1 for players
                 set to 100 for staff
                 set to 142 for club items
             start - position to start from
         """
-        data = {'count': count, 'level': level, 'type': type, 'start': start}
-        rc = self.__get__(self.urls['fut']['Club'], data=json.dumps(data))
+        params = {'count': count, 'level': level, 'type': type, 'start': start}
+        rc = self.__get__(self.urls['fut']['Club'], params=params)
         return [itemParse({'itemData': i}) for i in rc['itemData']]
 
     def squad(self, squad_id=0):
