@@ -4,6 +4,10 @@ Changelog
 ---------
 
 
+0.1.5 (2015-11-15)
+++++++++++++++++++
+* core: fix club (thanks to hunterjm #169)
+
 0.1.4 (2015-10-29)
 ++++++++++++++++++
 * core: fix itemParse (thanks to hunterjm #163)
