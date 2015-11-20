@@ -134,6 +134,7 @@ def teams(year=2016):
 
 class Core(object):
     def __init__(self, email, passwd, secret_answer, platform='pc', code=None, emulate=None, debug=False, cookies=cookies_file):
+        self.credits = 0
         self.cookies_file = cookies  # TODO: map self.cookies to requests.Session.cookies?
         if debug:  # save full log to file (fut.log)
             self.logger = logger(save=True)
@@ -403,6 +404,8 @@ class Core(object):
                     raise Conflict(err_code, err_reason, err_string)
                 else:
                     raise UnknownError(rc.__str__())
+            if 'credits' in rc:
+                self.credits = rc['credits']
         self.saveSession()
         return rc
 
@@ -464,11 +467,6 @@ class Core(object):
     @property
     def teams(self, year=2016):
         return teams(year)
-
-    @property
-    def credits(self):
-        """Returns credit amount."""
-        return self.__get__(self.urls['fut']['Credits'])['credits']
 
     def saveSession(self):
         '''Saves cookies/session.'''
@@ -661,7 +659,7 @@ class Core(object):
 
     def keepalive(self):
         """Just refresh credit amount to let know that we're still online. Returns credit amount."""
-        return self.credits
+        return self.__get__(self.urls['fut']['Credits'])['credits']
 
     def pileSize(self):
         """Returns size of tradepile and watchlist."""
