@@ -118,7 +118,7 @@ Piles (Watchlist / Tradepile / Unassigned / Squad)
 
 Credits
 `````````````
-It's updated automatically on every request.
+It's cached on every request so if you want the most accurate info call fut.keppalive()
 
 .. code-block:: python
 
@@ -155,11 +155,12 @@ Convert Team/League/Nation id to name
 
 Keepalive
 `````````````
-Send keepalive ping (you have to make at least one request every ~10 minutes to avoid session expire/logout).
+Sends keepalive ping and returns current credits amount (you have to make at least one request every ~10 minutes to avoid session expire/logout).
 
 .. code-block:: python
 
     >>> fut.keepalive()
+    650
 
 Logout
 `````````````
