@@ -4,6 +4,10 @@ Changelog
 ---------
 
 
+0.1.6 (2015-11-19)
+++++++++++++++++++
+* core: store credits after every call instead of making an additional call out
+
 0.1.5 (2015-11-15)
 ++++++++++++++++++
 * core: fix club (thanks to hunterjm #169)
