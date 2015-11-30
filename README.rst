@@ -211,7 +211,7 @@ Problems
 --------
 
 Somehow i've sent card to full tradepile and it disappeared
-`````````````
+```````````````````````````````````````````````````````````
 Make space in tradepile and just call one command to restore it:
 
 .. code-block:: python
