@@ -1,5 +1,5 @@
 fut
-=====
+===
 
 .. image:: https://travis-ci.org/oczkers/fut.png?branch=master
         :target: https://travis-ci.org/oczkers/fut
@@ -28,7 +28,7 @@ If You're looking for "user friendly" autobuyer take a look at hunterjm's projec
 https://github.com/hunterjm/futgui/releases
 
 Login
-`````````````
+`````
 Optional parameters:
 
 - CODE: [string] email/sms code for two-step verification (make sure to use string if your codes starts with 0).
@@ -43,7 +43,7 @@ Optional parameters:
     >>> fut = fut.Core('email', 'password', 'secret answer')
 
 Search
-`````````````
+``````
 Optional parameters:
 
 - LEVEL: ['?'/'?'/gold'] Card level.
@@ -60,14 +60,14 @@ Optional parameters:
     >>> items = fut.searchAuctions('development')
 
 Bid
-`````````````
+```
 
 .. code-block:: python
 
     >>> fut.bid(items[0]['trade_id'], 600)
 
 Sell
-`````````````
+````
 Optional parameters:
 
 - BUY_NOW: [int] Buy now price.
@@ -78,7 +78,7 @@ Optional parameters:
     >>>     fut.sell(item['item_id'], 150)
 
 Quick sell
-`````````````
+``````````
 single item:
 
 .. code-block:: python
@@ -94,7 +94,7 @@ multiple items:
     >>> fut.quickSell(item_id)
 
 Piles (Watchlist / Tradepile / Unassigned / Squad)
-`````````````
+``````````````````````````````````````````````````
 
 .. code-block:: python
 
@@ -117,7 +117,7 @@ Piles (Watchlist / Tradepile / Unassigned / Squad)
     10
 
 Credits
-`````````````
+```````
 It's cached on every request so if you want the most accurate info call fut.keppalive()
 
 .. code-block:: python
@@ -126,7 +126,7 @@ It's cached on every request so if you want the most accurate info call fut.kepp
     600
 
 Relist
-`````````````
+``````
 Relists all expired cards in tradepile.
 
 .. code-block:: python
@@ -134,7 +134,7 @@ Relists all expired cards in tradepile.
     >>> fut.relist()  # relist all expired cards in tradepile
 
 Card stats and definiction IDs
-`````````````
+``````````````````````````````
 Returns stats and definition IDs for each card variation.
 
 .. code-block:: python
@@ -142,7 +142,7 @@ Returns stats and definition IDs for each card variation.
     >>> fut.searchDefinition(asset_id, start=0, count=35)
 
 Convert Team/League/Nation id to name
-`````````````
+`````````````````````````````````````
 
 .. code-block:: python
 
@@ -154,7 +154,7 @@ Convert Team/League/Nation id to name
     Arsenal
 
 Keepalive
-`````````````
+`````````
 Sends keepalive ping and returns current credits amount (you have to make at least one request every ~10 minutes to avoid session expire/logout).
 
 .. code-block:: python
@@ -163,7 +163,7 @@ Sends keepalive ping and returns current credits amount (you have to make at lea
     650
 
 Logout
-`````````````
+``````
 Logs out nicely (like clicking on logout button).
 
 .. code-block:: python
@@ -173,7 +173,7 @@ Logs out nicely (like clicking on logout button).
 
 
 Item object (dict) structure
-`````````````
+````````````````````````````
 
 .. code-block:: python
 
@@ -208,7 +208,7 @@ to be continued ;-)
 
 
 Problems
------
+--------
 
 Somehow i've sent card to full tradepile and it disappeared
 `````````````
@@ -220,7 +220,7 @@ Make space in tradepile and just call one command to restore it:
 
 
 I've card with None tradeId so cannot move/trade it
-`````````````
+```````````````````````````````````````````````````
 Make space in tradepile and just call one command to restore it:
 
 .. code-block:: python

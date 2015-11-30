@@ -38,12 +38,12 @@ Changelog
 * config: update user-agent (chrome 45 @ win10)
 
 0.0.24 (2015-02-11)
-++++++++++++++++++
++++++++++++++++++++
 * core: fix #135 type conversion in quickSell & watchlistDelete
 * core: rename parameter squad_num to squad_id
 
 0.0.23 (2015-02-09)
-++++++++++++++++++
++++++++++++++++++++
 * urls: fix #131
 * Captcha exception got img & token parameter
 * core: add logout
@@ -52,13 +52,13 @@ Changelog
 * core & urls: add timestamp dynamically (just right before every request)
 
 0.0.22 (2014-12-28)
-++++++++++++++++++
++++++++++++++++++++
 * setup: fix manifest
 * core: save session if code is not provided but required
 
 
 0.0.21 (2014-12-13)
-++++++++++++++++++
++++++++++++++++++++
 * two-step verification
 * fix cookies parameter not working (#99)
 * core: use LWPCookieJar instead of pickle
@@ -66,12 +66,12 @@ Changelog
 
 
 0.0.20 (2014-10-19)
-++++++++++++++++++
++++++++++++++++++++
 * fix typo
 
 
 0.0.19 (2014-10-19)
-++++++++++++++++++
++++++++++++++++++++
 * core: update old fut14 urls
 * core: add cookies feature (save cookies after every request and load it when restaring app like browser)
 * core: add saveSession, searchDefinition
@@ -79,25 +79,25 @@ Changelog
 
 
 0.0.18 (2014-10-01)
-++++++++++++++++++
++++++++++++++++++++
 * core: add methods to list and delete available messages (thanks to jamslater)
 * core: rework base id from resource id calculation, use new constant (thanks to jamslater)
 * core: update android * ios clientVersion (9->11)
 
 
 0.0.17 (2014-09-22)
-++++++++++++++++++
++++++++++++++++++++
 * rename project (fut14->fut)
 * fut15 (drop support for fifa 14)
 
 
 0.0.16 (2014-08-31)
-++++++++++++++++++
++++++++++++++++++++
 * #76 fix buying (thanks to arthurnn)
 
 
 0.0.15 (2014-08-29)
-++++++++++++++++++
++++++++++++++++++++
 * add new exceptions: doLoginFail, MaxSessions, Captcha
 * add changelog
 * NullHandler is default logging handler
@@ -105,7 +105,7 @@ Changelog
 
 
 0.0.14 (2014-07-06)
-++++++++++++++++++
++++++++++++++++++++
 
 * core: relist returns number of delted/sold if clean parameter was set
 * add new exception FeatureDisabled
@@ -115,27 +115,27 @@ Changelog
 
 
 0.0.13 (2014-04-19)
-++++++++++++++++++
++++++++++++++++++++
 
 * core: add sendToWatchlist
 
 
 0.0.12 (2014-02-23)
-++++++++++++++++++
++++++++++++++++++++
 
 * exceptions: add Unauthorized & MultipleSession
 * fix quicksell
 
 
 0.0.11 (2014-02-15)
-++++++++++++++++++
++++++++++++++++++++
 
 * fix logger
 * setup.py is now executable
 
 
 0.0.10 (2014-02-15)
-++++++++++++++++++
++++++++++++++++++++
 
 * core: add clean ability to relist (remove sold cards)
 * core: keepalive returns credit amount
