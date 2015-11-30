@@ -4,6 +4,10 @@ Changelog
 ---------
 
 
+0.1.7 (2015-11-30)
+++++++++++++++++++
+* core: fix baseId calculation (thanks to hunterjm #174)
+
 0.1.6 (2015-11-19)
 ++++++++++++++++++
 * core: store credits after every call instead of making an additional call out
