@@ -43,11 +43,12 @@ def baseId(resource_id, return_version=False):
             resource_id -= 0x03000000  # 50331648
         else:
             resource_id -= 0x01000000  # 16777216
+        resource_id = abs(resource_id)
 
     if return_version:
-        return abs(resource_id), version
+        return resource_id, version
 
-    return abs(resource_id)
+    return resource_id
 
 
 def itemParse(item_data, full=True):
