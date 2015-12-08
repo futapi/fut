@@ -4,6 +4,10 @@ Changelog
 ---------
 
 
+0.1.8 (2015-12-09)
+++++++++++++++++++
+* core: fix #172, fix #176 crash when skuAccessList is empty
+
 0.1.7 (2015-11-30)
 ++++++++++++++++++
 * core: fix baseId calculation (thanks to hunterjm #174)
