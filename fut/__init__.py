@@ -18,7 +18,7 @@ Usage:
 """
 
 __title__ = 'fut'
-__version__ = '0.1.8'
+__version__ = '0.1.9'
 __author__ = 'Piotr Staroszczyk'
 __author_email__ = 'piotr.staroszczyk@get24.org'
 __license__ = 'GNU GPL v3'

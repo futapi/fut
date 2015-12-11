@@ -186,10 +186,10 @@ class Core(object):
         # emulate
         if emulate == 'ios':
             sku = 'FUT16IOS'
-            clientVersion = 15
+            clientVersion = 17
         elif emulate == 'and':
             sku = 'FUT16AND'
-            clientVersion = 15
+            clientVersion = 17
 #        TODO: need more info about log in procedure in game
 #        elif emulate == 'xbox':
 #            sku = 'FFA16XBX'  # FFA14CAP ?

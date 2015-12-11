@@ -4,6 +4,11 @@ Changelog
 ---------
 
 
+0.1.9 (2015-12-11)
+++++++++++++++++++
+* bump client version for and/ios
+* bump user-agent * flash version
+
 0.1.8 (2015-12-09)
 ++++++++++++++++++
 * core: fix #172, fix #176 crash when skuAccessList is empty
