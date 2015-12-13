@@ -219,7 +219,7 @@ Make space in tradepile and just call one command to restore it:
     fut.sendToTradepile(-1, id)
 
 
-I've card with None tradeId so cannot move/trade it
+I've got card with None tradeId so cannot move/trade it
 ```````````````````````````````````````````````````
 Make space in tradepile and just call one command to restore it:
 
@@ -227,6 +227,10 @@ Make space in tradepile and just call one command to restore it:
 
     fut.sendToTradepile(-1, id)
 
+
+PermissionDenied exceptions raises when trying to sell cards directly from watchlist
+````````````````````````````````````````````````````````````````````````````````````
+The solution is to send the items to Tradepile and offer from there.
 
 
 CLI examples
