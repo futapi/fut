@@ -31,7 +31,7 @@ from .EAHashingAlgorithm import EAHashingAlgorithm
 
 
 def baseId(resource_id, return_version=False):
-    """Calculates base id and version from a resource id."""
+    """Calculate base id and version from a resource id."""
     version = 0
     resource_id = abs(resource_id)
 
@@ -98,7 +98,7 @@ def itemParse(item_data, full=True):
 
 '''  # different urls (platforms)
 def cardInfo(resource_id):
-    """Returns card info."""
+    """Return card info."""
     # TODO: add referer to headers (futweb)
     url = '{0}{1}.json'.format(self.urls['card_info'], baseId(resource_id))
     return requests.get(url).json()
@@ -107,6 +107,7 @@ def cardInfo(resource_id):
 
 # TODO: optimize messages, xml parser might be faster
 def nations():
+    """Return all nations in dict {id0: nation0, id1: nation1}."""
     rc = requests.get(urls('pc')['messages']).content
     data = re.findall('<trans-unit resname="search.nationName.nation([0-9]+)">\n        <source>(.+)</source>', rc)
     nations = {}
@@ -116,6 +117,7 @@ def nations():
 
 
 def leagues(year=2016):
+    """Return all leagues in dict {id0: league0, id1: legaue1}."""
     rc = requests.get(urls('pc')['messages']).content
     data = re.findall('<trans-unit resname="global.leagueFull.%s.league([0-9]+)">\n        <source>(.+)</source>' % year, rc)
     leagues = {}
@@ -125,6 +127,7 @@ def leagues(year=2016):
 
 
 def teams(year=2016):
+    """Return all teams in dict {id0: team0, id1: team1}."""
     rc = requests.get(urls('pc')['messages']).content
     data = re.findall('<trans-unit resname="global.teamFull.%s.team([0-9]+)">\n        <source>(.+)</source>' % year, rc)
     teams = {}
@@ -369,7 +372,7 @@ class Core(object):
 #        # self.r.headers['X-UT-Route'] = self.urls['fut_pc']
 
     def __request__(self, method, url, *args, **kwargs):
-        """Prepares headers and sends request. Returns response as a json object."""
+        """Prepare headers and sends request. Returns response as a json object."""
         # TODO: update credtis?
         self.r.headers['X-HTTP-Method-Override'] = method.upper()
         self.logger.debug("request: {0} args={1};  kwargs={2}".format(url, args, kwargs))
@@ -411,23 +414,23 @@ class Core(object):
         return rc
 
     def __get__(self, url, *args, **kwargs):
-        """Sends get request. Returns response as a json object."""
+        """Send get request. Return response as a json object."""
         return self.__request__('GET', url, *args, **kwargs)
 
     def __post__(self, url, *args, **kwargs):
-        """Sends post request. Returns response as a json object."""
+        """Send post request. Return response as a json object."""
         return self.__request__('POST', url, *args, **kwargs)
 
     def __put__(self, url, *args, **kwargs):
-        """Sends put request. Returns response as a json object."""
+        """Send put request. Return response as a json object."""
         return self.__request__('PUT', url, *args, **kwargs)
 
     def __delete__(self, url, *args, **kwargs):
-        """Sends delete request. Returns response as a json object."""
+        """Send delete request. Return response as a json object."""
         return self.__request__('DELETE', url, *args, **kwargs)
 
     def __sendToPile__(self, pile, trade_id, item_id=None):
-        """Sends to pile."""
+        """Send to pile."""
         # TODO: accept multiple trade_ids (just extend list below (+ extend params?))
         if pile == 'watchlist':
             params = {'tradeId': trade_id}
@@ -450,7 +453,7 @@ class Core(object):
         return rc['itemData'][0]['success']
 
     def logout(self, save=True):
-        """Logs out nicely (like clicking on logout button)."""
+        """Log out nicely (like clicking on logout button)."""
         self.r.get('https://www.easports.com/fifa/logout')
         if save:
             self.saveSession()
@@ -459,33 +462,36 @@ class Core(object):
     # TODO: probably there is no need to refresh on every call?
     @property
     def nations(self):
+        """Return all nations in dict {id0: nation0, id1: nation1}."""
         return nations()
 
     @property
     def leagues(self, year=2016):
+        """Return all leagues in dict {id0: league0, id1: league1}."""
         return leagues(year)
 
     @property
     def teams(self, year=2016):
+        """Return all teams in dict {id0: team0, id1: team1}."""
         return teams(year)
 
     def saveSession(self):
-        '''Saves cookies/session.'''
+        """Save cookies/session."""
         if self.cookies_file:
             self.r.cookies.save(ignore_discard=True)
 
     def baseId(self, *args, **kwargs):
-        """Alias for baseId."""
+        """Calculate base id and version from a resource id."""
         return baseId(*args, **kwargs)
 
     def cardInfo(self, resource_id):
-        """Returns card info."""
+        """Return card info."""
         # TODO: add referer to headers (futweb)
         url = '{0}{1}.json'.format(self.urls['card_info'], baseId(resource_id))
         return requests.get(url).json()
 
     def searchDefinition(self, asset_id, start=0, count=35):
-        """Returns variations of the given asset id, e.g. IF cards."""
+        """Return variations of the given asset id, e.g. IF cards."""
         params = {
             'defId': asset_id,
             'start': start,
@@ -577,6 +583,7 @@ class Core(object):
     '''
 
     def tradeStatus(self, trade_id):
+        """Return trade status."""
         if not isinstance(trade_id, (list, tuple)):
             trade_id = (trade_id,)
         trade_id = (str(i) for i in trade_id)
@@ -585,22 +592,22 @@ class Core(object):
         return [itemParse(i, full=False) for i in rc['auctionInfo']]
 
     def tradepile(self):
-        """Returns items in tradepile."""
+        """Return items in tradepile."""
         rc = self.__get__(self.urls['fut']['TradePile'])
         return [itemParse(i) for i in rc['auctionInfo']]
 
     def watchlist(self):
-        """Returns items in watchlist."""
+        """Return items in watchlist."""
         rc = self.__get__(self.urls['fut']['WatchList'])
         return [itemParse(i) for i in rc['auctionInfo']]
 
     def unassigned(self):
-        """Returns Unassigned items (i.e. buyNow items)."""
+        """Return Unassigned items (i.e. buyNow items)."""
         rc = self.__get__(self.urls['fut']['Unassigned'])
         return [itemParse({'itemData': i}) for i in rc['itemData']]
 
     def sell(self, item_id, bid, buy_now=0, duration=3600):
-        """Starts auction. Returns trade_id."""
+        """Start auction. Returns trade_id."""
         # TODO: auto send to tradepile
         data = {'buyNowPrice': buy_now, 'startingBid': bid, 'duration': duration, 'itemData': {'id': item_id}}
         rc = self.__post__(self.urls['fut']['SearchAuctionsListItem'], data=json.dumps(data))
@@ -616,7 +623,7 @@ class Core(object):
         return True
 
     def watchlistDelete(self, trade_id):
-        """Removes cards from watchlist."""
+        """Remove cards from watchlist."""
         if not isinstance(trade_id, (list, tuple)):
             trade_id = (trade_id,)
         trade_id = (str(i) for i in trade_id)
@@ -625,23 +632,23 @@ class Core(object):
         return True
 
     def tradepileDelete(self, trade_id):
-        """Removes card from tradepile."""
+        """Remove card from tradepile."""
         url = '{0}/{1}'.format(self.urls['fut']['TradeInfo'], trade_id)
         self.__delete__(url)  # returns nothing
         return True
 
     def sendToTradepile(self, trade_id, item_id, safe=True):
-        """Sends to tradepile (alias for __sendToPile__)."""
+        """Send to tradepile (alias for __sendToPile__)."""
         if safe and len(self.tradepile()) >= self.tradepile_size:  # TODO?: optimization (don't parse items in tradepile)
             return False
         return self.__sendToPile__('trade', trade_id, item_id)
 
     def sendToClub(self, trade_id, item_id):
-        """Sends to club (alias for __sendToPile__)."""
+        """Send to club (alias for __sendToPile__)."""
         return self.__sendToPile__('club', trade_id, item_id)
 
     def sendToWatchlist(self, trade_id):
-        """Sends to watchlist."""
+        """Send to watchlist."""
         return self.__sendToPile__('watchlist', trade_id)
 
     def relist(self, clean=False):
@@ -659,17 +666,17 @@ class Core(object):
         return True
 
     def keepalive(self):
-        """Just refresh credit amount to let know that we're still online. Returns credit amount."""
+        """Refresh credit amount to let know that we're still online. Returns credit amount."""
         return self.__get__(self.urls['fut']['Credits'])['credits']
 
     def pileSize(self):
-        """Returns size of tradepile and watchlist."""
+        """Return size of tradepile and watchlist."""
         rc = self.__get__(self.urls['fut']['PileSize'])['entries']
         return {'tradepile': rc[0]['value'],
                 'watchlist': rc[2]['value']}
 
     def stats(self):
-        """Returns all stats."""
+        """Return all stats."""
         # TODO: add self.urls['fut']['Stats']
         # won-draw-loss
         rc = self.__get__(self.urls['fut']['user'])
@@ -694,7 +701,7 @@ class Core(object):
         return data
 
     def clubInfo(self):
-        """Returns getReliability"""
+        """Return getReliability."""
         # TODO?: return specific club
         rc = self.__get__(self.urls['fut']['user'])
         return {
@@ -717,6 +724,6 @@ class Core(object):
             raise UnknownError('Invalid activeMessage response')
 
     def messageDelete(self, message_id):
-        """Deletes the specified message, by id."""
+        """Delete the specified message, by id."""
         url = '{0}/{1}'.format(self.urls['fut']['ActiveMessage'], message_id)
         self.__delete__(url)

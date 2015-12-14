@@ -7,7 +7,7 @@ from .exceptions import FutError
 
 
 def __updateUrls__(urls, cl):
-        """Gets services urls."""
+        """Get services urls."""
         urls['fut_config'] = '%s?cl=%s' % (urls['fut_config'], cl)
         rc = xmltodict.parse(requests.get(urls['fut_config']).content)
         services = rc['main']['services']['prod']
@@ -22,7 +22,7 @@ def __updateUrls__(urls, cl):
 
 
 def urls(platform, cl=None):
-    """Returns services urls."""
+    """Return services urls."""
     urls = {
         'main_site':             'https://www.easports.com',
         'futweb':                'https://www.easports.com/iframe/fut16/?baseShowoffUrl=https%3A%2F%2Fwww.easports.com%2Ffifa%2Fultimate-team%2Fweb-app%2Fshow-off&guest_app_uri=http%3A%2F%2Fwww.easports.com%2Ffifa%2Fultimate-team%2Fweb-app&locale=en_US',
