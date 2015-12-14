@@ -31,7 +31,11 @@ from .EAHashingAlgorithm import EAHashingAlgorithm
 
 
 def baseId(resource_id, return_version=False):
-    """Calculate base id and version from a resource id."""
+    """Calculate base id and version from a resource id.
+
+    :params resource_id: Resource id.
+    :params return_version: (optional) True if You need version, returns (resource_id, version).
+    """
     version = 0
     resource_id = abs(resource_id)
 
@@ -52,7 +56,12 @@ def baseId(resource_id, return_version=False):
 
 
 def itemParse(item_data, full=True):
-    """Parser for item data. Returns nice dictionary."""
+    """Parser for item data. Returns nice dictionary.
+
+    :params iteam_data: Item data received from ea servers.
+    :params full: (optional) False if You're snipping and don't need extended info.
+    """
+    # TODO: object
     # TODO: parse all data
     return_data = {
         'tradeId':           item_data.get('tradeId'),
@@ -107,7 +116,10 @@ def cardInfo(resource_id):
 
 # TODO: optimize messages, xml parser might be faster
 def nations():
-    """Return all nations in dict {id0: nation0, id1: nation1}."""
+    """Return all nations in dict {id0: nation0, id1: nation1}.
+
+    :params year: Year.
+    """
     rc = requests.get(urls('pc')['messages']).content
     data = re.findall('<trans-unit resname="search.nationName.nation([0-9]+)">\n        <source>(.+)</source>', rc)
     nations = {}
@@ -117,7 +129,10 @@ def nations():
 
 
 def leagues(year=2016):
-    """Return all leagues in dict {id0: league0, id1: legaue1}."""
+    """Return all leagues in dict {id0: league0, id1: legaue1}.
+
+    :params year: Year.
+    """
     rc = requests.get(urls('pc')['messages']).content
     data = re.findall('<trans-unit resname="global.leagueFull.%s.league([0-9]+)">\n        <source>(.+)</source>' % year, rc)
     leagues = {}
@@ -127,7 +142,10 @@ def leagues(year=2016):
 
 
 def teams(year=2016):
-    """Return all teams in dict {id0: team0, id1: team1}."""
+    """Return all teams in dict {id0: team0, id1: team1}.
+
+    :params year: Year.
+    """
     rc = requests.get(urls('pc')['messages']).content
     data = re.findall('<trans-unit resname="global.teamFull.%s.team([0-9]+)">\n        <source>(.+)</source>' % year, rc)
     teams = {}
@@ -148,7 +166,15 @@ class Core(object):
         self.__login__(email, passwd, secret_answer, platform, code, emulate)
 
     def __login__(self, email, passwd, secret_answer, platform='pc', code=None, emulate=None):
-        """Just log in."""
+        """Log in.
+
+        :params email: Email.
+        :params passwd: Password.
+        :params secret_answer: Answer for secret question.
+        :params platform: (optional) [pc/xbox/xbox360/ps3/ps4] Platform.
+        :params code: (optional) Security code generated in origin or send via mail/sms.
+        :params emulate: (optional) [and/ios] Emulate mobile device.
+        """
         # TODO: split into smaller methods
         # TODO: check first if login is needed (https://www.easports.com/fifa/api/isUserLoggedIn)
         # TODO: get gamesku, url from shards !!
@@ -372,7 +398,11 @@ class Core(object):
 #        # self.r.headers['X-UT-Route'] = self.urls['fut_pc']
 
     def __request__(self, method, url, *args, **kwargs):
-        """Prepare headers and sends request. Returns response as a json object."""
+        """Prepare headers and sends request. Returns response as a json object.
+
+        :params method: Rest method.
+        :params url: Url.
+        """
         # TODO: update credtis?
         self.r.headers['X-HTTP-Method-Override'] = method.upper()
         self.logger.debug("request: {0} args={1};  kwargs={2}".format(url, args, kwargs))
@@ -430,7 +460,11 @@ class Core(object):
         return self.__request__('DELETE', url, *args, **kwargs)
 
     def __sendToPile__(self, pile, trade_id, item_id=None):
-        """Send to pile."""
+        """Send to pile.
+
+        :params trade_id: Trade id.
+        :params item_id: (optional) Iteam id.
+        """
         # TODO: accept multiple trade_ids (just extend list below (+ extend params?))
         if pile == 'watchlist':
             params = {'tradeId': trade_id}
@@ -453,7 +487,10 @@ class Core(object):
         return rc['itemData'][0]['success']
 
     def logout(self, save=True):
-        """Log out nicely (like clicking on logout button)."""
+        """Log out nicely (like clicking on logout button).
+
+        :params save: False if You don't want to save cookies.
+        """
         self.r.get('https://www.easports.com/fifa/logout')
         if save:
             self.saveSession()
@@ -462,17 +499,26 @@ class Core(object):
     # TODO: probably there is no need to refresh on every call?
     @property
     def nations(self):
-        """Return all nations in dict {id0: nation0, id1: nation1}."""
+        """Return all nations in dict {id0: nation0, id1: nation1}.
+
+        :params year: Year.
+        """
         return nations()
 
     @property
     def leagues(self, year=2016):
-        """Return all leagues in dict {id0: league0, id1: league1}."""
+        """Return all leagues in dict {id0: league0, id1: league1}.
+
+        :params year: Year.
+        """
         return leagues(year)
 
     @property
     def teams(self, year=2016):
-        """Return all teams in dict {id0: team0, id1: team1}."""
+        """Return all teams in dict {id0: team0, id1: team1}.
+
+        :params year: Year.
+        """
         return teams(year)
 
     def saveSession(self):
@@ -485,13 +531,21 @@ class Core(object):
         return baseId(*args, **kwargs)
 
     def cardInfo(self, resource_id):
-        """Return card info."""
+        """Return card info.
+
+        :params resource_id: Resource id.
+        """
         # TODO: add referer to headers (futweb)
         url = '{0}{1}.json'.format(self.urls['card_info'], baseId(resource_id))
         return requests.get(url).json()
 
     def searchDefinition(self, asset_id, start=0, count=35):
-        """Return variations of the given asset id, e.g. IF cards."""
+        """Return variations of the given asset id, e.g. IF cards.
+
+        :param asset_id: Asset id / Definition id.
+        :param start: (optional) Start page.
+        :param count: (optional) Number of definitions you want to request.
+        """
         params = {
             'defId': asset_id,
             'start': start,
@@ -510,7 +564,25 @@ class Core(object):
                        min_price=None, max_price=None, min_buy=None, max_buy=None,
                        league=None, club=None, position=None, nationality=None,
                        playStyle=None, start=0, page_size=16):
-        """Search specific items on transfer market."""
+        """Prepare search request, send and return parsed data as a dict.
+
+        :param ctype: [development / ? / ?] Card type.
+        :param level: (optional) [?/?/gold] Card level.
+        :param category: (optional) [fitness/?/?] Card category.
+        :param assetId: (optional) Asset id.
+        :param defId: (optional) Definition id.
+        :param min_price: (optional) Minimal price.
+        :param max_price: (optional) Maximum price.
+        :param min_buy: (optional) Minimal buy now price.
+        :param max_buy: (optional) Maximum buy now price.
+        :param league: (optional) League id.
+        :param club: (optional) Club id.
+        :param position: (optional) Position.
+        :param nationality: (optional) Natiion id.
+        :param playStyle: (optional) Play style.
+        :param start: (optional) Start page.
+        :param page_size: (optional) Page size (items per page).
+        """
         # TODO: add "search" alias
         # TODO: generator
         if start > 0 and page_size == 16:
@@ -540,7 +612,11 @@ class Core(object):
         return [itemParse(i) for i in rc['auctionInfo']]
 
     def bid(self, trade_id, bid):
-        """Make a bid."""
+        """Make a bid.
+
+        :params trade_id: Trade id.
+        :params bid: Amount of credits You want to spend.
+        """
         rc = self.tradeStatus(trade_id)[0]
         if rc['currentBid'] < bid and self.credits >= bid:
             data = {'bid': bid}
@@ -552,23 +628,22 @@ class Core(object):
             return False
 
     def club(self, count=10, level=10, type=1, start=0):
-        """
-            Returns items in your club, excluding consumables
+        """Return items in your club, excluding consumables.
 
-            count - the number of cards you want to request
-            level - 10 for ALL, 3 for gold, 2 for silver, 1 for bronze
-            type - the type of card that you need:
-                set to 1 for players
-                set to 100 for staff
-                set to 142 for club items
-            start - position to start from
+        :params count: (optional) Number of cards You want to request (Default: 10).
+        :params level: (optional) 10 = all | 3 = gold | 2 = silver | 1 = bronze (Default: 10).
+        :params type: (optional) 1 = players | 100 = staff | 142 = club items (Default: 1).
+        :params start: (optional) Position to start from (Default: 0).
         """
         params = {'count': count, 'level': level, 'type': type, 'start': start}
         rc = self.__get__(self.urls['fut']['Club'], params=params)
         return [itemParse({'itemData': i}) for i in rc['itemData']]
 
     def squad(self, squad_id=0):
-        """Return a squad."""
+        """Return a squad.
+
+        :params squad_id: Squad id.
+        """
         # TODO: ability to return other info than players only
         url = '{0}/{1}'.format(self.urls['fut']['Squad'], squad_id)
         rc = self.__get__(url)
@@ -583,7 +658,10 @@ class Core(object):
     '''
 
     def tradeStatus(self, trade_id):
-        """Return trade status."""
+        """Return trade status.
+
+        :params trade_id: Trade id.
+        """
         if not isinstance(trade_id, (list, tuple)):
             trade_id = (trade_id,)
         trade_id = (str(i) for i in trade_id)
@@ -607,14 +685,23 @@ class Core(object):
         return [itemParse({'itemData': i}) for i in rc['itemData']]
 
     def sell(self, item_id, bid, buy_now=0, duration=3600):
-        """Start auction. Returns trade_id."""
+        """Start auction. Returns trade_id.
+
+        :params item_id: Item id.
+        :params bid: Stard bid.
+        :params buy_now: Buy now price.
+        :params duration: Auction duration in seconds (Default: 3600).
+        """
         # TODO: auto send to tradepile
         data = {'buyNowPrice': buy_now, 'startingBid': bid, 'duration': duration, 'itemData': {'id': item_id}}
         rc = self.__post__(self.urls['fut']['SearchAuctionsListItem'], data=json.dumps(data))
         return rc['id']
 
     def quickSell(self, item_id):
-        """Quick sell."""
+        """Quick sell.
+
+        :params item_id: Item id.
+        """
         if not isinstance(item_id, (list, tuple)):
             item_id = (item_id,)
         item_id = (str(i) for i in item_id)
@@ -623,7 +710,10 @@ class Core(object):
         return True
 
     def watchlistDelete(self, trade_id):
-        """Remove cards from watchlist."""
+        """Remove cards from watchlist.
+
+        :params trade_id: Trade id.
+        """
         if not isinstance(trade_id, (list, tuple)):
             trade_id = (trade_id,)
         trade_id = (str(i) for i in trade_id)
@@ -632,27 +722,45 @@ class Core(object):
         return True
 
     def tradepileDelete(self, trade_id):
-        """Remove card from tradepile."""
+        """Remove card from tradepile.
+
+        :params trade_id: Trade id.
+        """
         url = '{0}/{1}'.format(self.urls['fut']['TradeInfo'], trade_id)
         self.__delete__(url)  # returns nothing
         return True
 
     def sendToTradepile(self, trade_id, item_id, safe=True):
-        """Send to tradepile (alias for __sendToPile__)."""
+        """Send to tradepile (alias for __sendToPile__).
+
+        :params trade_id: Trade id.
+        :params item_id: Item id.
+        :params safe: (optional) False to disable tradepile free space check.
+        """
         if safe and len(self.tradepile()) >= self.tradepile_size:  # TODO?: optimization (don't parse items in tradepile)
             return False
         return self.__sendToPile__('trade', trade_id, item_id)
 
     def sendToClub(self, trade_id, item_id):
-        """Send to club (alias for __sendToPile__)."""
+        """Send to club (alias for __sendToPile__).
+
+        :params trade_id: Trade id.
+        :params item_id: Item id.
+        """
         return self.__sendToPile__('club', trade_id, item_id)
 
     def sendToWatchlist(self, trade_id):
-        """Send to watchlist."""
+        """Send to watchlist.
+
+        :params trade_id: Trade id.
+        """
         return self.__sendToPile__('watchlist', trade_id)
 
     def relist(self, clean=False):
-        """Relist all tradepile. Returns True or number of deleted (sold) if clean was set."""
+        """Relist all tradepile. Returns True or number of deleted (sold) if clean was set.
+
+        :params clean: (optional) True if You want to purge pile from sold cards.
+        """
         # TODO: return relisted ids
         self.__put__(self.urls['fut']['SearchAuctionsReListItem'])
         # {"tradeIdList":[{"id":139632781208},{"id":139632796467}]}
@@ -724,6 +832,9 @@ class Core(object):
             raise UnknownError('Invalid activeMessage response')
 
     def messageDelete(self, message_id):
-        """Delete the specified message, by id."""
+        """Delete the specified message, by id.
+
+        :params message_id: Message id.
+        """
         url = '{0}/{1}'.format(self.urls['fut']['ActiveMessage'], message_id)
         self.__delete__(url)
