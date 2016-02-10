@@ -120,7 +120,7 @@ def nations():
 
     :params year: Year.
     """
-    rc = requests.get(urls('pc')['messages']).content
+    rc = requests.get(urls('pc')['messages']).text
     data = re.findall('<trans-unit resname="search.nationName.nation([0-9]+)">\n        <source>(.+)</source>', rc)
     nations = {}
     for i in data:
@@ -133,7 +133,7 @@ def leagues(year=2016):
 
     :params year: Year.
     """
-    rc = requests.get(urls('pc')['messages']).content
+    rc = requests.get(urls('pc')['messages']).text
     data = re.findall('<trans-unit resname="global.leagueFull.%s.league([0-9]+)">\n        <source>(.+)</source>' % year, rc)
     leagues = {}
     for i in data:
@@ -146,7 +146,7 @@ def teams(year=2016):
 
     :params year: Year.
     """
-    rc = requests.get(urls('pc')['messages']).content
+    rc = requests.get(urls('pc')['messages']).text
     data = re.findall('<trans-unit resname="global.teamFull.%s.team([0-9]+)">\n        <source>(.+)</source>' % year, rc)
     teams = {}
     for i in data:
