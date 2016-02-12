@@ -4,6 +4,10 @@ Changelog
 ---------
 
 
+0.1.10 (2016-?-?)
+++++++++++++++++++
+* fix python 3 compatibility #183
+
 0.1.9 (2015-12-11)
 ++++++++++++++++++
 * bump client version for and/ios
