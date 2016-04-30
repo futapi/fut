@@ -7,6 +7,8 @@ Changelog
 0.1.10 (2016-?-?)
 ++++++++++++++++++
 * fix python 3 compatibility #183
+* bump client version for and/ios (fix #190 thanks to rafaelget)
+* bump user-agent and flash version
 
 0.1.9 (2015-12-11)
 ++++++++++++++++++
