@@ -198,15 +198,15 @@ class Core(object):
         self.urls = urls(platform)
         # TODO: urls won't be loaded if we drop here
         if platform == 'pc':
-            game_sku = 'FFA16PCC'
+            game_sku = 'FFA17PCC'
         elif platform == 'xbox':
-            game_sku = 'FFA16XBO'
+            game_sku = 'FFA17XBO'
         elif platform == 'xbox360':
-            game_sku = 'FFA16XBX'
+            game_sku = 'FFA17XBX'
         elif platform == 'ps3':
-            game_sku = 'FFA16PS3'  # not tested
+            game_sku = 'FFA17PS3'  # not tested
         elif platform == 'ps4':
-            game_sku = 'FFA16PS4'
+            game_sku = 'FFA17PS4'
             platform = 'ps3'  # ps4 not available?
         else:
             raise FutError(reason='Wrong platform. (Valid ones are pc/xbox/xbox360/ps3/ps4)')
@@ -214,11 +214,11 @@ class Core(object):
         #    return True  # no need to log in again
         # emulate
         if emulate == 'ios':
-            sku = 'FUT16IOS'
-            clientVersion = 20
+            sku = 'FUT17IOS'
+            clientVersion = 20  # probably needs update for fifa17
         elif emulate == 'and':
-            sku = 'FUT16AND'
-            clientVersion = 20
+            sku = 'FUT17AND'
+            clientVersion = 20  # probably needs update for fifa17
 #        TODO: need more info about log in procedure in game
 #        elif emulate == 'xbox':
 #            sku = 'FFA16XBX'  # FFA14CAP ?
@@ -230,7 +230,7 @@ class Core(object):
 #            sku = ''  # dunno
 #            clientVersion = 1
         elif not emulate:
-            sku = 'FUT16WEB'
+            sku = 'FUT17WEB'
             clientVersion = 1
         else:
             raise FutError(reason='Invalid emulate parameter. (Valid ones are and/ios).')  # pc/ps3/xbox/

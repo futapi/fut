@@ -1,6 +1,6 @@
-# chrome 46 @ win10
+# chrome 53 @ win10
 headers = {
-    'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/50.0.2661.94 Safari/537.36',
+    'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/53.0.2785.122 Safari/537.36',
     'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
     'Accept-Encoding': 'gzip,deflate,sdch',
     'Accept-Language': 'en-US,en;q=0.8',
@@ -36,6 +36,6 @@ headers_ios = {
     # 'X-Requested-With': 'com.ea.fifaultimate_row',  # ultimate app identifier?
 }
 
-flash_agent = 'ShockwaveFlash/21.0.0.213'
+flash_agent = 'ShockwaveFlash/23.0.0.162'
 
 cookies_file = 'cookies.txt'
