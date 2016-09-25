@@ -215,10 +215,10 @@ class Core(object):
         # emulate
         if emulate == 'ios':
             sku = 'FUT17IOS'
-            clientVersion = 20  # probably needs update for fifa17
+            clientVersion = 21
         elif emulate == 'and':
             sku = 'FUT17AND'
-            clientVersion = 20  # probably needs update for fifa17
+            clientVersion = 21
 #        TODO: need more info about log in procedure in game
 #        elif emulate == 'xbox':
 #            sku = 'FFA16XBX'  # FFA14CAP ?
