@@ -4,7 +4,11 @@ Changelog
 ---------
 
 
-0.1.10 (2016-?-?)
+0.2.0 (2016-09-?)
+++++++++++++++++++
+* fifa 17 & dump versions (thanks to rafaelget #192)
+
+0.1.10 (2016-04-30)
 ++++++++++++++++++
 * fix python 3 compatibility #183
 * bump client version for and/ios (fix #190 thanks to rafaelget)
