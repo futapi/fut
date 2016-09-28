@@ -128,7 +128,7 @@ def nations():
     return nations
 
 
-def leagues(year=2016):
+def leagues(year=2017):
     """Return all leagues in dict {id0: league0, id1: legaue1}.
 
     :params year: Year.
@@ -141,7 +141,7 @@ def leagues(year=2016):
     return leagues
 
 
-def teams(year=2016):
+def teams(year=2017):
     """Return all teams in dict {id0: team0, id1: team1}.
 
     :params year: Year.
@@ -506,7 +506,7 @@ class Core(object):
         return nations()
 
     @property
-    def leagues(self, year=2016):
+    def leagues(self, year=2017):
         """Return all leagues in dict {id0: league0, id1: league1}.
 
         :params year: Year.
@@ -514,7 +514,7 @@ class Core(object):
         return leagues(year)
 
     @property
-    def teams(self, year=2016):
+    def teams(self, year=2017):
         """Return all teams in dict {id0: team0, id1: team1}.
 
         :params year: Year.

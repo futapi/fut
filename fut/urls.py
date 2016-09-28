@@ -44,7 +44,7 @@ def urls(platform, cl=None):
 
         'shards':                'https://www.easports.com/iframe/fut17/p/ut/shards',  # add timestamp
         'acc_info':              'https://www.easports.com/iframe/fut17/p/ut/game/fifa16/user/accountinfo',
-        'card_info':             'https://fifa17.content.easports.com/fifa/fltOnlineAssets/B488919F-23B5-497F-9FC0-CACFB38863D0/2016/fut/items/web/',
+        'card_info':             'https://fifa17.content.easports.com/fifa/fltOnlineAssets/CC8267B6-0817-4842-BB6A-A20F88B05418/2017/fut/items/web/',
         'messages':              'https://www.easports.com/iframe/fut17/bundles/futweb/web/flash/xml/localization/messages.en_US.xml',  # add cl
     }
     # urls['login'] = requests.get(urls['fut_home']).url
