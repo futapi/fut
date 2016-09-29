@@ -89,7 +89,7 @@ def itemParse(item_data, full=True):
             'formation':     item_data['itemData']['formation'],
             'leagueId':      item_data['itemData'].get('leagueId'),
             'injuryType':    item_data['itemData'].get('injuryType'),
-            'injuryGames':   item_data['itemData']['injuryGames'],
+            'injuryGames':   item_data['itemData'].get('injuryGames'),
             'lastSalePrice': item_data['itemData']['lastSalePrice'],
             'fitness':       item_data['itemData']['fitness'],
             'training':      item_data['itemData']['training'],
