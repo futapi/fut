@@ -438,7 +438,7 @@ class Core(object):
                     raise Conflict(err_code, err_reason, err_string)
                 else:
                     raise UnknownError(rc.__str__())
-            if 'credits' in rc:
+            if 'credits' in rc and rc['credits']:
                 self.credits = rc['credits']
         self.saveSession()
         return rc
