@@ -80,27 +80,27 @@ def itemParse(item_data, full=True):
     }
     if full:
         return_data.update({
-            'timestamp':     item_data['itemData']['timestamp'],  # auction start
-            'rating':        item_data['itemData']['rating'],
-            'assetId':       item_data['itemData']['assetId'],
-            'resourceId':    item_data['itemData']['resourceId'],
-            'itemState':     item_data['itemData']['itemState'],
-            'rareflag':      item_data['itemData']['rareflag'],
-            'formation':     item_data['itemData']['formation'],
+            'timestamp':     item_data['itemData'].get('timestamp'),  # auction start
+            'rating':        item_data['itemData'].get('rating'),
+            'assetId':       item_data['itemData'].get('assetId'),
+            'resourceId':    item_data['itemData'].get('resourceId'),
+            'itemState':     item_data['itemData'].get('itemState'),
+            'rareflag':      item_data['itemData'].get('rareflag'),
+            'formation':     item_data['itemData'].get('formation'),
             'leagueId':      item_data['itemData'].get('leagueId'),
             'injuryType':    item_data['itemData'].get('injuryType'),
-            'injuryGames':   item_data['itemData']['injuryGames'],
-            'lastSalePrice': item_data['itemData']['lastSalePrice'],
-            'fitness':       item_data['itemData']['fitness'],
-            'training':      item_data['itemData']['training'],
-            'suspension':    item_data['itemData']['suspension'],
-            'contract':      item_data['itemData']['contract'],
+            'injuryGames':   item_data['itemData'].get('injuryGames'),
+            'lastSalePrice': item_data['itemData'].get('lastSalePrice'),
+            'fitness':       item_data['itemData'].get('fitness'),
+            'training':      item_data['itemData'].get('training'),
+            'suspension':    item_data['itemData'].get('suspension'),
+            'contract':      item_data['itemData'].get('contract'),
             # 'position':     item_data['itemData']['preferredPosition'],
             'playStyle':     item_data['itemData'].get('playStyle'),  # used only for players
-            'discardValue':  item_data['itemData']['discardValue'],
-            'itemType':      item_data['itemData']['itemType'],
+            'discardValue':  item_data['itemData'].get('discardValue'),
+            'itemType':      item_data['itemData'].get('itemType'),
             'cardType':      item_data['itemData'].get("cardsubtypeid"),  # used only for cards
-            'owners':        item_data['itemData']['owners'],
+            'owners':        item_data['itemData'].get('owners'),
         })
     return return_data
 
@@ -128,7 +128,7 @@ def nations():
     return nations
 
 
-def leagues(year=2016):
+def leagues(year=2017):
     """Return all leagues in dict {id0: league0, id1: legaue1}.
 
     :params year: Year.
@@ -141,7 +141,7 @@ def leagues(year=2016):
     return leagues
 
 
-def teams(year=2016):
+def teams(year=2017):
     """Return all teams in dict {id0: team0, id1: team1}.
 
     :params year: Year.
@@ -438,7 +438,7 @@ class Core(object):
                     raise Conflict(err_code, err_reason, err_string)
                 else:
                     raise UnknownError(rc.__str__())
-            if 'credits' in rc:
+            if 'credits' in rc and rc['credits']:
                 self.credits = rc['credits']
         self.saveSession()
         return rc
@@ -506,7 +506,7 @@ class Core(object):
         return nations()
 
     @property
-    def leagues(self, year=2016):
+    def leagues(self, year=2017):
         """Return all leagues in dict {id0: league0, id1: league1}.
 
         :params year: Year.
@@ -514,7 +514,7 @@ class Core(object):
         return leagues(year)
 
     @property
-    def teams(self, year=2016):
+    def teams(self, year=2017):
         """Return all teams in dict {id0: team0, id1: team1}.
 
         :params year: Year.

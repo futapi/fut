@@ -4,7 +4,13 @@ Changelog
 ---------
 
 
-0.2.0 (2016-09-?)
+0.2.1 (2016-10-03)
+++++++++++++++++++
+* fix tradepile/watchlist when consumable in pile (#194)
+* fix card info url & bump default year in leagues/teams
+* fix credits resetting to 0 on search (thanks to hunterjm #198)
+
+0.2.0 (2016-09-26)
 ++++++++++++++++++
 * fifa 17 & dump versions (thanks to rafaelget #192)
 
