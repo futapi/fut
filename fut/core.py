@@ -276,7 +276,7 @@ class Core(object):
         # self.nucleus_id = re.search('userid : "([0-9]+)"', rc.text).group(1)  # we'll get it later
 
         # === lanuch futweb
-        self.r.headers['Referer'] = self.urls['fut_home']+'/web-app'  # prepare headers
+        self.r.headers['Referer'] = self.urls['fut_home']  # prepare headers
         rc = self.r.get(self.urls['futweb'])
         self.logger.debug(rc.content)
         rc = rc.text
