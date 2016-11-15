@@ -178,6 +178,7 @@ class Core(object):
         # TODO: split into smaller methods
         # TODO: check first if login is needed (https://www.easports.com/fifa/api/isUserLoggedIn)
         # TODO: get gamesku, url from shards !!
+        print("WARNING: Last days we've experienced few perm bans for most active users so at this moment it might be easy tracked by ea bot hunters. I strongly recommend to stop using it or at least lower activity until new version would be provided.")
         secret_answer_hash = EAHashingAlgorithm().EAHash(secret_answer)
         # create session
         self.r = requests.Session()  # init/reset requests session object
@@ -838,3 +839,5 @@ class Core(object):
         """
         url = '{0}/{1}'.format(self.urls['fut']['ActiveMessage'], message_id)
         self.__delete__(url)
+
+print("WARNING: Last days we've experienced few perm bans for most active users so at this moment it might be easy tracked by ea bot hunters. I strongly recommend to stop using it or at least lower activity until new version would be provided.")

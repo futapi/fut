@@ -31,7 +31,7 @@ Login
 `````
 Optional parameters:
 
-- CODE: [string] email/sms code for two-step verification (make sure to use string if your codes starts with 0).
+- CODE: [string] email/sms code for two-step verification (make sure to use string if your code starts with 0).
 - PLATFORM: [pc/ps3/ps4/xbox/xbox360] pc default.
 - EMULATE: [and/ios] use this feature to avoid webapp errors (BE WARE IT'S HIGH RISK).
 - DEBUG: [True/False] enables debug.
