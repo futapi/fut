@@ -587,7 +587,7 @@ class Core(object):
         # TODO: add "search" alias
         # TODO: generator
         if start > 0 and page_size == 16:
-            page_size = 13
+            page_size = 12
         elif page_size > 50:  # server restriction
             page_size = 50
         params = {
