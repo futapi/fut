@@ -178,7 +178,7 @@ class Core(object):
         # TODO: split into smaller methods
         # TODO: check first if login is needed (https://www.easports.com/fifa/api/isUserLoggedIn)
         # TODO: get gamesku, url from shards !!
-        print("WARNING: Last days we've experienced few perm bans for most active users so at this moment it might be easy tracked by ea bot hunters. I strongly recommend to stop using it or at least lower activity until new version would be provided.")
+        print("WARNING: Requests made by fut were investigated and one little problem has been found (default page_size for search was 13 instead of 12) but it shouldn't be enough to ban so most probably reason is just to much and repeatable activity. All i can recommend is avoid emulate feature and temp bans (lower, randomize activity). Please report all bans to help protect others https://github.com/oczkers/fut/issues/216")
         secret_answer_hash = EAHashingAlgorithm().EAHash(secret_answer)
         # create session
         self.r = requests.Session()  # init/reset requests session object
@@ -587,7 +587,7 @@ class Core(object):
         # TODO: add "search" alias
         # TODO: generator
         if start > 0 and page_size == 16:
-            page_size = 13
+            page_size = 12
         elif page_size > 50:  # server restriction
             page_size = 50
         params = {
@@ -840,4 +840,4 @@ class Core(object):
         url = '{0}/{1}'.format(self.urls['fut']['ActiveMessage'], message_id)
         self.__delete__(url)
 
-print("WARNING: Last days we've experienced few perm bans for most active users so at this moment it might be easy tracked by ea bot hunters. I strongly recommend to stop using it or at least lower activity until new version would be provided.")
+print("WARNING: Requests made by fut were investigated and one little problem has been found (default page_size for search was 13 instead of 12) but it shouldn't be enough to ban so most probably reason is just to much and repeatable activity. All i can recommend is avoid emulate feature and temp bans (lower, randomize activity). Please report all bans to help protect others https://github.com/oczkers/fut/issues/216")
