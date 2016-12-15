@@ -27,7 +27,7 @@ def urls(platform, cl=None):
         'main_site':             'https://www.easports.com',
         'futweb':                'https://www.easports.com/iframe/fut17/?baseShowoffUrl=https%3A%2F%2Fwww.easports.com%2Ffifa%2Fultimate-team%2Fweb-app%2Fshow-off&guest_app_uri=http%3A%2F%2Fwww.easports.com%2Ffifa%2Fultimate-team%2Fweb-app&locale=en_US',
         'fut_config':            'https://www.easports.com/iframe/fut17/bundles/futweb/web/flash/xml/site_config.xml',  # add timestamp
-        'fut_home':              'https://www.easports.com/uk/fifa/football-club/ultimate-team',
+        'fut_home':              'https://www.easports.com/fifa/ultimate-team/web-app',
         'fut':                   {},  # it's updated dynamicly (based on fut_config)
         'fut_question':          'https://www.easports.com/iframe/fut17/p/ut/game/fifa16/phishing/question',  # add timestamp
         'fut_validate':          'https://www.easports.com/iframe/fut17/p/ut/game/fifa16/phishing/validate',

@@ -4,6 +4,19 @@ Changelog
 ---------
 
 
+0.2.4 (2016-12-15)
+++++++++++++++++++
+* proper(?) page_size and start values correction (thanks to rafaelget #220)
+* fix fut_home url (thanks to Fanatico1981 #219)
+
+0.2.3 (2016-11-20)
+++++++++++++++++++
+* correct page_size value #216
+
+0.2.2 (2016-10-31)
+++++++++++++++++++
+* add bans wave warning
+
 0.2.1 (2016-10-03)
 ++++++++++++++++++
 * fix tradepile/watchlist when consumable in pile (#194)

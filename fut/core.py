@@ -178,7 +178,8 @@ class Core(object):
         # TODO: split into smaller methods
         # TODO: check first if login is needed (https://www.easports.com/fifa/api/isUserLoggedIn)
         # TODO: get gamesku, url from shards !!
-        print("WARNING: Requests made by fut were investigated and one little problem has been found (default page_size for search was 13 instead of 12) but it shouldn't be enough to ban so most probably reason is just to much and repeatable activity. All i can recommend is avoid emulate feature and temp bans (lower, randomize activity). Please report all bans to help protect others https://github.com/oczkers/fut/issues/216")
+        print("INFO: Two more issues has been found and fixed (#219, #220). Please report all bans to help protect others https://github.com/oczkers/fut/issues/216")
+        self.emulate = emulate
         secret_answer_hash = EAHashingAlgorithm().EAHash(secret_answer)
         # create session
         self.r = requests.Session()  # init/reset requests session object
@@ -587,7 +588,12 @@ class Core(object):
         # TODO: add "search" alias
         # TODO: generator
         if start > 0 and page_size == 16:
-            page_size = 12
+            if not self.emulate:  # wbeapp
+                page_size = 12
+                if start == 16:  # second page
+                    start = 12
+            elif self.emulate and start == 16:  # emulating android/ios
+                start = 15
         elif page_size > 50:  # server restriction
             page_size = 50
         params = {
@@ -840,4 +846,4 @@ class Core(object):
         url = '{0}/{1}'.format(self.urls['fut']['ActiveMessage'], message_id)
         self.__delete__(url)
 
-print("WARNING: Requests made by fut were investigated and one little problem has been found (default page_size for search was 13 instead of 12) but it shouldn't be enough to ban so most probably reason is just to much and repeatable activity. All i can recommend is avoid emulate feature and temp bans (lower, randomize activity). Please report all bans to help protect others https://github.com/oczkers/fut/issues/216")
+print("INFO: Two more issues has been found and fixed (#219, #220). Please report all bans to help protect others https://github.com/oczkers/fut/issues/216")
