@@ -4,6 +4,10 @@ Changelog
 ---------
 
 
+0.2.5 (2016-12-28)
+++++++++++++++++++
+* add timeout (#226)
+
 0.2.4 (2016-12-15)
 ++++++++++++++++++
 * proper(?) page_size and start values correction (thanks to rafaelget #220)

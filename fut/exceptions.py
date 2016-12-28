@@ -23,6 +23,10 @@ class UnknownError(FutError):
     https://github.com/oczkers/fut/issues/24"""
 
 
+class Timeout(FutError):
+    """Request timeout, looks like ea servers are down."""
+
+
 class ExpiredSession(FutError):
     """Session has expired,
     you should send at least one request every ~10 minutes."""
@@ -56,7 +60,10 @@ class PermissionDenied(FutError):
 
 class Captcha(FutError):
     """[459] Captcha Triggered."""
-    def __init__(self, token=None, img=None):
+    def __init__(self, code=None, reason=None, string=None, token=None, img=None):
+        self.code = code
+        self.reason = reason
+        self.string = string
         self.token = token
         self.img = img
 
