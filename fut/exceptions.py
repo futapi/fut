@@ -60,7 +60,10 @@ class PermissionDenied(FutError):
 
 class Captcha(FutError):
     """[459] Captcha Triggered."""
-    def __init__(self, token=None, img=None):
+    def __init__(self, code=None, reason=None, string=None, token=None, img=None):
+        self.code = code
+        self.reason = reason
+        self.string = string
         self.token = token
         self.img = img
 
