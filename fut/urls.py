@@ -3,13 +3,14 @@
 import requests
 import xmltodict
 
+from .config import timeout
 from .exceptions import FutError
 
 
 def __updateUrls__(urls, cl):
         """Get services urls."""
         urls['fut_config'] = '%s?cl=%s' % (urls['fut_config'], cl)
-        rc = xmltodict.parse(requests.get(urls['fut_config']).content)
+        rc = xmltodict.parse(requests.get(urls['fut_config'], timeout=timeout).content)
         services = rc['main']['services']['prod']
         path = '{0}{1}game/fifa17/'.format(urls['fut_host'], rc['main']['directHttpServiceDestination'])
         path_auth = '{0}/iframe/fut17{1}'.format(urls['main_site'], rc['main']['httpServiceDestination'])
@@ -47,7 +48,7 @@ def urls(platform, cl=None):
         'card_info':             'https://fifa17.content.easports.com/fifa/fltOnlineAssets/CC8267B6-0817-4842-BB6A-A20F88B05418/2017/fut/items/web/',
         'messages':              'https://www.easports.com/iframe/fut17/bundles/futweb/web/flash/xml/localization/messages.en_US.xml',  # add cl
     }
-    # urls['login'] = requests.get(urls['fut_home']).url
+    # urls['login'] = requests.get(urls['fut_home'], timeout=timeout).url
 
     if platform in urls['fut_host']:
         urls['fut_host'] = urls['fut_host'][platform]

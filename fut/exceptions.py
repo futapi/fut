@@ -23,6 +23,10 @@ class UnknownError(FutError):
     https://github.com/oczkers/fut/issues/24"""
 
 
+class Timeout(FutError):
+    """Request timeout, looks like ea servers are down."""
+
+
 class ExpiredSession(FutError):
     """Session has expired,
     you should send at least one request every ~10 minutes."""

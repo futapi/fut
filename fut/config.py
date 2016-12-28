@@ -39,3 +39,4 @@ headers_ios = {
 flash_agent = 'ShockwaveFlash/23.0.0.205'
 
 cookies_file = 'cookies.txt'
+timeout = 15  # defaulf global timeout
