@@ -26,7 +26,8 @@ from .urls import urls
 from .exceptions import (FutError, ExpiredSession, InternalServerError,
                          UnknownError, PermissionDenied, Captcha,
                          Conflict, MaxSessions, MultipleSession,
-                         FeatureDisabled, doLoginFail, NoUltimateTeam)
+                         Unauthorized, FeatureDisabled, doLoginFail,
+                         NoUltimateTeam)
 from .EAHashingAlgorithm import EAHashingAlgorithm
 
 
@@ -436,6 +437,8 @@ class Core(object):
                     # img = self.r.get(self.urls['fut_captcha_img'], params={'_': int(time()*1000), 'token': captcha_token}, timeout=self.timeout).content  # doesnt work - check headers
                     img = None
                     raise Captcha(err_code, err_reason, err_string, captcha_token, img)
+                elif err_code == '401' or err_string == 'Unauthorized':
+                    raise Unauthorized(err_code, err_reason, err_string)
                 elif err_code == '409' or err_string == 'Conflict':
                     raise Conflict(err_code, err_reason, err_string)
                 else:
