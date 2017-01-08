@@ -10,7 +10,7 @@ This module implements the fut's basic methods.
 
 import requests
 import re
-from time import time
+from time import time, sleep
 try:
     from cookielib import LWPCookieJar
 except ImportError:
@@ -621,17 +621,20 @@ class Core(object):
         rc = self.__get__(self.urls['fut']['SearchAuctions'], params=params)
         return [itemParse(i) for i in rc['auctionInfo']]
 
-    def bid(self, trade_id, bid):
+    def bid(self, trade_id, bid, delay=0):
         """Make a bid.
 
         :params trade_id: Trade id.
         :params bid: Amount of credits You want to spend.
         """
-        rc = self.tradeStatus(trade_id)[0]
-        if rc['currentBid'] < bid and self.credits >= bid:
-            data = {'bid': bid}
-            url = '{0}/{1}/bid'.format(self.urls['fut']['PostBid'], trade_id)
-            rc = self.__put__(url, data=json.dumps(data))['auctionInfo'][0]
+        if delay is not None:
+            rc = self.tradeStatus(trade_id)[0]
+            if rc['currentBid'] > bid or self.credits < bid:
+                return False  # TODO: add exceptions
+            sleep(delay)
+        data = {'bid': bid}
+        url = '{0}/{1}/bid'.format(self.urls['fut']['PostBid'], trade_id)
+        rc = self.__put__(url, data=json.dumps(data))['auctionInfo'][0]
         if rc['bidState'] == 'highest' or (rc['tradeState'] == 'closed' and rc['bidState'] == 'buyNow'):  # checking 'tradeState' is required?
             return True
         else:
