@@ -401,7 +401,7 @@ class Core(object):
 #        return self.r.get(self.urls['shards'], params={'_': int(time()*1000)}, timeout=self.timeout).json()
 #        # self.r.headers['X-UT-Route'] = self.urls['fut_pc']
 
-    def __request__(self, method, url, delay=self.delay, *args, **kwargs):
+    def __request__(self, method, url, *args, **kwargs):
         """Prepare headers and sends request. Returns response as a json object.
 
         :params method: Rest method.
@@ -410,7 +410,7 @@ class Core(object):
         # TODO: update credtis?
         self.r.headers['X-HTTP-Method-Override'] = method.upper()
         self.logger.debug("request: {0} args={1};  kwargs={2}".format(url, args, kwargs))
-        sleep(max(self.request_time - time() + random.randrange(delay[0], delay[1]+1), 0))  # respect minimum delay
+        sleep(max(self.request_time - time() + random.randrange(self.delay[0], self.delay[1]+1), 0))  # respect minimum delay
         self.request_time = time()  # save request time for delay calculations
         rc = self.r.post(url, timeout=self.timeout, *args, **kwargs)
         self.logger.debug("response: {0}".format(rc.content))
