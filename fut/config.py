@@ -40,3 +40,4 @@ flash_agent = 'ShockwaveFlash/24.0.0.186'
 
 cookies_file = 'cookies.txt'
 timeout = 15  # defaulf global timeout
+delay = (0, 5)  # default mininum delay between requests (random range)

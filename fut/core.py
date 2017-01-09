@@ -20,7 +20,7 @@ try:
 except ImportError:
     import json
 
-from .config import headers, headers_and, headers_ios, flash_agent, cookies_file, timeout
+from .config import headers, headers_and, headers_ios, flash_agent, cookies_file, timeout, delay
 from .log import logger
 from .urls import urls
 from .exceptions import (FutError, ExpiredSession, InternalServerError,
@@ -156,10 +156,11 @@ def teams(year=2017, timeout=timeout):
 
 
 class Core(object):
-    def __init__(self, email, passwd, secret_answer, platform='pc', code=None, emulate=None, debug=False, cookies=cookies_file, timeout=timeout):
+    def __init__(self, email, passwd, secret_answer, platform='pc', code=None, emulate=None, debug=False, cookies=cookies_file, timeout=timeout, delay=delay):
         self.credits = 0
         self.cookies_file = cookies  # TODO: map self.cookies to requests.Session.cookies?
         self.timeout = timeout
+        self.delay = delay
         if debug:  # save full log to file (fut.log)
             self.logger = logger(save=True)
         else:  # NullHandler
@@ -400,7 +401,7 @@ class Core(object):
 #        return self.r.get(self.urls['shards'], params={'_': int(time()*1000)}, timeout=self.timeout).json()
 #        # self.r.headers['X-UT-Route'] = self.urls['fut_pc']
 
-    def __request__(self, method, url, *args, **kwargs):
+    def __request__(self, method, url, delay=self.delay, *args, **kwargs):
         """Prepare headers and sends request. Returns response as a json object.
 
         :params method: Rest method.
@@ -409,6 +410,8 @@ class Core(object):
         # TODO: update credtis?
         self.r.headers['X-HTTP-Method-Override'] = method.upper()
         self.logger.debug("request: {0} args={1};  kwargs={2}".format(url, args, kwargs))
+        sleep(max(self.request_time - time() + random.randrange(delay[0], delay[1]+1), 0))  # respect minimum delay
+        self.request_time = time()  # save request time for delay calculations
         rc = self.r.post(url, timeout=self.timeout, *args, **kwargs)
         self.logger.debug("response: {0}".format(rc.content))
         if not rc.ok:  # status != 200
@@ -621,17 +624,17 @@ class Core(object):
         rc = self.__get__(self.urls['fut']['SearchAuctions'], params=params)
         return [itemParse(i) for i in rc['auctionInfo']]
 
-    def bid(self, trade_id, bid, delay=0):
+    def bid(self, trade_id, bid, fast=False):
         """Make a bid.
 
         :params trade_id: Trade id.
         :params bid: Amount of credits You want to spend.
+        :params fast: True for fastest bidding (skips trade status & credits check).
         """
-        if delay is not None:
+        if not fast:
             rc = self.tradeStatus(trade_id)[0]
             if rc['currentBid'] > bid or self.credits < bid:
                 return False  # TODO: add exceptions
-            sleep(delay)
         data = {'bid': bid}
         url = '{0}/{1}/bid'.format(self.urls['fut']['PostBid'], trade_id)
         rc = self.__put__(url, data=json.dumps(data))['auctionInfo'][0]
