@@ -62,6 +62,10 @@ Optional parameters:
 Bid
 ```
 
+Optional parameters:
+
+- FAST: [boolean] True for skipping trade status & credits check.
+
 .. code-block:: python
 
     >>> fut.bid(items[0]['trade_id'], 600)

@@ -161,6 +161,7 @@ class Core(object):
         self.cookies_file = cookies  # TODO: map self.cookies to requests.Session.cookies?
         self.timeout = timeout
         self.delay = delay
+        self.request_time = 0
         if debug:  # save full log to file (fut.log)
             self.logger = logger(save=True)
         else:  # NullHandler
