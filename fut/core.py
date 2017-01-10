@@ -10,7 +10,7 @@ This module implements the fut's basic methods.
 
 import requests
 import re
-from time import time
+from time import time, sleep
 try:
     from cookielib import LWPCookieJar
 except ImportError:
@@ -20,13 +20,14 @@ try:
 except ImportError:
     import json
 
-from .config import headers, headers_and, headers_ios, flash_agent, cookies_file, timeout
+from .config import headers, headers_and, headers_ios, flash_agent, cookies_file, timeout, delay
 from .log import logger
 from .urls import urls
 from .exceptions import (FutError, ExpiredSession, InternalServerError,
                          UnknownError, PermissionDenied, Captcha,
                          Conflict, MaxSessions, MultipleSession,
-                         FeatureDisabled, doLoginFail, NoUltimateTeam)
+                         Unauthorized, FeatureDisabled, doLoginFail,
+                         NoUltimateTeam)
 from .EAHashingAlgorithm import EAHashingAlgorithm
 
 
@@ -155,10 +156,12 @@ def teams(year=2017, timeout=timeout):
 
 
 class Core(object):
-    def __init__(self, email, passwd, secret_answer, platform='pc', code=None, emulate=None, debug=False, cookies=cookies_file, timeout=timeout):
+    def __init__(self, email, passwd, secret_answer, platform='pc', code=None, emulate=None, debug=False, cookies=cookies_file, timeout=timeout, delay=delay):
         self.credits = 0
         self.cookies_file = cookies  # TODO: map self.cookies to requests.Session.cookies?
         self.timeout = timeout
+        self.delay = delay
+        self.request_time = 0
         if debug:  # save full log to file (fut.log)
             self.logger = logger(save=True)
         else:  # NullHandler
@@ -307,13 +310,15 @@ class Core(object):
         personas = rc.json()['userAccountInfo']['personas']
         for p in personas:
             # self.clubs = [i for i in p['userClubList']]
-            # sort clubs by lastAccessTime (latest first)
+            # sort clubs by lastAccessTime (latest first but looks like ea is doing this for us(?))
             # self.clubs.sort(key=lambda i: i['lastAccessTime'], reverse=True)
             for c in p['userClubList']:
                 if c['skuAccessList'] and game_sku in c['skuAccessList']:
                     self.persona_id = p['personaId']
                     self.persona_name = p['personaName']
                     break
+        if not hasattr(self, 'persona_id') or not hasattr(self, 'persona_name'):
+            raise FutError(reason='Error during login process (no persona found).')
 
         # authorization
         self.r.headers.update({  # prepare headers
@@ -408,6 +413,8 @@ class Core(object):
         # TODO: update credtis?
         self.r.headers['X-HTTP-Method-Override'] = method.upper()
         self.logger.debug("request: {0} args={1};  kwargs={2}".format(url, args, kwargs))
+        sleep(max(self.request_time - time() + random.randrange(self.delay[0], self.delay[1]+1), 0))  # respect minimum delay
+        self.request_time = time()  # save request time for delay calculations
         rc = self.r.post(url, timeout=self.timeout, *args, **kwargs)
         self.logger.debug("response: {0}".format(rc.content))
         if not rc.ok:  # status != 200
@@ -436,6 +443,8 @@ class Core(object):
                     # img = self.r.get(self.urls['fut_captcha_img'], params={'_': int(time()*1000), 'token': captcha_token}, timeout=self.timeout).content  # doesnt work - check headers
                     img = None
                     raise Captcha(err_code, err_reason, err_string, captcha_token, img)
+                elif err_code == '401' or err_string == 'Unauthorized':
+                    raise Unauthorized(err_code, err_reason, err_string)
                 elif err_code == '409' or err_string == 'Conflict':
                     raise Conflict(err_code, err_reason, err_string)
                 else:
@@ -618,17 +627,20 @@ class Core(object):
         rc = self.__get__(self.urls['fut']['SearchAuctions'], params=params)
         return [itemParse(i) for i in rc['auctionInfo']]
 
-    def bid(self, trade_id, bid):
+    def bid(self, trade_id, bid, fast=False):
         """Make a bid.
 
         :params trade_id: Trade id.
         :params bid: Amount of credits You want to spend.
+        :params fast: True for fastest bidding (skips trade status & credits check).
         """
-        rc = self.tradeStatus(trade_id)[0]
-        if rc['currentBid'] < bid and self.credits >= bid:
-            data = {'bid': bid}
-            url = '{0}/{1}/bid'.format(self.urls['fut']['PostBid'], trade_id)
-            rc = self.__put__(url, data=json.dumps(data))['auctionInfo'][0]
+        if not fast:
+            rc = self.tradeStatus(trade_id)[0]
+            if rc['currentBid'] > bid or self.credits < bid:
+                return False  # TODO: add exceptions
+        data = {'bid': bid}
+        url = '{0}/{1}/bid'.format(self.urls['fut']['PostBid'], trade_id)
+        rc = self.__put__(url, data=json.dumps(data))['auctionInfo'][0]
         if rc['bidState'] == 'highest' or (rc['tradeState'] == 'closed' and rc['bidState'] == 'buyNow'):  # checking 'tradeState' is required?
             return True
         else:

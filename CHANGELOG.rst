@@ -4,6 +4,12 @@ Changelog
 ---------
 
 
+0.2.6 (2017-01-10)
+++++++++++++++++++
+* add (minimum request) delay param (#233)
+* add fast param to bid method
+* use Unauthorized expcetion (fix #232)
+
 0.2.5 (2016-12-28)
 ++++++++++++++++++
 * add timeout (#226)
