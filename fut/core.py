@@ -310,13 +310,15 @@ class Core(object):
         personas = rc.json()['userAccountInfo']['personas']
         for p in personas:
             # self.clubs = [i for i in p['userClubList']]
-            # sort clubs by lastAccessTime (latest first)
+            # sort clubs by lastAccessTime (latest first but looks like ea is doing this for us(?))
             # self.clubs.sort(key=lambda i: i['lastAccessTime'], reverse=True)
             for c in p['userClubList']:
                 if c['skuAccessList'] and game_sku in c['skuAccessList']:
                     self.persona_id = p['personaId']
                     self.persona_name = p['personaName']
                     break
+        if not hasattr(self, 'persona_id') or not hasattr(self, 'persona_name'):
+            raise FutError(reason='Error during login process (no persona found).')
 
         # authorization
         self.r.headers.update({  # prepare headers
