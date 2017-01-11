@@ -658,6 +658,11 @@ class Core(object):
         rc = self.__get__(self.urls['fut']['Club'], params=params)
         return [itemParse({'itemData': i}) for i in rc['itemData']]
 
+    def clubConsumables(self):
+        """Return all consumables."""
+        rc = self.__get__(self.urls['fut']['ClubConsumableSearch'])  # or ClubConsumableStats?
+        return rc
+
     def squad(self, squad_id=0):
         """Return a squad.
 
