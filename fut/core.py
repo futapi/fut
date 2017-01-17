@@ -10,7 +10,8 @@ This module implements the fut's basic methods.
 
 import requests
 import re
-from time import time, sleep
+import random
+import time
 try:
     from cookielib import LWPCookieJar
 except ImportError:
@@ -304,7 +305,7 @@ class Core(object):
             'X-UT-Route': self.urls['fut_host'],
             'Referer': self.urls['futweb'],
         })
-        rc = self.r.get(self.urls['acc_info'], params={'_': int(time() * 1000)}, timeout=self.timeout)
+        rc = self.r.get(self.urls['acc_info'], params={'_': int(time.time() * 1000)}, timeout=self.timeout)
         self.logger.debug(rc.content)
         # pick persona (first valid for given game_sku)
         personas = rc.json()['userAccountInfo']['personas']
@@ -356,7 +357,7 @@ class Core(object):
         # validate (secret question)
         self.r.headers['Accept'] = 'text/json'  # prepare headers
         del self.r.headers['Origin']
-        rc = self.r.get(self.urls['fut_question'], params={'_': int(time() * 1000)}, timeout=self.timeout)
+        rc = self.r.get(self.urls['fut_question'], params={'_': int(time.time() * 1000)}, timeout=self.timeout)
         self.logger.debug(rc.content)
         rc = rc.json()
         if rc.get('string') != 'Already answered question.':
@@ -401,7 +402,7 @@ class Core(object):
 #        """Returns shards info."""
 #        # TODO: headers
 #        self.r.headers['X-UT-Route'] = self.urls['fut_base']
-#        return self.r.get(self.urls['shards'], params={'_': int(time()*1000)}, timeout=self.timeout).json()
+#        return self.r.get(self.urls['shards'], params={'_': int(time.time()*1000)}, timeout=self.timeout).json()
 #        # self.r.headers['X-UT-Route'] = self.urls['fut_pc']
 
     def __request__(self, method, url, *args, **kwargs):
@@ -413,8 +414,8 @@ class Core(object):
         # TODO: update credtis?
         self.r.headers['X-HTTP-Method-Override'] = method.upper()
         self.logger.debug("request: {0} args={1};  kwargs={2}".format(url, args, kwargs))
-        sleep(max(self.request_time - time() + random.randrange(self.delay[0], self.delay[1]+1), 0))  # respect minimum delay
-        self.request_time = time()  # save request time for delay calculations
+        time.sleep(max(self.request_time - time.time() + random.randrange(self.delay[0], self.delay[1]+1), 0))  # respect minimum delay
+        self.request_time = time.time()  # save request time for delay calculations
         rc = self.r.post(url, timeout=self.timeout, *args, **kwargs)
         self.logger.debug("response: {0}".format(rc.content))
         if not rc.ok:  # status != 200
@@ -440,7 +441,7 @@ class Core(object):
                 elif err_code == '461' or err_string == 'Permission Denied':
                     raise PermissionDenied(err_code, err_reason, err_string)
                 elif err_code == '459' or err_string == 'Captcha Triggered':
-                    # img = self.r.get(self.urls['fut_captcha_img'], params={'_': int(time()*1000), 'token': captcha_token}, timeout=self.timeout).content  # doesnt work - check headers
+                    # img = self.r.get(self.urls['fut_captcha_img'], params={'_': int(time.time()*1000), 'token': captcha_token}, timeout=self.timeout).content  # doesnt work - check headers
                     img = None
                     raise Captcha(err_code, err_reason, err_string, captcha_token, img)
                 elif err_code == '401' or err_string == 'Unauthorized':
