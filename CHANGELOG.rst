@@ -4,6 +4,10 @@ Changelog
 ---------
 
 
+0.2.7 (2017-01-17)
+++++++++++++++++++
+* fix missing import (#244)
+
 0.2.6 (2017-01-10)
 ++++++++++++++++++
 * add (minimum request) delay param (#233)
