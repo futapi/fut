@@ -216,7 +216,7 @@ class Core(object):
             platform = 'ps3'  # ps4 not available?
         else:
             raise FutError(reason='Wrong platform. (Valid ones are pc/xbox/xbox360/ps3/ps4)')
-        # if self.r.get(self.urls['main_site']+'/fifa/api/isUserLoggedIn', timeout=timeout).json()['isLoggedIn']:
+        # if self.r.get(self.urls['main_site']+'/fifa/api/isUserLoggedIn', timeout=self.timeout).json()['isLoggedIn']:
         #    return True  # no need to log in again
         # emulate
         if emulate == 'ios':
@@ -241,7 +241,7 @@ class Core(object):
         else:
             raise FutError(reason='Invalid emulate parameter. (Valid ones are and/ios).')  # pc/ps3/xbox/
         # === login
-        self.urls['login'] = self.r.get(self.urls['fut_home'], timeout=timeout).url
+        self.urls['login'] = self.r.get(self.urls['fut_home'], timeout=self.timeout).url
         self.r.headers['Referer'] = self.urls['login']  # prepare headers
         data = {'email': email,
                 'password': passwd,
