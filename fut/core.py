@@ -196,8 +196,10 @@ class Core(object):
                 pass
                 # self.r.cookies.save(ignore_discard=True)  # create empty file for cookies
         if emulate == 'and':
+            raise FutError(reason='Emulate feature is currently disabled duo latest changes in login process, need more info')
             self.r.headers = headers_and.copy()  # i'm android now ;-)
         elif emulate == 'ios':
+            raise FutError(reason='Emulate feature is currently disabled duo latest changes in login process, need more info')
             self.r.headers = headers_ios.copy()  # i'm ios phone now ;-)
         else:
             self.r.headers = headers.copy()  # i'm chrome browser now ;-)
@@ -249,7 +251,7 @@ class Core(object):
                 'phoneNumber': '',  # TODO: add phone code verification
                 'passwordForPhone': '',
                 'gCaptchaResponse': '',
-                'isPhoneNumberLogin': 'false',  # TODO: add phono login
+                'isPhoneNumberLogin': 'false',  # TODO: add phone login
                 'isIncompletePhone': '',
                 '_rememberMe': 'on',
                 'rememberMe': 'on',
