@@ -247,7 +247,7 @@ class Core(object):
         self.r.headers['Referer'] = self.urls['login']  # prepare headers
         data = {'email': email,
                 'password': passwd,
-                'country': 'US',
+                'country': 'US',  # is it important?
                 'phoneNumber': '',  # TODO: add phone code verification
                 'passwordForPhone': '',
                 'gCaptchaResponse': '',
@@ -257,6 +257,8 @@ class Core(object):
                 'rememberMe': 'on',
                 '_eventId': 'submit'}
         rc = self.r.post(self.urls['login'], data=data, timeout=self.timeout).content
+        if 'redirectUri' not in rc:
+            raise FutError(reason='Error during login process (probably invalid email or password')
         url = re.search("var redirectUri \= '(https://signin.ea.com:443/p/web[0-9]+/login\?execution\=.+?)';", rc).group(1)  # also avaible in rc.url
         rc = self.r.get(url+'&_eventId=end')
         self.logger.debug(rc.content)
@@ -289,7 +291,7 @@ class Core(object):
 
         self.r.headers['Referer'] = self.urls['login']
         if self.r.get(self.urls['main_site'] + '/fifa/api/isUserLoggedIn', timeout=self.timeout).json()['isLoggedIn'] is not True:  # TODO: parse error?
-            raise FutError(reason='Error during login process (probably invalid email, password or code).')
+            raise FutError(reason='Unknown error during login process.')
         # TODO: catch invalid data exception
         # self.nucleus_id = re.search('userid : "([0-9]+)"', rc.text).group(1)  # we'll get it later
 
