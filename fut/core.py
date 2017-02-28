@@ -256,7 +256,7 @@ class Core(object):
                 '_rememberMe': 'on',
                 'rememberMe': 'on',
                 '_eventId': 'submit'}
-        rc = self.r.post(self.urls['login'], data=data, timeout=self.timeout).content
+        rc = self.r.post(self.urls['login'], data=data, timeout=self.timeout).text
         if 'redirectUri' not in rc:
             raise FutError(reason='Error during login process (probably invalid email or password')
         url = re.search("var redirectUri \= '(https://signin.ea.com:443/p/web[0-9]+/login\?execution\=.+?)';", rc).group(1)  # also avaible in rc.url
