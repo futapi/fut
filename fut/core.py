@@ -245,10 +245,18 @@ class Core(object):
         self.r.headers['Referer'] = self.urls['login']  # prepare headers
         data = {'email': email,
                 'password': passwd,
+                'country': 'US',
+                'phoneNumber': '',  # TODO: add phone code verification
+                'passwordForPhone': '',
+                'gCaptchaResponse': '',
+                'isPhoneNumberLogin': 'false',  # TODO: add phono login
+                'isIncompletePhone': '',
                 '_rememberMe': 'on',
                 'rememberMe': 'on',
                 '_eventId': 'submit'}
-        rc = self.r.post(self.urls['login'], data=data, timeout=self.timeout)
+        rc = self.r.post(self.urls['login'], data=data, timeout=self.timeout).content
+        url = re.search("var redirectUri \= '(https://signin.ea.com:443/p/web[0-9]+/login\?execution\=.+?)';", rc).group(1)  # also avaible in rc.url
+        rc = self.r.get(url+'&_eventId=end')
         self.logger.debug(rc.content)
 
         '''  # pops out only on first launch
@@ -258,6 +266,8 @@ class Core(object):
             self.r.headers['Referer'] = rc.url  # s3
             rc = self.r.post(rc.url, {'twofactorType': 'EMAIL', 'country': 0, 'phoneNumber': '', '_eventId': 'submit'}, timeout=self.timeout)
         '''
+        if 'Too many attempts, retry in a few minutes' in rc.text:
+            raise FutError(reason='Too many attempts, retry in a few minutes')
         if 'We sent a security code to your' in rc.text or 'Your security code was sent to' in rc.text or 'Enter the 6-digit verification code' in rc.text:  # post code
             # TODO: 'We sent a security code to your email' / 'We sent a security code to your ?'
             # TODO: pick code from codes.txt?
@@ -265,14 +275,14 @@ class Core(object):
                 self.saveSession()
                 raise FutError(reason='Error during login process - code is required.')
             self.r.headers['Referer'] = url = rc.url
-            # self.r.headers['Upgrade-Insecure-Requests'] = 1  # ?
+            # self.r.headers['Upgrade-Insecure-Requests'] = '1'  # ?
             # self.r.headers['Origin'] = 'https://signin.ea.com'
             rc = self.r.post(url, {'twofactorCode': code, '_trustThisDevice': 'on', 'trustThisDevice': 'on', '_eventId': 'submit'}, timeout=self.timeout).text
             if 'Incorrect code entered' in rc or 'Please enter a valid security code' in rc:
                 raise FutError(reason='Error during login process - provided code is incorrect.')
             self.logger.debug(rc)
             if 'Set Up an App Authenticator' in rc:
-                rc = self.r.post(url.replace('s2', 's3'), {'_eventId': 'cancel', 'appDevice': 'IPHONE'}, timeout=self.timeout).text
+                rc = self.r.post(url.replace('s3', 's4'), {'_eventId': 'cancel', 'appDevice': 'IPHONE'}, timeout=self.timeout).text
             self.logger.debug(rc)
 
         self.r.headers['Referer'] = self.urls['login']
