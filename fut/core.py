@@ -270,8 +270,6 @@ class Core(object):
             self.r.headers['Referer'] = rc.url  # s3
             rc = self.r.post(rc.url, {'twofactorType': 'EMAIL', 'country': 0, 'phoneNumber': '', '_eventId': 'submit'}, timeout=self.timeout)
         '''
-        if 'Too many attempts, retry in a few minutes' in rc.text:
-            raise FutError(reason='Too many attempts, retry in a few minutes')
         if 'We sent a security code to your' in rc.text or 'Your security code was sent to' in rc.text or 'Enter the 6-digit verification code' in rc.text:  # post code
             # TODO: 'We sent a security code to your email' / 'We sent a security code to your ?'
             # TODO: pick code from codes.txt?
