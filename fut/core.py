@@ -256,21 +256,24 @@ class Core(object):
                 '_rememberMe': 'on',
                 'rememberMe': 'on',
                 '_eventId': 'submit'}
-        rc = self.r.post(self.urls['login'], data=data, timeout=self.timeout).text
+        rc = self.r.post(self.urls['login'], data=data, timeout=self.timeout)
+        self.logger.debug(rc.content)
+        rc = rc.text
         if 'redirectUri' not in rc:
             raise FutError(reason='Error during login process (probably invalid email or password')
         url = re.search("var redirectUri \= '(https://signin.ea.com:443/p/web[0-9]+/login\?execution\=.+?)';", rc).group(1)  # also avaible in rc.url
         rc = self.r.get(url+'&_eventId=end')
         self.logger.debug(rc.content)
+        rc = rc.text
 
         '''  # pops out only on first launch
-        if 'FIFA Ultimate Team</strong> needs to update your Account to help protect your gameplay experience.' in rc.text:  # request email/sms code
+        if 'FIFA Ultimate Team</strong> needs to update your Account to help protect your gameplay experience.' in rc:  # request email/sms code
             self.r.headers['Referer'] = rc.url  # s2
             rc = self.r.post(rc.url.replace('s2', 's3'), {'_eventId': 'submit'}, timeout=self.timeout).content
             self.r.headers['Referer'] = rc.url  # s3
             rc = self.r.post(rc.url, {'twofactorType': 'EMAIL', 'country': 0, 'phoneNumber': '', '_eventId': 'submit'}, timeout=self.timeout)
         '''
-        if 'We sent a security code to your' in rc.text or 'Your security code was sent to' in rc.text or 'Enter the 6-digit verification code' in rc.text:  # post code
+        if 'We sent a security code to your' in rc or 'Your security code was sent to' in rc or 'Enter the 6-digit verification code' in rc:  # post code
             # TODO: 'We sent a security code to your email' / 'We sent a security code to your ?'
             # TODO: pick code from codes.txt?
             if not code:
@@ -279,13 +282,15 @@ class Core(object):
             self.r.headers['Referer'] = url = rc.url
             # self.r.headers['Upgrade-Insecure-Requests'] = '1'  # ?
             # self.r.headers['Origin'] = 'https://signin.ea.com'
-            rc = self.r.post(url, {'twofactorCode': code, '_trustThisDevice': 'on', 'trustThisDevice': 'on', '_eventId': 'submit'}, timeout=self.timeout).text
+            rc = self.r.post(url, {'twofactorCode': code, '_trustThisDevice': 'on', 'trustThisDevice': 'on', '_eventId': 'submit'}, timeout=self.timeout)
+            self.logger.debug(rc.content)
+            rc = rc.text
             if 'Incorrect code entered' in rc or 'Please enter a valid security code' in rc:
                 raise FutError(reason='Error during login process - provided code is incorrect.')
-            self.logger.debug(rc)
             if 'Set Up an App Authenticator' in rc:
-                rc = self.r.post(url.replace('s3', 's4'), {'_eventId': 'cancel', 'appDevice': 'IPHONE'}, timeout=self.timeout).text
-            self.logger.debug(rc)
+                rc = self.r.post(url.replace('s3', 's4'), {'_eventId': 'cancel', 'appDevice': 'IPHONE'}, timeout=self.timeout)
+                self.logger.debug(rc.content)
+                # rc = rc.text
 
         self.r.headers['Referer'] = self.urls['login']
         if self.r.get(self.urls['main_site'] + '/fifa/api/isUserLoggedIn', timeout=self.timeout).json()['isLoggedIn'] is not True:  # TODO: parse error?
@@ -320,7 +325,7 @@ class Core(object):
         rc = self.r.get(self.urls['acc_info'],
                         params={'_': int(time.time() * 1000),
                                 'filterConsoleLogin': True,
-                                'sku': 'FUT17WEB',  # need change to enable emulation feature
+                                'sku': sku,
                                 'returningUserGameYear': '2016'},
                         timeout=self.timeout)
         self.logger.debug(rc.content)
