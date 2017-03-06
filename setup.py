@@ -7,7 +7,7 @@ except ImportError:
 
 
 __title__ = 'fut'
-__version__ = '0.2.7'
+__version__ = '0.2.8'
 __author__ = 'Piotr Staroszczyk'
 __author_email__ = 'piotr.staroszczyk@get24.org'
 __license__ = 'GNU GPL v3'
