@@ -196,8 +196,10 @@ class Core(object):
                 pass
                 # self.r.cookies.save(ignore_discard=True)  # create empty file for cookies
         if emulate == 'and':
+            raise FutError(reason='Emulate feature is currently disabled duo latest changes in login process, need more info')
             self.r.headers = headers_and.copy()  # i'm android now ;-)
         elif emulate == 'ios':
+            raise FutError(reason='Emulate feature is currently disabled duo latest changes in login process, need more info')
             self.r.headers = headers_ios.copy()  # i'm ios phone now ;-)
         else:
             self.r.headers = headers.copy()  # i'm chrome browser now ;-)
@@ -216,7 +218,7 @@ class Core(object):
             platform = 'ps3'  # ps4 not available?
         else:
             raise FutError(reason='Wrong platform. (Valid ones are pc/xbox/xbox360/ps3/ps4)')
-        # if self.r.get(self.urls['main_site']+'/fifa/api/isUserLoggedIn', timeout=timeout).json()['isLoggedIn']:
+        # if self.r.get(self.urls['main_site']+'/fifa/api/isUserLoggedIn', timeout=self.timeout).json()['isLoggedIn']:
         #    return True  # no need to log in again
         # emulate
         if emulate == 'ios':
@@ -241,14 +243,24 @@ class Core(object):
         else:
             raise FutError(reason='Invalid emulate parameter. (Valid ones are and/ios).')  # pc/ps3/xbox/
         # === login
-        self.urls['login'] = self.r.get(self.urls['fut_home'], timeout=timeout).url
+        self.urls['login'] = self.r.get(self.urls['fut_home'], timeout=self.timeout).url
         self.r.headers['Referer'] = self.urls['login']  # prepare headers
         data = {'email': email,
                 'password': passwd,
+                'country': 'US',  # is it important?
+                'phoneNumber': '',  # TODO: add phone code verification
+                'passwordForPhone': '',
+                'gCaptchaResponse': '',
+                'isPhoneNumberLogin': 'false',  # TODO: add phone login
+                'isIncompletePhone': '',
                 '_rememberMe': 'on',
                 'rememberMe': 'on',
                 '_eventId': 'submit'}
-        rc = self.r.post(self.urls['login'], data=data, timeout=self.timeout)
+        rc = self.r.post(self.urls['login'], data=data, timeout=self.timeout).text
+        if 'redirectUri' not in rc:
+            raise FutError(reason='Error during login process (probably invalid email or password')
+        url = re.search("var redirectUri \= '(https://signin.ea.com:443/p/web[0-9]+/login\?execution\=.+?)';", rc).group(1)  # also avaible in rc.url
+        rc = self.r.get(url+'&_eventId=end')
         self.logger.debug(rc.content)
 
         '''  # pops out only on first launch
@@ -265,19 +277,19 @@ class Core(object):
                 self.saveSession()
                 raise FutError(reason='Error during login process - code is required.')
             self.r.headers['Referer'] = url = rc.url
-            # self.r.headers['Upgrade-Insecure-Requests'] = 1  # ?
+            # self.r.headers['Upgrade-Insecure-Requests'] = '1'  # ?
             # self.r.headers['Origin'] = 'https://signin.ea.com'
             rc = self.r.post(url, {'twofactorCode': code, '_trustThisDevice': 'on', 'trustThisDevice': 'on', '_eventId': 'submit'}, timeout=self.timeout).text
             if 'Incorrect code entered' in rc or 'Please enter a valid security code' in rc:
                 raise FutError(reason='Error during login process - provided code is incorrect.')
             self.logger.debug(rc)
             if 'Set Up an App Authenticator' in rc:
-                rc = self.r.post(url.replace('s2', 's3'), {'_eventId': 'cancel', 'appDevice': 'IPHONE'}, timeout=self.timeout).text
+                rc = self.r.post(url.replace('s3', 's4'), {'_eventId': 'cancel', 'appDevice': 'IPHONE'}, timeout=self.timeout).text
             self.logger.debug(rc)
 
         self.r.headers['Referer'] = self.urls['login']
         if self.r.get(self.urls['main_site'] + '/fifa/api/isUserLoggedIn', timeout=self.timeout).json()['isLoggedIn'] is not True:  # TODO: parse error?
-            raise FutError(reason='Error during login process (probably invalid email, password or code).')
+            raise FutError(reason='Unknown error during login process.')
         # TODO: catch invalid data exception
         # self.nucleus_id = re.search('userid : "([0-9]+)"', rc.text).group(1)  # we'll get it later
 
@@ -305,7 +317,12 @@ class Core(object):
             'X-UT-Route': self.urls['fut_host'],
             'Referer': self.urls['futweb'],
         })
-        rc = self.r.get(self.urls['acc_info'], params={'_': int(time.time() * 1000)}, timeout=self.timeout)
+        rc = self.r.get(self.urls['acc_info'],
+                        params={'_': int(time.time() * 1000),
+                                'filterConsoleLogin': True,
+                                'sku': 'FUT17WEB',  # need change to enable emulation feature
+                                'returningUserGameYear': '2016'},
+                        timeout=self.timeout)
         self.logger.debug(rc.content)
         # pick persona (first valid for given game_sku)
         personas = rc.json()['userAccountInfo']['personas']

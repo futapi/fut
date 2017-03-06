@@ -4,6 +4,12 @@ Changelog
 ---------
 
 
+0.2.8 (2017-03-06)
+++++++++++++++++++
+* fix login problems, need confirmation (#250)
+* bump fifa version in urls & user-agent etc.
+* temporary disabled emulate feature, need more info and work (#250)
+
 0.2.7 (2017-01-17)
 ++++++++++++++++++
 * fix missing import (#244)
