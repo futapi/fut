@@ -264,7 +264,6 @@ class Core(object):
         url = re.search("var redirectUri \= '(https://signin.ea.com:443/p/web[0-9]+/login\?execution\=.+?)';", rc).group(1)  # also avaible in rc.url
         rc = self.r.get(url+'&_eventId=end')
         self.logger.debug(rc.content)
-        rc = rc.text
 
         '''  # pops out only on first launch
         if 'FIFA Ultimate Team</strong> needs to update your Account to help protect your gameplay experience.' in rc:  # request email/sms code
@@ -273,7 +272,7 @@ class Core(object):
             self.r.headers['Referer'] = rc.url  # s3
             rc = self.r.post(rc.url, {'twofactorType': 'EMAIL', 'country': 0, 'phoneNumber': '', '_eventId': 'submit'}, timeout=self.timeout)
         '''
-        if 'We sent a security code to your' in rc or 'Your security code was sent to' in rc or 'Enter the 6-digit verification code' in rc:  # post code
+        if 'We sent a security code to your' in rc.text or 'Your security code was sent to' in rc.text or 'Enter the 6-digit verification code' in rc.text:  # post code
             # TODO: 'We sent a security code to your email' / 'We sent a security code to your ?'
             # TODO: pick code from codes.txt?
             if not code:
