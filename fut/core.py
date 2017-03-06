@@ -317,7 +317,12 @@ class Core(object):
             'X-UT-Route': self.urls['fut_host'],
             'Referer': self.urls['futweb'],
         })
-        rc = self.r.get(self.urls['acc_info'], params={'_': int(time.time() * 1000)}, timeout=self.timeout)
+        rc = self.r.get(self.urls['acc_info'],
+                        params={'_': int(time.time() * 1000),
+                                'filterConsoleLogin': True,
+                                'sku': 'FUT17WEB',  # need change to enable emulation feature
+                                'returningUserGameYear': '2016'},
+                        timeout=self.timeout)
         self.logger.debug(rc.content)
         # pick persona (first valid for given game_sku)
         personas = rc.json()['userAccountInfo']['personas']
