@@ -258,10 +258,11 @@ class Core(object):
                 '_eventId': 'submit'}
         rc = self.r.post(self.urls['login'], data=data, timeout=self.timeout)
         self.logger.debug(rc.content)
-        rc = rc.text
-        if 'redirectUri' not in rc:
+        #rc = rc.text
+        if 'redirectUri' not in rc.text:
             raise FutError(reason='Error during login process (probably invalid email or password')
-        url = re.search("var redirectUri \= '(https://signin.ea.com:443/p/web[0-9]+/login\?execution\=.+?)';", rc).group(1)  # also avaible in rc.url
+        #url = re.search("var redirectUri \= '(https://signin.ea.com:443/p/web[0-9]+/login\?execution\=.+?)';", rc).group(1)  # also avaible in rc.url
+        url = re.match('(https?://.+/p/web[0-9]+/login\?execution\=.+?)&', rc.url).group(1)
         rc = self.r.get(url+'&_eventId=end')
         self.logger.debug(rc.content)
 
