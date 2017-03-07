@@ -3,6 +3,8 @@ docs/_build
 build/
 dist/
 fut.egg-info/
+.coverage
+coverage.xml
 cookies.txt
 test.py
 testemu.py
