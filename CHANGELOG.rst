@@ -4,6 +4,10 @@ Changelog
 ---------
 
 
+0.2.9 (2017-03-07)
+++++++++++++++++++
+* proper #250, #251 fix (thanks to bas85)
+
 0.2.8 (2017-03-06)
 ++++++++++++++++++
 * fix login problems, need confirmation (#250)
