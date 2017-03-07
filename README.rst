@@ -1,8 +1,21 @@
 fut
 ===
 
+.. image:: https://img.shields.io/pypi/v/fut.svg
+    :target: https://pypi.python.org/pypi/fut
+
+.. image:: https://img.shields.io/pypi/l/fut.svg
+    :target: https://pypi.python.org/pypi/fut
+
+.. image:: https://img.shields.io/pypi/pyversions/fut.svg
+    :target: https://pypi.python.org/pypi/fut
+
 .. image:: https://travis-ci.org/oczkers/fut.png?branch=master
-        :target: https://travis-ci.org/oczkers/fut
+    :target: https://travis-ci.org/oczkers/fut
+
+.. image:: https://codecov.io/github/oczkers/fut/coverage.svg?branch=master
+    :target: https://codecov.io/github/oczkers/fut
+    :alt: codecov.io
 
 fut is a simple library for managing Fifa Ultimate Team.
 It is written entirely in Python.
@@ -11,6 +24,7 @@ It is written entirely in Python.
 
 Documentation
 -------------
+
 Documentation will be available soon at http://fut.readthedocs.org/.
 
 Players database: https://www.easports.com/uk/fifa/ultimate-team/fut/database
@@ -23,12 +37,14 @@ Usage
 -----
 
 AutoBuyer GUI
-`````````````
+^^^^^^^^^^^^^
+
 If You're looking for "user friendly" autobuyer take a look at hunterjm's project:
 https://github.com/hunterjm/futgui/releases
 
 Login
-`````
+^^^^^
+
 Optional parameters:
 
 - CODE: [string] email/sms code for two-step verification (make sure to use string if your code starts with 0).
@@ -43,7 +59,8 @@ Optional parameters:
     >>> fut = fut.Core('email', 'password', 'secret answer')
 
 Search
-``````
+^^^^^^
+
 Optional parameters:
 
 - LEVEL: ['?'/'?'/gold'] Card level.
@@ -60,7 +77,7 @@ Optional parameters:
     >>> items = fut.searchAuctions('development')
 
 Bid
-```
+^^^
 
 Optional parameters:
 
@@ -71,7 +88,8 @@ Optional parameters:
     >>> fut.bid(items[0]['trade_id'], 600)
 
 Sell
-````
+^^^^
+
 Optional parameters:
 
 - BUY_NOW: [int] Buy now price.
@@ -82,7 +100,8 @@ Optional parameters:
     >>>     fut.sell(item['item_id'], 150)
 
 Quick sell
-``````````
+^^^^^^^^^^
+
 single item:
 
 .. code-block:: python
@@ -98,7 +117,8 @@ multiple items:
     >>> fut.quickSell(item_id)
 
 Piles (Watchlist / Tradepile / Unassigned / Squad)
-``````````````````````````````````````````````````
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
 
 .. code-block:: python
 
@@ -121,7 +141,8 @@ Piles (Watchlist / Tradepile / Unassigned / Squad)
     10
 
 Credits
-```````
+^^^^^^^
+
 It's cached on every request so if you want the most accurate info call fut.keppalive()
 
 .. code-block:: python
@@ -130,7 +151,8 @@ It's cached on every request so if you want the most accurate info call fut.kepp
     600
 
 Relist
-``````
+^^^^^^
+
 Relists all expired cards in tradepile.
 
 .. code-block:: python
@@ -138,7 +160,8 @@ Relists all expired cards in tradepile.
     >>> fut.relist()  # relist all expired cards in tradepile
 
 Card stats and definiction IDs
-``````````````````````````````
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
 Returns stats and definition IDs for each card variation.
 
 .. code-block:: python
@@ -146,7 +169,7 @@ Returns stats and definition IDs for each card variation.
     >>> fut.searchDefinition(asset_id, start=0, count=35)
 
 Convert Team/League/Nation id to name
-`````````````````````````````````````
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 .. code-block:: python
 
@@ -158,7 +181,8 @@ Convert Team/League/Nation id to name
     Arsenal
 
 Keepalive
-`````````
+^^^^^^^^^
+
 Sends keepalive ping and returns current credits amount (you have to make at least one request every ~10 minutes to avoid session expire/logout).
 
 .. code-block:: python
@@ -167,7 +191,8 @@ Sends keepalive ping and returns current credits amount (you have to make at lea
     650
 
 Logout
-``````
+^^^^^^
+
 Logs out nicely (like clicking on logout button).
 
 .. code-block:: python
@@ -177,7 +202,7 @@ Logs out nicely (like clicking on logout button).
 
 
 Item object (dict) structure
-````````````````````````````
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 .. code-block:: python
 
@@ -215,7 +240,8 @@ Problems
 --------
 
 Somehow i've sent card to full tradepile and it disappeared
-```````````````````````````````````````````````````````````
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
 Make space in tradepile and just call one command to restore it:
 
 .. code-block:: python
@@ -224,7 +250,8 @@ Make space in tradepile and just call one command to restore it:
 
 
 I've got card with None tradeId so cannot move/trade it
-```````````````````````````````````````````````````
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
 Make space in tradepile and just call one command to restore it:
 
 .. code-block:: python
@@ -233,12 +260,14 @@ Make space in tradepile and just call one command to restore it:
 
 
 PermissionDenied exceptions raises when trying to sell cards directly from watchlist
-````````````````````````````````````````````````````````````````````````````````````
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
 The solution is to send the items to Tradepile and offer from there.
 
 
 CLI examples
 ------------
+
 .. code-block:: bash
 
     not yet
