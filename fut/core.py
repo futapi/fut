@@ -613,7 +613,7 @@ class Core(object):
         :param position: (optional) Position.
         :param nationality: (optional) Natiion id.
         :param playStyle: (optional) Play style.
-        :param start: (optional) Start page.
+        :param start: (optional) Start page sent to server so it supposed to be 12/15, 24/30 etc. (default platform page_size*n)
         :param page_size: (optional) Page size (items per page).
         """
         # TODO: add "search" alias
