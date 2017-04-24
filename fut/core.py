@@ -39,7 +39,7 @@ def baseId(resource_id, return_version=False):
     :params return_version: (optional) True if You need version, returns (resource_id, version).
     """
     version = 0
-    resource_id = abs(resource_id)
+    resource_id = resource_id + 0xC4000000 # 3288334336
 
     while resource_id > 0x01000000:  # 16777216
         version += 1
@@ -49,7 +49,6 @@ def baseId(resource_id, return_version=False):
             resource_id -= 0x03000000  # 50331648
         else:
             resource_id -= 0x01000000  # 16777216
-        resource_id = abs(resource_id)
 
     if return_version:
         return resource_id, version
@@ -613,7 +612,7 @@ class Core(object):
         :param position: (optional) Position.
         :param nationality: (optional) Natiion id.
         :param playStyle: (optional) Play style.
-        :param start: (optional) Start page.
+        :param start: (optional) Start page sent to server so it supposed to be 12/15, 24/30 etc. (default platform page_size*n)
         :param page_size: (optional) Page size (items per page).
         """
         # TODO: add "search" alias
