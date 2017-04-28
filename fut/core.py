@@ -152,13 +152,25 @@ def teams(year=2017, timeout=timeout):
     return teams
 
 def players(timeout=timeout):
-    """Return all players in dict {id: c, f, l, n, r}."""
+    """Return all players in dict {id: c, f, l, n, r}.
+    id, rank, nationality(?), first name, last name.
+    """
     rc = requests.get('{0}{1}.json'.format(urls('pc')['card_info'], 'players'), timeout=timeout).json()
     players = {}
     for i in rc['Players']:
-        players[i['id']] = i
+        players[i['id']] = {'id': i['id'],
+                            'firstname': i['f'],
+                            'lastname': i['l'],
+                            'surname': i['c'],
+                            'rating': i['r'],
+                            'nationality': i['n']}  # replace with nationality object when created
     for i in rc['LegendsPlayers']:
-        players[i['id']] = i
+        players[i['id']] = {'id': i['id'],
+                            'firstname': i['f'],
+                            'lastname': i['l'],
+                            'surname': i['c'],
+                            'rating': i['r'],
+                            'nationality': i['n']}  # replace with nationality object when created
     return players
 
 
