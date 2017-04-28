@@ -152,7 +152,9 @@ def teams(year=2017, timeout=timeout):
     return teams
 
 def players(timeout=timeout):
-    """Return all players in dict {id: c, f, l, n, r}."""
+    """Return all players in dict {id: c, f, l, n, r}.
+    id, rank, nationality(?), first name, last name.
+    """
     rc = requests.get('{0}{1}.json'.format(urls('pc')['card_info'], 'players'), timeout=timeout).json()
     players = {}
     for i in rc['Players']:
@@ -160,16 +162,6 @@ def players(timeout=timeout):
     for i in rc['LegendsPlayers']:
         players[i['id']] = i
     return players
-
-
-def players():
-    """Return all players in dict
-    ?? (id, r, n, f, l,) == (id, rank, nationality(?), first name, last name). ??
-    """
-    # TODO: convert json to nice dict/object
-    rc = requests.get('http://cdn.content.easports.com/fifa/fltOnlineAssets/CC8267B6-0817-4842-BB6A-A20F88B05418/2017/fut/items/web/players.json').json
-    # rc['Players']  # = list
-    # rc['LegendPlayers']  # = list
 
 
 class Core(object):
