@@ -3,6 +3,8 @@ docs/_build
 build/
 dist/
 fut.egg-info/
+.coverage
+coverage.xml
 cookies.txt
 test.py
 testemu.py
@@ -13,3 +15,4 @@ fut.log
 test.log
 testemu.py
 screenlog.0
+codecov.yml
