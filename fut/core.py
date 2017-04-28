@@ -44,7 +44,7 @@ def baseId(resource_id, return_version=False):
     while resource_id > 0x01000000:  # 16777216
         version += 1
         if version == 1:
-            resource_id -= 0x80000000  # 2147483648
+            resource_id -= 0x80000000  # 2147483648  # 0x50000000  # 1342177280 ?  || 0x2000000  # 33554432
         elif version == 2:
             resource_id -= 0x03000000  # 50331648
         else:
@@ -168,6 +168,7 @@ class Core(object):
             self.logger = logger()
         # TODO: validate fut request response (200 OK)
         self.__login__(email, passwd, secret_answer, platform, code, emulate)
+        self.db_players = self.db()
 
     def __login__(self, email, passwd, secret_answer, platform='pc', code=None, emulate=None):
         """Log in.
@@ -518,6 +519,16 @@ class Core(object):
             self.logger.error("{0} (itemId: {1}) NOT MOVED to {2} Pile. REASON: {3}".format(trade_id, item_id, pile, rc['itemData'][0]['reason']))
         return rc['itemData'][0]['success']
 
+    def db(self):
+        """Return full database (only players for now)."""
+        rc = self.r.get('{0}{1}.json'.format(self.urls['card_info'], 'players')).json()
+        db = {}
+        for i in rc['Players']:
+            db[i['id']] = i
+        for i in rc['LegendsPlayers']:
+            db[i['id']] = i
+        return db
+
     def logout(self, save=True):
         """Log out nicely (like clicking on logout button).
 
@@ -568,8 +579,11 @@ class Core(object):
         :params resource_id: Resource id.
         """
         # TODO: add referer to headers (futweb)
+        return self.db_players[baseId(resource_id)]
+        '''
         url = '{0}{1}.json'.format(self.urls['card_info'], baseId(resource_id))
         return requests.get(url, timeout=self.timeout).json()
+        '''
 
     def searchDefinition(self, asset_id, start=0, count=35):
         """Return variations of the given asset id, e.g. IF cards.
