@@ -12,14 +12,11 @@ import requests
 import re
 import random
 import time
+import json
 try:
     from cookielib import LWPCookieJar
 except ImportError:
     from http.cookiejar import LWPCookieJar
-try:
-    import simplejson as json
-except ImportError:
-    import json
 
 from .config import headers, headers_and, headers_ios, flash_agent, cookies_file, timeout, delay
 from .log import logger
@@ -154,6 +151,28 @@ def teams(year=2017, timeout=timeout):
         teams[int(i[0])] = i[1]
     return teams
 
+def players(timeout=timeout):
+    """Return all players in dict {id: c, f, l, n, r}.
+    id, rank, nationality(?), first name, last name.
+    """
+    rc = requests.get('{0}{1}.json'.format(urls('pc')['card_info'], 'players'), timeout=timeout).json()
+    players = {}
+    for i in rc['Players']:
+        players[i['id']] = {'id': i['id'],
+                            'firstname': i['f'],
+                            'lastname': i['l'],
+                            'surname': i['c'],
+                            'rating': i['r'],
+                            'nationality': i['n']}  # replace with nationality object when created
+    for i in rc['LegendsPlayers']:
+        players[i['id']] = {'id': i['id'],
+                            'firstname': i['f'],
+                            'lastname': i['l'],
+                            'surname': i['c'],
+                            'rating': i['r'],
+                            'nationality': i['n']}  # replace with nationality object when created
+    return players
+
 
 class Core(object):
     def __init__(self, email, passwd, secret_answer, platform='pc', code=None, emulate=None, debug=False, cookies=cookies_file, timeout=timeout, delay=delay):
@@ -162,13 +181,17 @@ class Core(object):
         self.timeout = timeout
         self.delay = delay
         self.request_time = 0
+        # db
+        self._players = None
+        self._nations = None
+        self._leagues = {}
+        self._teams = {}
         if debug:  # save full log to file (fut.log)
             self.logger = logger(save=True)
         else:  # NullHandler
             self.logger = logger()
         # TODO: validate fut request response (200 OK)
         self.__login__(email, passwd, secret_answer, platform, code, emulate)
-        self.db_players = self.db()
 
     def __login__(self, email, passwd, secret_answer, platform='pc', code=None, emulate=None):
         """Log in.
@@ -519,16 +542,6 @@ class Core(object):
             self.logger.error("{0} (itemId: {1}) NOT MOVED to {2} Pile. REASON: {3}".format(trade_id, item_id, pile, rc['itemData'][0]['reason']))
         return rc['itemData'][0]['success']
 
-    def db(self):
-        """Return full database (only players for now)."""
-        rc = self.r.get('{0}{1}.json'.format(self.urls['card_info'], 'players')).json()
-        db = {}
-        for i in rc['Players']:
-            db[i['id']] = i
-        for i in rc['LegendsPlayers']:
-            db[i['id']] = i
-        return db
-
     def logout(self, save=True):
         """Log out nicely (like clicking on logout button).
 
@@ -539,14 +552,22 @@ class Core(object):
             self.saveSession()
         return True
 
-    # TODO: probably there is no need to refresh on every call?
+    @property
+    def players(self):
+        """Return all players in dict {id: c, f, l, n, r}."""
+        if not self._players:
+            self._players = players()
+        return self._players
+
     @property
     def nations(self):
         """Return all nations in dict {id0: nation0, id1: nation1}.
 
         :params year: Year.
         """
-        return nations()
+        if not self._nations:
+            self._nations = nations()
+        return self._nations
 
     @property
     def leagues(self, year=2017):
@@ -554,7 +575,9 @@ class Core(object):
 
         :params year: Year.
         """
-        return leagues(year)
+        if year not in self._leagues:
+            self._leagues[year] = leagues(year)
+        return self._leagues[year]
 
     @property
     def teams(self, year=2017):
@@ -562,7 +585,9 @@ class Core(object):
 
         :params year: Year.
         """
-        return teams(year)
+        if year not in self._teams:
+            self._teams[year] = teams(year)
+        return self._teams[year]
 
     def saveSession(self):
         """Save cookies/session."""
@@ -579,11 +604,12 @@ class Core(object):
         :params resource_id: Resource id.
         """
         # TODO: add referer to headers (futweb)
-        return self.db_players[baseId(resource_id)]
-        '''
-        url = '{0}{1}.json'.format(self.urls['card_info'], baseId(resource_id))
-        return requests.get(url, timeout=self.timeout).json()
-        '''
+        base_id = baseId(resource_id)
+        if base_id in self.players:
+            return self.players[base_id]
+        else:  # not a player?
+            url = '{0}{1}.json'.format(self.urls['card_info'], base_id)
+            return requests.get(url, timeout=self.timeout).json()
 
     def searchDefinition(self, asset_id, start=0, count=35):
         """Return variations of the given asset id, e.g. IF cards.
