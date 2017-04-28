@@ -12,14 +12,11 @@ import requests
 import re
 import random
 import time
+import json
 try:
     from cookielib import LWPCookieJar
 except ImportError:
     from http.cookiejar import LWPCookieJar
-try:
-    import simplejson as json
-except ImportError:
-    import json
 
 from .config import headers, headers_and, headers_ios, flash_agent, cookies_file, timeout, delay
 from .log import logger
