@@ -154,6 +154,16 @@ def teams(year=2017, timeout=timeout):
         teams[int(i[0])] = i[1]
     return teams
 
+def players(timeout=timeout):
+    """Return all players in dict {id: c, f, l, n, r}."""
+    rc = requests.get('{0}{1}.json'.format(urls('pc')['card_info'], 'players'), timeout=timeout).json()
+    players = {}
+    for i in rc['Players']:
+        players[i['id']] = i
+    for i in rc['LegendsPlayers']:
+        players[i['id']] = i
+    return players
+
 
 class Core(object):
     def __init__(self, email, passwd, secret_answer, platform='pc', code=None, emulate=None, debug=False, cookies=cookies_file, timeout=timeout, delay=delay):
@@ -168,7 +178,6 @@ class Core(object):
             self.logger = logger()
         # TODO: validate fut request response (200 OK)
         self.__login__(email, passwd, secret_answer, platform, code, emulate)
-        self.db_players = self.db()
 
     def __login__(self, email, passwd, secret_answer, platform='pc', code=None, emulate=None):
         """Log in.
@@ -519,16 +528,6 @@ class Core(object):
             self.logger.error("{0} (itemId: {1}) NOT MOVED to {2} Pile. REASON: {3}".format(trade_id, item_id, pile, rc['itemData'][0]['reason']))
         return rc['itemData'][0]['success']
 
-    def db(self):
-        """Return full database (only players for now)."""
-        rc = self.r.get('{0}{1}.json'.format(self.urls['card_info'], 'players')).json()
-        db = {}
-        for i in rc['Players']:
-            db[i['id']] = i
-        for i in rc['LegendsPlayers']:
-            db[i['id']] = i
-        return db
-
     def logout(self, save=True):
         """Log out nicely (like clicking on logout button).
 
@@ -540,6 +539,11 @@ class Core(object):
         return True
 
     # TODO: probably there is no need to refresh on every call?
+    @property
+    def players(self):
+        """Return all players in dict {id: c, f, l, n, r}."""
+        return players()
+
     @property
     def nations(self):
         """Return all nations in dict {id0: nation0, id1: nation1}.
@@ -579,7 +583,7 @@ class Core(object):
         :params resource_id: Resource id.
         """
         # TODO: add referer to headers (futweb)
-        return self.db_players[baseId(resource_id)]
+        return self.players[baseId(resource_id)]
         '''
         url = '{0}{1}.json'.format(self.urls['card_info'], baseId(resource_id))
         return requests.get(url, timeout=self.timeout).json()
