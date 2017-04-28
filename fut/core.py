@@ -172,6 +172,9 @@ class Core(object):
         self.timeout = timeout
         self.delay = delay
         self.request_time = 0
+        # db
+        self._players = None
+        self._nations = None
         if debug:  # save full log to file (fut.log)
             self.logger = logger(save=True)
         else:  # NullHandler
@@ -538,11 +541,12 @@ class Core(object):
             self.saveSession()
         return True
 
-    # TODO: probably there is no need to refresh on every call?
     @property
     def players(self):
         """Return all players in dict {id: c, f, l, n, r}."""
-        return players()
+        if not self._players:
+            self._players = players()
+        return self._players
 
     @property
     def nations(self):
@@ -550,7 +554,9 @@ class Core(object):
 
         :params year: Year.
         """
-        return nations()
+        if not self._nations:
+            self._nations = nations()
+        return self._nations
 
     @property
     def leagues(self, year=2017):
