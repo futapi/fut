@@ -175,6 +175,8 @@ class Core(object):
         # db
         self._players = None
         self._nations = None
+        self._leagues = {}
+        self._teams = {}
         if debug:  # save full log to file (fut.log)
             self.logger = logger(save=True)
         else:  # NullHandler
@@ -564,7 +566,9 @@ class Core(object):
 
         :params year: Year.
         """
-        return leagues(year)
+        if year not in self._leagues:
+            self._leagues[year] = leagues(year)
+        return self._leagues[year]
 
     @property
     def teams(self, year=2017):
@@ -572,7 +576,9 @@ class Core(object):
 
         :params year: Year.
         """
-        return teams(year)
+        if year not in self._teams:
+            self._teams[year] = teams(year)
+        return self._teams[year]
 
     def saveSession(self):
         """Save cookies/session."""
