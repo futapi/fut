@@ -18,7 +18,7 @@ try:
 except ImportError:
     from http.cookiejar import LWPCookieJar
 
-from . import db
+from .db import Db
 from .config import headers, headers_and, headers_ios, flash_agent, cookies_file, timeout, delay
 from .log import logger
 from .urls import urls
@@ -122,10 +122,7 @@ class Core(object):
         self.delay = delay
         self.request_time = 0
         # db
-        self._players = None
-        self._nations = None
-        self._leagues = {}
-        self._teams = {}
+        self.db = Db()
         if debug:  # save full log to file (fut.log)
             self.logger = logger(save=True)
         else:  # NullHandler
@@ -494,40 +491,19 @@ class Core(object):
 
     @property
     def players(self):
-        """Return all players in dict {id: c, f, l, n, r}."""
-        if not self._players:
-            self._players = db.players()
-        return self._players
+        return self.db.players()
 
     @property
     def nations(self):
-        """Return all nations in dict {id0: nation0, id1: nation1}.
-
-        :params year: Year.
-        """
-        if not self._nations:
-            self._nations = db.nations()
-        return self._nations
+        return self.db.nations()
 
     @property
     def leagues(self, year=2017):
-        """Return all leagues in dict {id0: league0, id1: league1}.
-
-        :params year: Year.
-        """
-        if year not in self._leagues:
-            self._leagues[year] = db.leagues(year)
-        return self._leagues[year]
+        return self.db.leagues(year)
 
     @property
     def teams(self, year=2017):
-        """Return all teams in dict {id0: team0, id1: team1}.
-
-        :params year: Year.
-        """
-        if year not in self._teams:
-            self._teams[year] = db.teams(year)
-        return self._teams[year]
+        return self.db.teams(year)
 
     def saveSession(self):
         """Save cookies/session."""
@@ -544,7 +520,8 @@ class Core(object):
         :params resource_id: Resource id.
         """
         # TODO: add referer to headers (futweb)
-        return self.players[baseId(resource_id)]
+        # TODO: it might be other card type than player?
+        return self.db.players[baseId(resource_id)]
         '''
         url = '{0}{1}.json'.format(self.urls['card_info'], baseId(resource_id))
         return requests.get(url, timeout=self.timeout).json()
