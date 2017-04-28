@@ -13,6 +13,25 @@ from .config import timeout
 from .urls import urls
 
 
+class Player(object):
+    """Player object.
+
+    :param id: player id/base_id.
+    :param firstname: firstname.
+    :param lastname: lastname.
+    :param surname: surname, not every player has it.
+    :param rating: rating.
+    :param nationality: nationality.
+    """
+    def __init__(self, id, firstname, lastname, surname, rating, nationality):
+        self.id = id
+        self.firstname = firstname
+        self.lastname = lastname
+        self.surname = surname
+        self.rating = rating
+        self.nationality = nationality
+
+
 # TODO: optimize messages, xml parser might be faster
 def nations(timeout=timeout):
     """Return all nations in dict {id0: nation0, id1: nation1}.
@@ -58,18 +77,11 @@ def players(timeout=timeout):
     """
     rc = requests.get('{0}{1}.json'.format(urls('pc')['card_info'], 'players'), timeout=timeout).json()
     players = {}
-    for i in rc['Players']:
-        players[i['id']] = {'id': i['id'],
-                            'firstname': i['f'],
-                            'lastname': i['l'],
-                            'surname': i.get('c', None),
-                            'rating': i['r'],
-                            'nationality': i['n']}  # replace with nationality object when created
-    for i in rc['LegendsPlayers']:
-        players[i['id']] = {'id': i['id'],
-                            'firstname': i['f'],
-                            'lastname': i['l'],
-                            'surname': i.get('c', None),
-                            'rating': i['r'],
-                            'nationality': i['n']}  # replace with nationality object when created
+    for i in rc['Players'] + rc['LegendsPlayers']:
+        players[i['id']] = Player(id=i['id'],
+                                  fistname=i['f'],
+                                  lastname=i['l'],
+                                  surname=i.get('c'),
+                                  rating=i['r'],
+                                  nationality=i['n'])  # replace with nationality object when created
     return players

@@ -54,6 +54,7 @@ def baseId(resource_id, return_version=False):
     return resource_id
 
 
+# TODO: db
 def itemParse(item_data, full=True):
     """Parser for item data. Returns nice dictionary.
 
