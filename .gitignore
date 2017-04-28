@@ -4,6 +4,7 @@ build/
 dist/
 fut.egg-info/
 .coverage
+.cache/
 coverage.xml
 cookies.txt
 test.py
