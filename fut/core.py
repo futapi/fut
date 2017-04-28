@@ -604,11 +604,12 @@ class Core(object):
         :params resource_id: Resource id.
         """
         # TODO: add referer to headers (futweb)
-        return self.players[baseId(resource_id)]
-        '''
-        url = '{0}{1}.json'.format(self.urls['card_info'], baseId(resource_id))
-        return requests.get(url, timeout=self.timeout).json()
-        '''
+        base_id = baseId(resource_id)
+        if base_id in self.players:
+            return self.players[base_id]
+        else:  # not a player?
+            url = '{0}{1}.json'.format(self.urls['card_info'], base_id)
+            return requests.get(url, timeout=self.timeout).json()
 
     def searchDefinition(self, asset_id, start=0, count=35):
         """Return variations of the given asset id, e.g. IF cards.
