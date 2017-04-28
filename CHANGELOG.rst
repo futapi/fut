@@ -4,6 +4,11 @@ Changelog
 ---------
 
 
+0.2.12 (2017-04-28)
+^^^^^^^^^^^^^^^^^^^
+
+* proper #255 fix - from now we're going to read whole players db on login
+
 0.2.10 (2017-04-24)
 ^^^^^^^^^^^^^^^^^^^
 
