@@ -3,6 +3,7 @@ docs/_build
 build/
 dist/
 fut.egg-info/
+.cache/
 .coverage
 coverage.xml
 cookies.txt

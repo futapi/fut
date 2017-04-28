@@ -8,6 +8,7 @@ Changelog
 ^^^^^^^^^^^^^^^^^^^
 
 * fix cardInfo for not a player
+* cache database
 
 0.2.12 (2017-04-28)
 ^^^^^^^^^^^^^^^^^^^
