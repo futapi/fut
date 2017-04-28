@@ -9,10 +9,11 @@ python:
   - 3.6
   - 3.7-dev
   - pypy
-script: nosetests
 install:
-  - pip install -r requirements.txt --user codecov
-after success:
+ - pip install -r requirements.txt codecov
+script:
+ - nosetests --with-coverage --cover-xml
+after_success:
  - codecov
 notifications:
   email: oczkers@gmail.com
