@@ -118,7 +118,9 @@ def nations(timeout=timeout):
 
     :params year: Year.
     """
-    rc = requests.get(urls('pc')['messages'], timeout=timeout).text
+    rc = requests.get(urls('pc')['messages'], timeout=timeout)
+    rc.encoding = 'utf-8'  # guessing takes huge amont of cpu time
+    rc = rc.text
     data = re.findall('<trans-unit resname="search.nationName.nation([0-9]+)">\n        <source>(.+)</source>', rc)
     nations = {}
     for i in data:
@@ -131,7 +133,9 @@ def leagues(year=2017, timeout=timeout):
 
     :params year: Year.
     """
-    rc = requests.get(urls('pc')['messages'], timeout=timeout).text
+    rc = requests.get(urls('pc')['messages'], timeout=timeout)
+    rc.encoding = 'utf-8'  # guessing takes huge amont of cpu time
+    rc = rc.text
     data = re.findall('<trans-unit resname="global.leagueFull.%s.league([0-9]+)">\n        <source>(.+)</source>' % year, rc)
     leagues = {}
     for i in data:
@@ -144,7 +148,9 @@ def teams(year=2017, timeout=timeout):
 
     :params year: Year.
     """
-    rc = requests.get(urls('pc')['messages'], timeout=timeout).text
+    rc = requests.get(urls('pc')['messages'], timeout=timeout)
+    rc.encoding = 'utf-8'  # guessing takes huge amont of cpu time
+    rc = rc.text
     data = re.findall('<trans-unit resname="global.teamFull.%s.team([0-9]+)">\n        <source>(.+)</source>' % year, rc)
     teams = {}
     for i in data:
