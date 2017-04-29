@@ -24,6 +24,7 @@ class FutTestCase(unittest.TestCase):
 
     def testBaseId(self):
         # TODO: 3x test for every version
+        self.assertEqual(fut.core.baseId(124635), 124635)
         self.assertEqual(fut.core.baseId(124635, return_version=True), (124635, 0))
         self.assertEqual(fut.core.baseId(149147, return_version=True), (149147, 0))
         self.assertEqual(fut.core.baseId(222492, return_version=True), (222492, 0))
