@@ -54,7 +54,15 @@ class FutTestCase(unittest.TestCase):
         self.assertEqual(self.db_players[1179], {'lastname': 'Buffon', 'surname': None, 'rating': 88, 'nationality': 27, 'id': 1179, 'firstname': 'Gianluigi'})
 
     def testInvalidAccount(self):
-        self.assertRaises(FutError, fut.Core, 'test', 'test', 'test')
+        self.assertRaises(FutError, fut.Core, 'test', 'test', 'test', debug=True)
+        # platforms
+        self.assertRaises(FutError, fut.Core, 'test', 'test', 'test', platform='xbox', debug=True)
+        self.assertRaises(FutError, fut.Core, 'test', 'test', 'test', platform='xbox360', debug=True)
+        self.assertRaises(FutError, fut.Core, 'test', 'test', 'test', platform='ps3', debug=True)
+        self.assertRaises(FutError, fut.Core, 'test', 'test', 'test', platform='ps4', debug=True)
+        # emulate
+        self.assertRaises(FutError, fut.Core, 'test', 'test', 'test', emulate='ios', debug=True)
+        self.assertRaises(FutError, fut.Core, 'test', 'test', 'test', emulate='and', debug=True)
 
 
 if __name__ == '__main__':
