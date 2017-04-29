@@ -48,14 +48,14 @@ class FutTestCase(unittest.TestCase):
         self.assertEqual(self.db_nations[1], 'Albania')
         self.assertEqual(self.db_nations[133], 'Nigeria')
         self.assertEqual(self.db_nations[190], 'United Arab Emirates')
-        self.assertEqual(self.db_leagues[68], 'Süper Lig')
-        self.assertEqual(self.db_leagues[80], 'Österreichische Fußball-Bundesliga')
+        self.assertEqual(self.db_leagues[68], u'Süper Lig')
+        self.assertEqual(self.db_leagues[80], u'Österreichische Fußball-Bundesliga')
         self.assertEqual(self.db_leagues[66], 'T-Mobile Ekstraklasa')
         self.assertEqual(self.db_teams[1], 'Arsenal')
-        self.assertEqual(self.db_teams[1458], 'SAİ Kayseri Erciyesspor')
+        self.assertEqual(self.db_teams[1458], u'SAİ Kayseri Erciyesspor')
         self.assertEqual(self.db_teams[111827], 'Club Deportivo Guadalajara')
         self.assertEqual(self.db_players[227223], {'lastname': 'Vita', 'surname': None, 'rating': 65, 'nationality': 27, 'id': 227223, 'firstname': 'Alessio'})
-        self.assertEqual(self.db_players[159017], {'lastname': 'Hämäläinen', 'surname': None, 'rating': 72, 'nationality': 17, 'id': 159017, 'firstname': 'Kasper'})
+        self.assertEqual(self.db_players[159017], {'lastname': u'Hämäläinen', 'surname': None, 'rating': 72, 'nationality': 17, 'id': 159017, 'firstname': 'Kasper'})
         self.assertEqual(self.db_players[1179], {'lastname': 'Buffon', 'surname': None, 'rating': 88, 'nationality': 27, 'id': 1179, 'firstname': 'Gianluigi'})
 
     def testInvalidAccount(self):
