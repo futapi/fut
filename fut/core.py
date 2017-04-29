@@ -157,18 +157,11 @@ def players(timeout=timeout):
     """
     rc = requests.get('{0}{1}.json'.format(urls('pc')['card_info'], 'players'), timeout=timeout).json()
     players = {}
-    for i in rc['Players']:
+    for i in rc['Players'] + rc['LegendsPlayers']:
         players[i['id']] = {'id': i['id'],
                             'firstname': i['f'],
                             'lastname': i['l'],
-                            'surname': i['c'],
-                            'rating': i['r'],
-                            'nationality': i['n']}  # replace with nationality object when created
-    for i in rc['LegendsPlayers']:
-        players[i['id']] = {'id': i['id'],
-                            'firstname': i['f'],
-                            'lastname': i['l'],
-                            'surname': i['c'],
+                            'surname': i.get('c'),
                             'rating': i['r'],
                             'nationality': i['n']}  # replace with nationality object when created
     return players
