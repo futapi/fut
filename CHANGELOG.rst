@@ -4,6 +4,11 @@ Changelog
 ---------
 
 
+0.2.15 (2017-0?-?)
+^^^^^^^^^^^^^^^^^^^
+
+* huge performance improvement on database load (skip encoding guess)
+
 0.2.14 (2017-04-29)
 ^^^^^^^^^^^^^^^^^^^
 
