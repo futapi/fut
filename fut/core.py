@@ -37,6 +37,7 @@ def baseId(resource_id, return_version=False):
     """
     version = 0
     resource_id = resource_id + 0xC4000000 # 3288334336
+    # TODO: version is broken due ^^, needs refactoring
 
     while resource_id > 0x01000000:  # 16777216
         version += 1
@@ -48,7 +49,7 @@ def baseId(resource_id, return_version=False):
             resource_id -= 0x01000000  # 16777216
 
     if return_version:
-        return resource_id, version
+        return resource_id, version-67  # just correct "magic number"
 
     return resource_id
 
@@ -119,7 +120,7 @@ def nations(timeout=timeout):
     :params year: Year.
     """
     rc = requests.get(urls('pc')['messages'], timeout=timeout)
-    rc.encoding = 'utf-8'  # guessing takes huge amont of cpu time
+    rc.encoding = 'utf-8'  # guessing takes huge amount of cpu time
     rc = rc.text
     data = re.findall('<trans-unit resname="search.nationName.nation([0-9]+)">\n        <source>(.+)</source>', rc)
     nations = {}
@@ -134,7 +135,7 @@ def leagues(year=2017, timeout=timeout):
     :params year: Year.
     """
     rc = requests.get(urls('pc')['messages'], timeout=timeout)
-    rc.encoding = 'utf-8'  # guessing takes huge amont of cpu time
+    rc.encoding = 'utf-8'  # guessing takes huge amount of cpu time
     rc = rc.text
     data = re.findall('<trans-unit resname="global.leagueFull.%s.league([0-9]+)">\n        <source>(.+)</source>' % year, rc)
     leagues = {}
@@ -149,7 +150,7 @@ def teams(year=2017, timeout=timeout):
     :params year: Year.
     """
     rc = requests.get(urls('pc')['messages'], timeout=timeout)
-    rc.encoding = 'utf-8'  # guessing takes huge amont of cpu time
+    rc.encoding = 'utf-8'  # guessing takes huge amount of cpu time
     rc = rc.text
     data = re.findall('<trans-unit resname="global.teamFull.%s.team([0-9]+)">\n        <source>(.+)</source>' % year, rc)
     teams = {}
