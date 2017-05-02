@@ -771,7 +771,7 @@ class Core(object):
                 level = 'bronze'
             consumables[i['type']] = {'level': level,
                                       'type': i['type'],  # need list of all types
-                                      'contextId', i['contextId'],  # dunno what is it
+                                      'contextId': i['contextId'],  # dunno what is it
                                       'count': i['typeValue']}
         return consumables
 
