@@ -128,7 +128,7 @@ Piles (Watchlist / Tradepile / Unassigned / Squad / Club)
     >>> items = fut.unassigned()
     >>> items = fut.squad()
     >>> items = fut.club(count=10, level=10, type=1, start=0)
-    >>> items = fut.clubConsumablesDetails()  # returned object might be different here
+    >>> items = fut.clubConsumablesDetails()
     >>> fut.sendToTradepile(trade_id, item_id)               # add card to tradepile
     >>> fut.sendToClub(trade_id, item_id)                    # add card to club
     >>> fut.sendToWatchlist(trade_id)                        # add card to watchlist
