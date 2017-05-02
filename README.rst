@@ -280,6 +280,12 @@ to be continued ;-)
 Problems
 --------
 
+Bans
+^^^^
+
+To avoid getting ban take a look at our little discussion/guide thread:
+https://github.com/oczkers/fut/issues/259
+
 Somehow i've sent card to full tradepile and it disappeared
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
