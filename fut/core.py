@@ -58,7 +58,7 @@ def itemParse(item_data, full=True):
     """Parser for item data. Returns nice dictionary.
 
     :params iteam_data: Item data received from ea servers.
-    :params full: (optional) False if You're snipping and don't need extended info.
+    :params full: (optional) False if You're snipping and don't need extended info. Anyone really use this?
     """
     # TODO: object
     # TODO: parse all data
@@ -101,6 +101,45 @@ def itemParse(item_data, full=True):
             'cardType':      item_data['itemData'].get("cardsubtypeid"),  # used only for cards
             'owners':        item_data['itemData'].get('owners'),
         })
+    return return_data
+
+def itemParseConsumable(item_data):
+    """Parser for item data for consumables. Returns nice dictionary.
+    It's going to be merged with itemParse someday.
+
+    :params item_data: Item data received from ea servers.
+    """
+    return_data = {
+        'discardValue': item_data.get('discardValue'),
+        'year': item_data.get('resourceGameYear'),
+        'count': item_data.get('count'),
+        'untradeableCount': item_data.get('untradeableCount'),
+        'resourceId': item_data.get('resourceId'),
+        'suspension': item_data['item'].get('suspension'),
+        'owners': item_data['item'].get('owners'),
+        'statsList': item_data['item'].get('statsList'),
+        'contract': item_data['item'].get('contract'),  # allways 7?
+        'rareflag': item_data['item'].get('rareflag'),
+        'cardsubtypeid': item_data['item'].get('cardsubtypeid'),  # sub-type id?
+        'timestamp': item_data['item'].get('timestamp'),  # 1484636822? buy timestamp?
+        'cardassetid': item_data['item'].get('cardassetid'),
+        'id': item_data['item'].get('id'),  # item_id i suppose
+        'attributeList': item_data['item'].get('attributeList'),
+        'weightrare': item_data['item'].get('weightrare'),
+        'pile': item_data['item'].get('pile'),  # same as contract? count maybe?
+        'morale': item_data['item'].get('morale'),
+        'training': item_data['item'].get('training'),
+        'gold': item_data['item'].get('gold'),
+        'silver': item_data['item'].get('silver'),
+        'bronze': item_data['item'].get('bronze'),
+        'injuryGames': item_data['item'].get('injuryGames'),
+        'lastSalePrice': item_data['item'].get('lastSalePrice'),
+        'fitness': item_data['item'].get('fitness'),
+        'untradeable': item_data['item'].get('untradeable'),
+        'rating': item_data['item'].get('rating'),
+        'lifetimeStats': item_data['item'].get('lifetimeStats'),
+        'nation': item_data['item'].get('nation')
+    }
     return return_data
 
 
@@ -720,14 +759,26 @@ class Core(object):
         return [itemParse({'itemData': i}) for i in rc['itemData']]
 
     def clubConsumables(self):
-        """Return all consumables (stats?)."""
+        """Return all consumables stats in dictionary."""
         rc = self.__get__(self.urls['fut']['ClubConsumableSearch'])  # or ClubConsumableStats?
-        return rc
+        consumables = {}
+        for i in rc:
+            if i['contextValue'] == 1:
+                level = 'gold'
+            elif i['contextValue'] == 2:
+                level = 'silver'
+            elif i['contextValue'] == 3:
+                level = 'bronze'
+            consumables[i['type']] = {'level': level,
+                                      'type': i['type'],  # need list of all types
+                                      'contextId', i['contextId'],  # dunno what is it
+                                      'count': i['typeValue']}
+        return consumables
 
     def clubConsumablesDetails(self):
         """Return all consumables details."""
-        rc = self.__get__('{0}{1}'.format(self.url['fut']['ClubConsumableSearch'], '/development'))
-        return rc
+        rc = self.__get__('{0}{1}'.format(self.urls['fut']['ClubConsumableSearch'], '/development'))
+        return [{itemParseConsumable(i) for i in rc['itemData']}]
 
     def squad(self, squad_id=0):
         """Return a squad.
