@@ -163,6 +163,18 @@ Relists all expired cards in tradepile.
 
     >>> fut.relist()  # relist all expired cards in tradepile
 
+Apply consumable
+----------------
+
+Apply consumable on player.
+
+- ITEM_ID: [int] Player's item_id.
+- RESOURCE_ID: [int] Consumable's resource_id.
+
+... code-block:: python
+
+    >>> fut.applyConsumable(item_id, resource_id)
+
 Card stats and definiction IDs
 ------------------------------
 
