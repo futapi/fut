@@ -863,6 +863,17 @@ class Core(object):
             return sold
         return True
 
+    def applyConsumable(self, item_id, resource_id):
+        """Apply consumable on player.
+
+        :params item_id: Item id of player.
+        :params resource_id: Resource id of consumable.
+        """
+        # TODO: catch exception when consumable is not found etc.
+        # TODO: multiple players like in quickSell
+        data = {'apply': [{'id': item_id}]}
+        self.__post__('{0}/{1}'.format(self.urls['fut']['ItemResource'], resource,id), data=json.dumps(data))
+
     def keepalive(self):
         """Refresh credit amount to let know that we're still online. Returns credit amount."""
         return self.__get__(self.urls['fut']['Credits'])['credits']
