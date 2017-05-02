@@ -720,8 +720,13 @@ class Core(object):
         return [itemParse({'itemData': i}) for i in rc['itemData']]
 
     def clubConsumables(self):
-        """Return all consumables."""
+        """Return all consumables (stats?)."""
         rc = self.__get__(self.urls['fut']['ClubConsumableSearch'])  # or ClubConsumableStats?
+        return rc
+
+    def clubConsumablesDetails(self):
+        """Return all consumables details."""
+        rc = self.__get__('{0}{1}'.format(self.url['fut']['ClubConsumableSearch'], '/development'))
         return rc
 
     def squad(self, squad_id=0):
