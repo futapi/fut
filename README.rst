@@ -1,3 +1,4 @@
+===
 fut
 ===
 
@@ -23,7 +24,7 @@ It is written entirely in Python.
 
 
 Documentation
--------------
+=============
 
 Documentation will be available soon at http://fut.readthedocs.org/.
 
@@ -32,18 +33,19 @@ Players database: https://www.easports.com/uk/fifa/ultimate-team/fut/database
 Players database (json): http://cdn.content.easports.com/fifa/fltOnlineAssets/CC8267B6-0817-4842-BB6A-A20F88B05418/2017/fut/items/web/players.json
 
 
-
-Usage
------
-
 AutoBuyer GUI
-^^^^^^^^^^^^^
+-------------
 
-If You're looking for "user friendly" autobuyer take a look at hunterjm's project:
+If You're looking for "user friendly" autobuyer take a look at hunterjm's project (dead probably):
 https://github.com/hunterjm/futgui/releases
 
+
+
+Usage
+=====
+
 Login
-^^^^^
+-----
 
 Optional parameters:
 
@@ -59,7 +61,7 @@ Optional parameters:
     >>> fut = fut.Core('email', 'password', 'secret answer')
 
 Search
-^^^^^^
+------
 
 Optional parameters:
 
@@ -77,7 +79,7 @@ Optional parameters:
     >>> items = fut.searchAuctions('development')
 
 Bid
-^^^
+---
 
 Optional parameters:
 
@@ -88,7 +90,7 @@ Optional parameters:
     >>> fut.bid(items[0]['trade_id'], 600)
 
 Sell
-^^^^
+----
 
 Optional parameters:
 
@@ -100,7 +102,7 @@ Optional parameters:
     >>>     fut.sell(item['item_id'], 150)
 
 Quick sell
-^^^^^^^^^^
+----------
 
 single item:
 
@@ -116,8 +118,8 @@ multiple items:
     >>> item_id = [123456789, 987654321]
     >>> fut.quickSell(item_id)
 
-Piles (Watchlist / Tradepile / Unassigned / Squad)
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+Piles (Watchlist / Tradepile / Unassigned / Squad / Club)
+---------------------------------------------------------
 
 
 .. code-block:: python
@@ -125,6 +127,8 @@ Piles (Watchlist / Tradepile / Unassigned / Squad)
     >>> items = fut.tradepile()
     >>> items = fut.unassigned()
     >>> items = fut.squad()
+    >>> items = fut.club(count=10, level=10, type=1, start=0)
+    >>> items = fut.clubConsumablesDetails()
     >>> fut.sendToTradepile(trade_id, item_id)               # add card to tradepile
     >>> fut.sendToClub(trade_id, item_id)                    # add card to club
     >>> fut.sendToWatchlist(trade_id)                        # add card to watchlist
@@ -141,7 +145,7 @@ Piles (Watchlist / Tradepile / Unassigned / Squad)
     10
 
 Credits
-^^^^^^^
+-------
 
 It's cached on every request so if you want the most accurate info call fut.keppalive()
 
@@ -151,7 +155,7 @@ It's cached on every request so if you want the most accurate info call fut.kepp
     600
 
 Relist
-^^^^^^
+------
 
 Relists all expired cards in tradepile.
 
@@ -159,8 +163,20 @@ Relists all expired cards in tradepile.
 
     >>> fut.relist()  # relist all expired cards in tradepile
 
+Apply consumable
+----------------
+
+Apply consumable on player.
+
+- ITEM_ID: [int] Player's item_id.
+- RESOURCE_ID: [int] Consumable's resource_id.
+
+... code-block:: python
+
+    >>> fut.applyConsumable(item_id, resource_id)
+
 Card stats and definiction IDs
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+------------------------------
 
 Returns stats and definition IDs for each card variation.
 
@@ -168,20 +184,8 @@ Returns stats and definition IDs for each card variation.
 
     >>> fut.searchDefinition(asset_id, start=0, count=35)
 
-Convert Team/League/Nation id to name
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
-.. code-block:: python
-
-    >>> fut.nations[1]
-    Albania
-    >>> fut.leagues[1]
-    Alka Superliga
-    >>> fut.teams[1]
-    Arsenal
-
 Keepalive
-^^^^^^^^^
+---------
 
 Sends keepalive ping and returns current credits amount (you have to make at least one request every ~10 minutes to avoid session expire/logout).
 
@@ -191,7 +195,7 @@ Sends keepalive ping and returns current credits amount (you have to make at lea
     650
 
 Logout
-^^^^^^
+------
 
 Logs out nicely (like clicking on logout button).
 
@@ -199,6 +203,43 @@ Logs out nicely (like clicking on logout button).
 
     >>> fut.logout()
 
+
+Database
+--------
+
+Database if fully cached at first invocation so there won't by any additional requests:
+
+.. code-block:: python
+
+    >>> fut.nations
+    >>> fut.leagues
+    >>> fut.teams
+    >>> fut.players
+
+You can access database even without login:
+
+.. code-block:: python
+
+    >>> import fut
+    >>> nations = fut.core.nations()
+    >>> leagues = fut.core.leagues()
+    >>> teams = fut.core.teams()
+    >>> players = fut.core.players()
+
+
+Convert Team/League/Nation/Player id to name
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+.. code-block:: python
+
+    >>> nations[1]
+    ... 'Albania'
+    >>> leagues[1]
+    ... 'Alka Superliga'
+    >>> teams[1]
+    ... 'Arsenal'
+    >>> players[1]
+    ... {'rating': 88, 'lastname': 'Seaman', 'id': 1, 'firstname': 'David', 'nationality': 14, 'surname': None}
 
 
 Item object (dict) structure
@@ -238,6 +279,12 @@ to be continued ;-)
 
 Problems
 --------
+
+Bans
+^^^^
+
+To avoid getting ban take a look at our little discussion/guide thread:
+https://github.com/oczkers/fut/issues/259
 
 Somehow i've sent card to full tradepile and it disappeared
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^

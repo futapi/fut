@@ -4,6 +4,14 @@ Changelog
 ---------
 
 
+0.2.15 (2017-05-04)
+^^^^^^^^^^^^^^^^^^^
+
+* huge performance improvement on database load (skip encoding guess)
+* fix baseId version calculation
+* core: add clubConsumablesDetails
+* core: add applyConsumable
+
 0.2.14 (2017-04-29)
 ^^^^^^^^^^^^^^^^^^^
 

@@ -10,9 +10,9 @@ python:
   - 3.7-dev
   - pypy
 install:
- - pip install -r requirements.txt codecov
+ - pip install -r requirements.txt codecov pytest-cov
 script:
- - nosetests --with-coverage --cover-xml
+ - py.test --verbose --cov-report term --cov-report xml --cov=fut test_fut.py
 after_success:
  - codecov
 notifications:

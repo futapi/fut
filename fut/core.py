@@ -37,6 +37,7 @@ def baseId(resource_id, return_version=False):
     """
     version = 0
     resource_id = resource_id + 0xC4000000 # 3288334336
+    # TODO: version is broken due ^^, needs refactoring
 
     while resource_id > 0x01000000:  # 16777216
         version += 1
@@ -48,7 +49,7 @@ def baseId(resource_id, return_version=False):
             resource_id -= 0x01000000  # 16777216
 
     if return_version:
-        return resource_id, version
+        return resource_id, version-67  # just correct "magic number"
 
     return resource_id
 
@@ -57,7 +58,7 @@ def itemParse(item_data, full=True):
     """Parser for item data. Returns nice dictionary.
 
     :params iteam_data: Item data received from ea servers.
-    :params full: (optional) False if You're snipping and don't need extended info.
+    :params full: (optional) False if You're snipping and don't need extended info. Anyone really use this?
     """
     # TODO: object
     # TODO: parse all data
@@ -102,6 +103,45 @@ def itemParse(item_data, full=True):
         })
     return return_data
 
+def itemParseConsumable(item_data):
+    """Parser for item data for consumables. Returns nice dictionary.
+    It's going to be merged with itemParse someday.
+
+    :params item_data: Item data received from ea servers.
+    """
+    return_data = {
+        'discardValue': item_data.get('discardValue'),
+        'year': item_data.get('resourceGameYear'),
+        'count': item_data.get('count'),
+        'untradeableCount': item_data.get('untradeableCount'),
+        'resourceId': item_data.get('resourceId'),
+        'suspension': item_data['item'].get('suspension'),
+        'owners': item_data['item'].get('owners'),
+        'statsList': item_data['item'].get('statsList'),
+        'contract': item_data['item'].get('contract'),  # allways 7?
+        'rareflag': item_data['item'].get('rareflag'),
+        'cardsubtypeid': item_data['item'].get('cardsubtypeid'),  # sub-type id?
+        'timestamp': item_data['item'].get('timestamp'),  # 1484636822? buy timestamp?
+        'cardassetid': item_data['item'].get('cardassetid'),
+        'id': item_data['item'].get('id'),  # item_id i suppose
+        'attributeList': item_data['item'].get('attributeList'),
+        'weightrare': item_data['item'].get('weightrare'),
+        'pile': item_data['item'].get('pile'),  # same as contract? count maybe?
+        'morale': item_data['item'].get('morale'),
+        'training': item_data['item'].get('training'),
+        'gold': item_data['item'].get('gold'),
+        'silver': item_data['item'].get('silver'),
+        'bronze': item_data['item'].get('bronze'),
+        'injuryGames': item_data['item'].get('injuryGames'),
+        'lastSalePrice': item_data['item'].get('lastSalePrice'),
+        'fitness': item_data['item'].get('fitness'),
+        'untradeable': item_data['item'].get('untradeable'),
+        'rating': item_data['item'].get('rating'),
+        'lifetimeStats': item_data['item'].get('lifetimeStats'),
+        'nation': item_data['item'].get('nation')
+    }
+    return return_data
+
 
 '''  # different urls (platforms)
 def cardInfo(resource_id):
@@ -118,7 +158,9 @@ def nations(timeout=timeout):
 
     :params year: Year.
     """
-    rc = requests.get(urls('pc')['messages'], timeout=timeout).text
+    rc = requests.get(urls('pc')['messages'], timeout=timeout)
+    rc.encoding = 'utf-8'  # guessing takes huge amount of cpu time
+    rc = rc.text
     data = re.findall('<trans-unit resname="search.nationName.nation([0-9]+)">\n        <source>(.+)</source>', rc)
     nations = {}
     for i in data:
@@ -131,7 +173,9 @@ def leagues(year=2017, timeout=timeout):
 
     :params year: Year.
     """
-    rc = requests.get(urls('pc')['messages'], timeout=timeout).text
+    rc = requests.get(urls('pc')['messages'], timeout=timeout)
+    rc.encoding = 'utf-8'  # guessing takes huge amount of cpu time
+    rc = rc.text
     data = re.findall('<trans-unit resname="global.leagueFull.%s.league([0-9]+)">\n        <source>(.+)</source>' % year, rc)
     leagues = {}
     for i in data:
@@ -144,7 +188,9 @@ def teams(year=2017, timeout=timeout):
 
     :params year: Year.
     """
-    rc = requests.get(urls('pc')['messages'], timeout=timeout).text
+    rc = requests.get(urls('pc')['messages'], timeout=timeout)
+    rc.encoding = 'utf-8'  # guessing takes huge amount of cpu time
+    rc = rc.text
     data = re.findall('<trans-unit resname="global.teamFull.%s.team([0-9]+)">\n        <source>(.+)</source>' % year, rc)
     teams = {}
     for i in data:
@@ -713,9 +759,26 @@ class Core(object):
         return [itemParse({'itemData': i}) for i in rc['itemData']]
 
     def clubConsumables(self):
-        """Return all consumables."""
+        """Return all consumables stats in dictionary."""
         rc = self.__get__(self.urls['fut']['ClubConsumableSearch'])  # or ClubConsumableStats?
-        return rc
+        consumables = {}
+        for i in rc:
+            if i['contextValue'] == 1:
+                level = 'gold'
+            elif i['contextValue'] == 2:
+                level = 'silver'
+            elif i['contextValue'] == 3:
+                level = 'bronze'
+            consumables[i['type']] = {'level': level,
+                                      'type': i['type'],  # need list of all types
+                                      'contextId': i['contextId'],  # dunno what is it
+                                      'count': i['typeValue']}
+        return consumables
+
+    def clubConsumablesDetails(self):
+        """Return all consumables details."""
+        rc = self.__get__('{0}{1}'.format(self.urls['fut']['ClubConsumableSearch'], '/development'))
+        return [{itemParseConsumable(i) for i in rc['itemData']}]
 
     def squad(self, squad_id=0):
         """Return a squad.
@@ -850,6 +913,17 @@ class Core(object):
                     sold += 1
             return sold
         return True
+
+    def applyConsumable(self, item_id, resource_id):
+        """Apply consumable on player.
+
+        :params item_id: Item id of player.
+        :params resource_id: Resource id of consumable.
+        """
+        # TODO: catch exception when consumable is not found etc.
+        # TODO: multiple players like in quickSell
+        data = {'apply': [{'id': item_id}]}
+        self.__post__('{0}/{1}'.format(self.urls['fut']['ItemResource'], resource,id), data=json.dumps(data))
 
     def keepalive(self):
         """Refresh credit amount to let know that we're still online. Returns credit amount."""
