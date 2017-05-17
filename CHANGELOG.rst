@@ -4,6 +4,12 @@ Changelog
 ---------
 
 
+0.2.16 (2017-05-17)
+^^^^^^^^^^^^^^^^^^^
+
+* fix applyConsumable
+* add brokeringSku param for tradepile (thanks to pulkitsharma #259)
+
 0.2.15 (2017-05-04)
 ^^^^^^^^^^^^^^^^^^^
 
