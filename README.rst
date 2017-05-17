@@ -171,7 +171,7 @@ Apply consumable on player.
 - ITEM_ID: [int] Player's item_id.
 - RESOURCE_ID: [int] Consumable's resource_id.
 
-... code-block:: python
+.. code-block:: python
 
     >>> fut.applyConsumable(item_id, resource_id)
 

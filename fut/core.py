@@ -36,7 +36,7 @@ def baseId(resource_id, return_version=False):
     :params return_version: (optional) True if You need version, returns (resource_id, version).
     """
     version = 0
-    resource_id = resource_id + 0xC4000000 # 3288334336
+    resource_id = resource_id + 0xC4000000  # 3288334336
     # TODO: version is broken due ^^, needs refactoring
 
     while resource_id > 0x01000000:  # 16777216
@@ -49,7 +49,7 @@ def baseId(resource_id, return_version=False):
             resource_id -= 0x01000000  # 16777216
 
     if return_version:
-        return resource_id, version-67  # just correct "magic number"
+        return resource_id, version - 67  # just correct "magic number"
 
     return resource_id
 
@@ -102,6 +102,7 @@ def itemParse(item_data, full=True):
             'owners':        item_data['itemData'].get('owners'),
         })
     return return_data
+
 
 def itemParseConsumable(item_data):
     """Parser for item data for consumables. Returns nice dictionary.
@@ -196,6 +197,7 @@ def teams(year=2017, timeout=timeout):
     for i in data:
         teams[int(i[0])] = i[1]
     return teams
+
 
 def players(timeout=timeout):
     """Return all players in dict {id: c, f, l, n, r}.
@@ -304,6 +306,7 @@ class Core(object):
             clientVersion = 1
         else:
             raise FutError(reason='Invalid emulate parameter. (Valid ones are and/ios).')  # pc/ps3/xbox/
+        self.sku = sku  # TODO: use self.sku in all class
         # === login
         self.urls['login'] = self.r.get(self.urls['fut_home'], timeout=self.timeout).url
         self.r.headers['Referer'] = self.urls['login']  # prepare headers
@@ -320,11 +323,11 @@ class Core(object):
                 '_eventId': 'submit'}
         rc = self.r.post(self.urls['login'], data=data, timeout=self.timeout)
         self.logger.debug(rc.content)
-        #rc = rc.text
+        # rc = rc.text
         if 'var redirectUri' in rc.text:
-            #url = re.search("var redirectUri \= '(https://signin.ea.com:443/p/web[0-9]+/login\?execution\=.+?)';", rc).group(1)  # also avaible in rc.url
+            # url = re.search("var redirectUri \= '(https://signin.ea.com:443/p/web[0-9]+/login\?execution\=.+?)';", rc).group(1)  # also avaible in rc.url
             url = re.match('(https?://.+/p/web[0-9]+/login\?execution\=.+?)&', rc.url).group(1)
-            rc = self.r.get(url+'&_eventId=end')
+            rc = self.r.get(url + '&_eventId=end')
             self.logger.debug(rc.content)
 
         '''  # pops out only on first launch
@@ -812,17 +815,17 @@ class Core(object):
 
     def tradepile(self):
         """Return items in tradepile."""
-        rc = self.__get__(self.urls['fut']['TradePile'])
+        rc = self.__get__(self.urls['fut']['TradePile'], params={'brokeringSku': self.sku})
         return [itemParse(i) for i in rc['auctionInfo']]
 
     def watchlist(self):
         """Return items in watchlist."""
-        rc = self.__get__(self.urls['fut']['WatchList'])
+        rc = self.__get__(self.urls['fut']['WatchList'])  # , params={'brokeringSku': self.sku}
         return [itemParse(i) for i in rc['auctionInfo']]
 
     def unassigned(self):
         """Return Unassigned items (i.e. buyNow items)."""
-        rc = self.__get__(self.urls['fut']['Unassigned'])
+        rc = self.__get__(self.urls['fut']['Unassigned'])  # , params={'brokeringSku': self.sku}
         return [itemParse({'itemData': i}) for i in rc['itemData']]
 
     def sell(self, item_id, bid, buy_now=0, duration=3600):
@@ -923,7 +926,7 @@ class Core(object):
         # TODO: catch exception when consumable is not found etc.
         # TODO: multiple players like in quickSell
         data = {'apply': [{'id': item_id}]}
-        self.__post__('{0}/{1}'.format(self.urls['fut']['ItemResource'], resource,id), data=json.dumps(data))
+        self.__post__('{0}/{1}'.format(self.urls['fut']['ItemResource'], resource_id), data=json.dumps(data))
 
     def keepalive(self):
         """Refresh credit amount to let know that we're still online. Returns credit amount."""
