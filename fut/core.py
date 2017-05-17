@@ -306,6 +306,7 @@ class Core(object):
             clientVersion = 1
         else:
             raise FutError(reason='Invalid emulate parameter. (Valid ones are and/ios).')  # pc/ps3/xbox/
+        self.sku = sku  # TODO: use self.sku in all class
         # === login
         self.urls['login'] = self.r.get(self.urls['fut_home'], timeout=self.timeout).url
         self.r.headers['Referer'] = self.urls['login']  # prepare headers
@@ -814,17 +815,17 @@ class Core(object):
 
     def tradepile(self):
         """Return items in tradepile."""
-        rc = self.__get__(self.urls['fut']['TradePile'])
+        rc = self.__get__(self.urls['fut']['TradePile'], params={'brokeringSku': self.sku})
         return [itemParse(i) for i in rc['auctionInfo']]
 
     def watchlist(self):
         """Return items in watchlist."""
-        rc = self.__get__(self.urls['fut']['WatchList'])
+        rc = self.__get__(self.urls['fut']['WatchList'])  # , params={'brokeringSku': self.sku}
         return [itemParse(i) for i in rc['auctionInfo']]
 
     def unassigned(self):
         """Return Unassigned items (i.e. buyNow items)."""
-        rc = self.__get__(self.urls['fut']['Unassigned'])
+        rc = self.__get__(self.urls['fut']['Unassigned'])  # , params={'brokeringSku': self.sku}
         return [itemParse({'itemData': i}) for i in rc['itemData']]
 
     def sell(self, item_id, bid, buy_now=0, duration=3600):
