@@ -4,6 +4,11 @@ Changelog
 ---------
 
 
+0.2.17 (2017-05-?)
+^^^^^^^^^^^^^^^^^^^
+
+* fix #262 searchAuctions && piles returns empty list when no results found
+
 0.2.16 (2017-05-17)
 ^^^^^^^^^^^^^^^^^^^
 
