@@ -781,7 +781,7 @@ class Core(object):
     def clubConsumablesDetails(self):
         """Return all consumables details."""
         rc = self.__get__('{0}{1}'.format(self.urls['fut']['ClubConsumableSearch'], '/development'))
-        return [{itemParseConsumable(i) for i in rc['itemData']}]
+        return [{itemParseConsumable(i) for i in rc.get('itemData', ())}]
 
     def squad(self, squad_id=0):
         """Return a squad.
@@ -792,7 +792,7 @@ class Core(object):
         url = '{0}/{1}'.format(self.urls['fut']['Squad'], squad_id)
         rc = self.__get__(url)
         # return rc
-        return [itemParse(i) for i in rc['players']]
+        return [itemParse(i) for i in rc.get('players', ())]
 
     '''
     def squads(self):
@@ -816,17 +816,17 @@ class Core(object):
     def tradepile(self):
         """Return items in tradepile."""
         rc = self.__get__(self.urls['fut']['TradePile'], params={'brokeringSku': self.sku})
-        return [itemParse(i) for i in rc['auctionInfo']]
+        return [itemParse(i) for i in rc.get('auctionInfo', ())]
 
     def watchlist(self):
         """Return items in watchlist."""
         rc = self.__get__(self.urls['fut']['WatchList'])  # , params={'brokeringSku': self.sku}
-        return [itemParse(i) for i in rc['auctionInfo']]
+        return [itemParse(i) for i in rc.get('auctionInfo', ())]
 
     def unassigned(self):
         """Return Unassigned items (i.e. buyNow items)."""
         rc = self.__get__(self.urls['fut']['Unassigned'])  # , params={'brokeringSku': self.sku}
-        return [itemParse({'itemData': i}) for i in rc['itemData']]
+        return [itemParse({'itemData': i}) for i in rc.get('itemData', ())]
 
     def sell(self, item_id, bid, buy_now=0, duration=3600):
         """Start auction. Returns trade_id.
