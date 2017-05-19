@@ -728,7 +728,7 @@ class Core(object):
         if playStyle:   params['playStyle'] = playStyle
 
         rc = self.__get__(self.urls['fut']['SearchAuctions'], params=params)
-        return [itemParse(i) for i in rc['auctionInfo']]
+        return [itemParse(i) for i in rc.get('auctionInfo', ())]
 
     def bid(self, trade_id, bid, fast=False):
         """Make a bid.
