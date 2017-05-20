@@ -47,6 +47,7 @@ def urls(platform, cl=None):
         'acc_info':              'https://www.easports.com/iframe/fut17/p/ut/game/fifa17/user/accountinfo',
         'card_info':             'https://fifa17.content.easports.com/fifa/fltOnlineAssets/CC8267B6-0817-4842-BB6A-A20F88B05418/2017/fut/items/web/',
         'messages':              'https://www.easports.com/iframe/fut17/bundles/futweb/web/flash/xml/localization/messages.en_US.xml',  # add cl
+        'mass_info':             '/ut/game/fifa17/usermassinfo',
     }
     # urls['login'] = requests.get(urls['fut_home'], timeout=timeout).url
 
