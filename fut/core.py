@@ -227,6 +227,7 @@ class Core(object):
         self._nations = None
         self._leagues = {}
         self._teams = {}
+        self._usermassinfo = {}
         if debug:  # save full log to file (fut.log)
             self.logger = logger(save=True)
         else:  # NullHandler
@@ -466,17 +467,20 @@ class Core(object):
         del self.r.headers['X-Requested-With']
         del self.r.headers['X-UT-Route']
         self.r.headers.update({
-            # 'X-HTTP-Method-Override': 'GET',  # __request__ method manages this
+            'X-HTTP-Method-Override': 'GET',  # necessary for usermassinfo request
             'X-Requested-With': flash_agent,
-            'Referer': 'https://www.easports.com/iframe/fut16/bundles/futweb/web/flash/FifaUltimateTeam.swf',
+            'Referer': 'https://www.easports.com/iframe/fut17/bundles/futweb/web/flash/FifaUltimateTeam.swf',
             'Origin': 'https://www.easports.com',
             # 'Content-Type': 'application/json',  # already set
             'Accept': 'application/json',
         })
 
         # get basic user info
-        # TODO: parse response (https://gist.github.com/oczkers/526577572c097eb8172f)
-        self.__get__(self.urls['fut']['user'])
+        # TODO: parse usermassinfo and change _usermassinfo to userinfo
+        # TODO?: usermassinfo as separate method && ability to refresh piles etc.
+        self._usermassinfo = self.r.post(self.urls['fut_host'] + self.urls['mass_info'], timeout=self.timeout).json()
+        if self._usermassinfo['settings']['configs'][2]['value'] == 0:
+            raise FutError(reason='Transfer market is probably disabled on this account.')  # if tradingEnabled = 0
         # size of piles
         piles = self.pileSize()
         self.tradepile_size = piles['tradepile']
@@ -728,7 +732,7 @@ class Core(object):
         if playStyle:   params['playStyle'] = playStyle
 
         rc = self.__get__(self.urls['fut']['SearchAuctions'], params=params)
-        return [itemParse(i) for i in rc['auctionInfo']]
+        return [itemParse(i) for i in rc.get('auctionInfo', ())]
 
     def bid(self, trade_id, bid, fast=False):
         """Make a bid.
@@ -781,7 +785,7 @@ class Core(object):
     def clubConsumablesDetails(self):
         """Return all consumables details."""
         rc = self.__get__('{0}{1}'.format(self.urls['fut']['ClubConsumableSearch'], '/development'))
-        return [{itemParseConsumable(i) for i in rc['itemData']}]
+        return [{itemParseConsumable(i) for i in rc.get('itemData', ())}]
 
     def squad(self, squad_id=0):
         """Return a squad.
@@ -792,7 +796,7 @@ class Core(object):
         url = '{0}/{1}'.format(self.urls['fut']['Squad'], squad_id)
         rc = self.__get__(url)
         # return rc
-        return [itemParse(i) for i in rc['players']]
+        return [itemParse(i) for i in rc.get('players', ())]
 
     '''
     def squads(self):
@@ -816,17 +820,17 @@ class Core(object):
     def tradepile(self):
         """Return items in tradepile."""
         rc = self.__get__(self.urls['fut']['TradePile'], params={'brokeringSku': self.sku})
-        return [itemParse(i) for i in rc['auctionInfo']]
+        return [itemParse(i) for i in rc.get('auctionInfo', ())]
 
     def watchlist(self):
         """Return items in watchlist."""
         rc = self.__get__(self.urls['fut']['WatchList'])  # , params={'brokeringSku': self.sku}
-        return [itemParse(i) for i in rc['auctionInfo']]
+        return [itemParse(i) for i in rc.get('auctionInfo', ())]
 
     def unassigned(self):
         """Return Unassigned items (i.e. buyNow items)."""
         rc = self.__get__(self.urls['fut']['Unassigned'])  # , params={'brokeringSku': self.sku}
-        return [itemParse({'itemData': i}) for i in rc['itemData']]
+        return [itemParse({'itemData': i}) for i in rc.get('itemData', ())]
 
     def sell(self, item_id, bid, buy_now=0, duration=3600):
         """Start auction. Returns trade_id.
@@ -934,7 +938,7 @@ class Core(object):
 
     def pileSize(self):
         """Return size of tradepile and watchlist."""
-        rc = self.__get__(self.urls['fut']['PileSize'])['entries']
+        rc = self._usermassinfo['pileSizeClientData']['entries']
         return {'tradepile': rc[0]['value'],
                 'watchlist': rc[2]['value']}
 

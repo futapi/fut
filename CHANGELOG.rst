@@ -4,6 +4,14 @@ Changelog
 ---------
 
 
+0.2.17 (2017-05-20)
+^^^^^^^^^^^^^^^^^^^
+
+* fix #262 searchAuctions && piles returns empty list when no results found
+* fix wrong fut version in referer on login (thanks to xAranaktu #263)
+* init usermassinfo functionality (thanks to xAranaktu #263)
+* add tradingEnabled check on login (thanks to xAranaktu #263)
+
 0.2.16 (2017-05-17)
 ^^^^^^^^^^^^^^^^^^^
 
