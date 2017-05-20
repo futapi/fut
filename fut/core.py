@@ -476,10 +476,11 @@ class Core(object):
         })
 
         # get basic user info
-        # TODO: parse response (https://gist.github.com/oczkers/526577572c097eb8172f)
+        # TODO: parse usermassinfo and change _usermassinfo to userinfo
+        # TODO?: usermassinfo as separate method && ability to refresh piles etc.
         self._usermassinfo = self.r.post(self.urls['fut_host'] + self.urls['mass_info'], timeout=self.timeout).json()
-        if self._usermassinfo['settings']['configs'][2]['value'] == 0:  
-            raise FutError(reason='Transfer market is probably disabled on this account.') # if tradingEnabled = 0
+        if self._usermassinfo['settings']['configs'][2]['value'] == 0:
+            raise FutError(reason='Transfer market is probably disabled on this account.')  # if tradingEnabled = 0
         # size of piles
         piles = self.pileSize()
         self.tradepile_size = piles['tradepile']
