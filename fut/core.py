@@ -227,6 +227,7 @@ class Core(object):
         self._nations = None
         self._leagues = {}
         self._teams = {}
+        self._usermassinfo = {}
         if debug:  # save full log to file (fut.log)
             self.logger = logger(save=True)
         else:  # NullHandler
@@ -466,9 +467,9 @@ class Core(object):
         del self.r.headers['X-Requested-With']
         del self.r.headers['X-UT-Route']
         self.r.headers.update({
-            # 'X-HTTP-Method-Override': 'GET',  # __request__ method manages this
+            'X-HTTP-Method-Override': 'GET',  # necessary for usermassinfo request
             'X-Requested-With': flash_agent,
-            'Referer': 'https://www.easports.com/iframe/fut16/bundles/futweb/web/flash/FifaUltimateTeam.swf',
+            'Referer': 'https://www.easports.com/iframe/fut17/bundles/futweb/web/flash/FifaUltimateTeam.swf',
             'Origin': 'https://www.easports.com',
             # 'Content-Type': 'application/json',  # already set
             'Accept': 'application/json',
@@ -476,7 +477,9 @@ class Core(object):
 
         # get basic user info
         # TODO: parse response (https://gist.github.com/oczkers/526577572c097eb8172f)
-        self.__get__(self.urls['fut']['user'])
+        self._usermassinfo = self.r.post(self.urls['fut_host'] + self.urls['mass_info'], timeout=self.timeout).json()
+        if self._usermassinfo['settings']['configs'][2]['value'] == 0:  
+            raise FutError(reason='Transfer market is probably disabled on this account.') # if tradingEnabled = 0
         # size of piles
         piles = self.pileSize()
         self.tradepile_size = piles['tradepile']
@@ -934,7 +937,7 @@ class Core(object):
 
     def pileSize(self):
         """Return size of tradepile and watchlist."""
-        rc = self.__get__(self.urls['fut']['PileSize'])['entries']
+        rc = self._usermassinfo['pileSizeClientData']['entries']
         return {'tradepile': rc[0]['value'],
                 'watchlist': rc[2]['value']}
 
