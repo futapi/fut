@@ -310,61 +310,61 @@ class Core(object):
         self.sku = sku  # TODO: use self.sku in all class
         # === login
         self.urls['login'] = self.r.get(self.urls['fut_home'], timeout=self.timeout).url
-        self.r.headers['Referer'] = self.urls['login']  # prepare headers
-        data = {'email': email,
-                'password': passwd,
-                'country': 'US',  # is it important?
-                'phoneNumber': '',  # TODO: add phone code verification
-                'passwordForPhone': '',
-                'gCaptchaResponse': '',
-                'isPhoneNumberLogin': 'false',  # TODO: add phone login
-                'isIncompletePhone': '',
-                '_rememberMe': 'on',
-                'rememberMe': 'on',
-                '_eventId': 'submit'}
-        rc = self.r.post(self.urls['login'], data=data, timeout=self.timeout)
-        self.logger.debug(rc.content)
-        # rc = rc.text
-        if 'var redirectUri' in rc.text:
-            # url = re.search("var redirectUri \= '(https://signin.ea.com:443/p/web[0-9]+/login\?execution\=.+?)';", rc).group(1)  # also avaible in rc.url
-            url = re.match('(https?://.+/p/web[0-9]+/login\?execution\=.+?)&', rc.url).group(1)
-            rc = self.r.get(url + '&_eventId=end')
+        if self.urls['login'] != self.urls['fut_home']:
+            self.r.headers['Referer'] = self.urls['login']  # prepare headers
+            data = {'email': email,
+                    'password': passwd,
+                    'country': 'US',  # is it important?
+                    'phoneNumber': '',  # TODO: add phone code verification
+                    'passwordForPhone': '',
+                    'gCaptchaResponse': '',
+                    'isPhoneNumberLogin': 'false',  # TODO: add phone login
+                    'isIncompletePhone': '',
+                    '_rememberMe': 'on',
+                    'rememberMe': 'on',
+                    '_eventId': 'submit'}
+            rc = self.r.post(self.urls['login'], data=data, timeout=self.timeout)
             self.logger.debug(rc.content)
-
-        '''  # pops out only on first launch
-        if 'FIFA Ultimate Team</strong> needs to update your Account to help protect your gameplay experience.' in rc:  # request email/sms code
-            self.r.headers['Referer'] = rc.url  # s2
-            rc = self.r.post(rc.url.replace('s2', 's3'), {'_eventId': 'submit'}, timeout=self.timeout).content
-            self.r.headers['Referer'] = rc.url  # s3
-            rc = self.r.post(rc.url, {'twofactorType': 'EMAIL', 'country': 0, 'phoneNumber': '', '_eventId': 'submit'}, timeout=self.timeout)
-        '''
-        if 'We sent a security code to your' in rc.text or 'Your security code was sent to' in rc.text or 'Enter the 6-digit verification code' in rc.text:  # post code
-            # TODO: 'We sent a security code to your email' / 'We sent a security code to your ?'
-            # TODO: pick code from codes.txt?
-            if not code:
-                self.saveSession()
-                raise FutError(reason='Error during login process - code is required.')
-            self.r.headers['Referer'] = url = rc.url
-            # self.r.headers['Upgrade-Insecure-Requests'] = '1'  # ?
-            # self.r.headers['Origin'] = 'https://signin.ea.com'
-            rc = self.r.post(url, {'twofactorCode': code, '_trustThisDevice': 'on', 'trustThisDevice': 'on', '_eventId': 'submit'}, timeout=self.timeout)
-            self.logger.debug(rc.content)
-            rc = rc.text
-            if 'Incorrect code entered' in rc or 'Please enter a valid security code' in rc:
-                raise FutError(reason='Error during login process - provided code is incorrect.')
-            if 'Set Up an App Authenticator' in rc:
-                rc = self.r.post(url.replace('s3', 's4'), {'_eventId': 'cancel', 'appDevice': 'IPHONE'}, timeout=self.timeout)
+            # rc = rc.text
+            if 'var redirectUri' in rc.text:
+                # url = re.search("var redirectUri \= '(https://signin.ea.com:443/p/web[0-9]+/login\?execution\=.+?)';", rc).group(1)  # also avaible in rc.url
+                url = re.match('(https?://.+/p/web[0-9]+/login\?execution\=.+?)&', rc.url).group(1)
+                rc = self.r.get(url + '&_eventId=end')
                 self.logger.debug(rc.content)
-                # rc = rc.text
 
-        self.r.headers['Referer'] = self.urls['login']
+            '''  # pops out only on first launch
+            if 'FIFA Ultimate Team</strong> needs to update your Account to help protect your gameplay experience.' in rc:  # request email/sms code
+                self.r.headers['Referer'] = rc.url  # s2
+                rc = self.r.post(rc.url.replace('s2', 's3'), {'_eventId': 'submit'}, timeout=self.timeout).content
+                self.r.headers['Referer'] = rc.url  # s3
+                rc = self.r.post(rc.url, {'twofactorType': 'EMAIL', 'country': 0, 'phoneNumber': '', '_eventId': 'submit'}, timeout=self.timeout)
+            '''
+            if 'We sent a security code to your' in rc.text or 'Your security code was sent to' in rc.text or 'Enter the 6-digit verification code' in rc.text:  # post code
+                # TODO: 'We sent a security code to your email' / 'We sent a security code to your ?'
+                # TODO: pick code from codes.txt?
+                if not code:
+                    self.saveSession()
+                    raise FutError(reason='Error during login process - code is required.')
+                self.r.headers['Referer'] = url = rc.url
+                # self.r.headers['Upgrade-Insecure-Requests'] = '1'  # ?
+                # self.r.headers['Origin'] = 'https://signin.ea.com'
+                rc = self.r.post(url, {'twofactorCode': code, '_trustThisDevice': 'on', 'trustThisDevice': 'on', '_eventId': 'submit'}, timeout=self.timeout)
+                self.logger.debug(rc.content)
+                rc = rc.text
+                if 'Incorrect code entered' in rc or 'Please enter a valid security code' in rc:
+                    raise FutError(reason='Error during login process - provided code is incorrect.')
+                if 'Set Up an App Authenticator' in rc:
+                    rc = self.r.post(url.replace('s3', 's4'), {'_eventId': 'cancel', 'appDevice': 'IPHONE'}, timeout=self.timeout)
+                    self.logger.debug(rc.content)
+                    # rc = rc.text
+
+        self.r.headers['Referer'] = self.urls['fut_home']  # prepare headers
         if self.r.get(self.urls['main_site'] + '/fifa/api/isUserLoggedIn', timeout=self.timeout).json()['isLoggedIn'] is not True:  # TODO: parse error?
             raise FutError(reason='Error during login process (probably invalid email or password.')
         # TODO: catch invalid data exception
         # self.nucleus_id = re.search('userid : "([0-9]+)"', rc.text).group(1)  # we'll get it later
 
         # === lanuch futweb
-        self.r.headers['Referer'] = self.urls['fut_home']  # prepare headers
         rc = self.r.get(self.urls['futweb'], timeout=self.timeout)
         self.logger.debug(rc.content)
         rc = rc.text
