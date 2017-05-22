@@ -248,6 +248,11 @@ class Core(object):
         # TODO: split into smaller methods
         # TODO: check first if login is needed (https://www.easports.com/fifa/api/isUserLoggedIn)
         # TODO: get gamesku, url from shards !!
+
+        if not email:               raise FutError('Missing email')
+        elif not passwd:            raise FutError('Missing password')
+        elif not secret_answer:     raise FutError('Missing secret answer')
+
         self.emulate = emulate
         secret_answer_hash = EAHashingAlgorithm().EAHash(secret_answer)
         # create session
@@ -326,6 +331,13 @@ class Core(object):
             rc = self.r.post(self.urls['login'], data=data, timeout=self.timeout)
             self.logger.debug(rc.content)
             # rc = rc.text
+
+            if "'successfulLogin': false" in rc.text:
+                self.logger.debug(rc.content)
+                failedReason = re.search('general-error">\s+<div>\s+<div>\s+(.*)\s.+', rc.text).group(1)
+                #print(failedReason)
+                raise FutError(reason=failedReason)
+
             if 'var redirectUri' in rc.text:
                 rc = self.r.get(rc.url + '&_eventId=end') # initref param was missing here
                 self.logger.debug(rc.content)
@@ -356,13 +368,8 @@ class Core(object):
                     self.logger.debug(rc.content)
                     # rc = rc.text
 
-        self.r.headers['Referer'] = self.urls['fut_home']  # prepare headers
-        if self.r.get(self.urls['main_site'] + '/fifa/api/isUserLoggedIn', timeout=self.timeout).json()['isLoggedIn'] is not True:  # TODO: parse error?
-            raise FutError(reason='Error during login process (probably invalid email or password.)')
-        # TODO: catch invalid data exception
-        # self.nucleus_id = re.search('userid : "([0-9]+)"', rc.text).group(1)  # we'll get it later
-
         # === lanuch futweb
+        self.r.headers['Referer'] = self.urls['fut_home']  # prepare headers
         rc = self.r.get(self.urls['futweb'], timeout=self.timeout)
         self.logger.debug(rc.content)
         rc = rc.text
@@ -374,6 +381,10 @@ class Core(object):
         # self.urls['fut_home'] = re.search("var GUEST_APP_URI = '(http://.+?)';", rc).group(1)
 
         self.urls = urls(platform, self.build_cl)
+
+        # Just in case
+        if self.r.get(self.urls['main_site'] + '/fifa/api/isUserLoggedIn', timeout=self.timeout).json()['isLoggedIn'] is not True:  # TODO: parse error?
+            raise FutError(reason='Error during login process (probably invalid email or password.)')
 
         # acc info
         self.r.headers.update({  # prepare headers
