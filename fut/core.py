@@ -94,7 +94,7 @@ def itemParse(item_data, full=True):
             'training':      item_data['itemData'].get('training'),
             'suspension':    item_data['itemData'].get('suspension'),
             'contract':      item_data['itemData'].get('contract'),
-            # 'position':     item_data['itemData']['preferredPosition'],
+            'position':     item_data['itemData'].get('preferredPosition'),
             'playStyle':     item_data['itemData'].get('playStyle'),  # used only for players
             'discardValue':  item_data['itemData'].get('discardValue'),
             'itemType':      item_data['itemData'].get('itemType'),
