@@ -61,7 +61,7 @@ def itemParse(item_data, full=True):
     :params full: (optional) False if You're snipping and don't need extended info. Anyone really use this?
     """
     # TODO: object
-    # TODO: parse all data
+    # TODO: dynamic parse all data
     return_data = {
         'tradeId':           item_data.get('tradeId'),
         'buyNowPrice':       item_data.get('buyNowPrice'),
@@ -79,27 +79,39 @@ def itemParse(item_data, full=True):
     }
     if full:
         return_data.update({
-            'timestamp':     item_data['itemData'].get('timestamp'),  # auction start
-            'rating':        item_data['itemData'].get('rating'),
-            'assetId':       item_data['itemData'].get('assetId'),
-            'resourceId':    item_data['itemData'].get('resourceId'),
-            'itemState':     item_data['itemData'].get('itemState'),
-            'rareflag':      item_data['itemData'].get('rareflag'),
-            'formation':     item_data['itemData'].get('formation'),
-            'leagueId':      item_data['itemData'].get('leagueId'),
-            'injuryType':    item_data['itemData'].get('injuryType'),
-            'injuryGames':   item_data['itemData'].get('injuryGames'),
-            'lastSalePrice': item_data['itemData'].get('lastSalePrice'),
-            'fitness':       item_data['itemData'].get('fitness'),
-            'training':      item_data['itemData'].get('training'),
-            'suspension':    item_data['itemData'].get('suspension'),
-            'contract':      item_data['itemData'].get('contract'),
-            'position':     item_data['itemData'].get('preferredPosition'),
-            'playStyle':     item_data['itemData'].get('playStyle'),  # used only for players
-            'discardValue':  item_data['itemData'].get('discardValue'),
-            'itemType':      item_data['itemData'].get('itemType'),
-            'cardType':      item_data['itemData'].get("cardsubtypeid"),  # used only for cards
-            'owners':        item_data['itemData'].get('owners'),
+            'timestamp':       item_data['itemData'].get('timestamp'),  # auction start
+            'rating':          item_data['itemData'].get('rating'),
+            'assetId':         item_data['itemData'].get('assetId'),
+            'resourceId':      item_data['itemData'].get('resourceId'),
+            'itemState':       item_data['itemData'].get('itemState'),
+            'rareflag':        item_data['itemData'].get('rareflag'),
+            'formation':       item_data['itemData'].get('formation'),
+            'leagueId':        item_data['itemData'].get('leagueId'),
+            'injuryType':      item_data['itemData'].get('injuryType'),
+            'injuryGames':     item_data['itemData'].get('injuryGames'),
+            'lastSalePrice':   item_data['itemData'].get('lastSalePrice'),
+            'fitness':         item_data['itemData'].get('fitness'),
+            'training':        item_data['itemData'].get('training'),
+            'suspension':      item_data['itemData'].get('suspension'),
+            'contract':        item_data['itemData'].get('contract'),
+            'position':        item_data['itemData'].get('preferredPosition'),
+            'playStyle':       item_data['itemData'].get('playStyle'),  # used only for players
+            'discardValue':    item_data['itemData'].get('discardValue'),
+            'itemType':        item_data['itemData'].get('itemType'),
+            'cardType':        item_data['itemData'].get("cardsubtypeid"),  # used only for cards
+            'owners':          item_data['itemData'].get('owners'),
+            'untradeable':     item_data['itemData'].get('untradeable'),
+            'morale':          item_data['itemData'].get('morale'),
+            'statsList':       item_data['itemData'].get('statsList'),  # what is this?
+            'lifetimeStats':   item_data['itemData'].get('lifetimeStats'),
+            'attributeList':   item_data['itemData'].get('attributeList'),
+            'teamid':          item_data['itemData'].get('teamid'),
+            'assists':         item_data['itemData'].get('assists'),
+            'lifetimeAssists': item_data['itemData'].get('lifetimeAssists'),
+            'loyaltyBonus':    item_data['itemData'].get('loyaltyBonus'),
+            'pile':            item_data['itemData'].get('pile'),
+            'nation':          item_data['itemData'].get('nation'),  # nation_id?
+            'year':            item_data['itemData'].get('resourceGameYear'),
         })
     return return_data
 
@@ -110,6 +122,7 @@ def itemParseConsumable(item_data):
 
     :params item_data: Item data received from ea servers.
     """
+    # TODO: merge into itemParse
     return_data = {
         'discardValue': item_data.get('discardValue'),
         'year': item_data.get('resourceGameYear'),
@@ -242,7 +255,7 @@ class Core(object):
         :params passwd: Password.
         :params secret_answer: Answer for secret question.
         :params platform: (optional) [pc/xbox/xbox360/ps3/ps4] Platform.
-        :params code: (optional) Security code generated in origin or send via mail/sms.
+        :params code: (optional) Security code generated in origin or sent via mail/sms.
         :params emulate: (optional) [and/ios] Emulate mobile device.
         """
         # TODO: split into smaller methods
@@ -335,11 +348,10 @@ class Core(object):
             if "'successfulLogin': false" in rc.text:
                 self.logger.debug(rc.content)
                 failedReason = re.search('general-error">\s+<div>\s+<div>\s+(.*)\s.+', rc.text).group(1)
-                #print(failedReason)
                 raise FutError(reason=failedReason)
 
             if 'var redirectUri' in rc.text:
-                rc = self.r.get(rc.url + '&_eventId=end') # initref param was missing here
+                rc = self.r.get(rc.url + '&_eventId=end')  # initref param was missing here
                 self.logger.debug(rc.content)
 
             '''  # pops out only on first launch
