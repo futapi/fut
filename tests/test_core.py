@@ -7,11 +7,14 @@ import unittest
 import responses
 import re
 import json
-from sys import path
+from sys import path, version_info
 
 from fut import core
 from fut.urls import urls
 from fut.exceptions import FutError
+
+if version_info[0] == 2:  # utf8 for python2
+    from codecs import open
 
 
 class FutCoreTestCase(unittest.TestCase):
@@ -57,7 +60,7 @@ class FutCoreTestCase(unittest.TestCase):
         # TODO: drop re, use xmltodict
         # TODO: year in config
         year = 2017
-        rc = open(path[0] + '/tests/data/messages.en_US.xml', 'r').read()
+        rc = open(path[0] + '/tests/data/messages.en_US.xml', 'r', encoding='utf8').read()
         for i in re.findall('<trans-unit resname="search.nationName.nation([0-9]+)">\n        <source>(.+)</source>', rc[:]):
             self.assertEqual(self.db_nations[int(i[0])], i[1])
 
