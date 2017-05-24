@@ -42,3 +42,7 @@ class FutLogTestCase(unittest.TestCase):
     #     self.logger.debug('test ąćóżź')
     #     log_dump = open('fut.log', 'r').read()
     #     self.assertEqual(log_dump, '')
+
+
+if __name__ == '__main__':
+    unittest.main()
