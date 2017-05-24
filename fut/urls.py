@@ -7,10 +7,10 @@ from .config import timeout
 from .exceptions import FutError
 
 
-def __updateUrls__(urls, cl, site_config):
+def __updateUrls__(urls, cl):
         """Get services urls."""
         urls['fut_config'] = '%s?cl=%s' % (urls['fut_config'], cl)
-        rc = xmltodict.parse(site_config)
+        rc = xmltodict.parse(requests.get(urls['fut_config'], timeout=timeout).content)
         services = rc['main']['services']['prod']
         path = '{0}{1}game/fifa17/'.format(urls['fut_host'], rc['main']['directHttpServiceDestination'])
         path_auth = '{0}/iframe/fut17{1}'.format(urls['main_site'], rc['main']['httpServiceDestination'])
@@ -22,7 +22,7 @@ def __updateUrls__(urls, cl, site_config):
         return urls
 
 
-def urls(platform, cl=None, site_config=None):
+def urls(platform, cl=None):
     """Return services urls."""
     urls = {
         'main_site':             'https://www.easports.com',
@@ -32,7 +32,6 @@ def urls(platform, cl=None, site_config=None):
         'fut':                   {},  # it's updated dynamicly (based on fut_config)
         'fut_question':          'https://www.easports.com/iframe/fut17/p/ut/game/fifa17/phishing/question',  # add timestamp
         'fut_validate':          'https://www.easports.com/iframe/fut17/p/ut/game/fifa17/phishing/validate',
-        'fut_auth':              'https://www.easports.com/iframe/fut17/p/ut/auth',
         'fut_captcha_img':       'https://www.easports.com/iframe/fut17/p/ut/captcha/img',  # add timestamp
         'fut_captcha_validate':  'https://www.easports.com/iframe/fut17/p/ut/captcha/validate',
 
@@ -44,7 +43,7 @@ def urls(platform, cl=None, site_config=None):
                                   'ios':     'https://utas.external.fut.ea.com:443',
                                   'and':     'https://utas.external.fut.ea.com:443'},
 
-        'shards':                'https://www.easports.com/iframe/fut17/p/ut/shards/v2',
+        'shards':                'https://www.easports.com/iframe/fut17/p/ut/shards',  # add timestamp
         'acc_info':              'https://www.easports.com/iframe/fut17/p/ut/game/fifa17/user/accountinfo',
         'card_info':             'https://fifa17.content.easports.com/fifa/fltOnlineAssets/CC8267B6-0817-4842-BB6A-A20F88B05418/2017/fut/items/web/',
         'messages':              'https://www.easports.com/iframe/fut17/bundles/futweb/web/flash/xml/localization/messages.en_US.xml',  # add cl
@@ -57,7 +56,7 @@ def urls(platform, cl=None, site_config=None):
     else:
         raise FutError('Invalid platform. (Valid ones are pc/ps3/xbox/and/ios).')
 
-    if cl and site_config:
-        return __updateUrls__(urls, cl, site_config)
+    if cl:
+        return __updateUrls__(urls, cl)
     else:
         return urls
