@@ -380,7 +380,7 @@ class Core(object):
                     self.logger.debug(rc.content)
                     # rc = rc.text
 
-        # === lanuch futweb
+        # === launch futweb
         self.r.headers['Referer'] = self.urls['fut_home']  # prepare headers
         rc = self.r.get(self.urls['futweb'], timeout=self.timeout)
         self.logger.debug(rc.content)
@@ -391,8 +391,6 @@ class Core(object):
         self.build_cl = re.search("var BUILD_CL = '([0-9]+)';", rc).group(1)
         # self.urls['fut_base'] = re.search("var BASE_FUT_URL = '(https://.+?)';", rc).group(1)
         # self.urls['fut_home'] = re.search("var GUEST_APP_URI = '(http://.+?)';", rc).group(1)
-
-        self.urls = urls(platform, self.build_cl)
 
         # Just in case
         if self.r.get(self.urls['main_site'] + '/fifa/api/isUserLoggedIn', timeout=self.timeout).json()['isLoggedIn'] is not True:  # TODO: parse error?
@@ -446,7 +444,7 @@ class Core(object):
                 'method': 'authcode',
                 'priorityLevel': 4,
                 'identification': {'AuthCode': ''}}
-        rc = self.r.post(self.urls['fut']['authentication'], data=json.dumps(data), timeout=self.timeout)
+        rc = self.r.post(self.urls['fut_auth'], data=json.dumps(data), timeout=self.timeout)
         self.logger.debug(rc.content)
         if rc.status_code == 500:
             raise InternalServerError('Servers are probably temporary down.')
@@ -481,18 +479,34 @@ class Core(object):
                 else:
                     raise UnknownError
             self.r.headers['Content-Type'] = 'application/json'
-        self.r.headers['X-UT-PHISHING-TOKEN'] = self.token = rc['token']
+        self.token = rc['token']
+
+        # prepare headers for site_config.xml request
+        del self.r.headers['Easw-Session-Data-Nucleus-Id']
+        del self.r.headers['X-UT-Route']
+        del self.r.headers['X-UT-SID']
+        del self.r.headers['X-UT-Embed-Error']
+        del self.r.headers['Content-Type']
+        self.r.headers.update({
+            'X-Requested-With': flash_agent,
+            'Accept': '*/*',
+        })
+
+        # Parse site_config.xml
+        # TODO?: Save response to file only on first login
+        rc = self.r.get(self.urls['fut_config'], params={'cl' : self.build_cl}, timeout=self.timeout)
+        self.urls = urls(platform, self.build_cl, rc.content)
 
         # prepare headers for ut operations
-        del self.r.headers['Easw-Session-Data-Nucleus-Id']
-        del self.r.headers['X-Requested-With']
-        del self.r.headers['X-UT-Route']
         self.r.headers.update({
             'X-HTTP-Method-Override': 'GET',  # necessary for usermassinfo request
             'X-Requested-With': flash_agent,
+            'X-UT-Embed-Error': 'true',
+            'X-UT-SID' : self.sid,
+            'X-UT-PHISHING-TOKEN' : self.token,
             'Referer': 'https://www.easports.com/iframe/fut17/bundles/futweb/web/flash/FifaUltimateTeam.swf',
             'Origin': 'https://www.easports.com',
-            # 'Content-Type': 'application/json',  # already set
+            'Content-Type': 'application/json',
             'Accept': 'application/json',
         })
 
