@@ -79,81 +79,53 @@ def itemParse(item_data, full=True):
     }
     if full:
         return_data.update({
-            'timestamp':       item_data['itemData'].get('timestamp'),  # auction start
-            'rating':          item_data['itemData'].get('rating'),
-            'assetId':         item_data['itemData'].get('assetId'),
-            'resourceId':      item_data['itemData'].get('resourceId'),
-            'itemState':       item_data['itemData'].get('itemState'),
-            'rareflag':        item_data['itemData'].get('rareflag'),
-            'formation':       item_data['itemData'].get('formation'),
-            'leagueId':        item_data['itemData'].get('leagueId'),
-            'injuryType':      item_data['itemData'].get('injuryType'),
-            'injuryGames':     item_data['itemData'].get('injuryGames'),
-            'lastSalePrice':   item_data['itemData'].get('lastSalePrice'),
-            'fitness':         item_data['itemData'].get('fitness'),
-            'training':        item_data['itemData'].get('training'),
-            'suspension':      item_data['itemData'].get('suspension'),
-            'contract':        item_data['itemData'].get('contract'),
-            'position':        item_data['itemData'].get('preferredPosition'),
-            'playStyle':       item_data['itemData'].get('playStyle'),  # used only for players
-            'discardValue':    item_data['itemData'].get('discardValue'),
-            'itemType':        item_data['itemData'].get('itemType'),
-            'cardType':        item_data['itemData'].get("cardsubtypeid"),  # used only for cards
-            'owners':          item_data['itemData'].get('owners'),
-            'untradeable':     item_data['itemData'].get('untradeable'),
-            'morale':          item_data['itemData'].get('morale'),
-            'statsList':       item_data['itemData'].get('statsList'),  # what is this?
-            'lifetimeStats':   item_data['itemData'].get('lifetimeStats'),
-            'attributeList':   item_data['itemData'].get('attributeList'),
-            'teamid':          item_data['itemData'].get('teamid'),
-            'assists':         item_data['itemData'].get('assists'),
-            'lifetimeAssists': item_data['itemData'].get('lifetimeAssists'),
-            'loyaltyBonus':    item_data['itemData'].get('loyaltyBonus'),
-            'pile':            item_data['itemData'].get('pile'),
-            'nation':          item_data['itemData'].get('nation'),  # nation_id?
-            'year':            item_data['itemData'].get('resourceGameYear'),
+            'timestamp':        item_data['itemData'].get('timestamp'),  # auction start
+            'rating':           item_data['itemData'].get('rating'),
+            'assetId':          item_data['itemData'].get('assetId'),
+            'resourceId':       item_data['itemData'].get('resourceId'),
+            'itemState':        item_data['itemData'].get('itemState'),
+            'rareflag':         item_data['itemData'].get('rareflag'),
+            'formation':        item_data['itemData'].get('formation'),
+            'leagueId':         item_data['itemData'].get('leagueId'),
+            'injuryType':       item_data['itemData'].get('injuryType'),
+            'injuryGames':      item_data['itemData'].get('injuryGames'),
+            'lastSalePrice':    item_data['itemData'].get('lastSalePrice'),
+            'fitness':          item_data['itemData'].get('fitness'),
+            'training':         item_data['itemData'].get('training'),
+            'suspension':       item_data['itemData'].get('suspension'),
+            'contract':         item_data['itemData'].get('contract'),
+            'position':         item_data['itemData'].get('preferredPosition'),
+            'playStyle':        item_data['itemData'].get('playStyle'),  # used only for players
+            'discardValue':     item_data['itemData'].get('discardValue'),
+            'itemType':         item_data['itemData'].get('itemType'),
+            'cardType':         item_data['itemData'].get('cardsubtypeid'),  # alias
+            'cardsubtypeid':    item_data['itemData'].get('cardsubtypeid'),  # used only for cards
+            'owners':           item_data['itemData'].get('owners'),
+            'untradeable':      item_data['itemData'].get('untradeable'),
+            'morale':           item_data['itemData'].get('morale'),
+            'statsList':        item_data['itemData'].get('statsList'),  # what is this?
+            'lifetimeStats':    item_data['itemData'].get('lifetimeStats'),
+            'attributeList':    item_data['itemData'].get('attributeList'),
+            'teamid':           item_data['itemData'].get('teamid'),
+            'assists':          item_data['itemData'].get('assists'),
+            'lifetimeAssists':  item_data['itemData'].get('lifetimeAssists'),
+            'loyaltyBonus':     item_data['itemData'].get('loyaltyBonus'),
+            'pile':             item_data['itemData'].get('pile'),
+            'nation':           item_data['itemData'].get('nation'),  # nation_id?
+            'year':             item_data['itemData'].get('resourceGameYear'),  # alias
+            'resourceGameYear': item_data['itemData'].get('resourceGameYear'),
+            'count':            item_data.get('count'),  # consumables only (?)
+            'untradeableCount': item_data.get('untradeableCount'),  # consumables only (?)
         })
-    return return_data
+        if 'item' in item_data:  # consumables only (?)
+            return_data.update({
+                'cardassetid':  item_data['item'].get('cardassetid'),
+                'weightrare':   item_data['item'].get('weightrare'),
+                'gold':         item_data['item'].get('gold'),
+                'silver':       item_data['item'].get('silver'),
+                'bronze':       item_data['item'].get('bronze'),
+            })
 
-
-def itemParseConsumable(item_data):
-    """Parser for item data for consumables. Returns nice dictionary.
-    It's going to be merged with itemParse someday.
-
-    :params item_data: Item data received from ea servers.
-    """
-    # TODO: merge into itemParse
-    return_data = {
-        'discardValue': item_data.get('discardValue'),
-        'year': item_data.get('resourceGameYear'),
-        'count': item_data.get('count'),
-        'untradeableCount': item_data.get('untradeableCount'),
-        'resourceId': item_data.get('resourceId'),
-        'suspension': item_data['item'].get('suspension'),
-        'owners': item_data['item'].get('owners'),
-        'statsList': item_data['item'].get('statsList'),
-        'contract': item_data['item'].get('contract'),  # allways 7?
-        'rareflag': item_data['item'].get('rareflag'),
-        'cardsubtypeid': item_data['item'].get('cardsubtypeid'),  # sub-type id?
-        'timestamp': item_data['item'].get('timestamp'),  # 1484636822? buy timestamp?
-        'cardassetid': item_data['item'].get('cardassetid'),
-        'id': item_data['item'].get('id'),  # item_id i suppose
-        'attributeList': item_data['item'].get('attributeList'),
-        'weightrare': item_data['item'].get('weightrare'),
-        'pile': item_data['item'].get('pile'),  # same as contract? count maybe?
-        'morale': item_data['item'].get('morale'),
-        'training': item_data['item'].get('training'),
-        'gold': item_data['item'].get('gold'),
-        'silver': item_data['item'].get('silver'),
-        'bronze': item_data['item'].get('bronze'),
-        'injuryGames': item_data['item'].get('injuryGames'),
-        'lastSalePrice': item_data['item'].get('lastSalePrice'),
-        'fitness': item_data['item'].get('fitness'),
-        'untradeable': item_data['item'].get('untradeable'),
-        'rating': item_data['item'].get('rating'),
-        'lifetimeStats': item_data['item'].get('lifetimeStats'),
-        'nation': item_data['item'].get('nation')
-    }
     return return_data
 
 
@@ -820,7 +792,7 @@ class Core(object):
     def clubConsumablesDetails(self):
         """Return all consumables details."""
         rc = self.__get__('{0}{1}'.format(self.urls['fut']['ClubConsumableSearch'], '/development'))
-        return [{itemParseConsumable(i) for i in rc.get('itemData', ())}]
+        return [{itemParse(i) for i in rc.get('itemData', ())}]
 
     def squad(self, squad_id=0):
         """Return a squad.
