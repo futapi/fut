@@ -1,9 +1,7 @@
 # -*- coding: utf-8 -*-
 
-import requests
 import xmltodict
 
-from .config import timeout
 from .exceptions import FutError
 
 

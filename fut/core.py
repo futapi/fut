@@ -138,7 +138,7 @@ def cardInfo(resource_id):
 '''
 
 
-# TODO: optimize messages, xml parser might be faster
+# TODO: optimize messages (parse whole messages once!), xml parser might be faster
 def nations(timeout=timeout):
     """Return all nations in dict {id0: nation0, id1: nation1}.
 
@@ -184,6 +184,21 @@ def teams(year=2017, timeout=timeout):
     return teams
 
 
+def stadiums(year=2017, timeout=timeout):
+    """Return all stadium in dict {id0: stadium0, id1: stadium1}.
+
+    :params year: Year.
+    """
+    rc = requests.get(urls('pc')['messages'], timeout=timeout)
+    rc.encoding = 'utf-8'  # guessing takes huge amount of cpu time
+    rc = rc.text
+    data = re.findall('<trans-unit resname="global.stadiumFull.%s.stadium([0-9]+)">\n        <source>(.+)</source>' % year, rc)
+    stadiums = {}
+    for i in data:
+        stadiums[int(i[0])] = i[1]
+    return stadiums
+
+
 def players(timeout=timeout):
     """Return all players in dict {id: c, f, l, n, r}.
     id, rank, nationality(?), first name, last name.
@@ -198,6 +213,21 @@ def players(timeout=timeout):
                             'rating': i['r'],
                             'nationality': i['n']}  # replace with nationality object when created
     return players
+
+
+def playstyles(year=2017, timeout=timeout):
+    """Return all playstyles in dict {id0: playstyle0, id1: playstyle1}.
+
+    :params year: Year.
+    """
+    rc = requests.get(urls('pc')['messages'], timeout=timeout)
+    rc.encoding = 'utf-8'  # guessing takes huge amount of cpu time
+    rc = rc.text
+    data = re.findall('<trans-unit resname="playstyles.%s.playstyle([0-9]+)">\n        <source>(.+)</source>' % year, rc)
+    playstyles = {}
+    for i in data:
+        playstyles[int(i[0])] = i[1]
+    return playstyles
 
 
 class Core(object):
@@ -613,6 +643,16 @@ class Core(object):
         return self._players
 
     @property
+    def playstyles(self, year=2017):
+        """Return all playstyles in dict {id0: playstyle0, id1: playstyle1}.
+
+        :params year: Year.
+        """
+        if not self._playstyles:
+            self._playstyles = playstyles()
+        return self._playstyles
+
+    @property
     def nations(self):
         """Return all nations in dict {id0: nation0, id1: nation1}.
 
@@ -641,6 +681,16 @@ class Core(object):
         if year not in self._teams:
             self._teams[year] = teams(year)
         return self._teams[year]
+
+    @property
+    def stadiums(self):
+        """Return all stadiums in dict {id0: stadium0, id1: stadium1}.
+
+        :params year: Year.
+        """
+        if not self._stadiums:
+            self._stadiums = stadiums()
+        return self._stadiums
 
     def saveSession(self):
         """Save cookies/session."""

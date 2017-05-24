@@ -55,7 +55,9 @@ class FutCoreTestCase(unittest.TestCase):
         self.db_nations = core.nations()
         self.db_leagues = core.leagues()
         self.db_teams = core.teams()
+        self.db_stadiums = core.stadiums()
         self.db_players = core.players()
+        self.db_playstyles = core.playstyles()
 
         # TODO: drop re, use xmltodict
         # TODO: year in config
@@ -69,6 +71,12 @@ class FutCoreTestCase(unittest.TestCase):
 
         for i in re.findall('<trans-unit resname="global.teamFull.%steam([0-9]+)">\n        <source>(.+)</source>' % year, rc[:]):
             self.assertEqual(self.db_teams[int(i[0])], i[1])
+
+        for i in re.findall('<trans-unit resname="global.stadiumFull.%sstadium([0-9]+)">\n        <source>(.+)</source>' % year, rc[:]):
+            self.assertEqual(self.db_stadiums[int(i[0])], i[1])
+
+        for i in re.findall('<trans-unit resname="playstyles.%splaystyle([0-9]+)">\n        <source>(.+)</source>' % year, rc[:]):
+            self.assertEqual(self.db_playstyles[int(i[0])], i[1])
 
         rc = json.loads(open(path[0] + '/tests/data/players.json', 'r').read())
         for i in rc['Players'] + rc['LegendsPlayers']:
