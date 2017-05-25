@@ -214,7 +214,9 @@ Database if fully cached at first invocation so there won't by any additional re
     >>> fut.nations
     >>> fut.leagues
     >>> fut.teams
+    >>> fut.stadiums
     >>> fut.players
+    >>> fut.playstyles
 
 You can access database even without login:
 
@@ -224,7 +226,9 @@ You can access database even without login:
     >>> nations = fut.core.nations()
     >>> leagues = fut.core.leagues()
     >>> teams = fut.core.teams()
+    >>> stadiums = fut.core.stadiums()
     >>> players = fut.core.players()
+    >>> playestyles = fut.core.playstyles()
 
 
 Convert Team/League/Nation/Player id to name
@@ -238,8 +242,12 @@ Convert Team/League/Nation/Player id to name
     ... 'Alka Superliga'
     >>> teams[1]
     ... 'Arsenal'
+    >>> stadiums[1]
+    ... 'Old Trafford'
     >>> players[1]
     ... {'rating': 88, 'lastname': 'Seaman', 'id': 1, 'firstname': 'David', 'nationality': 14, 'surname': None}
+    >>> playstyles[250]
+    ... 'BASIC'
 
 
 Item object (dict) structure
