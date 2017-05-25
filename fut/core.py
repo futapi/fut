@@ -447,7 +447,7 @@ class Core(object):
                 'method': 'authcode',
                 'priorityLevel': 4,
                 'identification': {'AuthCode': ''}}
-        rc = self.r.post(self.urls['fut_auth'], data=json.dumps(data), timeout=self.timeout)
+        rc = self.r.post(self.urls['fut_auth'], data=json.dumps(data), params={'sku_a': self.sku_a}, timeout=self.timeout)
         self.logger.debug(rc.content)
         if rc.status_code == 500:
             raise InternalServerError('Servers are probably temporary down.')
@@ -466,10 +466,10 @@ class Core(object):
         # validate (secret question)
         self.r.headers['Accept'] = 'text/json'  # prepare headers
         del self.r.headers['Origin']
-        rc = self.r.get(self.urls['fut_question'], params={'_': int(time.time() * 1000)}, timeout=self.timeout)
+        rc = self.r.get(self.urls['fut_question'], params={'_': int(time.time() * 1000), "redirect": "false"}, timeout=self.timeout)
         self.logger.debug(rc.content)
         rc = rc.json()
-        if rc.get('string') != 'Already answered question.':
+        if rc.get('string') != 'Already answered question':
             # answer question
             data = {'answer': secret_answer_hash}
             self.r.headers['Content-Type'] = 'application/x-www-form-urlencoded'  # requests bug?
