@@ -328,6 +328,7 @@ class Core(object):
         else:
             raise FutError(reason='Invalid emulate parameter. (Valid ones are and/ios).')  # pc/ps3/xbox/
         self.sku = sku  # TODO: use self.sku in all class
+        self.sku_a = 'F17'
         # === login
         self.urls['login'] = self.r.get(self.urls['fut_home'], timeout=self.timeout).url
         if self.urls['login'] != self.urls['fut_home']:
@@ -876,12 +877,12 @@ class Core(object):
 
     def tradepile(self):
         """Return items in tradepile."""
-        rc = self.__get__(self.urls['fut']['TradePile'], params={'brokeringSku': self.sku})
+        rc = self.__get__(self.urls['fut']['TradePile'], params={'sku_a': self.sku_a, 'brokeringSku': self.sku})
         return [itemParse(i) for i in rc.get('auctionInfo', ())]
 
     def watchlist(self):
         """Return items in watchlist."""
-        rc = self.__get__(self.urls['fut']['WatchList'])  # , params={'brokeringSku': self.sku}
+        rc = self.__get__(self.urls['fut']['WatchList'], params={'sku_a': self.sku_a})  # , params={'brokeringSku': self.sku}
         return [itemParse(i) for i in rc.get('auctionInfo', ())]
 
     def unassigned(self):
