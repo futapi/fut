@@ -4,7 +4,7 @@ Changelog
 ---------
 
 
-0.2.18 (2017-0?-??)
+0.2.18 (2017-05-25)
 ^^^^^^^^^^^^^^^^^^^
 
 * do not force log in when not necessary (thanks to xAranaktu #264)
@@ -12,6 +12,7 @@ Changelog
 * reenable postion parsing & add missing keys in item_data parser (fix #265)
 * unify item_data keys for players & consumables
 * add playstyles & stadiums
+* add missing param sku_a (thanks to rafaelget #259)
 
 0.2.17 (2017-05-20)
 ^^^^^^^^^^^^^^^^^^^
