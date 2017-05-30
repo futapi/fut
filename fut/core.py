@@ -476,7 +476,7 @@ class Core(object):
             rc = self.r.post(self.urls['fut_validate'], data=data, timeout=self.timeout)
             self.logger.debug(rc.content)
             rc = rc.json()
-            if rc['string'] != 'OK':  # we've got error
+            if rc['string'] != 'OK':  # we've got an error
                 # Known reasons:
                 # * invalid secret answer
                 # * No remaining attempt
