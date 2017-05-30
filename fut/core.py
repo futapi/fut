@@ -477,10 +477,10 @@ class Core(object):
             self.logger.debug(rc.content)
             rc = rc.json()
             if rc['string'] != 'OK':  # we've got error
-                if 'Answers do not match' in rc['reason']:
-                    raise FutError(reason='Error during login process (invalid secret answer).')
-                else:
-                    raise UnknownError
+                # Known reasons:
+                # * invalid secret answer
+                # * No remaining attempt
+                raise FutError(reason='Error during login process (%s).' % (rc['reason']))
             self.r.headers['Content-Type'] = 'application/json'
         self.token = rc['token']
 
