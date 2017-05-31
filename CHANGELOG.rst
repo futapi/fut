@@ -4,10 +4,6 @@ Changelog
 ---------
 
 
-0.2.19 (2017-0?-?)
-^^^^^^^^^^^^^^^^^^^
-* add rare param in searchAuctions
-
 0.2.18 (2017-05-25)
 ^^^^^^^^^^^^^^^^^^^
 
@@ -326,7 +322,7 @@ Changelog
 0.0.5 (2013-12-23)
 ^^^^^^^^^^^^^^^^^^
 
-* core: add assetId param to searchAuctions method
+* core: add assetId param to searchAuction method
 * core: add pileSize
 * core: add leagueId to item data parser
 
