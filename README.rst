@@ -23,7 +23,8 @@ It is written entirely in Python.
 
 
 
-# Documentation
+Documentation
+=============
 
 Documentation will be available soon at http://fut.readthedocs.org/.
 
@@ -32,94 +33,102 @@ Players database: https://www.easports.com/uk/fifa/ultimate-team/fut/database
 Players database (json): http://cdn.content.easports.com/fifa/fltOnlineAssets/CC8267B6-0817-4842-BB6A-A20F88B05418/2017/fut/items/web/players.json
 
 
-### AutoBuyer GUI
+AutoBuyer GUI
+-------------
 
 If You're looking for "user friendly" autobuyer take a look at hunterjm's project (dead probably):
 https://github.com/hunterjm/futgui/releases
 
 
 
-## Usage
+Usage
+=====
 
-### Login
+Login
+-----
 
-#### Optional parameters:
+Optional parameters:
 
-- **code**: [string] email/sms code for two-step verification (make sure to use string if your code starts with 0).
-- **platform**: [pc/ps3/ps4/xbox/xbox360] pc default.
-- **emualte**: [and/ios] use this feature to avoid webapp errors (BE WARE IT'S HIGH RISK).
-- **debug**: [True/False] enables debug.
-- **cookies**: [filename] saves cookies after every request and load it from given file when restaring app (just like browser).
+- code: [string] email/sms code for two-step verification (make sure to use string if your code starts with 0).
+- platform: [pc/ps3/ps4/xbox/xbox360] pc default.
+- emualte: [and/ios] use this feature to avoid webapp errors (BE WARE IT'S HIGH RISK).
+- debug: [True/False] enables debug.
+- cookies: [filename] saves cookies after every request and load it from given file when restaring app (just like browser).
 
 .. code-block:: python
 
     >>> import fut
     >>> fut = fut.Core('email', 'password', 'secret answer')
 
-### Search
+Search
+------
 
-#### Optional parameters:
+Optional parameters:
 
-- **min_price**: [int] Minimal price.
-- **max_price**: [int] Maximum price.
-- **min_buy**: [int] Minimal buy now price.
-- **max_buy**: [int] Maximum buy now price.
-- **level**: ['bronze'/'silver'/gold'] Card level.
-- **rare**: [bool] True for rare only results.
-- **start**: [int] Start page number.
-- **category**: ['fitness'/'?'] Card category.
-- **assetId**: [int] assetId.
-- **defId**: [int] defId.
-- **league**: [int] League id.
-- **club**: [int] Club id.
-- **position**: [int?/str?] Position.
-- **nationality**: [int] Nation id.
-- **playStyle**: [str?] playStyle.
-- **page_size**: [int] Amount of cards on single page (changing this might be risky).
+- min_price: [int] Minimal price.
+- max_price: [int] Maximum price.
+- min_buy: [int] Minimal buy now price.
+- max_buy: [int] Maximum buy now price.
+- level: ['bronze'/'silver'/gold'] Card level.
+- rare: [bool] True for rare only results.
+- start: [int] Start page number.
+- category: ['fitness'/'?'] Card category.
+- assetId: [int] assetId.
+- defId: [int] defId.
+- league: [int] League id.
+- club: [int] Club id.
+- position: [int?/str?] Position.
+- nationality: [int] Nation id.
+- playStyle: [str?] playStyle.
+- page_size: [int] Amount of cards on single page (changing this might be risky).
 
 .. code-block:: python
 
     >>> items = fut.searchAuctions('development')
 
-### Bid
+Bid
+---
 
-#### Optional parameters:
+Optional parameters:
 
-- **fast**: [bool] True for skipping trade status & credits check.
+- FAST: [boolean] True for skipping trade status & credits check.
 
 .. code-block:: python
 
     >>> fut.bid(items[0]['trade_id'], 600)
 
-### Sell
+Sell
+----
 
-#### Optional parameters:
+Optional parameters:
 
-- **buy_now**: [int] Buy now price.
-- **duration**: [int] Auction duration in seconds (3600 default).
+- buy_now: [int] Buy now price.
+- duration: [int] Auction duration in seconds (3600 default).
 
 .. code-block:: python
 
     >>>     fut.sell(item['item_id'], 150)
 
-### Quick sell
+Quick sell
+----------
 
-##### single item:
+single item:
 
 .. code-block:: python
 
     >>> item_id = 123456789
     >>> fut.quickSell(item_id)
 
-##### multiple items:
+multiple items:
 
 .. code-block:: python
 
     >>> item_id = [123456789, 987654321]
     >>> fut.quickSell(item_id)
 
+Piles (Watchlist / Tradepile / Unassigned / Squad / Club)
+---------------------------------------------------------
 
-### Piles (Watchlist / Tradepile / Unassigned / Squad / Club)
 
 .. code-block:: python
 
@@ -143,7 +152,8 @@ https://github.com/hunterjm/futgui/releases
     >> len(fut.watchlist())  # watchlist fulfilment (number of cards in watchlist)
     10
 
-### Credits
+Credits
+-------
 
 It's cached on every request so if you want the most accurate info call fut.keppalive()
 
@@ -152,7 +162,8 @@ It's cached on every request so if you want the most accurate info call fut.kepp
     >>> fut.credits
     600
 
-### Relist
+Relist
+------
 
 Relists all expired cards in tradepile.
 
@@ -160,18 +171,20 @@ Relists all expired cards in tradepile.
 
     >>> fut.relist()  # relist all expired cards in tradepile
 
-### Apply consumable
+Apply consumable
+----------------
 
 Apply consumable on player.
 
-- **item_id**: [int] Player's item_id.
-- **resource_id**: [int] Consumable's resource_id.
+- item_id: [int] Player's item_id.
+- resource_id: [int] Consumable's resource_id.
 
 .. code-block:: python
 
     >>> fut.applyConsumable(item_id, resource_id)
 
-### Card stats and definiction IDs
+Card stats and definiction IDs
+------------------------------
 
 Returns stats and definition IDs for each card variation.
 
@@ -179,7 +192,8 @@ Returns stats and definition IDs for each card variation.
 
     >>> fut.searchDefinition(asset_id, start=0, count=35)
 
-### Keepalive
+Keepalive
+---------
 
 Sends keepalive ping and returns current credits amount (you have to make at least one request every ~10 minutes to avoid session expire/logout).
 
@@ -188,7 +202,8 @@ Sends keepalive ping and returns current credits amount (you have to make at lea
     >>> fut.keepalive()
     650
 
-### Logout
+Logout
+------
 
 Logs out nicely (like clicking on logout button).
 
@@ -197,9 +212,10 @@ Logs out nicely (like clicking on logout button).
     >>> fut.logout()
 
 
-### Database
+Database
+--------
 
-##### Database if fully cached at first invocation so there won't by any additional requests:
+Database if fully cached at first invocation so there won't by any additional requests:
 
 .. code-block:: python
 
@@ -210,7 +226,7 @@ Logs out nicely (like clicking on logout button).
     >>> fut.players
     >>> fut.playstyles
 
-##### You can access database even without login:
+You can access database even without login:
 
 .. code-block:: python
 
@@ -223,7 +239,8 @@ Logs out nicely (like clicking on logout button).
     >>> playestyles = fut.core.playstyles()
 
 
-#### Convert Team/League/Nation/Player id to name
+Convert Team/League/Nation/Player id to name
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 .. code-block:: python
 
@@ -241,7 +258,8 @@ Logs out nicely (like clicking on logout button).
     ... 'BASIC'
 
 
-#### Item object (dict) structure
+Item object (dict) structure
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 .. code-block:: python
 
@@ -275,14 +293,17 @@ to be continued ;-)
 
 
 
-## Problems
+Problems
+--------
 
-### Bans
+Bans
+^^^^
 
 To avoid getting ban take a look at our little discussion/guide thread:
 https://github.com/oczkers/fut/issues/259
 
-### Somehow i've sent card to full tradepile and it disappeared
+Somehow i've sent card to full tradepile and it disappeared
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 Make space in tradepile and just call one command to restore it:
 
@@ -291,7 +312,8 @@ Make space in tradepile and just call one command to restore it:
     fut.sendToTradepile(-1, id)
 
 
-### I've got card with None tradeId so cannot move/trade it
+I've got card with None tradeId so cannot move/trade it
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 Make space in tradepile and just call one command to restore it:
 
@@ -300,12 +322,14 @@ Make space in tradepile and just call one command to restore it:
     fut.sendToTradepile(-1, id)
 
 
-### PermissionDenied exceptions raises when trying to sell cards directly from watchlist
+PermissionDenied exceptions raises when trying to sell cards directly from watchlist
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 The solution is to send the items to Tradepile and offer from there.
 
 
-## CLI examples
+CLI examples
+------------
 
 .. code-block:: bash
 
@@ -314,6 +338,7 @@ The solution is to send the items to Tradepile and offer from there.
 
 
 
-## License
+License
+-------
 
 GNU GPLv3
