@@ -789,7 +789,7 @@ class Core(object):
         if position:    params['pos'] = position
         if nationality: params['nat'] = nationality
         if playStyle:   params['playStyle'] = playStyle
-        if rare:        params['rareFlag'] = 1
+        if rare:        params['rareflag'] = 1
 
         rc = self.__get__(self.urls['fut']['SearchAuctions'], params=params)
         return [itemParse(i) for i in rc.get('auctionInfo', ())]
