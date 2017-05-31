@@ -754,7 +754,7 @@ class Core(object):
         :param league: (optional) League id.
         :param club: (optional) Club id.
         :param position: (optional) Position.
-        :param nationality: (optional) Natiion id.
+        :param nationality: (optional) Nation id.
         :param playStyle: (optional) Play style.
         :param rare: (optional) True for rare only results.
         :param start: (optional) Start page sent to server so it supposed to be 12/15, 24/30 etc. (default platform page_size*n)

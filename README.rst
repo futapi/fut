@@ -49,11 +49,11 @@ Login
 
 Optional parameters:
 
-- CODE: [string] email/sms code for two-step verification (make sure to use string if your code starts with 0).
-- PLATFORM: [pc/ps3/ps4/xbox/xbox360] pc default.
-- EMULATE: [and/ios] use this feature to avoid webapp errors (BE WARE IT'S HIGH RISK).
-- DEBUG: [True/False] enables debug.
-- COOKIES: [filename] saves cookies after every request and load it from given file when restaring app (just like browser).
+- code: [string] email/sms code for two-step verification (make sure to use string if your code starts with 0).
+- platform: [pc/ps3/ps4/xbox/xbox360] pc default.
+- emualte: [and/ios] use this feature to avoid webapp errors (BE WARE IT'S HIGH RISK).
+- debug: [True/False] enables debug.
+- cookies: [filename] saves cookies after every request and load it from given file when restaring app (just like browser).
 
 .. code-block:: python
 
@@ -65,14 +65,22 @@ Search
 
 Optional parameters:
 
-- LEVEL: ['?'/'?'/gold'] Card level.
-- CATEGORY: ['fitness'/'?'] Card category.
-- MIN_PRICE: [int] Minimal price.
-- MAX_PRICE: [int] Maximum price.
-- MIN_BUY: [int] Minimal buy now price.
-- MAX_BUY: [int] Maximum buy now price.
-- START: [int] Start page number.
-- PAGE_SIZE: [int] Amount of cards on single page (changing this might be risky).
+- min_price: [int] Minimal price.
+- max_price: [int] Maximum price.
+- min_buy: [int] Minimal buy now price.
+- max_buy: [int] Maximum buy now price.
+- level: ['bronze'/'silver'/gold'] Card level.
+- rare: [bool] True for rare only results.
+- start: [int] Start page number.
+- category: ['fitness'/'?'] Card category.
+- assetId: [int] assetId.
+- defId: [int] defId.
+- league: [int] League id.
+- club: [int] Club id.
+- position: [int?/str?] Position.
+- nationality: [int] Nation id.
+- playStyle: [str?] playStyle.
+- page_size: [int] Amount of cards on single page (changing this might be risky).
 
 .. code-block:: python
 
@@ -94,8 +102,8 @@ Sell
 
 Optional parameters:
 
-- BUY_NOW: [int] Buy now price.
-- DURATION: [int] Auction duration in seconds (3600 default).
+- buy_now: [int] Buy now price.
+- duration: [int] Auction duration in seconds (3600 default).
 
 .. code-block:: python
 
@@ -168,8 +176,8 @@ Apply consumable
 
 Apply consumable on player.
 
-- ITEM_ID: [int] Player's item_id.
-- RESOURCE_ID: [int] Consumable's resource_id.
+- item_id: [int] Player's item_id.
+- resource_id: [int] Consumable's resource_id.
 
 .. code-block:: python
 
