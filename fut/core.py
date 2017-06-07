@@ -243,10 +243,8 @@ class Core(object):
         self._leagues = {}
         self._teams = {}
         self._usermassinfo = {}
-        if debug:  # save full log to file (fut.log)
-            self.logger = logger(save=True)
-        else:  # NullHandler
-            self.logger = logger()
+        logger(save=debug)  # init root logger
+        self.logger = logger(__name__)
         # TODO: validate fut request response (200 OK)
         self.__login__(email, passwd, secret_answer, platform, code, emulate)
 
