@@ -20,7 +20,7 @@ fut
 
 .. image:: https://cdn.worldvectorlogo.com/logos/slack.svg
     :height: 20px
-    :target: futapi.slack.com
+    :target: https://futapi.slack.com
 
 fut is a simple library for managing Fifa Ultimate Team.
 It is written entirely in Python.
@@ -40,7 +40,7 @@ Players database (json): http://cdn.content.easports.com/fifa/fltOnlineAssets/CC
 
 .. image:: https://cdn.worldvectorlogo.com/logos/slack.svg
     :height: 100px
-    :target: futapi.slack.com
+    :target: https://futapi.slack.com
 
 `Click here to get Slack invitation <https://gentle-everglades-93932.herokuapp.com>`_
 
