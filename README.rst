@@ -18,6 +18,10 @@ fut
     :target: https://codecov.io/github/oczkers/fut
     :alt: codecov.io
 
+.. image:: https://cdn.worldvectorlogo.com/logos/slack.svg
+    :height: 100px
+    :target: https://gentle-everglades-93932.herokuapp.com
+
 fut is a simple library for managing Fifa Ultimate Team.
 It is written entirely in Python.
 
