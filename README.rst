@@ -36,6 +36,10 @@ Players database: https://www.easports.com/uk/fifa/ultimate-team/fut/database
 
 Players database (json): http://cdn.content.easports.com/fifa/fltOnlineAssets/CC8267B6-0817-4842-BB6A-A20F88B05418/2017/fut/items/web/players.json
 
+.. image:: https://cdn.worldvectorlogo.com/logos/slack.svg
+    :height: 100px
+    :target: https://gentle-everglades-93932.herokuapp.com
+
 
 AutoBuyer GUI
 -------------
