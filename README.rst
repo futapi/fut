@@ -91,6 +91,7 @@ Optional parameters:
 - club: [int] Club id.
 - position: [int?/str?] Position.
 - nationality: [int] Nation id.
+- rare: [boolean] True for searching special cards.
 - playStyle: [str?] playStyle.
 - page_size: [int] Amount of cards on single page (changing this might be risky).
 

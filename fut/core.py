@@ -736,7 +736,7 @@ class Core(object):
 
     def searchAuctions(self, ctype, level=None, category=None, assetId=None, defId=None,
                        min_price=None, max_price=None, min_buy=None, max_buy=None,
-                       league=None, club=None, position=None, nationality=None,
+                       league=None, club=None, position=None, nationality=None, rare=None
                        playStyle=None, start=0, page_size=16):
         """Prepare search request, send and return parsed data as a dict.
 
@@ -753,6 +753,7 @@ class Core(object):
         :param club: (optional) Club id.
         :param position: (optional) Position.
         :param nationality: (optional) Nation id.
+        :param rare: (optional) [boolean] True for searching special cards.
         :param playStyle: (optional) Play style.
         :param start: (optional) Start page sent to server so it supposed to be 12/15, 24/30 etc. (default platform page_size*n)
         :param page_size: (optional) Page size (items per page).
@@ -785,6 +786,7 @@ class Core(object):
         if club:        params['team'] = club
         if position:    params['pos'] = position
         if nationality: params['nat'] = nationality
+        if rare:        params['rare'] = 'SP'
         if playStyle:   params['playStyle'] = playStyle
 
         rc = self.__get__(self.urls['fut']['SearchAuctions'], params=params)
