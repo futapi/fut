@@ -4,6 +4,10 @@ Changelog
 ---------
 
 
+0.2.19 (2017-07-??)
+^^^^^^^^^^^^^^^^^^^
+* searchAuctions: add ability to search rare (special) cards #280
+
 0.2.18 (2017-05-25)
 ^^^^^^^^^^^^^^^^^^^
 
