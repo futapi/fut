@@ -249,7 +249,7 @@ def playstyles(year=2017, timeout=timeout):
 
 
 class Core(object):
-    def __init__(self, email, passwd, secret_answer, platform='pc', code=None, emulate=None, debug=False, cookies=cookies_file, timeout=timeout, delay=delay):
+    def __init__(self, email, passwd, secret_answer, platform='pc', code=None, emulate=None, debug=False, cookies=cookies_file, timeout=timeout, delay=delay, proxies=None):
         self.credits = 0
         self.cookies_file = cookies  # TODO: map self.cookies to requests.Session.cookies?
         self.timeout = timeout
@@ -264,9 +264,9 @@ class Core(object):
         logger(save=debug)  # init root logger
         self.logger = logger(__name__)
         # TODO: validate fut request response (200 OK)
-        self.__login__(email, passwd, secret_answer, platform, code, emulate)
+        self.__login__(email, passwd, secret_answer, platform, code, emulate, proxies)
 
-    def __login__(self, email, passwd, secret_answer, platform='pc', code=None, emulate=None):
+    def __login__(self, email, passwd, secret_answer, platform='pc', code=None, emulate=None, proxies=None):
         """Log in.
 
         :params email: Email.
@@ -288,6 +288,8 @@ class Core(object):
         secret_answer_hash = EAHashingAlgorithm().EAHash(secret_answer)
         # create session
         self.r = requests.Session()  # init/reset requests session object
+        if proxies is not None:
+            self.r.proxies = proxies
         # load saved cookies/session
         if self.cookies_file:
             self.r.cookies = LWPCookieJar(self.cookies_file)
