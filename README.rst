@@ -66,6 +66,7 @@ Optional parameters:
 - emualte: [and/ios] use this feature to avoid webapp errors (BE WARE IT'S HIGH RISK).
 - debug: [True/False] enables debug.
 - cookies: [filename] saves cookies after every request and load it from given file when restaring app (just like browser).
+- proxies: [dict] http/socks proxies in requests's format http://docs.python-requests.org/en/master/user/advanced/#proxies
 
 .. code-block:: python
 

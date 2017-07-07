@@ -275,6 +275,7 @@ class Core(object):
         :params platform: (optional) [pc/xbox/xbox360/ps3/ps4] Platform.
         :params code: (optional) Security code generated in origin or sent via mail/sms.
         :params emulate: (optional) [and/ios] Emulate mobile device.
+        :params proxies: (optional) [dict] http/socks proxies in requests's format. http://docs.python-requests.org/en/master/user/advanced/#proxies
         """
         # TODO: split into smaller methods
         # TODO: check first if login is needed (https://www.easports.com/fifa/api/isUserLoggedIn)
