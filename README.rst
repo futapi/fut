@@ -18,6 +18,9 @@ fut
     :target: https://codecov.io/github/oczkers/fut
     :alt: codecov.io
 
+.. image:: https://api.codacy.com/project/badge/Grade/f599808fba2447c98253cf44cca86a1b
+    :target: https://www.codacy.com/app/oczkers/fut?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=oczkers/fut&amp;utm_campaign=Badge_Grade
+
 .. image:: https://cdn.worldvectorlogo.com/logos/slack.svg
     :height: 20px
     :target: https://futapi.slack.com
