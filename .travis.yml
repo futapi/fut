@@ -16,6 +16,6 @@ script:
  - py.test --verbose --cov-report term --cov-report xml --cov=fut tests
 after_success:
  - codecov
-- python-codacy-coverage
+ - python-codacy-coverage
 notifications:
   email: oczkers@gmail.com
