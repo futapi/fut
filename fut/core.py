@@ -281,10 +281,6 @@ class Core(object):
         # TODO: check first if login is needed (https://www.easports.com/fifa/api/isUserLoggedIn)
         # TODO: get gamesku, url from shards !!
 
-        if not email:               raise FutError('Missing email')
-        elif not passwd:            raise FutError('Missing password')
-        elif not secret_answer:     raise FutError('Missing secret answer')
-
         self.emulate = emulate
         secret_answer_hash = EAHashingAlgorithm().EAHash(secret_answer)
         # create session
@@ -370,6 +366,7 @@ class Core(object):
             if "'successfulLogin': false" in rc.text:
                 self.logger.debug(rc.content)
                 failedReason = re.search('general-error">\s+<div>\s+<div>\s+(.*)\s.+', rc.text).group(1)
+                # Your credentials are incorrect or have expired. Please try again or reset your password.
                 raise FutError(reason=failedReason)
 
             if 'var redirectUri' in rc.text:
@@ -516,7 +513,7 @@ class Core(object):
 
         # Parse site_config.xml
         # TODO?: Save response to file only on first login
-        rc = self.r.get(self.urls['fut_config'], params={'cl' : self.build_cl}, timeout=self.timeout)
+        rc = self.r.get(self.urls['fut_config'], params={'cl': self.build_cl}, timeout=self.timeout)
         self.urls = urls(platform, self.build_cl, rc.content)
 
         # prepare headers for ut operations
@@ -524,8 +521,8 @@ class Core(object):
             'X-HTTP-Method-Override': 'GET',  # necessary for usermassinfo request
             'X-Requested-With': flash_agent,
             'X-UT-Embed-Error': 'true',
-            'X-UT-SID' : self.sid,
-            'X-UT-PHISHING-TOKEN' : self.token,
+            'X-UT-SID': self.sid,
+            'X-UT-PHISHING-TOKEN': self.token,
             'Referer': 'https://www.easports.com/iframe/fut17/bundles/futweb/web/flash/FifaUltimateTeam.swf',
             'Origin': 'https://www.easports.com',
             'Content-Type': 'application/json',
