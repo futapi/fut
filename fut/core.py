@@ -172,7 +172,7 @@ def nations(timeout=timeout):
     return nations
 
 
-def leagues(year=2017, timeout=timeout):
+def leagues(year=2018, timeout=timeout):
     """Return all leagues in dict {id0: league0, id1: legaue1}.
 
     :params year: Year.
@@ -187,7 +187,7 @@ def leagues(year=2017, timeout=timeout):
     return leagues
 
 
-def teams(year=2017, timeout=timeout):
+def teams(year=2018, timeout=timeout):
     """Return all teams in dict {id0: team0, id1: team1}.
 
     :params year: Year.
@@ -202,7 +202,7 @@ def teams(year=2017, timeout=timeout):
     return teams
 
 
-def stadiums(year=2017, timeout=timeout):
+def stadiums(year=2018, timeout=timeout):
     """Return all stadium in dict {id0: stadium0, id1: stadium1}.
 
     :params year: Year.
@@ -233,7 +233,7 @@ def players(timeout=timeout):
     return players
 
 
-def playstyles(year=2017, timeout=timeout):
+def playstyles(year=2018, timeout=timeout):
     """Return all playstyles in dict {id0: playstyle0, id1: playstyle1}.
 
     :params year: Year.
@@ -306,15 +306,15 @@ class Core(object):
         self.urls = urls(platform)
         # TODO: urls won't be loaded if we drop here
         if platform == 'pc':
-            game_sku = 'FFA17PCC'
+            game_sku = 'FFA18PCC'
         elif platform == 'xbox':
-            game_sku = 'FFA17XBO'
+            game_sku = 'FFA18XBO'
         elif platform == 'xbox360':
-            game_sku = 'FFA17XBX'
+            game_sku = 'FFA18XBX'
         elif platform == 'ps3':
-            game_sku = 'FFA17PS3'  # not tested
+            game_sku = 'FFA18PS3'  # not tested
         elif platform == 'ps4':
-            game_sku = 'FFA17PS4'
+            game_sku = 'FFA18PS4'
             platform = 'ps3'  # ps4 not available?
         else:
             raise FutError(reason='Wrong platform. (Valid ones are pc/xbox/xbox360/ps3/ps4)')
@@ -322,10 +322,10 @@ class Core(object):
         #    return True  # no need to log in again
         # emulate
         if emulate == 'ios':
-            sku = 'FUT17IOS'
+            sku = 'FUT18IOS'
             clientVersion = 21
         elif emulate == 'and':
-            sku = 'FUT17AND'
+            sku = 'FUT18AND'
             clientVersion = 21
 #        TODO: need more info about log in procedure in game
 #        elif emulate == 'xbox':
@@ -338,12 +338,12 @@ class Core(object):
 #            sku = ''  # dunno
 #            clientVersion = 1
         elif not emulate:
-            sku = 'FUT17WEB'
+            sku = 'FUT18WEB'
             clientVersion = 1
         else:
             raise FutError(reason='Invalid emulate parameter. (Valid ones are and/ios).')  # pc/ps3/xbox/
         self.sku = sku  # TODO: use self.sku in all class
-        self.sku_a = 'F17'
+        self.sku_a = 'F18'
         # === login
         self.urls['login'] = self.r.get(self.urls['fut_home'], timeout=self.timeout).url
         if self.urls['login'] != self.urls['fut_home']:
@@ -526,7 +526,7 @@ class Core(object):
             'X-UT-Embed-Error': 'true',
             'X-UT-SID': self.sid,
             'X-UT-PHISHING-TOKEN': self.token,
-            'Referer': 'https://www.easports.com/iframe/fut17/bundles/futweb/web/flash/FifaUltimateTeam.swf',
+            'Referer': 'https://www.easports.com/iframe/fut18/bundles/futweb/web/flash/FifaUltimateTeam.swf',
             'Origin': 'https://www.easports.com',
             'Content-Type': 'application/json',
             'Accept': 'application/json',
@@ -663,7 +663,7 @@ class Core(object):
         return self._players
 
     @property
-    def playstyles(self, year=2017):
+    def playstyles(self, year=2018):
         """Return all playstyles in dict {id0: playstyle0, id1: playstyle1}.
 
         :params year: Year.
@@ -683,7 +683,7 @@ class Core(object):
         return self._nations
 
     @property
-    def leagues(self, year=2017):
+    def leagues(self, year=2018):
         """Return all leagues in dict {id0: league0, id1: league1}.
 
         :params year: Year.
@@ -693,7 +693,7 @@ class Core(object):
         return self._leagues[year]
 
     @property
-    def teams(self, year=2017):
+    def teams(self, year=2018):
         """Return all teams in dict {id0: team0, id1: team1}.
 
         :params year: Year.

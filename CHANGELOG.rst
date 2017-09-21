@@ -4,9 +4,17 @@ Changelog
 ---------
 
 
-0.2.19 (2017-07-??)
+0.3.0 (2017-09-??)
+^^^^^^^^^^^^^^^^^^
+
+* initial release for fifa 18
+* bump useragent && flash version
+
+0.2.19 (2017-09-21)
 ^^^^^^^^^^^^^^^^^^^
+
 * searchAuctions: add ability to search rare (special) cards #280
+* fix addition request to send code (#285)
 
 0.2.18 (2017-05-25)
 ^^^^^^^^^^^^^^^^^^^
