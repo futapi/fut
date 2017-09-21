@@ -380,6 +380,9 @@ class Core(object):
                 self.r.headers['Referer'] = rc.url  # s3
                 rc = self.r.post(rc.url, {'twofactorType': 'EMAIL', 'country': 0, 'phoneNumber': '', '_eventId': 'submit'}, timeout=self.timeout)
             '''
+            if '<span><span>Send Security Code</span></span>' in rc.text:  # click button to get code sent
+                rc = self.r.post(rc.url, {'_eventId': 'submit'})
+                self.logger.debug(rc.content)
             if 'We sent a security code to your' in rc.text or 'Your security code was sent to' in rc.text or 'Enter the 6-digit verification code' in rc.text:  # post code
                 # TODO: 'We sent a security code to your email' / 'We sent a security code to your ?'
                 # TODO: pick code from codes.txt?
