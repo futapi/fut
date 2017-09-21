@@ -61,7 +61,7 @@ class FutCoreTestCase(unittest.TestCase):
 
         # TODO: drop re, use xmltodict
         # TODO: year in config
-        year = 2017
+        year = 2018
         rc = open(path[0] + '/tests/data/messages.en_US.xml', 'r', encoding='utf8').read()
         for i in re.findall('<trans-unit resname="search.nationName.nation([0-9]+)">\n        <source>(.+)</source>', rc[:]):
             self.assertEqual(self.db_nations[int(i[0])], i[1])

@@ -39,7 +39,7 @@ Documentation will be available soon at http://fut.readthedocs.org/.
 
 Players database: https://www.easports.com/uk/fifa/ultimate-team/fut/database
 
-Players database (json): http://cdn.content.easports.com/fifa/fltOnlineAssets/CC8267B6-0817-4842-BB6A-A20F88B05418/2017/fut/items/web/players.json  # need update 17->18
+Players database (json): https://www.easports.com/fifa/ultimate-team/web-app/content/B1BA185F-AD7C-4128-8A64-746DE4EC5A82/2018/fut/items/web/players_meta.json
 
 Consumables database provided by koolaidjones: https://github.com/koolaidjones/FUT-Consumables-Resource-IDs
 
