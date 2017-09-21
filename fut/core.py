@@ -13,6 +13,7 @@ import re
 import random
 import time
 import json
+from datetime import datetime, timedelta
 try:
     from cookielib import LWPCookieJar
 except ImportError:
@@ -344,9 +345,65 @@ class Core(object):
             raise FutError(reason='Invalid emulate parameter. (Valid ones are and/ios).')  # pc/ps3/xbox/
         self.sku = sku  # TODO: use self.sku in all class
         self.sku_a = 'F18'
+        # === pre login
+        # rc = self.r.get(self.urls['fut_home'])
+        # self.logger.debug(rc.content)
+        # print(rc.url)
+        # # window.fut_resourceRoot = "https://www.easports.com";
+        # # window.fut_resourceBase = "/fifa/ultimate-team/web-app/content/";
+        # self.guid = re.search('fut_guid = "(.+?)";', rc.text).group(1)
+        # self.year = re.search('fut_year = "([0-9]{4})";', rc.text).group(1)
+        # ts_event = datetime.now()  # this probably will be used for bot detection
+        # ts_post = ts_event + timedelta(microseconds=random.randrange(500000, 2000000))  # 0.5-2 seconds
+        # data = {"taxv": 1.1,
+        #         "tidt": "easku",
+        #         "tid": "FUT18WEB",
+        #         "rel": "prod",
+        #         "v": "18.0.0",
+        #         "ts_post": ts_post.strftime('%Y-%m-%dT%H:%M:%S.%f')[:-3] + 'Z',  # "2017-09-21T11:53:35.513Z",
+        #         "sid": "",
+        #         "gid": 0,
+        #         "plat": "web",
+        #         "et": "client",
+        #         "loc": "en_US",
+        #         "is_sess": False,
+        #         "custom": {"networkAccess": "W"},
+        #         "events": [{"core": {"s": 0,
+        #                              "pidt": "persona",
+        #                              "pid": "",
+        #                              "pidm": {"nucleus": 0},
+        #                              "didm": {"uuid": "0"},
+        #                              "ts_event": ts_event.strftime('%Y-%m-%dT%H:%M:%S.%f')[:-3] + 'Z',  # "2017-09-21T11:53:35.012Z",
+        #                              "en": "connection"}},
+        #                    {"status": "success",
+        #                     "source": "0-normal",
+        #                     "core": {"s": 1,
+        #                              "pidt": "persona",
+        #                              "pid": "",
+        #                              "pidm": {"nucleus": 0},
+        #                              "didm": {"uuid": "0"},
+        #                              "ts_event": ts_event.strftime('%Y-%m-%dT%H:%M:%S.%f')[:-3] + 'Z',  # "2017-09-21T11:53:35.013Z",
+        #                              "en": "boot_start"}}]}
+        # rc = self.r.post('https://pin-river.data.ea.com/pinEvents', data=data)  # {"status":"ok"}
+        # self.logger.debug(rc.content)
+        # # rc = self.r.get('https://gateway.ea.com/proxy/identity/pids/me')
+        # self.logger.debug(rc.content)
+        # print(rc.content)
+        # asdasdasd
         # === login
-        self.urls['login'] = self.r.get(self.urls['fut_home'], timeout=self.timeout).url
-        if self.urls['login'] != self.urls['fut_home']:
+        params = {'prompt': 'login',
+                  'accessToken': 'null',
+                  'client_id': 'FIFA-18-WEBCLIENT',  # TODO: variable
+                  'response_type': 'token',
+                  'display': 'web2/login',
+                  'locale': 'en_US',
+                  'redirect_uri': 'https://www.easports.com/fifa/ultimate-team/web-app/auth.html',
+                  'scope': 'basic.identity offline signin'}
+        rc = self.r.get('https://accounts.ea.com/connect/auth', params=params, timeout=self.timeout)
+        self.logger.debug(rc.content)
+        self.urls['login'] = rc.url
+        # self.urls['login'] = self.r.get(self.urls['fut_home'], timeout=self.timeout).url
+        if self.urls['login'] != self.urls['fut_home']:  # TODO: fut_home or https://www.easports.com/fifa/ultimate-team/web-app/auth.html
             self.r.headers['Referer'] = self.urls['login']  # prepare headers
             data = {'email': email,
                     'password': passwd,
@@ -383,7 +440,7 @@ class Core(object):
             if '<span><span>Send Security Code</span></span>' in rc.text:  # click button to get code sent
                 rc = self.r.post(rc.url, {'_eventId': 'submit'})
                 self.logger.debug(rc.content)
-            if 'We sent a security code to your' in rc.text or 'Your security code was sent to' in rc.text or 'Enter the 6-digit verification code' in rc.text:  # post code
+            if 'We sent a security code to your' in rc.text or 'Your security code was sent to' in rc.text or 'Enter the 6-digit verification code' in rc.text or 'We have sent a security code' in rc.text:  # post code
                 # TODO: 'We sent a security code to your email' / 'We sent a security code to your ?'
                 # TODO: pick code from codes.txt?
                 if not code:
