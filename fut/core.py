@@ -22,6 +22,7 @@ except ImportError:
 from .config import headers, headers_and, headers_ios, flash_agent, cookies_file, timeout, delay
 from .log import logger
 from .urls import urls
+from .urls2 import client_id, auth_url
 from .exceptions import (FutError, ExpiredSession, InternalServerError,
                          UnknownError, PermissionDenied, Captcha,
                          Conflict, MaxSessions, MultipleSession,
@@ -391,23 +392,26 @@ class Core(object):
         # print(rc.content)
         # asdasdasd
         # === login
+        self.r.headers['Content-Type'] = 'application/json'
+        self.r.headers['Origin'] = 'https://www.easports.com'
+        self.r.headers['Referer'] = 'https://www.easports.com/fifa/ultimate-team/web-app/'
         params = {'prompt': 'none',
                   # 'accessToken': 'null',
-                  'client_id': 'FIFA-18-WEBCLIENT',  # TODO: variable
+                  'client_id': client_id,
                   'response_type': 'token',
                   'display': 'web2/login',
                   'locale': 'en_US',
                   'redirect_uri': 'nucleus:rest',
                   'scope': 'basic.identity offline signin'}
-        self.r.headers['Referer'] = 'https://www.easports.com/fifa/ultimate-team/web-app/'
         rc = self.r.get('https://accounts.ea.com/connect/auth', params=params, timeout=self.timeout)
         self.logger.debug(rc.content)
         rc = rc.json()
         authorization = '%s %s' % (rc['token_type'], rc['access_token'])  # expires in 3599
+        access_token = rc['access_token']
 
         params = {'prompt': 'login',
-                  # 'accessToken': 'null',
-                  'client_id': 'FIFA-18-WEBCLIENT',  # TODO: variable
+                  'accessToken': 'null',
+                  'client_id': client_id,
                   'response_type': 'token',
                   'display': 'web2/login',
                   'locale': 'en_US',
@@ -482,6 +486,8 @@ class Core(object):
         rc = self.r.get('https://www.easports.com/fifa/ultimate-team/web-app/', timeout=self.timeout)
         self.logger.debug(rc.content)
         rc = rc.text
+        # year = re.search('fut_year = "([0-9]{4}])"', rc).group(1)  # use this to construct urls, sku etc.
+        # guid = re.search('fut_guid = "(.+?)"', rc).group(1)
         # TODO: config
         self.r.headers['Referer'] = 'https://www.easports.com/fifa/ultimate-team/web-app/'
         self.r.headers['Authorization'] = authorization
@@ -489,38 +495,35 @@ class Core(object):
         self.logger.debug(rc.content)
         rc = rc.json()
         self.nucleus_id = rc['externalRefValue']
+        # tos_version = rc['tosVersion']
+        # authentication_source = rc['authenticationSource']
+        # password_signature = rc['passwordSignature']
         # TODO: various checks (validation)
+        del self.r.headers['Authorization']
+        self.r.headers['Easw-Session-Data-Nucleus-Id'] = self.nucleus_id
 
-#        if 'EASW_ID' not in rc:
-#            raise FutError(reason='Error during login process (probably invalid email or password).')
-        # self.nucleus_id = re.search("var EASW_ID = '([0-9]+)';", rc).group(1)
-        # self.build_cl = re.search("var BUILD_CL = '([0-9]+)';", rc).group(1)
-        # self.urls['fut_base'] = re.search("var BASE_FUT_URL = '(https://.+?)';", rc).group(1)
-        # self.urls['fut_home'] = re.search("var GUEST_APP_URI = '(http://.+?)';", rc).group(1)
+        # shards
+        rc = self.r.get('https://%s/ut/shards/v2' % auth_url, data={'_': int(time.time() * 1000)}).json()  # TODO: parse this
+        self.fut_host = {
+            'pc': 'utas.external.s2.fut.ea.com:443',
+            'ps3': 'utas.external.s2.fut.ea.com:443',
+            'xbox': 'utas.external.s3.fut.ea.com:443',
+            # 'ios': 'utas.external.fut.ea.com:443',
+            # 'and': 'utas.external.fut.ea.com:443'
+        }
 
-        # Just in case
-        if self.r.get(self.urls['main_site'] + '/fifa/api/isUserLoggedIn', timeout=self.timeout).json()['isLoggedIn'] is not True:  # TODO: parse error?
-            raise FutError(reason='Error during login process (probably invalid email or password.)')
+        # # Just in case
+        # if self.r.get(self.urls['main_site'] + '/fifa/api/isUserLoggedIn', timeout=self.timeout).json()['isLoggedIn'] is not True:  # TODO: parse error?
+        #     raise FutError(reason='Error during login process (probably invalid email or password.)')
 
-        # acc info
-        self.r.headers.update({  # prepare headers
-            'Content-Type': 'application/json',
-            'Accept': 'text/json',
-            'Easw-Session-Data-Nucleus-Id': self.nucleus_id,
-            'X-UT-Embed-Error': 'true',
-            'X-Requested-With': 'XMLHttpRequest',
-            'X-UT-Route': self.urls['fut_host'],
-            'Referer': self.urls['futweb'],
-        })
-        rc = self.r.get(self.urls['acc_info'],
-                        params={'_': int(time.time() * 1000),
-                                'filterConsoleLogin': True,
-                                'sku': sku,
-                                'returningUserGameYear': '2016'},
-                        timeout=self.timeout)
-        self.logger.debug(rc.content)
+        # personas
+        data = {'filterConsoleLogin': 'true',
+                'sku': sku,
+                'returningUserGameYear': '2017',  # allways year-1?
+                '_': int(time.time() * 1000)}
+        rc = self.r.get('https://%s/ut/game/fifa18/user/accountinfo' % self.fut_host[platform], params=data).json()
         # pick persona (first valid for given game_sku)
-        personas = rc.json()['userAccountInfo']['personas']
+        personas = rc['userAccountInfo']['personas']
         for p in personas:
             # self.clubs = [i for i in p['userClubList']]
             # sort clubs by lastAccessTime (latest first but looks like ea is doing this for us(?))
@@ -528,29 +531,33 @@ class Core(object):
             for c in p['userClubList']:
                 if c['skuAccessList'] and game_sku in c['skuAccessList']:
                     self.persona_id = p['personaId']
-                    self.persona_name = p['personaName']
+                    # self.persona_name = p['personaName']  # not needed anymore
                     break
-        if not hasattr(self, 'persona_id') or not hasattr(self, 'persona_name'):
+        if not hasattr(self, 'persona_id'):
             raise FutError(reason='Error during login process (no persona found).')
 
         # authorization
-        self.r.headers.update({  # prepare headers
-            'Accept': 'application/json, text/javascript',
-            'Origin': 'http://www.easports.com',
-        })
+        del self.r.headers['Easw-Session-Data-Nucleus-Id']
+        self.r.headers['Origin'] = 'http://www.easports.com'
+        params = {'client_id': 'FOS-SERVER',  # i've seen in some js/json response but cannot find now
+                  'redirect_uri': 'nucleus:rest',
+                  'response_type': 'code',
+                  'access_token': access_token}
+        rc = self.r.get('https://accounts.ea.com/connect/auth', params=params).json()
+        auth_code = rc['code']
         data = {'isReadOnly': False,
                 'sku': sku,
                 'clientVersion': clientVersion,
                 # 'nuc': self.nucleus_id,
                 'nucleusPersonaId': self.persona_id,
-                'nucleusPersonaDisplayName': self.persona_name,
                 'gameSku': game_sku,
                 'nucleusPersonaPlatform': platform,
-                'locale': 'en-GB',
+                'locale': 'en-US',
                 'method': 'authcode',
                 'priorityLevel': 4,
-                'identification': {'AuthCode': ''}}
-        rc = self.r.post(self.urls['fut_auth'], data=json.dumps(data), params={'sku_a': self.sku_a}, timeout=self.timeout)
+                'identification': {'AuthCode': auth_code,
+                                   'redirectUrl': 'nucleus:rest'}}
+        rc = self.r.post('https://%s/ut/auth' % self.fut_host[platform], data=json.dumps(data), params={'': int(time.time() * 1000)}, timeout=self.timeout)
         self.logger.debug(rc.content)
         if rc.status_code == 500:
             raise InternalServerError('Servers are probably temporary down.')
@@ -567,15 +574,14 @@ class Core(object):
         self.r.headers['X-UT-SID'] = self.sid = rc['sid']
 
         # validate (secret question)
-        self.r.headers['Accept'] = 'text/json'  # prepare headers
-        del self.r.headers['Origin']
-        rc = self.r.get(self.urls['fut_question'], params={'_': int(time.time() * 1000), "redirect": "false"}, timeout=self.timeout)
+        self.r.headers['Easw-Session-Data-Nucleus-Id'] = self.nucleus_id
+        rc = self.r.get('https://%s/ut/question' % self.fut_host[platform], params={'_': int(time.time() * 1000)}, timeout=self.timeout)
         self.logger.debug(rc.content)
         rc = rc.json()
         if rc.get('string') != 'Already answered question':
             # answer question
             data = {'answer': secret_answer_hash}
-            self.r.headers['Content-Type'] = 'application/x-www-form-urlencoded'  # requests bug?
+            # self.r.headers['Content-Type'] = 'application/x-www-form-urlencoded'  # requests bug?
             rc = self.r.post(self.urls['fut_validate'], data=data, timeout=self.timeout)
             self.logger.debug(rc.content)
             rc = rc.json()
@@ -587,21 +593,9 @@ class Core(object):
             self.r.headers['Content-Type'] = 'application/json'
         self.token = rc['token']
 
-        # prepare headers for site_config.xml request
-        del self.r.headers['Easw-Session-Data-Nucleus-Id']
-        del self.r.headers['X-UT-Route']
-        del self.r.headers['X-UT-SID']
-        del self.r.headers['X-UT-Embed-Error']
-        del self.r.headers['Content-Type']
-        self.r.headers.update({
-            'X-Requested-With': flash_agent,
-            'Accept': '*/*',
-        })
-
-        # Parse site_config.xml
-        # TODO?: Save response to file only on first login
-        rc = self.r.get(self.urls['fut_config'], params={'cl': self.build_cl}, timeout=self.timeout)
-        self.urls = urls(platform, self.build_cl, rc.content)
+        # ask again for question to get another token (?)
+        rc = self.r.get('https://%s/ut/question' % self.fut_host[platform], params={'_': int(time.time() * 1000)}, timeout=self.timeout).json()
+        self.token = rc['token']
 
         # prepare headers for ut operations
         self.r.headers.update({
@@ -619,7 +613,7 @@ class Core(object):
         # get basic user info
         # TODO: parse usermassinfo and change _usermassinfo to userinfo
         # TODO?: usermassinfo as separate method && ability to refresh piles etc.
-        self._usermassinfo = self.r.post(self.urls['fut_host'] + self.urls['mass_info'], timeout=self.timeout).json()
+        self._usermassinfo = self.r.get('https://%s/ut/usermassinfo' % self.fut_host[platform], params={'_': int(time.time() * 1000)}, timeout=self.timeout).json()
         if self._usermassinfo['settings']['configs'][2]['value'] == 0:
             raise FutError(reason='Transfer market is probably disabled on this account.')  # if tradingEnabled = 0
         # size of piles

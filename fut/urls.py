@@ -24,7 +24,7 @@ def urls(platform, cl=None, site_config=None):
     """Return services urls."""
     urls = {
         'main_site':             'https://www.easports.com',
-        'futweb':                'https://www.easports.com/iframe/fut18/?baseShowoffUrl=https%3A%2F%2Fwww.easports.com%2Ffifa%2Fultimate-team%2Fweb-app%2Fshow-off&guest_app_uri=http%3A%2F%2Fwww.easports.com%2Ffifa%2Fultimate-team%2Fweb-app&locale=en_US',
+        'futweb':                'https://www.easports.com/iframe/fut18/?baseShowoffUrl=https%3A%2F%2Fwww.easports.com%2Ffifa%2Fultimate-team%2Fweb-app%2Fshow-off&guest_app_uri=http%3A%2F%2Fwww.easports.com%2Ffifa%2Fultimate-team%2Fweb-app&locale=en_US',  # TODO: drop this
         'fut_config':            'https://www.easports.com/iframe/fut18/bundles/futweb/web/flash/xml/site_config.xml',  # add timestamp
         'fut_home':              'https://www.easports.com/fifa/ultimate-team/web-app/',
         'fut':                   {},  # it's updated dynamicly (based on fut_config)
