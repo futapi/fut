@@ -391,16 +391,32 @@ class Core(object):
         # print(rc.content)
         # asdasdasd
         # === login
+        params = {'prompt': 'none',
+                  # 'accessToken': 'null',
+                  'client_id': 'FIFA-18-WEBCLIENT',  # TODO: variable
+                  'response_type': 'token',
+                  'display': 'web2/login',
+                  'locale': 'en_US',
+                  'redirect_uri': 'nucleus:rest',
+                  'scope': 'basic.identity offline signin'}
+        self.r.headers['Referer'] = 'https://www.easports.com/fifa/ultimate-team/web-app/'
+        rc = self.r.get('https://accounts.ea.com/connect/auth', params=params, timeout=self.timeout)
+        self.logger.debug(rc.content)
+        rc = rc.json()
+        authorization = '%s %s' % (rc['token_type'], rc['access_token'])  # expires in 3599
+
         params = {'prompt': 'login',
-                  'accessToken': 'null',
+                  # 'accessToken': 'null',
                   'client_id': 'FIFA-18-WEBCLIENT',  # TODO: variable
                   'response_type': 'token',
                   'display': 'web2/login',
                   'locale': 'en_US',
                   'redirect_uri': 'https://www.easports.com/fifa/ultimate-team/web-app/auth.html',
                   'scope': 'basic.identity offline signin'}
+        self.r.headers['Referer'] = 'https://www.easports.com/fifa/ultimate-team/web-app/'
         rc = self.r.get('https://accounts.ea.com/connect/auth', params=params, timeout=self.timeout)
         self.logger.debug(rc.content)
+        rc = rc.json()
         self.urls['login'] = rc.url
         # self.urls['login'] = self.r.get(self.urls['fut_home'], timeout=self.timeout).url
         if self.urls['login'] != self.urls['fut_home']:  # TODO: fut_home or https://www.easports.com/fifa/ultimate-team/web-app/auth.html
@@ -449,7 +465,7 @@ class Core(object):
                 self.r.headers['Referer'] = url = rc.url
                 # self.r.headers['Upgrade-Insecure-Requests'] = '1'  # ?
                 # self.r.headers['Origin'] = 'https://signin.ea.com'
-                rc = self.r.post(url, {'twofactorCode': code, '_trustThisDevice': 'on', 'trustThisDevice': 'on', '_eventId': 'submit'}, timeout=self.timeout)
+                rc = self.r.post(url.replace('s3', 's4'), {'oneTimeCode': code, '_trustThisDevice': 'on', 'trustThisDevice': 'on', '_eventId': 'submit'}, timeout=self.timeout)
                 self.logger.debug(rc.content)
                 rc = rc.text
                 if 'Incorrect code entered' in rc or 'Please enter a valid security code' in rc:
@@ -460,14 +476,25 @@ class Core(object):
                     # rc = rc.text
 
         # === launch futweb
-        self.r.headers['Referer'] = self.urls['fut_home']  # prepare headers
-        rc = self.r.get(self.urls['futweb'], timeout=self.timeout)
+        # self.r.headers['Referer'] = self.urls['fut_home']  # prepare headers
+        self.r.headers['Referer'] = 'https://www.easports.com/fifa/ultimate-team/web-app/auth.html'
+        # rc = self.r.get(self.urls['futweb'], timeout=self.timeout)
+        rc = self.r.get('https://www.easports.com/fifa/ultimate-team/web-app/', timeout=self.timeout)
         self.logger.debug(rc.content)
         rc = rc.text
+        # TODO: config
+        self.r.headers['Referer'] = 'https://www.easports.com/fifa/ultimate-team/web-app/'
+        self.r.headers['Authorization'] = authorization
+        rc = self.r.get('https://gateway.ea.com/proxy/identity/pids/me')
+        self.logger.debug(rc.content)
+        rc = rc.json()
+        self.nucleus_id = rc['externalRefValue']
+        # TODO: various checks (validation)
+
 #        if 'EASW_ID' not in rc:
 #            raise FutError(reason='Error during login process (probably invalid email or password).')
-        self.nucleus_id = re.search("var EASW_ID = '([0-9]+)';", rc).group(1)
-        self.build_cl = re.search("var BUILD_CL = '([0-9]+)';", rc).group(1)
+        # self.nucleus_id = re.search("var EASW_ID = '([0-9]+)';", rc).group(1)
+        # self.build_cl = re.search("var BUILD_CL = '([0-9]+)';", rc).group(1)
         # self.urls['fut_base'] = re.search("var BASE_FUT_URL = '(https://.+?)';", rc).group(1)
         # self.urls['fut_home'] = re.search("var GUEST_APP_URI = '(http://.+?)';", rc).group(1)
 
