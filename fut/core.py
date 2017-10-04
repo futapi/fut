@@ -590,6 +590,7 @@ class Core(object):
                 # * invalid secret answer
                 # * No remaining attempt
                 raise FutError(reason='Error during login process (%s).' % (rc['reason']))
+            self.r.headers['X-UT-PHISHING-TOKEN'] = self.token = rc['token']
             # ask again for question to refresh(?) token, i'm just doing what webapp is doing
             rc = self.r.get('https://%s/ut/game/fifa18/phishing/question' % self.fut_host[platform], params={'_': int(time.time() * 1000)}, timeout=self.timeout).json()
         self.r.headers['X-UT-PHISHING-TOKEN'] = self.token = rc['token']
