@@ -487,7 +487,8 @@ class Core(object):
             access_token = rc.group(1)
             token_type = rc.group(2)
 
-        self.r.headers['Referer'] = 'https://www.easports.com/fifa/ultimate-team/web-app/auth.html'
+        # === launch futweb
+        # self.r.headers['Referer'] = 'https://www.easports.com/fifa/ultimate-team/web-app/auth.html'
         rc = self.r.get('https://www.easports.com/fifa/ultimate-team/web-app/', timeout=self.timeout)
         self.logger.debug(rc.content)
         rc = rc.text
@@ -589,17 +590,9 @@ class Core(object):
                 # * invalid secret answer
                 # * No remaining attempt
                 raise FutError(reason='Error during login process (%s).' % (rc['reason']))
-            self.r.headers['Content-Type'] = 'application/json'
+            # ask again for question to refresh(?) token, i'm just doing what webapp is doing
+            rc = self.r.get('https://%s/ut/game/fifa18/phishing/question' % self.fut_host[platform], params={'_': int(time.time() * 1000)}, timeout=self.timeout).json()
         self.r.headers['X-UT-PHISHING-TOKEN'] = self.token = rc['token']
-
-        # ask again for question to refresh(?) token
-        rc = self.r.get('https://%s/ut/game/fifa18/phishing/question' % self.fut_host[platform], params={'_': int(time.time() * 1000)}, timeout=self.timeout).json()
-        print(rc)
-        del self.r.headers['Content-Type']
-        self.r.headers['X-UT-PHISHING-TOKEN'] = self.token = rc['token']
-
-        # === launch futweb
-        print(self.r.get('https://utas.external.s2.fut.ea.com/ut/game/fifa18/tradepile', params={'_': int(time.time() * 1000)}).content)
 
         # get basic user info
         # TODO: parse usermassinfo and change _usermassinfo to userinfo
