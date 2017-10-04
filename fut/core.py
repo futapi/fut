@@ -613,6 +613,8 @@ class Core(object):
             rc = self.r.post(url, data=data, params=params, timeout=self.timeout)
         elif method.upper() == 'PUT':
             rc = self.r.put(url, data=data, params=params, timeout=self.timeout)
+        elif method.upper() == 'DELETE':
+            rc = self.r.delete(url, data=data, params=params, timeout=self.timeout)
         self.logger.debug("response: {0}".format(rc.content))
         if not rc.ok:  # status != 200
             raise UnknownError(rc.content)
@@ -651,42 +653,47 @@ class Core(object):
         self.saveSession()
         return rc
 
-    # def __sendToPile__(self, pile, trade_id, item_id=None):
-    #     """Send to pile.
-    #
-    #     :params trade_id: Trade id.
-    #     :params item_id: (optional) Iteam id.
-    #     """
-    #     # TODO: accept multiple trade_ids (just extend list below (+ extend params?))
-    #     if pile == 'watchlist':
-    #         params = {'tradeId': trade_id}
-    #         data = {'auctionInfo': [{'id': trade_id}]}
-    #         self.__put__(self.urls['fut']['WatchList'], params=params, data=json.dumps(data))
-    #         return True
-    #
-    #     if trade_id > 0:
-    #         # won item
-    #         data = {"itemData": [{"tradeId": trade_id, "pile": pile, "id": str(item_id)}]}
-    #     else:
-    #         # unassigned item
-    #         data = {"itemData": [{"pile": pile, "id": str(item_id)}]}
-    #
-    #     rc = self.__put__(self.urls['fut']['Item'], data=json.dumps(data))
-    #     if rc['itemData'][0]['success']:
-    #         self.logger.info("{0} (itemId: {1}) moved to {2} Pile".format(trade_id, item_id, pile))
-    #     else:
-    #         self.logger.error("{0} (itemId: {1}) NOT MOVED to {2} Pile. REASON: {3}".format(trade_id, item_id, pile, rc['itemData'][0]['reason']))
-    #     return rc['itemData'][0]['success']
+    def __sendToPile__(self, pile, trade_id=None, item_id=None):
+        """Send to pile.
 
-    # def logout(self, save=True):
-    #     """Log out nicely (like clicking on logout button).
-    #
-    #     :params save: False if You don't want to save cookies.
-    #     """
-    #     self.r.get('https://www.easports.com/fifa/logout', timeout=self.timeout)
-    #     if save:
-    #         self.saveSession()
-    #     return True
+        :params trade_id: Trade id.
+        :params item_id: (optional) Iteam id.
+        """
+        method = 'PUT'
+        url = 'item'
+
+        # TODO: accept multiple trade_ids (just extend list below)
+        if pile == 'watchlist':
+            params = {'tradeId': trade_id}
+            data = {'auctionInfo': [{'id': trade_id}]}
+            self.__put__(self.urls['fut']['WatchList'], params=params, data=json.dumps(data))
+            return True
+
+        # if trade_id > 0:
+        #     # won item
+        #     data = {"itemData": [{"tradeId": trade_id, "pile": pile, "id": str(item_id)}]}
+        # else:
+        #     # unassigned item
+        #     data = {"itemData": [{"pile": pile, "id": str(item_id)}]}
+        data = {"itemData": [{"pile": pile, "id": str(item_id)}]}
+
+        rc = self.__request__(method, url, data=json.dumps(data))
+        if rc['itemData'][0]['success']:
+            self.logger.info("{0} (itemId: {1}) moved to {2} Pile".format(trade_id, item_id, pile))
+        else:
+            self.logger.error("{0} (itemId: {1}) NOT MOVED to {2} Pile. REASON: {3}".format(trade_id, item_id, pile, rc['itemData'][0]['reason']))
+        return rc['itemData'][0]['success']
+
+    def logout(self, save=True):
+        """Log out nicely (like clicking on logout button).
+
+        :params save: False if You don't want to save cookies.
+        """
+        self.r.delete('https://%s/ut/auth' % self.fut_host, timeout=self.timeout)
+        if save:
+            self.saveSession()
+        # needed? https://accounts.ea.com/connect/logout?client_id=FIFA-18-WEBCLIENT&redirect_uri=https://www.easports.com/fifa/ultimate-team/web-app/auth.html
+        return True
 
     @property
     def players(self):
@@ -754,18 +761,18 @@ class Core(object):
         """Calculate base id and version from a resource id."""
         return baseId(*args, **kwargs)
 
-    # def cardInfo(self, resource_id):
-    #     """Return card info.
-    #
-    #     :params resource_id: Resource id.
-    #     """
-    #     # TODO: add referer to headers (futweb)
-    #     base_id = baseId(resource_id)
-    #     if base_id in self.players:
-    #         return self.players[base_id]
-    #     else:  # not a player?
-    #         url = '{0}{1}.json'.format(self.urls['card_info'], base_id)
-    #         return requests.get(url, timeout=self.timeout).json()
+    def cardInfo(self, resource_id):
+        """Return card info.
+
+        :params resource_id: Resource id.
+        """
+        # TODO: add referer to headers (futweb)
+        base_id = baseId(resource_id)
+        if base_id in self.players:
+            return self.players[base_id]
+        else:  # not a player?
+            url = '{0}{1}.json'.format(self.urls['card_info'], base_id)
+            return requests.get(url, timeout=self.timeout).json()
 
     # def searchDefinition(self, asset_id, start=0, count=35):
     #     """Return variations of the given asset id, e.g. IF cards.
@@ -849,36 +856,35 @@ class Core(object):
         rc = self.__request__(method, url, params=params)
         return [itemParse(i) for i in rc.get('auctionInfo', ())]
 
-    # def bid(self, trade_id, bid, fast=False):
-    #     """Make a bid.
-    #
-    #     :params trade_id: Trade id.
-    #     :params bid: Amount of credits You want to spend.
-    #     :params fast: True for fastest bidding (skips trade status & credits check).
-    #     """
-    #     if not fast:
-    #         rc = self.tradeStatus(trade_id)[0]
-    #         if rc['currentBid'] > bid or self.credits < bid:
-    #             return False  # TODO: add exceptions
-    #     data = {'bid': bid}
-    #     url = '{0}/{1}/bid'.format(self.urls['fut']['PostBid'], trade_id)
-    #     rc = self.__put__(url, data=json.dumps(data))['auctionInfo'][0]
-    #     if rc['bidState'] == 'highest' or (rc['tradeState'] == 'closed' and rc['bidState'] == 'buyNow'):  # checking 'tradeState' is required?
-    #         return True
-    #     else:
-    #         return False
+    def bid(self, trade_id, bid, fast=False):
+        """Make a bid.
 
-    # def club(self, count=10, level=10, type=1, start=0):
-    #     """Return items in your club, excluding consumables.
-    #
-    #     :params count: (optional) Number of cards You want to request (Default: 10).
-    #     :params level: (optional) 10 = all | 3 = gold | 2 = silver | 1 = bronze (Default: 10).
-    #     :params type: (optional) 1 = players | 100 = staff | 142 = club items (Default: 1).
-    #     :params start: (optional) Position to start from (Default: 0).
-    #     """
-    #     params = {'count': count, 'level': level, 'type': type, 'start': start}
-    #     rc = self.__get__(self.urls['fut']['Club'], params=params)
-    #     return [itemParse({'itemData': i}) for i in rc['itemData']]
+        :params trade_id: Trade id.
+        :params bid: Amount of credits You want to spend.
+        :params fast: True for fastest bidding (skips trade status & credits check).
+        """
+        method = 'PUT'
+        url = 'trade/%s/bid' % trade_id
+
+        if not fast:
+            rc = self.tradeStatus(trade_id)[0]
+            if rc['currentBid'] > bid or self.credits < bid:
+                return False  # TODO: add exceptions
+        data = {'bid': bid}
+        rc = self.__request__(method, url, data=json.dumps(data))['auctionInfo'][0]
+        if rc['bidState'] == 'highest' or (rc['tradeState'] == 'closed' and rc['bidState'] == 'buyNow'):  # checking 'tradeState' is required?
+            return True
+        else:
+            return False
+
+    def club(self, sort='desc', ctype='player', defId='', start=0, count=91):
+        """Return items in your club, excluding consumables."""
+        method = 'GET'
+        url = 'club'
+
+        params = {'sort': sort, 'type': ctype, 'defId': defId, 'start': start, 'count': count}
+        rc = self.__request__(method, url, params=params)
+        return [itemParse({'itemData': i}) for i in rc['itemData']]
 
     def clubStaff(self):
         """Return staff in your club."""
@@ -959,11 +965,14 @@ class Core(object):
 
         rc = self.__request__(method, url)
         return [itemParse(i) for i in rc.get('auctionInfo', ())]
-    #
-    # def unassigned(self):
-    #     """Return Unassigned items (i.e. buyNow items)."""
-    #     rc = self.__get__(self.urls['fut']['Unassigned'])  # , params={'brokeringSku': self.sku}
-    #     return [itemParse({'itemData': i}) for i in rc.get('itemData', ())]
+
+    def unassigned(self):
+        """Return Unassigned items (i.e. buyNow items)."""
+        method = 'GET'
+        url = 'purchased/items'
+
+        rc = self.__request__(method, url)
+        return [itemParse({'itemData': i}) for i in rc.get('itemData', ())]
 
     def sell(self, item_id, bid, buy_now=10000, duration=3600):
         """Start auction. Returns trade_id.
@@ -980,65 +989,72 @@ class Core(object):
         data = {'buyNowPrice': buy_now, 'startingBid': bid, 'duration': duration, 'itemData': {'id': item_id}}
         rc = self.__request__(method, url, data=json.dumps(data))
         return rc['id']
-    #
-    # def quickSell(self, item_id):
-    #     """Quick sell.
-    #
-    #     :params item_id: Item id.
-    #     """
-    #     if not isinstance(item_id, (list, tuple)):
-    #         item_id = (item_id,)
-    #     item_id = (str(i) for i in item_id)
-    #     params = {'itemIds': ','.join(item_id)}
-    #     self.__delete__(self.urls['fut']['Item'], params=params)  # returns nothing
-    #     return True
-    #
-    # def watchlistDelete(self, trade_id):
-    #     """Remove cards from watchlist.
-    #
-    #     :params trade_id: Trade id.
-    #     """
-    #     if not isinstance(trade_id, (list, tuple)):
-    #         trade_id = (trade_id,)
-    #     trade_id = (str(i) for i in trade_id)
-    #     params = {'tradeId': ','.join(trade_id)}
-    #     self.__delete__(self.urls['fut']['WatchList'], params=params)  # returns nothing
-    #     return True
-    #
-    # def tradepileDelete(self, trade_id):
-    #     """Remove card from tradepile.
-    #
-    #     :params trade_id: Trade id.
-    #     """
-    #     url = '{0}/{1}'.format(self.urls['fut']['TradeInfo'], trade_id)
-    #     self.__delete__(url)  # returns nothing
-    #     return True
-    #
-    # def sendToTradepile(self, trade_id, item_id, safe=True):
-    #     """Send to tradepile (alias for __sendToPile__).
-    #
-    #     :params trade_id: Trade id.
-    #     :params item_id: Item id.
-    #     :params safe: (optional) False to disable tradepile free space check.
-    #     """
-    #     if safe and len(self.tradepile()) >= self.tradepile_size:  # TODO?: optimization (don't parse items in tradepile)
-    #         return False
-    #     return self.__sendToPile__('trade', trade_id, item_id)
-    #
-    # def sendToClub(self, trade_id, item_id):
-    #     """Send to club (alias for __sendToPile__).
-    #
-    #     :params trade_id: Trade id.
-    #     :params item_id: Item id.
-    #     """
-    #     return self.__sendToPile__('club', trade_id, item_id)
-    #
-    # def sendToWatchlist(self, trade_id):
-    #     """Send to watchlist.
-    #
-    #     :params trade_id: Trade id.
-    #     """
-    #     return self.__sendToPile__('watchlist', trade_id)
+
+    def quickSell(self, item_id):
+        """Quick sell.
+
+        :params item_id: Item id.
+        """
+        method = 'DELETE'
+        url = 'item/%s' % item_id
+
+        if not isinstance(item_id, (list, tuple)):
+            item_id = (item_id,)
+        item_id = (str(i) for i in item_id)
+        params = {'itemIds': ','.join(item_id)}
+        self.__request__(method, url, params=params)  # {"items":[{"id":280607437106}],"totalCredits":18136}
+        return True
+
+    def watchlistDelete(self, trade_id):
+        """Remove cards from watchlist.
+
+        :params trade_id: Trade id.
+        """
+        method = 'DELETE'
+        url = 'watchlist'
+
+        if not isinstance(trade_id, (list, tuple)):
+            trade_id = (trade_id,)
+        trade_id = (str(i) for i in trade_id)
+        params = {'tradeId': ','.join(trade_id)}
+        self.__request__(method, url, params=params)  # returns nothing
+        return True
+
+    def tradepileDelete(self, trade_id):  # item_id instead of trade_id?
+        """Remove card from tradepile.
+
+        :params trade_id: Trade id.
+        """
+        method = 'DELETE'
+        url = 'trade/%s' % trade_id
+
+        self.__request__(method, url)  # returns nothing
+        # TODO: validate status code
+        return True
+
+    def sendToTradepile(self, item_id, safe=True):
+        """Send to tradepile (alias for __sendToPile__).
+
+        :params item_id: Item id.
+        :params safe: (optional) False to disable tradepile free space check.
+        """
+        if safe and len(self.tradepile()) >= self.tradepile_size:  # TODO?: optimization (don't parse items in tradepile)
+            return False
+        return self.__sendToPile__('trade', item_id=item_id)
+
+    def sendToClub(self, item_id):
+        """Send to club (alias for __sendToPile__).
+
+        :params item_id: Item id.
+        """
+        return self.__sendToPile__('club', item_id=item_id)
+
+    def sendToWatchlist(self, trade_id):
+        """Send to watchlist.
+
+        :params trade_id: Trade id.
+        """
+        return self.__sendToPile__('watchlist', trade_id=trade_id)
     #
     # def relist(self, clean=False):
     #     """Relist all tradepile. Returns True or number of deleted (sold) if clean was set.
@@ -1064,21 +1080,24 @@ class Core(object):
 
         return self.__request__(method, url)
 
-    # def applyConsumable(self, item_id, resource_id):
-    #     """Apply consumable on player.
-    #
-    #     :params item_id: Item id of player.
-    #     :params resource_id: Resource id of consumable.
-    #     """
-    #     # TODO: catch exception when consumable is not found etc.
-    #     # TODO: multiple players like in quickSell
-    #     data = {'apply': [{'id': item_id}]}
-    #     self.__post__('{0}/{1}'.format(self.urls['fut']['ItemResource'], resource_id), data=json.dumps(data))
+    def applyConsumable(self, item_id, resource_id):
+        """Apply consumable on player.
+
+        :params item_id: Item id of player.
+        :params resource_id: Resource id of consumable.
+        """
+        # TODO: catch exception when consumable is not found etc.
+        # TODO: multiple players like in quickSell
+        method = 'POST'
+        url = 'item/resource/%s' % resource_id
+
+        data = {'apply': [{'id': item_id}]}
+        self.__request__(method, url, data=json.dumps(data))
     #
     # def keepalive(self):
     #     """Refresh credit amount to let know that we're still online. Returns credit amount."""
     #     return self.__get__(self.urls['fut']['Credits'])['credits']
-    #
+
     def pileSize(self):
         """Return size of tradepile and watchlist."""
         rc = self._usermassinfo['pileSizeClientData']['entries']
@@ -1143,3 +1162,13 @@ class Core(object):
     #     """
     #     url = '{0}/{1}'.format(self.urls['fut']['ActiveMessage'], message_id)
     #     self.__delete__(url)
+
+    def openPack(self, pack_id):
+        method = 'POST'
+        url = 'purchased/items'
+
+        data = {"packId": pack_id,
+                "currency": 0,  # what is it?
+                "usePreOrder": True}
+        rc = self.__request__(method, url, data=json.dumps(data))
+        return rc  # TODO: parse response
