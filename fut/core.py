@@ -348,8 +348,6 @@ class Core(object):
         self.sku_a = 'F18'
         # === pre login
         # rc = self.r.get(self.urls['fut_home'])
-        # self.logger.debug(rc.content)
-        # print(rc.url)
         # # window.fut_resourceRoot = "https://www.easports.com";
         # # window.fut_resourceBase = "/fifa/ultimate-team/web-app/content/";
         # self.guid = re.search('fut_guid = "(.+?)";', rc.text).group(1)
@@ -386,10 +384,7 @@ class Core(object):
         #                              "ts_event": ts_event.strftime('%Y-%m-%dT%H:%M:%S.%f')[:-3] + 'Z',  # "2017-09-21T11:53:35.013Z",
         #                              "en": "boot_start"}}]}
         # rc = self.r.post('https://pin-river.data.ea.com/pinEvents', data=data)  # {"status":"ok"}
-        # self.logger.debug(rc.content)
         # # rc = self.r.get('https://gateway.ea.com/proxy/identity/pids/me')
-        # self.logger.debug(rc.content)
-        # print(rc.content)
         # asdasdasd
         # === login
         # # Content-Type:application/json
@@ -403,9 +398,7 @@ class Core(object):
         #           # 'redirect_uri': 'https://www.easports.com/fifa/ultimate-team/web-app/auth.html',
         #           'redirect_uri': 'nucleus:rest',
         #           'scope': 'basic.identity offline signin'}
-        # rc = self.r.get('https://accounts.ea.com/connect/auth', params=params, timeout=self.timeout)
-        # self.logger.debug(rc.content)
-        # rc = rc.json()
+        # rc = self.r.get('https://accounts.ea.com/connect/auth', params=params, timeout=self.timeout).json()
         # # if rc.get('error') == 'login_required':  # check if cookies are valid
         # authorization = '%s %s' % (rc['token_type'], rc['access_token'])  # expires in 3599
         # access_token = rc['access_token']
@@ -420,7 +413,6 @@ class Core(object):
                   'scope': 'basic.identity offline signin'}
         self.r.headers['Referer'] = 'https://www.easports.com/fifa/ultimate-team/web-app/'
         rc = self.r.get('https://accounts.ea.com/connect/auth', params=params, timeout=self.timeout)
-        self.logger.debug(rc.content)
         # TODO: validate (captcha etc.)
         if rc.url != 'https://www.easports.com/fifa/ultimate-team/web-app/auth.html':  # redirect target
             self.r.headers['Referer'] = rc.url
@@ -437,18 +429,15 @@ class Core(object):
                     'rememberMe': 'on',
                     '_eventId': 'submit'}
             rc = self.r.post(rc.url, data=data, timeout=self.timeout)
-            self.logger.debug(rc.content)
             # rc = rc.text
 
             if "'successfulLogin': false" in rc.text:
-                self.logger.debug(rc.content)
                 failedReason = re.search('general-error">\s+<div>\s+<div>\s+(.*)\s.+', rc.text).group(1)
                 # Your credentials are incorrect or have expired. Please try again or reset your password.
                 raise FutError(reason=failedReason)
 
             if 'var redirectUri' in rc.text:
                 rc = self.r.post(rc.url, {'_eventId': 'end'})  # initref param was missing here
-                self.logger.debug(rc.content)
 
             '''  # pops out only on first launch
             if 'FIFA Ultimate Team</strong> needs to update your Account to help protect your gameplay experience.' in rc:  # request email/sms code
@@ -461,7 +450,6 @@ class Core(object):
             # click button to send code
             if '<span><span>Send Security Code</span></span>' in rc.text:  # click button to get code sent
                 rc = self.r.post(rc.url, {'_eventId': 'submit'})
-                self.logger.debug(rc.content)
 
             if 'We sent a security code to your' in rc.text or 'Your security code was sent to' in rc.text or 'Enter the 6-digit verification code' in rc.text or 'We have sent a security code' in rc.text:  # post code
                 # TODO: 'We sent a security code to your email' / 'We sent a security code to your ?'
@@ -474,13 +462,11 @@ class Core(object):
                 # self.r.headers['Upgrade-Insecure-Requests'] = '1'  # ?
                 # self.r.headers['Origin'] = 'https://signin.ea.com'
                 rc = self.r.post(url.replace('s3', 's4'), {'oneTimeCode': code, '_trustThisDevice': 'on', 'trustThisDevice': 'on', '_eventId': 'submit'}, timeout=self.timeout)
-                self.logger.debug(rc.content)
                 # rc = rc.text
                 if 'Incorrect code entered' in rc.text or 'Please enter a valid security code' in rc.text:
                     raise FutError(reason='Error during login process - provided code is incorrect.')
                 if 'Set Up an App Authenticator' in rc.text:
                     rc = self.r.post(url.replace('s3', 's4'), {'_eventId': 'cancel', 'appDevice': 'IPHONE'}, timeout=self.timeout)
-                    self.logger.debug(rc.content)
                     # rc = rc.text
 
             rc = re.match('https://www.easports.com/fifa/ultimate-team/web-app/auth.html#access_token=(.+?)&token_type=(.+?)&expires_in=[0-9]+', rc.url)
@@ -488,19 +474,16 @@ class Core(object):
             token_type = rc.group(2)
 
         # === launch futweb
+        # TODO!: move to separate method __launch__, do not call login when not necessary
         # self.r.headers['Referer'] = 'https://www.easports.com/fifa/ultimate-team/web-app/auth.html'
-        rc = self.r.get('https://www.easports.com/fifa/ultimate-team/web-app/', timeout=self.timeout)
-        self.logger.debug(rc.content)
-        rc = rc.text
+        rc = self.r.get('https://www.easports.com/fifa/ultimate-team/web-app/', timeout=self.timeout).text
         # year = re.search('fut_year = "([0-9]{4}])"', rc).group(1)  # use this to construct urls, sku etc.
         # guid = re.search('fut_guid = "(.+?)"', rc).group(1)
         # TODO: config
         self.r.headers['Referer'] = 'https://www.easports.com/fifa/ultimate-team/web-app/'
         self.r.headers['Accept'] = 'application/json'
         self.r.headers['Authorization'] = '%s %s' % (token_type, access_token)
-        rc = self.r.get('https://gateway.ea.com/proxy/identity/pids/me')
-        self.logger.debug(rc.content)
-        rc = rc.json()
+        rc = self.r.get('https://gateway.ea.com/proxy/identity/pids/me').json()
         self.nucleus_id = rc['pid']['externalRefValue']  # or pidId
         # tos_version = rc['tosVersion']
         # authentication_source = rc['authenticationSource']
@@ -559,8 +542,7 @@ class Core(object):
                 'priorityLevel': 4,
                 'identification': {'authCode': auth_code,
                                    'redirectUrl': 'nucleus:rest'}}
-        rc = self.r.post('https://%s/ut/auth' % self.fut_host[platform], data=json.dumps(data), params={'': int(time.time() * 1000)}, timeout=self.timeout)
-        self.logger.debug(rc.content)
+        rc = self.r.post('https://%s/ut/auth' % self.fut_host[platform], data=json.dumps(data), params={'': int(time.time() * 1000)}, timeout=self.timeout).json()
         if rc.status_code == 500:
             raise InternalServerError('Servers are probably temporary down.')
         rc = rc.json()
@@ -577,14 +559,10 @@ class Core(object):
 
         # validate (secret question)
         self.r.headers['Easw-Session-Data-Nucleus-Id'] = self.nucleus_id
-        rc = self.r.get('https://%s/ut/game/fifa18/phishing/question' % self.fut_host[platform], params={'_': int(time.time() * 1000)}, timeout=self.timeout)
-        self.logger.debug(rc.content)
-        rc = rc.json()
+        rc = self.r.get('https://%s/ut/game/fifa18/phishing/question' % self.fut_host[platform], params={'_': int(time.time() * 1000)}, timeout=self.timeout).json()
         if rc.get('string') != 'Already answered question':
             params = {'answer': secret_answer_hash}
-            rc = self.r.post('https://%s/ut/game/fifa18/phishing/validate' % self.fut_host[platform], params=params, timeout=self.timeout)
-            self.logger.debug(rc.content)
-            rc = rc.json()
+            rc = self.r.post('https://%s/ut/game/fifa18/phishing/validate' % self.fut_host[platform], params=params, timeout=self.timeout).json()
             if rc['string'] != 'OK':  # we've got an error
                 # Known reasons:
                 # * invalid secret answer
@@ -622,11 +600,13 @@ class Core(object):
         :params url: Url.
         """
         # TODO: update credtis?
-        self.r.headers['X-HTTP-Method-Override'] = method.upper()
         self.logger.debug("request: {0} args={1};  kwargs={2}".format(url, args, kwargs))
         time.sleep(max(self.request_time - time.time() + random.randrange(self.delay[0], self.delay[1] + 1), 0))  # respect minimum delay
         self.request_time = time.time()  # save request time for delay calculations
-        rc = self.r.post(url, timeout=self.timeout, *args, **kwargs)
+        if method == 'GET':
+            rc = self.r.get(url, timeout=self.timeout, *args, **kwargs)
+        elif method == 'POST':
+            rc = self.r.post(url, timeout=self.timeout, *args, **kwargs)
         self.logger.debug("response: {0}".format(rc.content))
         if not rc.ok:  # status != 200
             raise UnknownError(rc.content)
@@ -673,13 +653,13 @@ class Core(object):
         """Send post request. Return response as a json object."""
         return self.__request__('POST', url, *args, **kwargs)
 
-    def __put__(self, url, *args, **kwargs):
-        """Send put request. Return response as a json object."""
-        return self.__request__('PUT', url, *args, **kwargs)
-
-    def __delete__(self, url, *args, **kwargs):
-        """Send delete request. Return response as a json object."""
-        return self.__request__('DELETE', url, *args, **kwargs)
+    # def __put__(self, url, *args, **kwargs):
+    #     """Send put request. Return response as a json object."""
+    #     return self.__request__('PUT', url, *args, **kwargs)
+    #
+    # def __delete__(self, url, *args, **kwargs):
+    #     """Send delete request. Return response as a json object."""
+    #     return self.__request__('DELETE', url, *args, **kwargs)
 
     def __sendToPile__(self, pile, trade_id, item_id=None):
         """Send to pile.
