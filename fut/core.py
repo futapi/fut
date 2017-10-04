@@ -251,7 +251,7 @@ def playstyles(year=2018, timeout=timeout):
 
 
 class Core(object):
-    def __init__(self, email, passwd, secret_answer, platform='pc', code=None, emulate=None, debug=False, cookies=cookies_file, timeout=timeout, delay=delay, proxies=None):
+    def __init__(self, email, passwd, secret_answer, platform='pc', code=None, emulate=None, debug=False, cookies=cookies_file, timeout=timeout, delay=delay, proxies=None, totp=False):
         self.credits = 0
         self.cookies_file = cookies  # TODO: map self.cookies to requests.Session.cookies?
         self.timeout = timeout
@@ -266,9 +266,9 @@ class Core(object):
         logger(save=debug)  # init root logger
         self.logger = logger(__name__)
         # TODO: validate fut request response (200 OK)
-        self.__login__(email, passwd, secret_answer, platform, code, emulate, proxies)
+        self.__login__(email, passwd, secret_answer, platform, code, emulate, proxies, totp)
 
-    def __login__(self, email, passwd, secret_answer, platform='pc', code=None, emulate=None, proxies=None):
+    def __login__(self, email, passwd, secret_answer, platform='pc', code=None, emulate=None, proxies=None, totp=False):
         """Log in.
 
         :params email: Email.
@@ -449,9 +449,13 @@ class Core(object):
 
             # click button to send code
             if '<span><span>Send Security Code</span></span>' in rc.text:  # click button to get code sent
-                rc = self.r.post(rc.url, {'_eventId': 'submit'})
+                if totp:
+                    rc = self.r.post(rc.url, {'_eventId': 'submit', 'codeType': 'APP'})
+                else:  # email
+                    rc = self.r.post(rc.url, {'_eventId': 'submit'})
 
-            if 'We sent a security code to your' in rc.text or 'Your security code was sent to' in rc.text or 'Enter the 6-digit verification code' in rc.text or 'We have sent a security code' in rc.text:  # post code
+            # if 'We sent a security code to your' in rc.text or 'Your security code was sent to' in rc.text or 'Enter the 6-digit verification code' in rc.text or 'We have sent a security code' in rc.text:  # post code
+            if 'Enter your security code' in rc.text:
                 # TODO: 'We sent a security code to your email' / 'We sent a security code to your ?'
                 # TODO: pick code from codes.txt?
                 if not code:
@@ -465,7 +469,7 @@ class Core(object):
                 # rc = rc.text
                 if 'Incorrect code entered' in rc.text or 'Please enter a valid security code' in rc.text:
                     raise FutError(reason='Error during login process - provided code is incorrect.')
-                if 'Set Up an App Authenticator' in rc.text:
+                if 'Set Up an App Authenticator' in rc.text:  # may we drop this?
                     rc = self.r.post(url.replace('s3', 's4'), {'_eventId': 'cancel', 'appDevice': 'IPHONE'}, timeout=self.timeout)
                     # rc = rc.text
 
