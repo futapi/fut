@@ -611,6 +611,8 @@ class Core(object):
             rc = self.r.get(url, data=data, params=params, timeout=self.timeout)
         elif method.upper() == 'POST':
             rc = self.r.post(url, data=data, params=params, timeout=self.timeout)
+        elif method.upper() == 'PUT':
+            rc = self.r.put(url, data=data, params=params, timeout=self.timeout)
         self.logger.debug("response: {0}".format(rc.content))
         if not rc.ok:  # status != 200
             raise UnknownError(rc.content)
@@ -1054,7 +1056,14 @@ class Core(object):
     #                 sold += 1
     #         return sold
     #     return True
-    #
+
+    def relist(self):
+        """ReList all cards in tradepile. EA method - might(?) change prices."""
+        method = 'PUT'
+        url = 'auctionhouse/relist'
+
+        return self.__request__(method, url)
+
     # def applyConsumable(self, item_id, resource_id):
     #     """Apply consumable on player.
     #
