@@ -13,6 +13,7 @@ import re
 import random
 import time
 import json
+import pyotp
 from datetime import datetime, timedelta
 try:
     from cookielib import LWPCookieJar
@@ -251,7 +252,7 @@ def playstyles(year=2018, timeout=timeout):
 
 
 class Core(object):
-    def __init__(self, email, passwd, secret_answer, platform='pc', code=None, emulate=None, debug=False, cookies=cookies_file, timeout=timeout, delay=delay, proxies=None, totp=False):
+    def __init__(self, email, passwd, secret_answer, platform='pc', code=None, totp=None, emulate=None, debug=False, cookies=cookies_file, timeout=timeout, delay=delay, proxies=None):
         self.credits = 0
         self.cookies_file = cookies  # TODO: map self.cookies to requests.Session.cookies?
         self.timeout = timeout
@@ -266,9 +267,9 @@ class Core(object):
         logger(save=debug)  # init root logger
         self.logger = logger(__name__)
         # TODO: validate fut request response (200 OK)
-        self.__login__(email, passwd, secret_answer, platform, code, emulate, proxies, totp)
+        self.__login__(email, passwd, secret_answer, platform=platform, code=code, totp=totp, emulate=emulate, proxies=proxies)
 
-    def __login__(self, email, passwd, secret_answer, platform='pc', code=None, emulate=None, proxies=None, totp=False):
+    def __login__(self, email, passwd, secret_answer, platform='pc', code=None, totp=None, emulate=None, proxies=None):
         """Log in.
 
         :params email: Email.
@@ -448,9 +449,10 @@ class Core(object):
             '''
 
             # click button to send code
-            if '<span><span>Send Security Code</span></span>' in rc.text:  # click button to get code sent
+            if 'Login Verification' in rc.text:  # click button to get code sent
                 if totp:
                     rc = self.r.post(rc.url, {'_eventId': 'submit', 'codeType': 'APP'})
+                    code = pyotp.TOTP(totp).now()
                 else:  # email
                     rc = self.r.post(rc.url, {'_eventId': 'submit'})
 
