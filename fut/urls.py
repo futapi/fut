@@ -44,7 +44,7 @@ def urls(platform, cl=None, site_config=None):
 
         'shards':                'https://www.easports.com/iframe/fut18/p/ut/shards/v2',
         'acc_info':              'https://www.easports.com/iframe/fut18/p/ut/game/fifa18/user/accountinfo',
-        'card_info':             'https://fifa17.content.easports.com/fifa/fltOnlineAssets/CC8267B6-0817-4842-BB6A-A20F88B05418/2017/fut/items/web/',  # need update 17->18
+        'card_info':             'https://fifa18.content.easports.com/fifa/fltOnlineAssets/B1BA185F-AD7C-4128-8A64-746DE4EC5A82/2018/fut/items/web/',  # update 18
         'messages':              'https://www.easports.com/iframe/fut18/bundles/futweb/web/flash/xml/localization/messages.en_US.xml',  # add cl
         'mass_info':             '/ut/game/fifa18/usermassinfo',
     }
