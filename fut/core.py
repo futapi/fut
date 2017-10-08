@@ -252,7 +252,7 @@ def playstyles(year=2018, timeout=timeout):
 
 
 class Core(object):
-    def __init__(self, email, passwd, secret_answer, platform='pc', code=None, totp=None, emulate=None, debug=False, cookies=cookies_file, timeout=timeout, delay=delay, proxies=None):
+    def __init__(self, email, passwd, secret_answer, platform='pc', code=None, totp=None, sms=False, emulate=None, debug=False, cookies=cookies_file, timeout=timeout, delay=delay, proxies=None):
         self.credits = 0
         self.cookies_file = cookies  # TODO: map self.cookies to requests.Session.cookies?
         self.timeout = timeout
@@ -267,9 +267,9 @@ class Core(object):
         logger(save=debug)  # init root logger
         self.logger = logger(__name__)
         # TODO: validate fut request response (200 OK)
-        self.__login__(email, passwd, secret_answer, platform=platform, code=code, totp=totp, emulate=emulate, proxies=proxies)
+        self.__login__(email, passwd, secret_answer, platform=platform, code=code, totp=totp, sms=sms, emulate=emulate, proxies=proxies)
 
-    def __login__(self, email, passwd, secret_answer, platform='pc', code=None, totp=None, emulate=None, proxies=None):
+    def __login__(self, email, passwd, secret_answer, platform='pc', code=None, totp=None, sms=False, emulate=None, proxies=None):
         """Log in.
 
         :params email: Email.
@@ -453,8 +453,10 @@ class Core(object):
                 if totp:
                     rc = self.r.post(rc.url, {'_eventId': 'submit', 'codeType': 'APP'})
                     code = pyotp.TOTP(totp).now()
+                elif sms:
+                    rc = self.r.post(rc.url, {'_eventId': 'submit', 'codeType': 'SMS'})
                 else:  # email
-                    rc = self.r.post(rc.url, {'_eventId': 'submit'})
+                    rc = self.r.post(rc.url, {'_eventId': 'submit', 'codeType': 'EMAIL'})
 
             # if 'We sent a security code to your' in rc.text or 'Your security code was sent to' in rc.text or 'Enter the 6-digit verification code' in rc.text or 'We have sent a security code' in rc.text:  # post code
             if 'Enter your security code' in rc.text:
