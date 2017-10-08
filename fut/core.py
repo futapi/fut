@@ -270,25 +270,43 @@ class Pin(object):
         self.et = re.search('et:"(.+?)"', rc).group(1)
         self.pidt = re.search('pidt:"(.+?)"', rc).group(1)
 
+        self.r = requests.Session()
+        self.r.headers = headers
+        self.r.headers['Origin'] = 'https://www.easports.com'
+        self.r.headers['Referer'] = 'https://www.easports.com/fifa/ultimate-team/web-app/'
+        self.r.headers['x-ea-game-id'] = self.sku
+        self.r.headers['x-ea-game-id-type'] = self.tidt
+        self.r.headers['x-ea-taxv'] = self.taxv
+
         self.custom = {"networkAccess": "W"}  # wifi?
         # TODO: boot pinEvents (boot_start, login, boot_end)
+        # TODO?: full boot process when there is no session saved
 
         self.custom['service_plat'] = platform
+        self.s = 4  # event id?
+
+    def __ts(self):
+        # TODO: add ability to random something
+        ts = datetime.now()
+        ts = ts.strftime('%Y-%m-%dT%H:%M:%S.%f')[:-3] + 'Z'
+        return ts
 
     def event(self, en, pgid=False, status=False, source=False):
-        data = {"core": {"s": 0,
+        data = {"core": {"s": self.s,
                          "pidt": self.pidt,
                          "pid": self.persona_id,
                          "pidm": {"nucleus": self.nucleus_id},
                          "didm": {"uuid": "0"},  # what is it?
-                         "ts_event": "2017-10-08T18:31:52.927Z",
-                         "en": en}}
+                         "ts_event": self.__ts(),
+                         "en": en},
+                'userid': self.persona_id,  # not needed before session?
+                'type': 'utas'}  # not needed before session?
         if status:
             data['status'] = status
         if source:
             data['source'] = source
         if self.dob:  # date of birth yyyy-mm
-            data['code']['dob'] = self.dob
+            data['core']['dob'] = self.dob
         if pgid:
             data['pgid'] = pgid
         return data
@@ -299,7 +317,7 @@ class Pin(object):
                 "tid": self.sku,
                 "rel": self.rel,
                 "v": "18.0.0",  # TODO: where is it from?
-                "ts_post": "2017-10-08T18:31:53.455Z",
+                "ts_post": self.__ts(),  # TODO: random delay between event and post (0.5-2s?)
                 "sid": self.sid,
                 "gid": self.gid,  # convert to int?
                 "plat": self.plat,
@@ -308,6 +326,11 @@ class Pin(object):
                 "is_sess": self.sid != '',
                 "custom": self.custom,
                 "events": events}
+        rc = self.r.post(self.url, data=json.dumps(data)).json()
+        if rc['status'] != 'ok':
+            raise FutError('PinEvent is NOT OK, probably they changed something.')
+        return True
+
 
 
 class Core(object):
@@ -406,63 +429,6 @@ class Core(object):
             raise FutError(reason='Invalid emulate parameter. (Valid ones are and/ios).')  # pc/ps3/xbox/
         self.sku = sku  # TODO: use self.sku in all class
         self.sku_a = 'F18'
-        # === pre login
-        # rc = self.r.get(self.urls['fut_home'])
-        # # window.fut_resourceRoot = "https://www.easports.com";
-        # # window.fut_resourceBase = "/fifa/ultimate-team/web-app/content/";
-        # self.guid = re.search('fut_guid = "(.+?)";', rc.text).group(1)
-        # self.year = re.search('fut_year = "([0-9]{4})";', rc.text).group(1)
-        # ts_event = datetime.now()  # this probably will be used for bot detection
-        # ts_post = ts_event + timedelta(microseconds=random.randrange(500000, 2000000))  # 0.5-2 seconds
-        # data = {"taxv": 1.1,
-        #         "tidt": "easku",
-        #         "tid": "FUT18WEB",
-        #         "rel": "prod",
-        #         "v": "18.0.0",
-        #         "ts_post": ts_post.strftime('%Y-%m-%dT%H:%M:%S.%f')[:-3] + 'Z',  # "2017-09-21T11:53:35.513Z",
-        #         "sid": "",
-        #         "gid": 0,
-        #         "plat": "web",
-        #         "et": "client",
-        #         "loc": "en_US",
-        #         "is_sess": False,
-        #         "custom": {"networkAccess": "W"},
-        #         "events": [{"core": {"s": 0,
-        #                              "pidt": "persona",
-        #                              "pid": "",
-        #                              "pidm": {"nucleus": 0},
-        #                              "didm": {"uuid": "0"},
-        #                              "ts_event": ts_event.strftime('%Y-%m-%dT%H:%M:%S.%f')[:-3] + 'Z',  # "2017-09-21T11:53:35.012Z",
-        #                              "en": "connection"}},
-        #                    {"status": "success",
-        #                     "source": "0-normal",
-        #                     "core": {"s": 1,
-        #                              "pidt": "persona",
-        #                              "pid": "",
-        #                              "pidm": {"nucleus": 0},
-        #                              "didm": {"uuid": "0"},
-        #                              "ts_event": ts_event.strftime('%Y-%m-%dT%H:%M:%S.%f')[:-3] + 'Z',  # "2017-09-21T11:53:35.013Z",
-        #                              "en": "boot_start"}}]}
-        # rc = self.r.post('https://pin-river.data.ea.com/pinEvents', data=data)  # {"status":"ok"}
-        # # rc = self.r.get('https://gateway.ea.com/proxy/identity/pids/me')
-        # asdasdasd
-        # === login
-        # # Content-Type:application/json
-        # self.r.headers['Referer'] = 'https://www.easports.com/fifa/ultimate-team/web-app/'
-        # params = {'prompt': 'none',
-        #           'accessToken': 'null',
-        #           'client_id': client_id,
-        #           'response_type': 'token',
-        #           'display': 'web2/login',
-        #           'locale': 'en_US',
-        #           # 'redirect_uri': 'https://www.easports.com/fifa/ultimate-team/web-app/auth.html',
-        #           'redirect_uri': 'nucleus:rest',
-        #           'scope': 'basic.identity offline signin'}
-        # rc = self.r.get('https://accounts.ea.com/connect/auth', params=params, timeout=self.timeout).json()
-        # # if rc.get('error') == 'login_required':  # check if cookies are valid
-        # authorization = '%s %s' % (rc['token_type'], rc['access_token'])  # expires in 3599
-        # access_token = rc['access_token']
-        #
         params = {'prompt': 'login',
                   'accessToken': 'null',
                   'client_id': client_id,
@@ -552,6 +518,7 @@ class Core(object):
         self.r.headers['Authorization'] = '%s %s' % (token_type, access_token)
         rc = self.r.get('https://gateway.ea.com/proxy/identity/pids/me').json()
         self.nucleus_id = rc['pid']['externalRefValue']  # or pidId
+        self.dob = rc['pid']['dob']
         # tos_version = rc['tosVersion']
         # authentication_source = rc['authenticationSource']
         # password_signature = rc['passwordSignature']
@@ -590,6 +557,7 @@ class Core(object):
             raise FutError(reason='Error during login process (no persona found).')
 
         # authorization
+        # TODO?: with proper saved session we might start here
         del self.r.headers['Easw-Session-Data-Nucleus-Id']
         self.r.headers['Origin'] = 'http://www.easports.com'
         params = {'client_id': 'FOS-SERVER',  # i've seen in some js/json response but cannot find now
@@ -623,6 +591,12 @@ class Core(object):
         elif rc.get('reason'):
             raise UnknownError(rc.__str__())
         self.r.headers['X-UT-SID'] = self.sid = rc['sid']
+
+        # init pin
+        self.pin = Pin(sid=self.sid, nucleus_id=self.nucleus_id, persona_id=self.persona_id, dob=self.dob[:-3], platform=platform)
+        events = [self.pin.event('login', status='success')]
+        print(self.pin.send(events))
+        asdasd
 
         # validate (secret question)
         self.r.headers['Easw-Session-Data-Nucleus-Id'] = self.nucleus_id
