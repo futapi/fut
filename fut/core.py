@@ -279,11 +279,10 @@ class Pin(object):
         self.r.headers['x-ea-taxv'] = self.taxv
 
         self.custom = {"networkAccess": "W"}  # wifi?
-        # TODO: boot pinEvents (boot_start, login, boot_end)
-        # TODO?: full boot process when there is no session saved
+        # TODO?: full boot process when there is no session (boot start)
 
         self.custom['service_plat'] = platform
-        self.s = 4  # event id?
+        self.s = 4  # event id  |  3 before "was sent" without session/persona/nucleus id so we can probably omit
 
     def __ts(self):
         # TODO: add ability to random something
@@ -291,7 +290,7 @@ class Pin(object):
         ts = ts.strftime('%Y-%m-%dT%H:%M:%S.%f')[:-3] + 'Z'
         return ts
 
-    def event(self, en, pgid=False, status=False, source=False):
+    def event(self, en, pgid=False, status=False, source=False, end_reason=False):  # type=False
         data = {"core": {"s": self.s,
                          "pidt": self.pidt,
                          "pid": self.persona_id,
@@ -301,14 +300,23 @@ class Pin(object):
                          "en": en},
                 'userid': self.persona_id,  # not needed before session?
                 'type': 'utas'}  # not needed before session?
-        if status:
-            data['status'] = status
-        if source:
-            data['source'] = source
         if self.dob:  # date of birth yyyy-mm
             data['core']['dob'] = self.dob
         if pgid:
             data['pgid'] = pgid
+            if pgid[:3] == 'Hub':
+                data['type'] = 'menu'
+        # if type:  # yeah i know we're overwriting default namespace but why not?
+        #     data['type'] = type
+        if status:
+            data['status'] = status
+        if source:
+            data['source'] = source
+        if end_reason:
+            data['end_reason'] = end_reason
+
+        self.s += 1  # bump event id
+
         return data
 
     def send(self, events):
@@ -595,8 +603,7 @@ class Core(object):
         # init pin
         self.pin = Pin(sid=self.sid, nucleus_id=self.nucleus_id, persona_id=self.persona_id, dob=self.dob[:-3], platform=platform)
         events = [self.pin.event('login', status='success')]
-        print(self.pin.send(events))
-        asdasd
+        self.pin.send(events)
 
         # validate (secret question)
         self.r.headers['Easw-Session-Data-Nucleus-Id'] = self.nucleus_id
@@ -620,6 +627,12 @@ class Core(object):
         self._usermassinfo = self.r.get('https://%s/ut/game/fifa18/usermassinfo' % self.fut_host, params={'_': int(time.time() * 1000)}, timeout=self.timeout).json()
         if self._usermassinfo['settings']['configs'][2]['value'] == 0:
             raise FutError(reason='Transfer market is probably disabled on this account.')  # if tradingEnabled = 0
+
+        # pinEvent - boot_end
+        events = [self.pin.event('connection'),
+                  self.pin.event('boot_end', end_reason='normal')]
+        self.pin.send(events)
+
         # size of piles
         piles = self.pileSize()
         self.tradepile_size = piles['tradepile']
