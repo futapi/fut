@@ -251,6 +251,65 @@ def playstyles(year=2018, timeout=timeout):
     return playstyles
 
 
+class Pin(object):
+    def __init__(self, sku='FIFA18WEB', sid='', nucleus_id=0, persona_id='', dob=False, platform=False):
+        self.sku = sku
+        self.sid = sid
+        self.nucleus_id = nucleus_id
+        self.persona_id = persona_id
+        self.dob = dob
+        self.platform = platform
+        rc = requests.get('https://www.easports.com/fifa/ultimate-team/web-app/config/config.json').text
+        self.url = re.search('"pinURL": "(.+?)",', rc).group(1)
+        rc = requests.get('https://www.easports.com/fifa/ultimate-team/web-app/js/compiled_1.js').text
+        self.taxv = re.search('PinManager.TAXONOMY_VERSION=([0-9\.]+?)', rc).group(1)
+        self.tidt = re.search('PinManager.TITLE_ID_TYPE="(.+?)"', rc).group(1)
+        self.rel = re.search('rel:"(.+?)"', rc).group(1)
+        self.gid = re.search('gid:([0-9]+?)', rc).group(1)
+        self.plat = re.search('plat:"(.+?)"', rc).group(1)
+        self.et = re.search('et:"(.+?)"', rc).group(1)
+        self.pidt = re.search('pidt:"(.+?)"', rc).group(1)
+
+        self.custom = {"networkAccess": "W"}  # wifi?
+        # TODO: boot pinEvents (boot_start, login, boot_end)
+
+        self.custom['service_plat'] = platform
+
+    def event(self, en, pgid=False, status=False, source=False):
+        data = {"core": {"s": 0,
+                         "pidt": self.pidt,
+                         "pid": self.persona_id,
+                         "pidm": {"nucleus": self.nucleus_id},
+                         "didm": {"uuid": "0"},  # what is it?
+                         "ts_event": "2017-10-08T18:31:52.927Z",
+                         "en": en}}
+        if status:
+            data['status'] = status
+        if source:
+            data['source'] = source
+        if self.dob:  # date of birth yyyy-mm
+            data['code']['dob'] = self.dob
+        if pgid:
+            data['pgid'] = pgid
+        return data
+
+    def send(self, events):
+        data = {"taxv": self.taxv,  # convert to float?
+                "tidt": self.tidt,
+                "tid": self.sku,
+                "rel": self.rel,
+                "v": "18.0.0",  # TODO: where is it from?
+                "ts_post": "2017-10-08T18:31:53.455Z",
+                "sid": self.sid,
+                "gid": self.gid,  # convert to int?
+                "plat": self.plat,
+                "et": self.et,
+                "loc": "en_US",
+                "is_sess": self.sid != '',
+                "custom": self.custom,
+                "events": events}
+
+
 class Core(object):
     def __init__(self, email, passwd, secret_answer, platform='pc', code=None, totp=None, sms=False, emulate=None, debug=False, cookies=cookies_file, timeout=timeout, delay=delay, proxies=None):
         self.credits = 0
