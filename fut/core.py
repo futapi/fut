@@ -304,8 +304,8 @@ class Pin(object):
             data['core']['dob'] = self.dob
         if pgid:
             data['pgid'] = pgid
-            if pgid[:3] == 'Hub':
-                data['type'] = 'menu'
+            # if pgid[:3] == 'Hub':
+            #     data['type'] = 'menu'
         # if type:  # yeah i know we're overwriting default namespace but why not?
         #     data['type'] = type
         if status:
@@ -314,6 +314,9 @@ class Pin(object):
             data['source'] = source
         if end_reason:
             data['end_reason'] = end_reason
+
+        if en == 'page_view':
+            data['type'] = 'menu'
 
         self.s += 1  # bump event id
 
@@ -878,6 +881,10 @@ class Core(object):
         method = 'GET'
         url = 'transfermarket'
 
+        # pinEvent - Transfer Market Search
+        events = [self.pin.event('page_view', 'Transfer Market Search')]
+        self.pin.send(events)
+
         if start > 0 and page_size == 16:
             if not self.emulate:  # wbeapp
                 page_size = 12
@@ -908,6 +915,11 @@ class Core(object):
         if playStyle:   params['playStyle'] = playStyle
 
         rc = self.__request__(method, url, params=params)
+
+        # pinEvents - Transfer Market Results - List View
+        events = [self.pin.event('page_view', 'Transfer Market Results - List View')]
+        self.pin.send(events)
+
         return [itemParse(i) for i in rc.get('auctionInfo', ())]
 
     def bid(self, trade_id, bid, fast=False):
