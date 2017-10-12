@@ -770,10 +770,10 @@ class Core(object):
     #         raise UnknownError('Invalid definition response')
     #     return rc
 
-    def searchAuctions(self, ctype, level=None, category=None, assetId=None, defId=None,
-                       min_price=None, max_price=None, min_buy=None, max_buy=None,
-                       league=None, club=None, position=None, nationality=None, rare=False,
-                       playStyle=None, start=0, page_size=16):
+    def search(self, ctype, level=None, category=None, assetId=None, defId=None,
+               min_price=None, max_price=None, min_buy=None, max_buy=None,
+               league=None, club=None, position=None, nationality=None, rare=False,
+               playStyle=None, start=0, page_size=16):
         """Prepare search request, send and return parsed data as a dict.
 
         :param ctype: [development / ? / ?] Card type.
@@ -841,6 +841,10 @@ class Core(object):
             self.pin.send(events)
 
         return [itemParse(i) for i in rc.get('auctionInfo', ())]
+
+    def searchAuctions(self, *args, **kwargs):
+        """Alias for search method, just to keep compatibility."""
+        return self.search(*args, **kwargs)
 
     def bid(self, trade_id, bid, fast=False):
         """Make a bid.
