@@ -494,7 +494,9 @@ class Core(object):
                 'priorityLevel': 4,
                 'identification': {'authCode': auth_code,
                                    'redirectUrl': 'nucleus:rest'}}
-        rc = self.r.post('https://%s/ut/auth' % self.fut_host, data=json.dumps(data), params={'': int(time.time() * 1000)}, timeout=self.timeout)
+        params = {'sku_a': self.sku_a,
+                  '': int(time.time() * 1000)}
+        rc = self.r.post('https://%s/ut/auth' % self.fut_host, data=json.dumps(data), params=params, timeout=self.timeout)
         if rc.status_code == 500:
             raise InternalServerError('Servers are probably temporary down.')
         rc = rc.json()

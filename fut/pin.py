@@ -103,6 +103,7 @@ class Pin(object):
                 "is_sess": self.sid != '',
                 "custom": self.custom,
                 "events": events}
+        # print(data)  # DEBUG
         rc = self.r.post(self.url, data=json.dumps(data)).json()
         if rc['status'] != 'ok':
             raise FutError('PinEvent is NOT OK, probably they changed something.')
