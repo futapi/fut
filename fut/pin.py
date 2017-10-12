@@ -11,9 +11,11 @@ This module implements the fut's pinEvents methods.
 import requests
 import re
 import json
-from datetime import datetime
+from random import random
+from datetime import datetime, timedelta
 
 from fut.config import headers
+from fut.urls import pin_url, v
 from fut.exceptions import FutError
 
 
@@ -25,8 +27,6 @@ class Pin(object):
         self.persona_id = persona_id
         self.dob = dob
         self.platform = platform
-        rc = requests.get('https://www.easports.com/fifa/ultimate-team/web-app/config/config.json').text
-        self.url = re.search('"pinURL": "(.+?)",', rc).group(1)
         rc = requests.get('https://www.easports.com/fifa/ultimate-team/web-app/js/compiled_1.js').text
         self.taxv = re.search('PinManager.TAXONOMY_VERSION=([0-9\.]+?)', rc).group(1)
         self.tidt = re.search('PinManager.TITLE_ID_TYPE="(.+?)"', rc).group(1)
@@ -50,9 +50,9 @@ class Pin(object):
         self.custom['service_plat'] = platform
         self.s = 4  # event id  |  3 before "was sent" without session/persona/nucleus id so we can probably omit
 
-    def __ts(self):
+    def __ts(self, delay=0):
         # TODO: add ability to random something
-        ts = datetime.now()
+        ts = datetime.now() + timedelta(seconds=delay)
         ts = ts.strftime('%Y-%m-%dT%H:%M:%S.%f')[:-3] + 'Z'
         return ts
 
@@ -62,7 +62,7 @@ class Pin(object):
                          "pid": self.persona_id,
                          "pidm": {"nucleus": self.nucleus_id},
                          "didm": {"uuid": "0"},  # what is it?
-                         "ts_event": self.__ts(),
+                         "ts_event": self.__ts(delay=-0.25),
                          "en": en},
                 'userid': self.persona_id,  # not needed before session?
                 'type': 'utas'}  # not needed before session?
@@ -93,8 +93,8 @@ class Pin(object):
                 "tidt": self.tidt,
                 "tid": self.sku,
                 "rel": self.rel,
-                "v": "18.0.0",  # TODO: where is it from?
-                "ts_post": self.__ts(),  # TODO: random delay between event and post (0.5-2s?)
+                "v": v,
+                "ts_post": self.__ts(delay=0.25 + random() / 20),
                 "sid": self.sid,
                 "gid": self.gid,  # convert to int?
                 "plat": self.plat,
@@ -104,7 +104,7 @@ class Pin(object):
                 "custom": self.custom,
                 "events": events}
         # print(data)  # DEBUG
-        rc = self.r.post(self.url, data=json.dumps(data)).json()
+        rc = self.r.post(pin_url, data=json.dumps(data)).json()
         if rc['status'] != 'ok':
             raise FutError('PinEvent is NOT OK, probably they changed something.')
         return True
