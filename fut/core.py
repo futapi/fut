@@ -23,7 +23,7 @@ except ImportError:
 from .pin import Pin
 from .config import headers, headers_and, headers_ios, cookies_file, timeout, delay
 from .log import logger
-from .urls2 import client_id, auth_url, card_info_url, messages_url
+from .urls import client_id, auth_url, card_info_url, messages_url
 from .exceptions import (FutError, ExpiredSession, InternalServerError,
                          UnknownError, PermissionDenied, Captcha,
                          Conflict, MaxSessions, MultipleSession,
