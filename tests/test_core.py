@@ -10,7 +10,7 @@ import json
 from sys import path, version_info
 
 from fut import core
-from fut.urls import urls
+from fut.urls import messages_url, card_info_url
 from fut.exceptions import FutError
 
 if version_info[0] == 2:  # utf8 for python2
@@ -46,10 +46,10 @@ class FutCoreTestCase(unittest.TestCase):
     @responses.activate
     def testDatabase(self):
         responses.add(responses.GET,
-                      urls('pc')['messages'],
+                      messages_url,
                       body=open(path[0] + '/tests/data/messages.en_US.xml', 'r').read())
         responses.add(responses.GET,
-                      '{0}{1}.json'.format(urls('pc')['card_info'], 'players'),
+                      '{0}{1}.json'.format(card_info_url, 'players'),
                       json=json.loads(open(path[0] + '/tests/data/players.json', 'r').read()))  # load json to avoid encoding errors
 
         self.db_nations = core.nations()
