@@ -27,3 +27,5 @@ Patches and Suggestions
 - spacedlevo
 - pulkitsharma
 - xAranaktu
+- LasseRegin
+- kirov

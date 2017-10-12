@@ -18,8 +18,17 @@ fut
     :target: https://codecov.io/github/oczkers/fut
     :alt: codecov.io
 
+.. image:: https://api.codacy.com/project/badge/Grade/f599808fba2447c98253cf44cca86a1b
+    :target: https://www.codacy.com/app/oczkers/fut?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=oczkers/fut&amp;utm_campaign=Badge_Grade
+
+.. image:: https://cdn.worldvectorlogo.com/logos/slack.svg
+    :height: 20px
+    :target: https://futapi.slack.com
+
 fut is a simple library for managing Fifa Ultimate Team.
 It is written entirely in Python.
+
+`Click here to get Slack invitation <https://gentle-everglades-93932.herokuapp.com>`_
 
 
 
@@ -30,7 +39,15 @@ Documentation will be available soon at http://fut.readthedocs.org/.
 
 Players database: https://www.easports.com/uk/fifa/ultimate-team/fut/database
 
-Players database (json): http://cdn.content.easports.com/fifa/fltOnlineAssets/CC8267B6-0817-4842-BB6A-A20F88B05418/2017/fut/items/web/players.json
+Players database (json): https://www.easports.com/fifa/ultimate-team/web-app/content/B1BA185F-AD7C-4128-8A64-746DE4EC5A82/2018/fut/items/web/players_meta.json
+
+Consumables database provided by koolaidjones: https://github.com/koolaidjones/FUT-Consumables-Resource-IDs
+
+.. image:: https://cdn.worldvectorlogo.com/logos/slack.svg
+    :height: 100px
+    :target: https://futapi.slack.com
+
+`Click here to get Slack invitation <https://gentle-everglades-93932.herokuapp.com>`_
 
 
 AutoBuyer GUI
@@ -49,11 +66,12 @@ Login
 
 Optional parameters:
 
-- CODE: [string] email/sms code for two-step verification (make sure to use string if your code starts with 0).
-- PLATFORM: [pc/ps3/ps4/xbox/xbox360] pc default.
-- EMULATE: [and/ios] use this feature to avoid webapp errors (BE WARE IT'S HIGH RISK).
-- DEBUG: [True/False] enables debug.
-- COOKIES: [filename] saves cookies after every request and load it from given file when restaring app (just like browser).
+- code: [string] email/sms code for two-step verification (make sure to use string if your code starts with 0).
+- platform: [pc/ps3/ps4/xbox/xbox360] pc default.
+- emualte: [and/ios] use this feature to avoid webapp errors (BE WARE IT'S HIGH RISK).
+- debug: [True/False] enables debug.
+- cookies: [filename] saves cookies after every request and load it from given file when restaring app (just like browser).
+- proxies: [dict] http/socks proxies in requests's format http://docs.python-requests.org/en/master/user/advanced/#proxies
 
 .. code-block:: python
 
@@ -65,14 +83,23 @@ Search
 
 Optional parameters:
 
-- LEVEL: ['?'/'?'/gold'] Card level.
-- CATEGORY: ['fitness'/'?'] Card category.
-- MIN_PRICE: [int] Minimal price.
-- MAX_PRICE: [int] Maximum price.
-- MIN_BUY: [int] Minimal buy now price.
-- MAX_BUY: [int] Maximum buy now price.
-- START: [int] Start page number.
-- PAGE_SIZE: [int] Amount of cards on single page (changing this might be risky).
+- min_price: [int] Minimal price.
+- max_price: [int] Maximum price.
+- min_buy: [int] Minimal buy now price.
+- max_buy: [int] Maximum buy now price.
+- level: ['bronze'/'silver'/gold'] Card level.
+- rare: [bool] False for non-rare only results.
+- start: [int] Start page number.
+- category: ['fitness'/'?'] Card category.
+- assetId: [int] assetId.
+- defId: [int] defId.
+- league: [int] League id.
+- club: [int] Club id.
+- position: [int?/str?] Position.
+- nationality: [int] Nation id.
+- rare: [boolean] True for searching special cards.
+- playStyle: [str?] playStyle.
+- page_size: [int] Amount of cards on single page (changing this might be risky).
 
 .. code-block:: python
 
@@ -94,8 +121,8 @@ Sell
 
 Optional parameters:
 
-- BUY_NOW: [int] Buy now price.
-- DURATION: [int] Auction duration in seconds (3600 default).
+- buy_now: [int] Buy now price.
+- duration: [int] Auction duration in seconds (3600 default).
 
 .. code-block:: python
 
@@ -168,8 +195,8 @@ Apply consumable
 
 Apply consumable on player.
 
-- ITEM_ID: [int] Player's item_id.
-- RESOURCE_ID: [int] Consumable's resource_id.
+- item_id: [int] Player's item_id.
+- resource_id: [int] Consumable's resource_id.
 
 .. code-block:: python
 

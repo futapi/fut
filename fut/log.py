@@ -17,13 +17,12 @@ except ImportError:
             pass
 
 
-def logger(save=False):
+def logger(name=None, save=False):
     """Init and configure logger."""
-    logformat = '%(asctime)s [%(levelname)s] [%(name)s] %(funcName)s: %(message)s (line %(lineno)d)'
-
-    logger = logging.getLogger()
+    logger = logging.getLogger(name)
 
     if save:
+        logformat = '%(asctime)s [%(levelname)s] [%(name)s] %(funcName)s: %(message)s (line %(lineno)d)'
         log_file_path = 'fut.log'  # TODO: define logpath
         open(log_file_path, 'w').write('')  # remove old logs
         logger.setLevel(logging.DEBUG)

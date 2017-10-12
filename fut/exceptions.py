@@ -7,6 +7,7 @@ fut.exceptions
 This module contains the set of fut's exceptions.
 
 """
+# TODO: add few exceptions for login
 
 
 class FutError(RuntimeError):

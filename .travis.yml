@@ -9,11 +9,13 @@ python:
   - 3.6
   - 3.7-dev
   - pypy
+  - pypy3
 install:
- - pip install -r requirements.txt codecov pytest-cov responses
+ - pip install -r requirements.txt codecov pytest-cov codacy-coverage responses
 script:
  - py.test --verbose --cov-report term --cov-report xml --cov=fut tests
 after_success:
  - codecov
+ - python-codacy-coverage
 notifications:
   email: oczkers@gmail.com
