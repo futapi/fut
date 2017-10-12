@@ -584,6 +584,14 @@ class Core(object):
             rc = self.r.delete(url, data=data, params=params, timeout=self.timeout)
         self.logger.debug("response: {0}".format(rc.content))
         if not rc.ok:  # status != 200
+            if rc.status_code == 429:
+                raise FutError('429 Too many requests')
+            elif rc.status_code in (512, 521):
+                raise FutError('512/521 Temporary ban or just too many requests.')
+            elif rc.status_code == 461:
+                raise PermissionDenied(461)  # TODO: add code, reason etc
+            print(rc.status_code)
+            print(rc.content)
             raise UnknownError(rc.content)
         if rc.text == '':
             rc = {}
@@ -849,7 +857,10 @@ class Core(object):
             if rc['currentBid'] > bid or self.credits < bid:
                 return False  # TODO: add exceptions
         data = {'bid': bid}
-        rc = self.__request__(method, url, data=json.dumps(data), params={'sku_a': self.sku_a})['auctionInfo'][0]
+        try:
+            rc = self.__request__(method, url, data=json.dumps(data), params={'sku_a': self.sku_a})['auctionInfo'][0]
+        except PermissionDenied:  # too slow, somebody took it already :-(
+            return False
         if rc['bidState'] == 'highest' or (rc['tradeState'] == 'closed' and rc['bidState'] == 'buyNow'):  # checking 'tradeState' is required?
             return True
         else:

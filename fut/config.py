@@ -39,4 +39,4 @@ headers_ios = {
 
 cookies_file = 'cookies.txt'
 timeout = 15  # defaulf global timeout
-delay = (0, 5)  # default mininum delay between requests (random range)
+delay = (1, 3)  # default mininum delay between requests (random range)
