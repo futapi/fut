@@ -796,15 +796,15 @@ class Core(object):
             events = [self.pin.event('page_view', 'Transfer Market Search')]
             self.pin.send(events)
 
-        if start > 0 and page_size == 16:
-            if not self.emulate:  # wbeapp
-                page_size = 12
-                if start == 16:  # second page
-                    start = 12
-            elif self.emulate and start == 16:  # emulating android/ios
-                start = 15
-        elif page_size > 50:  # server restriction
-            page_size = 50
+        # if start > 0 and page_size == 16:
+        #     if not self.emulate:  # wbeapp
+        #         page_size = 12
+        #         if start == 16:  # second page
+        #             start = 12
+        #     elif self.emulate and start == 16:  # emulating android/ios
+        #         start = 15
+        # elif page_size > 50:  # server restriction
+        #     page_size = 50
         params = {
             'start': start,
             'num': page_size,
