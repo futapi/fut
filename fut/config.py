@@ -36,7 +36,6 @@ headers_ios = {
     # 'X-Requested-With': 'com.ea.fifaultimate_row',  # ultimate app identifier?
 }
 
-flash_agent = 'ShockwaveFlash/27.0.0.130'
 
 cookies_file = 'cookies.txt'
 timeout = 15  # defaulf global timeout

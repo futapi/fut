@@ -21,7 +21,7 @@ except ImportError:
     from http.cookiejar import LWPCookieJar
 
 from .pin import Pin
-from .config import headers, headers_and, headers_ios, flash_agent, cookies_file, timeout, delay
+from .config import headers, headers_and, headers_ios, cookies_file, timeout, delay
 from .log import logger
 from .urls import urls
 from .urls2 import client_id, auth_url
