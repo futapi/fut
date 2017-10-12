@@ -10,8 +10,8 @@ This module implements the fut's pinEvents methods.
 
 import requests
 import re
-import datetime
 import json
+from datetime import datetime
 
 from fut.config import headers
 from fut.exceptions import FutError

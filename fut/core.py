@@ -867,7 +867,7 @@ class Core(object):
                 pgid = 'Club - Players - List View'
             elif ctype == 'item':
                 pgid = 'Club - Club Items - List View'
-                else:  # TODO: THIS IS WRONG, detect all ctypes
+            else:  # TODO: THIS IS WRONG, detect all ctypes
                 pgid = 'Club - Club Items - List View'
             events = [self.pin.event('page_view', pgid)]
             self.pin.send(events)
@@ -999,7 +999,7 @@ class Core(object):
 
         # TODO: auto send to tradepile
         data = {'buyNowPrice': buy_now, 'startingBid': bid, 'duration': duration, 'itemData': {'id': item_id}}
-        rc = self.__request__(method, url, data=json.dumps(data), params='sku_a': self.sku_a)
+        rc = self.__request__(method, url, data=json.dumps(data), params={'sku_a': self.sku_a})
         return rc['id']
 
     def quickSell(self, item_id):

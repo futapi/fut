@@ -4,11 +4,11 @@ Changelog
 ---------
 
 
-0.3.0 (2017-10-??)
+0.3.0 (2017-10-12)
 ^^^^^^^^^^^^^^^^^^
 
 * initial release for fifa 18
-* bump useragent && flash version
+* bump useragent
 * add ability to login via sms code or totp authenticator (fully automatic)
 * pinEvents
 
