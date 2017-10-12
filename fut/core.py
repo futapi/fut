@@ -23,8 +23,7 @@ except ImportError:
 from .pin import Pin
 from .config import headers, headers_and, headers_ios, cookies_file, timeout, delay
 from .log import logger
-from .urls import urls
-from .urls2 import client_id, auth_url
+from .urls2 import client_id, auth_url, card_info_url, messages_url
 from .exceptions import (FutError, ExpiredSession, InternalServerError,
                          UnknownError, PermissionDenied, Captcha,
                          Conflict, MaxSessions, MultipleSession,
@@ -166,7 +165,7 @@ def nations(timeout=timeout):
 
     :params year: Year.
     """
-    rc = requests.get(urls('pc')['messages'], timeout=timeout)
+    rc = requests.get(messages_url, timeout=timeout)
     rc.encoding = 'utf-8'  # guessing takes huge amount of cpu time
     rc = rc.text
     data = re.findall('<trans-unit resname="search.nationName.nation([0-9]+)">\n        <source>(.+)</source>', rc)
@@ -181,7 +180,7 @@ def leagues(year=2018, timeout=timeout):
 
     :params year: Year.
     """
-    rc = requests.get(urls('pc')['messages'], timeout=timeout)
+    rc = requests.get(messages_url, timeout=timeout)
     rc.encoding = 'utf-8'  # guessing takes huge amount of cpu time
     rc = rc.text
     data = re.findall('<trans-unit resname="global.leagueFull.%s.league([0-9]+)">\n        <source>(.+)</source>' % year, rc)
@@ -196,7 +195,7 @@ def teams(year=2018, timeout=timeout):
 
     :params year: Year.
     """
-    rc = requests.get(urls('pc')['messages'], timeout=timeout)
+    rc = requests.get(messages_url, timeout=timeout)
     rc.encoding = 'utf-8'  # guessing takes huge amount of cpu time
     rc = rc.text
     data = re.findall('<trans-unit resname="global.teamFull.%s.team([0-9]+)">\n        <source>(.+)</source>' % year, rc)
@@ -211,7 +210,7 @@ def stadiums(year=2018, timeout=timeout):
 
     :params year: Year.
     """
-    rc = requests.get(urls('pc')['messages'], timeout=timeout)
+    rc = requests.get(messages_url, timeout=timeout)
     rc.encoding = 'utf-8'  # guessing takes huge amount of cpu time
     rc = rc.text
     data = re.findall('<trans-unit resname="global.stadiumFull.%s.stadium([0-9]+)">\n        <source>(.+)</source>' % year, rc)
@@ -225,7 +224,7 @@ def players(timeout=timeout):
     """Return all players in dict {id: c, f, l, n, r}.
     id, rank, nationality(?), first name, last name.
     """
-    rc = requests.get('{0}{1}.json'.format(urls('pc')['card_info'], 'players'), timeout=timeout).json()
+    rc = requests.get('{0}{1}.json'.format(card_info_url, 'players'), timeout=timeout).json()
     players = {}
     for i in rc['Players'] + rc['LegendsPlayers']:
         players[i['id']] = {'id': i['id'],
@@ -242,7 +241,7 @@ def playstyles(year=2018, timeout=timeout):
 
     :params year: Year.
     """
-    rc = requests.get(urls('pc')['messages'], timeout=timeout)
+    rc = requests.get(messages_url, timeout=timeout)
     rc.encoding = 'utf-8'  # guessing takes huge amount of cpu time
     rc = rc.text
     data = re.findall('<trans-unit resname="playstyles.%s.playstyle([0-9]+)">\n        <source>(.+)</source>' % year, rc)
@@ -307,8 +306,6 @@ class Core(object):
             self.r.headers = headers_ios.copy()  # i'm ios phone now ;-)
         else:
             self.r.headers = headers.copy()  # i'm chrome browser now ;-)
-        self.urls = urls(platform)
-        # TODO: urls won't be loaded if we drop here
         if platform == 'pc':
             game_sku = 'FFA18PCC'
         elif platform == 'xbox':
@@ -359,7 +356,7 @@ class Core(object):
         self.r.headers['Referer'] = 'https://www.easports.com/fifa/ultimate-team/web-app/'
         rc = self.r.get('https://accounts.ea.com/connect/auth', params=params, timeout=self.timeout)
         # TODO: validate (captcha etc.)
-        if rc.url != 'https://www.easports.com/fifa/ultimate-team/web-app/auth.html':  # redirect target
+        if rc.url != 'https://www.easports.com/fifa/ultimate-team/web-app/auth.html':  # redirect target  # TODO: move (only?) this to separate method - login and rename __login__ to launch
             self.r.headers['Referer'] = rc.url
             # origin required?
             data = {'email': email,
@@ -628,11 +625,11 @@ class Core(object):
         url = 'item'
 
         # TODO: accept multiple trade_ids (just extend list below)
-        if pile == 'watchlist':
-            params = {'tradeId': trade_id}
-            data = {'auctionInfo': [{'id': trade_id}]}
-            self.__put__(self.urls['fut']['WatchList'], params=params, data=json.dumps(data))
-            return True
+        # if pile == 'watchlist':
+        #     params = {'tradeId': trade_id}
+        #     data = {'auctionInfo': [{'id': trade_id}]}
+        #     self.__put__(self.urls['fut']['WatchList'], params=params, data=json.dumps(data))
+        #     return True
 
         # if trade_id > 0:
         #     # won item
@@ -736,7 +733,7 @@ class Core(object):
         if base_id in self.players:
             return self.players[base_id]
         else:  # not a player?
-            url = '{0}{1}.json'.format(self.urls['card_info'], base_id)
+            url = '{0}{1}.json'.format(card_info_url, base_id)
             return requests.get(url, timeout=self.timeout).json()
 
     # def searchDefinition(self, asset_id, start=0, count=35):
