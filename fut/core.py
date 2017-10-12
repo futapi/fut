@@ -344,7 +344,7 @@ class Core(object):
         else:
             raise FutError(reason='Invalid emulate parameter. (Valid ones are and/ios).')  # pc/ps3/xbox/
         self.sku = sku  # TODO: use self.sku in all class
-        self.sku_a = 'F18'
+        self.sku_a = 'FFT18'
         params = {'prompt': 'login',
                   'accessToken': 'null',
                   'client_id': client_id,
@@ -536,7 +536,7 @@ class Core(object):
         if self._usermassinfo['settings']['configs'][2]['value'] == 0:
             raise FutError(reason='Transfer market is probably disabled on this account.')  # if tradingEnabled = 0
 
-        # pinEvent - boot_end
+        # pinEvents - boot_end
         events = [self.pin.event('connection'),
                   self.pin.event('boot_end', end_reason='normal')]
         self.pin.send(events)
@@ -548,7 +548,7 @@ class Core(object):
 
         self.saveSession()
 
-        # pinEvent - home screen
+        # pinEvents - home screen
         events = [self.pin.event('page_view', 'Hub - Home')]
         self.pin.send(events)
 
@@ -565,7 +565,6 @@ class Core(object):
         :params method: Rest method.
         :params url: Url.
         """
-        # !!!! TODO !!!: add pinEvents
         # TODO: update credtis?
         url = 'https://%s/ut/game/fifa18/%s' % (self.fut_host, url)
 
@@ -790,7 +789,7 @@ class Core(object):
         method = 'GET'
         url = 'transfermarket'
 
-        # pinEvent - Transfer Market Search
+        # pinEvents
         if start == 0:
             events = [self.pin.event('page_view', 'Transfer Market Search')]
             self.pin.send(events)
@@ -826,7 +825,7 @@ class Core(object):
 
         rc = self.__request__(method, url, params=params)
 
-        # pinEvents - Transfer Market Results - List View
+        # pinEvents
         if start == 0:
             events = [self.pin.event('page_view', 'Transfer Market Results - List View')]
             self.pin.send(events)
@@ -848,7 +847,7 @@ class Core(object):
             if rc['currentBid'] > bid or self.credits < bid:
                 return False  # TODO: add exceptions
         data = {'bid': bid}
-        rc = self.__request__(method, url, data=json.dumps(data), params={'sku_a': 'FFT18'})['auctionInfo'][0]
+        rc = self.__request__(method, url, data=json.dumps(data), params={'sku_a': self.sku_a})['auctionInfo'][0]
         if rc['bidState'] == 'highest' or (rc['tradeState'] == 'closed' and rc['bidState'] == 'buyNow'):  # checking 'tradeState' is required?
             return True
         else:
@@ -863,14 +862,15 @@ class Core(object):
         rc = self.__request__(method, url, params=params)
 
         # pinEvent
-        if ctype == 'player':
-            pgid = 'Club - Players - List View'
-        elif ctype == 'item':
-            pgid = 'Club - Club Items - List View'
-        else:  # TODO: THIS IS WRONG, detect all ctypes
-            pgid = 'Club - Club Items - List View'
-        events = [self.pin.event('page_view', pgid)]
-        self.pin.send(events)
+        if start == 0:
+            if ctype == 'player':
+                pgid = 'Club - Players - List View'
+            elif ctype == 'item':
+                pgid = 'Club - Club Items - List View'
+                else:  # TODO: THIS IS WRONG, detect all ctypes
+                pgid = 'Club - Club Items - List View'
+            events = [self.pin.event('page_view', pgid)]
+            self.pin.send(events)
 
         return [itemParse({'itemData': i}) for i in rc['itemData']]
 
@@ -912,8 +912,17 @@ class Core(object):
         method = 'GET'
         url = 'quad/%s/user/%s' % (squad_id, persona_id or self.persona_id)
 
+        # pinEvents
+        events = [self.pin.event('page_view', 'Hub - Squads')]
+        self.pin.send(events)
+
         # TODO: ability to return other info than players only
         rc = self.__request__(method, url)
+
+        # pinEvents
+        events = [self.pin.event('page_view', 'Squads - Squad Overview')]
+        self.pin.send(events)
+
         return [itemParse(i) for i in rc.get('players', ())]
 
     '''
@@ -990,7 +999,7 @@ class Core(object):
 
         # TODO: auto send to tradepile
         data = {'buyNowPrice': buy_now, 'startingBid': bid, 'duration': duration, 'itemData': {'id': item_id}}
-        rc = self.__request__(method, url, data=json.dumps(data))
+        rc = self.__request__(method, url, data=json.dumps(data), params='sku_a': self.sku_a)
         return rc['id']
 
     def quickSell(self, item_id):
