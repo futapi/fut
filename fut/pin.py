@@ -104,6 +104,7 @@ class Pin(object):
                 "custom": self.custom,
                 "events": events}
         # print(data)  # DEBUG
+        self.r.options(pin_url)
         rc = self.r.post(pin_url, data=json.dumps(data)).json()
         if rc['status'] != 'ok':
             raise FutError('PinEvent is NOT OK, probably they changed something.')
