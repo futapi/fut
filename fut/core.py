@@ -554,6 +554,8 @@ class Core(object):
         events = [self.pin.event('page_view', 'Hub - Home')]
         self.pin.send(events)
 
+        self.keepalive()  # credits
+
 #    def __shards__(self):
 #        """Returns shards info."""
 #        # TODO: headers
@@ -561,7 +563,7 @@ class Core(object):
 #        return self.r.get(self.urls['shards'], params={'_': int(time.time()*1000)}, timeout=self.timeout).json()
 #        # self.r.headers['X-UT-Route'] = self.urls['fut_pc']
 
-    def __request__(self, method, url, data={}, params={}):
+    def __request__(self, method, url, data={}, params={}, fast=False):
         """Prepare headers and sends request. Returns response as a json object.
 
         :params method: Rest method.
@@ -571,7 +573,8 @@ class Core(object):
         url = 'https://%s/ut/game/fifa18/%s' % (self.fut_host, url)
 
         self.logger.debug("request: {0} data={1};  params={2}".format(url, data, params))
-        time.sleep(max(self.request_time - time.time() + random.randrange(self.delay[0], self.delay[1] + 1), 0))  # respect minimum delay
+        if not fast:
+            time.sleep(max(self.request_time - time.time() + random.randrange(self.delay[0], self.delay[1] + 1), 0))  # respect minimum delay
         self.request_time = time.time()  # save request time for delay calculations
         if method.upper() == 'GET':
             params['_'] = int(time.time() * 1000)  # only for get(?)
@@ -584,6 +587,9 @@ class Core(object):
             rc = self.r.delete(url, data=data, params=params, timeout=self.timeout)
         self.logger.debug("response: {0}".format(rc.content))
         if not rc.ok:  # status != 200
+            print(rc.headers)
+            print(rc.status_code)
+            print(rc.cookies)
             if rc.status_code == 429:
                 raise FutError('429 Too many requests')
             elif rc.status_code in (512, 521):
@@ -833,7 +839,7 @@ class Core(object):
         if rare:        params['rare'] = 'SP'
         if playStyle:   params['playStyle'] = playStyle
 
-        rc = self.__request__(method, url, params=params)
+        rc = self.__request__(method, url, params=params)  # TODO: catch 426 429 512 521 - temporary ban
 
         # pinEvents
         if start == 0:
@@ -861,10 +867,11 @@ class Core(object):
             if rc['currentBid'] > bid or self.credits < bid:
                 return False  # TODO: add exceptions
         data = {'bid': bid}
-        try:
-            rc = self.__request__(method, url, data=json.dumps(data), params={'sku_a': self.sku_a})['auctionInfo'][0]
-        except PermissionDenied:  # too slow, somebody took it already :-(
-            return False
+        rc = self.__request__(method, url, data=json.dumps(data), params={'sku_a': self.sku_a}, fast=fast)['auctionInfo'][0]
+        # try:
+        #     rc = self.__request__(method, url, data=json.dumps(data), params={'sku_a': self.sku_a})['auctionInfo'][0]
+        # except PermissionDenied:  # too slow, somebody took it already :-(
+        #     return False
         if rc['bidState'] == 'highest' or (rc['tradeState'] == 'closed' and rc['bidState'] == 'buyNow'):  # checking 'tradeState' is required?
             return True
         else:
