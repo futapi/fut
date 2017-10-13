@@ -20,6 +20,11 @@ try:
 except ImportError:
     from http.cookiejar import LWPCookieJar
 
+try:  # python2 compatibility
+    input = raw_input
+except NameError:
+    pass
+
 from .pin import Pin
 from .config import headers, headers_and, headers_ios, cookies_file, timeout, delay
 from .log import logger

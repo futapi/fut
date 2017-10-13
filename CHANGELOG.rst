@@ -8,6 +8,7 @@ Changelog
 ^^^^^^^^^^^^^^^^^^
 
 * pinEvents: random timestamp with delay
+* add sbsSets
 
 0.3.0 (2017-10-12)
 ^^^^^^^^^^^^^^^^^^
