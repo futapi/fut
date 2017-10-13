@@ -1211,3 +1211,10 @@ class Core(object):
                 "usePreOrder": True}
         rc = self.__request__(method, url, data=json.dumps(data))
         return rc  # TODO: parse response
+
+    def sbsSets(self):
+        method = 'GET'
+        url = 'sbs/sets'
+
+        rc = self.__request__(method, url)
+        return rc  # TODO?: parse
