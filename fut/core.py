@@ -610,7 +610,7 @@ class Core(object):
             if rc.status_code == 429:
                 raise FutError('429 Too many requests')
             elif rc.status_code == 426:
-                raise FutError('426 Too many requests') 
+                raise FutError('426 Too many requests')
             elif rc.status_code in (512, 521):
                 raise FutError('512/521 Temporary ban or just too many requests.')
             elif rc.status_code == 461:
@@ -953,7 +953,7 @@ class Core(object):
         :params squad_id: Squad id.
         """
         method = 'GET'
-        url = 'quad/%s/user/%s' % (squad_id, persona_id or self.persona_id)
+        url = 'squad/%s/user/%s' % (squad_id, persona_id or self.persona_id)
 
         # pinEvents
         events = [self.pin.event('page_view', 'Hub - Squads')]
