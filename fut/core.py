@@ -523,7 +523,9 @@ class Core(object):
         # validate (secret question)
         self.r.headers['Easw-Session-Data-Nucleus-Id'] = self.nucleus_id
         rc = self.r.get('https://%s/ut/game/fifa18/phishing/question' % self.fut_host, params={'_': int(time.time() * 1000)}, timeout=self.timeout).json()
-        if rc.get('string') != 'Already answered question':
+        if rc.get('code') == 458:
+            raise Captcha()
+        elif rc.get('string') != 'Already answered question':
             params = {'answer': secret_answer_hash}
             rc = self.r.post('https://%s/ut/game/fifa18/phishing/validate' % self.fut_host, params=params, timeout=self.timeout).json()
             if rc['string'] != 'OK':  # we've got an error
@@ -596,14 +598,15 @@ class Core(object):
             print(rc.headers)
             print(rc.status_code)
             print(rc.cookies)
+            print(rc.content)
             if rc.status_code == 429:
                 raise FutError('429 Too many requests')
             elif rc.status_code in (512, 521):
                 raise FutError('512/521 Temporary ban or just too many requests.')
             elif rc.status_code == 461:
                 raise PermissionDenied(461)  # TODO: add code, reason etc
-            print(rc.status_code)
-            print(rc.content)
+            elif rc.status_code == 458:
+                raise Captcha()
             raise UnknownError(rc.content)
         if rc.text == '':
             rc = {}
@@ -873,11 +876,11 @@ class Core(object):
             if rc['currentBid'] > bid or self.credits < bid:
                 return False  # TODO: add exceptions
         data = {'bid': bid}
-        rc = self.__request__(method, url, data=json.dumps(data), params={'sku_a': self.sku_a}, fast=fast)['auctionInfo'][0]
-        # try:
-        #     rc = self.__request__(method, url, data=json.dumps(data), params={'sku_a': self.sku_a})['auctionInfo'][0]
-        # except PermissionDenied:  # too slow, somebody took it already :-(
-        #     return False
+        # rc = self.__request__(method, url, data=json.dumps(data), params={'sku_a': self.sku_a}, fast=fast)['auctionInfo'][0]
+        try:
+            rc = self.__request__(method, url, data=json.dumps(data), params={'sku_a': self.sku_a})['auctionInfo'][0]
+        except PermissionDenied:  # too slow, somebody took it already :-(
+            return False
         if rc['bidState'] == 'highest' or (rc['tradeState'] == 'closed' and rc['bidState'] == 'buyNow'):  # checking 'tradeState' is required?
             return True
         else:
