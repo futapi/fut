@@ -448,7 +448,9 @@ class Core(object):
         self.r.headers['Easw-Session-Data-Nucleus-Id'] = self.nucleus_id
 
         # shards
-        rc = self.r.get('https://%s/ut/shards/v2' % auth_url, data={'_': int(time.time() * 1000)}).json()  # TODO: parse this
+        self._ = int(time.time() * 1000)
+        rc = self.r.get('https://%s/ut/shards/v2' % auth_url, data={'_': self._}).json()  # TODO: parse this
+        self._ += 1
         self.fut_host = {
             'pc': 'utas.external.s2.fut.ea.com:443',
             'ps3': 'utas.external.s2.fut.ea.com:443',
@@ -462,8 +464,9 @@ class Core(object):
         data = {'filterConsoleLogin': 'true',
                 'sku': sku,
                 'returningUserGameYear': '2017',  # allways year-1?
-                '_': int(time.time() * 1000)}
+                '_': self._}
         rc = self.r.get('https://%s/ut/game/fifa18/user/accountinfo' % self.fut_host, params=data).json()
+        self._ += 1
         # pick persona (first valid for given game_sku)
         personas = rc['userAccountInfo']['personas']
         for p in personas:
@@ -522,8 +525,11 @@ class Core(object):
 
         # validate (secret question)
         self.r.headers['Easw-Session-Data-Nucleus-Id'] = self.nucleus_id
-        rc = self.r.get('https://%s/ut/game/fifa18/phishing/question' % self.fut_host, params={'_': int(time.time() * 1000)}, timeout=self.timeout).json()
-        if rc.get('string') != 'Already answered question':
+        rc = self.r.get('https://%s/ut/game/fifa18/phishing/question' % self.fut_host, params={'_': self._}, timeout=self.timeout).json()
+        self._ += 1
+        if rc.get('code') == 458:
+            raise Captcha()
+        elif rc.get('string') != 'Already answered question':
             params = {'answer': secret_answer_hash}
             rc = self.r.post('https://%s/ut/game/fifa18/phishing/validate' % self.fut_host, params=params, timeout=self.timeout).json()
             if rc['string'] != 'OK':  # we've got an error
@@ -533,13 +539,15 @@ class Core(object):
                 raise FutError(reason='Error during login process (%s).' % (rc['reason']))
             self.r.headers['X-UT-PHISHING-TOKEN'] = self.token = rc['token']
             # ask again for question to refresh(?) token, i'm just doing what webapp is doing
-            rc = self.r.get('https://%s/ut/game/fifa18/phishing/question' % self.fut_host, params={'_': int(time.time() * 1000)}, timeout=self.timeout).json()
+            rc = self.r.get('https://%s/ut/game/fifa18/phishing/question' % self.fut_host, params={'_': self._}, timeout=self.timeout).json()
+            self._ += 1
         self.r.headers['X-UT-PHISHING-TOKEN'] = self.token = rc['token']
 
         # get basic user info
         # TODO: parse usermassinfo and change _usermassinfo to userinfo
         # TODO?: usermassinfo as separate method && ability to refresh piles etc.
-        self._usermassinfo = self.r.get('https://%s/ut/game/fifa18/usermassinfo' % self.fut_host, params={'_': int(time.time() * 1000)}, timeout=self.timeout).json()
+        self._usermassinfo = self.r.get('https://%s/ut/game/fifa18/usermassinfo' % self.fut_host, params={'_': self._}, timeout=self.timeout).json()
+        self._ += 1
         if self._usermassinfo['settings']['configs'][2]['value'] == 0:
             raise FutError(reason='Transfer market is probably disabled on this account.')  # if tradingEnabled = 0
 
@@ -578,12 +586,14 @@ class Core(object):
         url = 'https://%s/ut/game/fifa18/%s' % (self.fut_host, url)
 
         self.logger.debug("request: {0} data={1};  params={2}".format(url, data, params))
+        if method.upper() == 'GET':
+            params['_'] = self._  # only for get(?)
+            self._ += 1
         if not fast:  # TODO: refactorization
             time.sleep(max(self.request_time - time.time() + random.randrange(self.delay[0], self.delay[1] + 1), 0))  # respect minimum delay
-            self.r.options(url)
+            self.r.options(url, params=params)
         self.request_time = time.time()  # save request time for delay calculations
         if method.upper() == 'GET':
-            params['_'] = int(time.time() * 1000)  # only for get(?)
             rc = self.r.get(url, data=data, params=params, timeout=self.timeout)
         elif method.upper() == 'POST':
             rc = self.r.post(url, data=data, params=params, timeout=self.timeout)
@@ -596,6 +606,7 @@ class Core(object):
             print(rc.headers)
             print(rc.status_code)
             print(rc.cookies)
+            print(rc.content)
             if rc.status_code == 429:
                 raise FutError('429 Too many requests')
             elif rc.status_code == 426:
@@ -604,8 +615,8 @@ class Core(object):
                 raise FutError('512/521 Temporary ban or just too many requests.')
             elif rc.status_code == 461:
                 raise PermissionDenied(461)  # You are not allowed to bid on this trade TODO: add code, reason etc
-            print(rc.status_code)
-            print(rc.content)
+            elif rc.status_code == 458:
+                raise Captcha()
             raise UnknownError(rc.content)
         if rc.text == '':
             rc = {}
@@ -875,11 +886,11 @@ class Core(object):
             if rc['currentBid'] > bid or self.credits < bid:
                 return False  # TODO: add exceptions
         data = {'bid': bid}
-        rc = self.__request__(method, url, data=json.dumps(data), params={'sku_a': self.sku_a}, fast=fast)['auctionInfo'][0]
-        # try:
-        #     rc = self.__request__(method, url, data=json.dumps(data), params={'sku_a': self.sku_a})['auctionInfo'][0]
-        # except PermissionDenied:  # too slow, somebody took it already :-(
-        #     return False
+        # rc = self.__request__(method, url, data=json.dumps(data), params={'sku_a': self.sku_a}, fast=fast)['auctionInfo'][0]
+        try:
+            rc = self.__request__(method, url, data=json.dumps(data), params={'sku_a': self.sku_a})['auctionInfo'][0]
+        except PermissionDenied:  # too slow, somebody took it already :-(
+            return False
         if rc['bidState'] == 'highest' or (rc['tradeState'] == 'closed' and rc['bidState'] == 'buyNow'):  # checking 'tradeState' is required?
             return True
         else:
