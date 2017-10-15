@@ -448,7 +448,9 @@ class Core(object):
         self.r.headers['Easw-Session-Data-Nucleus-Id'] = self.nucleus_id
 
         # shards
-        rc = self.r.get('https://%s/ut/shards/v2' % auth_url, data={'_': int(time.time() * 1000)}).json()  # TODO: parse this
+        self._ = int(time.time() * 1000)
+        rc = self.r.get('https://%s/ut/shards/v2' % auth_url, data={'_': self._}).json()  # TODO: parse this
+        self._ += 1
         self.fut_host = {
             'pc': 'utas.external.s2.fut.ea.com:443',
             'ps3': 'utas.external.s2.fut.ea.com:443',
@@ -462,8 +464,9 @@ class Core(object):
         data = {'filterConsoleLogin': 'true',
                 'sku': sku,
                 'returningUserGameYear': '2017',  # allways year-1?
-                '_': int(time.time() * 1000)}
+                '_': self._}
         rc = self.r.get('https://%s/ut/game/fifa18/user/accountinfo' % self.fut_host, params=data).json()
+        self._ += 1
         # pick persona (first valid for given game_sku)
         personas = rc['userAccountInfo']['personas']
         for p in personas:
@@ -522,7 +525,8 @@ class Core(object):
 
         # validate (secret question)
         self.r.headers['Easw-Session-Data-Nucleus-Id'] = self.nucleus_id
-        rc = self.r.get('https://%s/ut/game/fifa18/phishing/question' % self.fut_host, params={'_': int(time.time() * 1000)}, timeout=self.timeout).json()
+        rc = self.r.get('https://%s/ut/game/fifa18/phishing/question' % self.fut_host, params={'_': self._}, timeout=self.timeout).json()
+        self._ += 1
         if rc.get('code') == 458:
             raise Captcha()
         elif rc.get('string') != 'Already answered question':
@@ -535,13 +539,15 @@ class Core(object):
                 raise FutError(reason='Error during login process (%s).' % (rc['reason']))
             self.r.headers['X-UT-PHISHING-TOKEN'] = self.token = rc['token']
             # ask again for question to refresh(?) token, i'm just doing what webapp is doing
-            rc = self.r.get('https://%s/ut/game/fifa18/phishing/question' % self.fut_host, params={'_': int(time.time() * 1000)}, timeout=self.timeout).json()
+            rc = self.r.get('https://%s/ut/game/fifa18/phishing/question' % self.fut_host, params={'_': self._}, timeout=self.timeout).json()
+            self._ += 1
         self.r.headers['X-UT-PHISHING-TOKEN'] = self.token = rc['token']
 
         # get basic user info
         # TODO: parse usermassinfo and change _usermassinfo to userinfo
         # TODO?: usermassinfo as separate method && ability to refresh piles etc.
-        self._usermassinfo = self.r.get('https://%s/ut/game/fifa18/usermassinfo' % self.fut_host, params={'_': int(time.time() * 1000)}, timeout=self.timeout).json()
+        self._usermassinfo = self.r.get('https://%s/ut/game/fifa18/usermassinfo' % self.fut_host, params={'_': self._}, timeout=self.timeout).json()
+        self._ += 1
         if self._usermassinfo['settings']['configs'][2]['value'] == 0:
             raise FutError(reason='Transfer market is probably disabled on this account.')  # if tradingEnabled = 0
 
@@ -585,7 +591,8 @@ class Core(object):
             self.r.options(url)
         self.request_time = time.time()  # save request time for delay calculations
         if method.upper() == 'GET':
-            params['_'] = int(time.time() * 1000)  # only for get(?)
+            params['_'] = self._  # only for get(?)
+            self._ += 1
             rc = self.r.get(url, data=data, params=params, timeout=self.timeout)
         elif method.upper() == 'POST':
             rc = self.r.post(url, data=data, params=params, timeout=self.timeout)
