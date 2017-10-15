@@ -586,13 +586,14 @@ class Core(object):
         url = 'https://%s/ut/game/fifa18/%s' % (self.fut_host, url)
 
         self.logger.debug("request: {0} data={1};  params={2}".format(url, data, params))
-        if not fast:  # TODO: refactorization
-            time.sleep(max(self.request_time - time.time() + random.randrange(self.delay[0], self.delay[1] + 1), 0))  # respect minimum delay
-            self.r.options(url)
-        self.request_time = time.time()  # save request time for delay calculations
         if method.upper() == 'GET':
             params['_'] = self._  # only for get(?)
             self._ += 1
+        if not fast:  # TODO: refactorization
+            time.sleep(max(self.request_time - time.time() + random.randrange(self.delay[0], self.delay[1] + 1), 0))  # respect minimum delay
+            self.r.options(url, params=params)
+        self.request_time = time.time()  # save request time for delay calculations
+        if method.upper() == 'GET':
             rc = self.r.get(url, data=data, params=params, timeout=self.timeout)
         elif method.upper() == 'POST':
             rc = self.r.post(url, data=data, params=params, timeout=self.timeout)
