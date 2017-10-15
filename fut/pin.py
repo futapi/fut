@@ -94,7 +94,7 @@ class Pin(object):
                 "tid": self.sku,
                 "rel": self.rel,
                 "v": v,
-                "ts_post": self.__ts(delay=0.25 + random() / 20),
+                "ts_post": self.__ts(delay=0.25 + random() / 50),
                 "sid": self.sid,
                 "gid": self.gid,  # convert to int?
                 "plat": self.plat,
