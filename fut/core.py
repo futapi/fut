@@ -609,10 +609,12 @@ class Core(object):
             print(rc.content)
             if rc.status_code == 429:
                 raise FutError('429 Too many requests')
+            elif rc.status_code == 426:
+                raise FutError('426 Too many requests') 
             elif rc.status_code in (512, 521):
                 raise FutError('512/521 Temporary ban or just too many requests.')
             elif rc.status_code == 461:
-                raise PermissionDenied(461)  # TODO: add code, reason etc
+                raise PermissionDenied(461)  # You are not allowed to bid on this trade TODO: add code, reason etc
             elif rc.status_code == 458:
                 raise Captcha()
             raise UnknownError(rc.content)
