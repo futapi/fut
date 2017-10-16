@@ -65,11 +65,11 @@ def baseId(resource_id, return_version=False):
 def itemParse(item_data, full=True):
     """Parser for item data. Returns nice dictionary.
 
-    :params iteam_data: Item data received from ea servers.
-    :params full: (optional) False if You're snipping and don't need extended info. Anyone really use this?
+    :params item_data: Item data received from ea servers.
+    :params full: (optional) False if you're sniping and don't need extended info. Anyone really use this?
     """
     # TODO: object
-    # TODO: dynamic parse all data
+    # TODO: dynamically parse all data
     return_data = {
         'tradeId':           item_data.get('tradeId'),
         'buyNowPrice':       item_data.get('buyNowPrice'),
@@ -883,7 +883,8 @@ class Core(object):
 
         if not fast:
             rc = self.tradeStatus(trade_id)[0]
-            if rc['currentBid'] > bid or self.credits < bid:
+            # don't bid if current bid is equal or greater than our max bid
+            if rc['currentBid'] >= bid or self.credits < bid:
                 return False  # TODO: add exceptions
         data = {'bid': bid}
         # rc = self.__request__(method, url, data=json.dumps(data), params={'sku_a': self.sku_a}, fast=fast)['auctionInfo'][0]
@@ -1109,7 +1110,11 @@ class Core(object):
 
         :params trade_id: Trade id.
         """
-        return self.__sendToPile__('watchlist', trade_id=trade_id)
+        method = 'PUT'
+        url = 'watchlist'
+
+        data = {'auctionInfo': [{'id': trade_id}]}
+        return self.__request__(method, url, data=json.dumps(data))
     #
     # def relist(self, clean=False):
     #     """Relist all tradepile. Returns True or number of deleted (sold) if clean was set.
