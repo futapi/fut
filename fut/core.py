@@ -165,6 +165,7 @@ def cardInfo(resource_id):
 
 
 # TODO: optimize messages (parse whole messages once!), xml parser might be faster
+# TODO: parse more data (short club names, playstyles etc.)
 def nations(timeout=timeout):
     """Return all nations in dict {id0: nation0, id1: nation1}.
 
@@ -173,7 +174,7 @@ def nations(timeout=timeout):
     rc = requests.get(messages_url, timeout=timeout)
     rc.encoding = 'utf-8'  # guessing takes huge amount of cpu time
     rc = rc.text
-    data = re.findall('<trans-unit resname="search.nationName.nation([0-9]+)">\n        <source>(.+)</source>', rc)
+    data = re.findall('"search.nationName.nation([0-9]+)": "(.+)"', rc)
     nations = {}
     for i in data:
         nations[int(i[0])] = i[1]
@@ -188,7 +189,7 @@ def leagues(year=2018, timeout=timeout):
     rc = requests.get(messages_url, timeout=timeout)
     rc.encoding = 'utf-8'  # guessing takes huge amount of cpu time
     rc = rc.text
-    data = re.findall('<trans-unit resname="global.leagueFull.%s.league([0-9]+)">\n        <source>(.+)</source>' % year, rc)
+    data = re.findall('"global.leagueFull.%s.league([0-9]+)": "(.+)"' % year, rc)
     leagues = {}
     for i in data:
         leagues[int(i[0])] = i[1]
@@ -203,7 +204,7 @@ def teams(year=2018, timeout=timeout):
     rc = requests.get(messages_url, timeout=timeout)
     rc.encoding = 'utf-8'  # guessing takes huge amount of cpu time
     rc = rc.text
-    data = re.findall('<trans-unit resname="global.teamFull.%s.team([0-9]+)">\n        <source>(.+)</source>' % year, rc)
+    data = re.findall('"global.teamFull.%s.team([0-9]+)": "(.+)"' % year, rc)
     teams = {}
     for i in data:
         teams[int(i[0])] = i[1]
@@ -218,11 +219,23 @@ def stadiums(year=2018, timeout=timeout):
     rc = requests.get(messages_url, timeout=timeout)
     rc.encoding = 'utf-8'  # guessing takes huge amount of cpu time
     rc = rc.text
-    data = re.findall('<trans-unit resname="global.stadiumFull.%s.stadium([0-9]+)">\n        <source>(.+)</source>' % year, rc)
+    data = re.findall('"global.stadiumFull.%s.stadium([0-9]+)": "(.+)"' % year, rc)
     stadiums = {}
     for i in data:
         stadiums[int(i[0])] = i[1]
     return stadiums
+
+
+def balls(timeout=timeout):
+    """Return all balls in dict {id0: ball0, id1: ball1}."""
+    rc = requests.get(messages_url, timeout=timeout)
+    rc.encoding = 'utf-8'  # guessing takes huge amount of cpu time
+    rc = rc.text
+    data = re.findall('"BallName_([0-9]+)": "(.+)"', rc)
+    balls = {}
+    for i in data:
+        balls[int(i[0])] = i[1]
+    return balls
 
 
 def players(timeout=timeout):

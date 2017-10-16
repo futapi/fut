@@ -16,6 +16,8 @@ Changelog
 * fix sendToWatchlist (jsarasti patch #303)
 * proper currentBid check logic (jsarasti patch #303)
 * fix squad method (#300)
+* fix database (players, nations, leagues, teams, stadiums)
+* add balls method (database)
 
 0.3.0 (2017-10-12)
 ^^^^^^^^^^^^^^^^^^
