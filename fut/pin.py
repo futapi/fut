@@ -11,6 +11,7 @@ This module implements the fut's pinEvents methods.
 import requests
 import re
 import json
+import time
 from random import random
 from datetime import datetime, timedelta
 
@@ -62,7 +63,7 @@ class Pin(object):
                          "pid": self.persona_id,
                          "pidm": {"nucleus": self.nucleus_id},
                          "didm": {"uuid": "0"},  # what is it?
-                         "ts_event": self.__ts(delay=-0.25),
+                         "ts_event": self.__ts(),
                          "en": en},
                 'userid': self.persona_id,  # not needed before session?
                 'type': 'utas'}  # not needed before session?
@@ -89,12 +90,13 @@ class Pin(object):
         return data
 
     def send(self, events):
+        time.sleep(0.5 + random() / 50)
         data = {"taxv": self.taxv,  # convert to float?
                 "tidt": self.tidt,
                 "tid": self.sku,
                 "rel": self.rel,
                 "v": v,
-                "ts_post": self.__ts(delay=0.25 + random() / 50),
+                "ts_post": self.__ts(),
                 "sid": self.sid,
                 "gid": self.gid,  # convert to int?
                 "plat": self.plat,
