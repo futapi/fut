@@ -65,11 +65,11 @@ def baseId(resource_id, return_version=False):
 def itemParse(item_data, full=True):
     """Parser for item data. Returns nice dictionary.
 
-    :params iteam_data: Item data received from ea servers.
-    :params full: (optional) False if You're snipping and don't need extended info. Anyone really use this?
+    :params item_data: Item data received from ea servers.
+    :params full: (optional) False if you're sniping and don't need extended info. Anyone really use this?
     """
     # TODO: object
-    # TODO: dynamic parse all data
+    # TODO: dynamically parse all data
     return_data = {
         'tradeId':           item_data.get('tradeId'),
         'buyNowPrice':       item_data.get('buyNowPrice'),
