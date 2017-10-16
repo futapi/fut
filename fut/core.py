@@ -607,6 +607,8 @@ class Core(object):
         if not fast:  # TODO: refactorization
             time.sleep(max(self.request_time - time.time() + random.randrange(self.delay[0], self.delay[1] + 1), 0))  # respect minimum delay
             self.r.options(url, params=params)
+        else:
+            time.sleep(max(self.request_time - time.time() + 1, 0))  # respect 1s minimum delay between requests
         self.request_time = time.time()  # save request time for delay calculations
         if method.upper() == 'GET':
             rc = self.r.get(url, data=data, params=params, timeout=self.timeout)
@@ -902,9 +904,8 @@ class Core(object):
             if rc['currentBid'] >= bid or self.credits < bid:
                 return False  # TODO: add exceptions
         data = {'bid': bid}
-        # rc = self.__request__(method, url, data=json.dumps(data), params={'sku_a': self.sku_a}, fast=fast)['auctionInfo'][0]
         try:
-            rc = self.__request__(method, url, data=json.dumps(data), params={'sku_a': self.sku_a})['auctionInfo'][0]
+            rc = self.__request__(method, url, data=json.dumps(data), params={'sku_a': self.sku_a}, fast=fast)['auctionInfo'][0]
         except PermissionDenied:  # too slow, somebody took it already :-(
             return False
         if rc['bidState'] == 'highest' or (rc['tradeState'] == 'closed' and rc['bidState'] == 'buyNow'):  # checking 'tradeState' is required?

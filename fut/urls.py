@@ -31,4 +31,4 @@ if rc['futweb_maintenance']:
 
 
 card_info_url = 'https://fifa18.content.easports.com/fifa/fltOnlineAssets/B1BA185F-AD7C-4128-8A64-746DE4EC5A82/2018/fut/items/web/'  # TODO: get hash from somewhere, dynamic year
-messages_url = 'https://www.easports.com/fifa/ultimate-team/web-app/loc/en_US.json'  # TODO: dynamic year
+messages_url = 'https://www.easports.com/fifa/ultimate-team/web-app/loc/en_US.json'
