@@ -11,8 +11,8 @@ fut
 .. image:: https://img.shields.io/pypi/pyversions/fut.svg
     :target: https://pypi.python.org/pypi/fut
 
-.. image:: https://travis-ci.org/oczkers/fut.png?branch=master
-    :target: https://travis-ci.org/oczkers/fut
+.. image:: https://travis-ci.org/futapi/fut.png?branch=master
+    :target: https://travis-ci.org/futapi/fut
 
 .. image:: https://codecov.io/github/oczkers/fut/coverage.svg?branch=master
     :target: https://codecov.io/github/oczkers/fut
