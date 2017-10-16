@@ -791,26 +791,33 @@ class Core(object):
             url = '{0}{1}.json'.format(card_info_url, base_id)
             return requests.get(url, timeout=self.timeout).json()
 
-    # def searchDefinition(self, asset_id, start=0, count=35):
-    #     """Return variations of the given asset id, e.g. IF cards.
-    #
-    #     :param asset_id: Asset id / Definition id.
-    #     :param start: (optional) Start page.
-    #     :param count: (optional) Number of definitions you want to request.
-    #     """
-    #     params = {
-    #         'defId': asset_id,
-    #         'start': start,
-    #         'type': 'player',
-    #         'count': count
-    #     }
-    #
-    #     rc = self.__get__(self.urls['fut']['Search'], params=params)
-    #     try:
-    #         return rc['itemData']
-    #     except:
-    #         raise UnknownError('Invalid definition response')
-    #     return rc
+    def searchDefinition(self, asset_id, start=0, count=46):
+        """Return variations of the given asset id, e.g. IF cards.
+
+        :param asset_id: Asset id / Definition id.
+        :param start: (optional) Start page.
+        :param count: (optional) Number of definitions you want to request.
+        """
+        method = 'GET'
+        url = 'defid'
+
+        base_id = baseId(asset_id)
+        if base_id not in self.players:
+            raise FutError(reason='Invalid player asset/definition id.')
+
+        params = {
+            'defId': base_id,
+            'start': start,
+            'type': 'player',
+            'count': count
+        }
+
+        rc = self.__request__(method, url, params=params)
+
+        try:
+            return [itemParse({'itemData': i}) for i in rc['itemData']]
+        except:
+            raise UnknownError('Invalid definition response')
 
     def search(self, ctype, level=None, category=None, assetId=None, defId=None,
                min_price=None, max_price=None, min_buy=None, max_buy=None,
