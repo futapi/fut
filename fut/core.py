@@ -883,7 +883,8 @@ class Core(object):
 
         if not fast:
             rc = self.tradeStatus(trade_id)[0]
-            if rc['currentBid'] > bid or self.credits < bid:
+            # don't bid if current bid is equal or greater than our max bid
+            if rc['currentBid'] >= bid or self.credits < bid:
                 return False  # TODO: add exceptions
         data = {'bid': bid}
         # rc = self.__request__(method, url, data=json.dumps(data), params={'sku_a': self.sku_a}, fast=fast)['auctionInfo'][0]
