@@ -88,7 +88,6 @@ Optional parameters:
 - min_buy: [int] Minimal buy now price.
 - max_buy: [int] Maximum buy now price.
 - level: ['bronze'/'silver'/gold'] Card level.
-- rare: [bool] False for non-rare only results.
 - start: [int] Start page number.
 - category: ['fitness'/'?'] Card category.
 - assetId: [int] assetId.
