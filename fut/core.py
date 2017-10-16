@@ -505,6 +505,8 @@ class Core(object):
         params = {'sku_a': self.sku_a,
                   '': int(time.time() * 1000)}
         rc = self.r.post('https://%s/ut/auth' % self.fut_host, data=json.dumps(data), params=params, timeout=self.timeout)
+        if rc.status_code == 401:  # and rc.text == 'multiple session'
+            raise FutError('multiple session')
         if rc.status_code == 500:
             raise InternalServerError('Servers are probably temporary down.')
         rc = rc.json()
