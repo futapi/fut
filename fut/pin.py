@@ -13,7 +13,7 @@ import re
 import json
 import time
 from random import random
-from datetime import datetime, timedelta
+from datetime import datetime
 
 from fut.config import headers
 from fut.urls import pin_url, v
@@ -51,9 +51,9 @@ class Pin(object):
         self.custom['service_plat'] = platform
         self.s = 4  # event id  |  3 before "was sent" without session/persona/nucleus id so we can probably omit
 
-    def __ts(self, delay=0):
+    def __ts(self):
         # TODO: add ability to random something
-        ts = datetime.now() + timedelta(seconds=delay)
+        ts = datetime.now()
         ts = ts.strftime('%Y-%m-%dT%H:%M:%S.%f')[:-3] + 'Z'
         return ts
 

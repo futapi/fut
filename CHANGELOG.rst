@@ -18,6 +18,7 @@ Changelog
 * fix squad method (#300)
 * fix database (players, nations, leagues, teams, stadiums)
 * add balls method (database)
+* rewrite searchDefinition (jsarasti work #304)
 
 0.3.0 (2017-10-12)
 ^^^^^^^^^^^^^^^^^^
