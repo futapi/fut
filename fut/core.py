@@ -165,7 +165,7 @@ def cardInfo(resource_id):
 
 
 # TODO: optimize messages (parse whole messages once!), xml parser might be faster
-# TODO: parse more data (short club names, playstyles etc.)
+# TODO: parse more data (short club names etc.)
 def nations(timeout=timeout):
     """Return all nations in dict {id0: nation0, id1: nation1}.
 
@@ -262,7 +262,7 @@ def playstyles(year=2018, timeout=timeout):
     rc = requests.get(messages_url, timeout=timeout)
     rc.encoding = 'utf-8'  # guessing takes huge amount of cpu time
     rc = rc.text
-    data = re.findall('<trans-unit resname="playstyles.%s.playstyle([0-9]+)">\n        <source>(.+)</source>' % year, rc)
+    data = re.findall('"playstyles.%s.playstyle([0-9]+)": "(.+)"' % year, rc)
     playstyles = {}
     for i in data:
         playstyles[int(i[0])] = i[1]
