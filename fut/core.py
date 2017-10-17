@@ -620,6 +620,7 @@ class Core(object):
             rc = self.r.delete(url, data=data, params=params, timeout=self.timeout)
         self.logger.debug("response: {0}".format(rc.content))
         if not rc.ok:  # status != 200
+            rcj = rc.json()
             if rc.status_code == 429:
                 raise FutError('429 Too many requests')
             elif rc.status_code == 426:
@@ -630,8 +631,8 @@ class Core(object):
                 raise PermissionDenied(461)  # You are not allowed to bid on this trade TODO: add code, reason etc
             elif rc.status_code == 458:
                 raise Captcha()
-            elif rc.status_code == 401 and rc['reason'] == 'expired session':
-                raise ExpiredSession(rc['code'], rc['reason'], rc['message'])
+            elif rc.status_code == 401 and rcj['reason'] == 'expired session':
+                raise ExpiredSession(rcj['code'], rcj['reason'], rcj['message'])
 
             # it makes sense to print headers, status_code, etc. only when we don't know what happened
             print(rc.headers)
