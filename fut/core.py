@@ -620,10 +620,6 @@ class Core(object):
             rc = self.r.delete(url, data=data, params=params, timeout=self.timeout)
         self.logger.debug("response: {0}".format(rc.content))
         if not rc.ok:  # status != 200
-            print(rc.headers)
-            print(rc.status_code)
-            print(rc.cookies)
-            print(rc.content)
             if rc.status_code == 429:
                 raise FutError('429 Too many requests')
             elif rc.status_code == 426:
@@ -634,7 +630,17 @@ class Core(object):
                 raise PermissionDenied(461)  # You are not allowed to bid on this trade TODO: add code, reason etc
             elif rc.status_code == 458:
                 raise Captcha()
+            elif rc.status_code == 401 and rc['reason'] == 'expired session':
+                raise ExpiredSession(rc['code'], rc['reason'], rc['message'])
+
+            # it makes sense to print headers, status_code, etc. only when we don't know what happened
+            print(rc.headers)
+            print(rc.status_code)
+            print(rc.cookies)
+            print(rc.content)
             raise UnknownError(rc.content)
+        # this whole error handling section might be moot now since they no longer return status_code = 200 when there's an error
+        # TODO: determine which of the errors (500, 489, 465, 461, 459, 401, 409) should actually be handled in the block above
         if rc.text == '':
             rc = {}
         else:
