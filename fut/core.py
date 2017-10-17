@@ -821,7 +821,7 @@ class Core(object):
 
     def search(self, ctype, level=None, category=None, assetId=None, defId=None,
                min_price=None, max_price=None, min_buy=None, max_buy=None,
-               league=None, club=None, position=None, nationality=None, rare=False,
+               league=None, club=None, position=None, zone=None, nationality=None, rare=False,
                playStyle=None, start=0, page_size=16):
         """Prepare search request, send and return parsed data as a dict.
 
@@ -878,6 +878,7 @@ class Core(object):
         if league:      params['leag'] = league
         if club:        params['team'] = club
         if position:    params['pos'] = position
+        if zone:        params['zone'] = zone
         if nationality: params['nat'] = nationality
         if rare:        params['rare'] = 'SP'
         if playStyle:   params['playStyle'] = playStyle
