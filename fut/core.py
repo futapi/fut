@@ -397,7 +397,7 @@ class Core(object):
                 raise FutError(reason=failedReason)
 
             if 'var redirectUri' in rc.text:
-                rc = self.r.get(rc.url, {'_eventId': 'end'})  # initref param was missing here
+                rc = self.r.get(rc.url, params={'_eventId': 'end'})  # initref param was missing here
 
             '''  # pops out only on first launch
             if 'FIFA Ultimate Team</strong> needs to update your Account to help protect your gameplay experience.' in rc:  # request email/sms code
