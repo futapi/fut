@@ -397,7 +397,7 @@ class Core(object):
                 raise FutError(reason=failedReason)
 
             if 'var redirectUri' in rc.text:
-                rc = self.r.post(rc.url, {'_eventId': 'end'})  # initref param was missing here
+                rc = self.r.get(rc.url, {'_eventId': 'end'})  # initref param was missing here
 
             '''  # pops out only on first launch
             if 'FIFA Ultimate Team</strong> needs to update your Account to help protect your gameplay experience.' in rc:  # request email/sms code
@@ -608,7 +608,7 @@ class Core(object):
             time.sleep(max(self.request_time - time.time() + random.randrange(self.delay[0], self.delay[1] + 1), 0))  # respect minimum delay
             self.r.options(url, params=params)
         else:
-            time.sleep(max(self.request_time - time.time() + 1.2, 0))  # respect 1s minimum delay between requests
+            time.sleep(max(self.request_time - time.time() + 1.1, 0))  # respect 1s minimum delay between requests
         self.request_time = time.time()  # save request time for delay calculations
         if method.upper() == 'GET':
             rc = self.r.get(url, data=data, params=params, timeout=self.timeout)
