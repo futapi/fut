@@ -4,6 +4,22 @@ Changelog
 ---------
 
 
+0.3.1 (2017-10-18)
+^^^^^^^^^^^^^^^^^^
+
+* pinEvents: random timestamp with delay & option request before sending data
+* add sbsSets
+* correct few details (page_size, sleep times etc.) - community work :-)
+* rename searchAuctions to search (You can still use searchAuctions)
+* fix python2 compatibility (#296)
+* correct _ value - all credits go to ricklhp7
+* fix sendToWatchlist (jsarasti patch #303)
+* proper currentBid check logic (jsarasti patch #303)
+* fix squad method (#300)
+* fix database (players, nations, leagues, teams, stadiums)
+* add balls method (database)
+* rewrite searchDefinition (jsarasti work #304)
+
 0.3.0 (2017-10-12)
 ^^^^^^^^^^^^^^^^^^
 

@@ -20,6 +20,11 @@ try:
 except ImportError:
     from http.cookiejar import LWPCookieJar
 
+try:  # python2 compatibility
+    input = raw_input
+except NameError:
+    pass
+
 from .pin import Pin
 from .config import headers, headers_and, headers_ios, cookies_file, timeout, delay
 from .log import logger
@@ -60,11 +65,11 @@ def baseId(resource_id, return_version=False):
 def itemParse(item_data, full=True):
     """Parser for item data. Returns nice dictionary.
 
-    :params iteam_data: Item data received from ea servers.
-    :params full: (optional) False if You're snipping and don't need extended info. Anyone really use this?
+    :params item_data: Item data received from ea servers.
+    :params full: (optional) False if you're sniping and don't need extended info. Anyone really use this?
     """
     # TODO: object
-    # TODO: dynamic parse all data
+    # TODO: dynamically parse all data
     return_data = {
         'tradeId':           item_data.get('tradeId'),
         'buyNowPrice':       item_data.get('buyNowPrice'),
@@ -160,6 +165,7 @@ def cardInfo(resource_id):
 
 
 # TODO: optimize messages (parse whole messages once!), xml parser might be faster
+# TODO: parse more data (short club names etc.)
 def nations(timeout=timeout):
     """Return all nations in dict {id0: nation0, id1: nation1}.
 
@@ -168,7 +174,7 @@ def nations(timeout=timeout):
     rc = requests.get(messages_url, timeout=timeout)
     rc.encoding = 'utf-8'  # guessing takes huge amount of cpu time
     rc = rc.text
-    data = re.findall('<trans-unit resname="search.nationName.nation([0-9]+)">\n        <source>(.+)</source>', rc)
+    data = re.findall('"search.nationName.nation([0-9]+)": "(.+)"', rc)
     nations = {}
     for i in data:
         nations[int(i[0])] = i[1]
@@ -183,7 +189,7 @@ def leagues(year=2018, timeout=timeout):
     rc = requests.get(messages_url, timeout=timeout)
     rc.encoding = 'utf-8'  # guessing takes huge amount of cpu time
     rc = rc.text
-    data = re.findall('<trans-unit resname="global.leagueFull.%s.league([0-9]+)">\n        <source>(.+)</source>' % year, rc)
+    data = re.findall('"global.leagueFull.%s.league([0-9]+)": "(.+)"' % year, rc)
     leagues = {}
     for i in data:
         leagues[int(i[0])] = i[1]
@@ -198,7 +204,7 @@ def teams(year=2018, timeout=timeout):
     rc = requests.get(messages_url, timeout=timeout)
     rc.encoding = 'utf-8'  # guessing takes huge amount of cpu time
     rc = rc.text
-    data = re.findall('<trans-unit resname="global.teamFull.%s.team([0-9]+)">\n        <source>(.+)</source>' % year, rc)
+    data = re.findall('"global.teamFull.%s.team([0-9]+)": "(.+)"' % year, rc)
     teams = {}
     for i in data:
         teams[int(i[0])] = i[1]
@@ -213,11 +219,23 @@ def stadiums(year=2018, timeout=timeout):
     rc = requests.get(messages_url, timeout=timeout)
     rc.encoding = 'utf-8'  # guessing takes huge amount of cpu time
     rc = rc.text
-    data = re.findall('<trans-unit resname="global.stadiumFull.%s.stadium([0-9]+)">\n        <source>(.+)</source>' % year, rc)
+    data = re.findall('"global.stadiumFull.%s.stadium([0-9]+)": "(.+)"' % year, rc)
     stadiums = {}
     for i in data:
         stadiums[int(i[0])] = i[1]
     return stadiums
+
+
+def balls(timeout=timeout):
+    """Return all balls in dict {id0: ball0, id1: ball1}."""
+    rc = requests.get(messages_url, timeout=timeout)
+    rc.encoding = 'utf-8'  # guessing takes huge amount of cpu time
+    rc = rc.text
+    data = re.findall('"BallName_([0-9]+)": "(.+)"', rc)
+    balls = {}
+    for i in data:
+        balls[int(i[0])] = i[1]
+    return balls
 
 
 def players(timeout=timeout):
@@ -244,7 +262,7 @@ def playstyles(year=2018, timeout=timeout):
     rc = requests.get(messages_url, timeout=timeout)
     rc.encoding = 'utf-8'  # guessing takes huge amount of cpu time
     rc = rc.text
-    data = re.findall('<trans-unit resname="playstyles.%s.playstyle([0-9]+)">\n        <source>(.+)</source>' % year, rc)
+    data = re.findall('"playstyles.%s.playstyle([0-9]+)": "(.+)"' % year, rc)
     playstyles = {}
     for i in data:
         playstyles[int(i[0])] = i[1]
@@ -379,7 +397,7 @@ class Core(object):
                 raise FutError(reason=failedReason)
 
             if 'var redirectUri' in rc.text:
-                rc = self.r.post(rc.url, {'_eventId': 'end'})  # initref param was missing here
+                rc = self.r.get(rc.url, {'_eventId': 'end'})  # initref param was missing here
 
             '''  # pops out only on first launch
             if 'FIFA Ultimate Team</strong> needs to update your Account to help protect your gameplay experience.' in rc:  # request email/sms code
@@ -443,7 +461,9 @@ class Core(object):
         self.r.headers['Easw-Session-Data-Nucleus-Id'] = self.nucleus_id
 
         # shards
-        rc = self.r.get('https://%s/ut/shards/v2' % auth_url, data={'_': int(time.time() * 1000)}).json()  # TODO: parse this
+        self._ = int(time.time() * 1000)
+        rc = self.r.get('https://%s/ut/shards/v2' % auth_url, data={'_': self._}).json()  # TODO: parse this
+        self._ += 1
         self.fut_host = {
             'pc': 'utas.external.s2.fut.ea.com:443',
             'ps3': 'utas.external.s2.fut.ea.com:443',
@@ -457,8 +477,9 @@ class Core(object):
         data = {'filterConsoleLogin': 'true',
                 'sku': sku,
                 'returningUserGameYear': '2017',  # allways year-1?
-                '_': int(time.time() * 1000)}
+                '_': self._}
         rc = self.r.get('https://%s/ut/game/fifa18/user/accountinfo' % self.fut_host, params=data).json()
+        self._ += 1
         # pick persona (first valid for given game_sku)
         personas = rc['userAccountInfo']['personas']
         for p in personas:
@@ -494,7 +515,11 @@ class Core(object):
                 'priorityLevel': 4,
                 'identification': {'authCode': auth_code,
                                    'redirectUrl': 'nucleus:rest'}}
-        rc = self.r.post('https://%s/ut/auth' % self.fut_host, data=json.dumps(data), params={'': int(time.time() * 1000)}, timeout=self.timeout)
+        params = {'sku_a': self.sku_a,
+                  '': int(time.time() * 1000)}
+        rc = self.r.post('https://%s/ut/auth' % self.fut_host, data=json.dumps(data), params=params, timeout=self.timeout)
+        if rc.status_code == 401:  # and rc.text == 'multiple session'
+            raise FutError('multiple session')
         if rc.status_code == 500:
             raise InternalServerError('Servers are probably temporary down.')
         rc = rc.json()
@@ -515,8 +540,11 @@ class Core(object):
 
         # validate (secret question)
         self.r.headers['Easw-Session-Data-Nucleus-Id'] = self.nucleus_id
-        rc = self.r.get('https://%s/ut/game/fifa18/phishing/question' % self.fut_host, params={'_': int(time.time() * 1000)}, timeout=self.timeout).json()
-        if rc.get('string') != 'Already answered question':
+        rc = self.r.get('https://%s/ut/game/fifa18/phishing/question' % self.fut_host, params={'_': self._}, timeout=self.timeout).json()
+        self._ += 1
+        if rc.get('code') == '458':
+            raise Captcha()
+        elif rc.get('string') != 'Already answered question':
             params = {'answer': secret_answer_hash}
             rc = self.r.post('https://%s/ut/game/fifa18/phishing/validate' % self.fut_host, params=params, timeout=self.timeout).json()
             if rc['string'] != 'OK':  # we've got an error
@@ -526,13 +554,15 @@ class Core(object):
                 raise FutError(reason='Error during login process (%s).' % (rc['reason']))
             self.r.headers['X-UT-PHISHING-TOKEN'] = self.token = rc['token']
             # ask again for question to refresh(?) token, i'm just doing what webapp is doing
-            rc = self.r.get('https://%s/ut/game/fifa18/phishing/question' % self.fut_host, params={'_': int(time.time() * 1000)}, timeout=self.timeout).json()
+            rc = self.r.get('https://%s/ut/game/fifa18/phishing/question' % self.fut_host, params={'_': self._}, timeout=self.timeout).json()
+            self._ += 1
         self.r.headers['X-UT-PHISHING-TOKEN'] = self.token = rc['token']
 
         # get basic user info
         # TODO: parse usermassinfo and change _usermassinfo to userinfo
         # TODO?: usermassinfo as separate method && ability to refresh piles etc.
-        self._usermassinfo = self.r.get('https://%s/ut/game/fifa18/usermassinfo' % self.fut_host, params={'_': int(time.time() * 1000)}, timeout=self.timeout).json()
+        self._usermassinfo = self.r.get('https://%s/ut/game/fifa18/usermassinfo' % self.fut_host, params={'_': self._}, timeout=self.timeout).json()
+        self._ += 1
         if self._usermassinfo['settings']['configs'][2]['value'] == 0:
             raise FutError(reason='Transfer market is probably disabled on this account.')  # if tradingEnabled = 0
 
@@ -552,6 +582,8 @@ class Core(object):
         events = [self.pin.event('page_view', 'Hub - Home')]
         self.pin.send(events)
 
+        self.keepalive()  # credits
+
 #    def __shards__(self):
 #        """Returns shards info."""
 #        # TODO: headers
@@ -559,7 +591,7 @@ class Core(object):
 #        return self.r.get(self.urls['shards'], params={'_': int(time.time()*1000)}, timeout=self.timeout).json()
 #        # self.r.headers['X-UT-Route'] = self.urls['fut_pc']
 
-    def __request__(self, method, url, data={}, params={}):
+    def __request__(self, method, url, data={}, params={}, fast=False):
         """Prepare headers and sends request. Returns response as a json object.
 
         :params method: Rest method.
@@ -569,10 +601,16 @@ class Core(object):
         url = 'https://%s/ut/game/fifa18/%s' % (self.fut_host, url)
 
         self.logger.debug("request: {0} data={1};  params={2}".format(url, data, params))
-        time.sleep(max(self.request_time - time.time() + random.randrange(self.delay[0], self.delay[1] + 1), 0))  # respect minimum delay
+        if method.upper() == 'GET':
+            params['_'] = self._  # only for get(?)
+            self._ += 1
+        if not fast:  # TODO: refactorization
+            time.sleep(max(self.request_time - time.time() + random.randrange(self.delay[0], self.delay[1] + 1), 0))  # respect minimum delay
+            self.r.options(url, params=params)
+        else:
+            time.sleep(max(self.request_time - time.time() + 1.1, 0))  # respect 1s minimum delay between requests
         self.request_time = time.time()  # save request time for delay calculations
         if method.upper() == 'GET':
-            params['_'] = int(time.time() * 1000)  # only for get(?)
             rc = self.r.get(url, data=data, params=params, timeout=self.timeout)
         elif method.upper() == 'POST':
             rc = self.r.post(url, data=data, params=params, timeout=self.timeout)
@@ -582,7 +620,27 @@ class Core(object):
             rc = self.r.delete(url, data=data, params=params, timeout=self.timeout)
         self.logger.debug("response: {0}".format(rc.content))
         if not rc.ok:  # status != 200
+            rcj = rc.json()
+            if rc.status_code == 429:
+                raise FutError('429 Too many requests')
+            elif rc.status_code == 426:
+                raise FutError('426 Too many requests')
+            elif rc.status_code in (512, 521):
+                raise FutError('512/521 Temporary ban or just too many requests.')
+            elif rc.status_code == 461:
+                raise PermissionDenied(461)  # You are not allowed to bid on this trade TODO: add code, reason etc
+            elif rc.status_code == 458:
+                raise Captcha()
+            elif rc.status_code == 401 and rcj['reason'] == 'expired session':
+                raise ExpiredSession(rcj['code'], rcj['reason'], rcj['message'])
+            # it makes sense to print headers, status_code, etc. only when we don't know what happened
+            print(rc.headers)
+            print(rc.status_code)
+            print(rc.cookies)
+            print(rc.content)
             raise UnknownError(rc.content)
+        # this whole error handling section might be moot now since they no longer return status_code = 200 when there's an error
+        # TODO: determine which of the errors (500, 489, 465, 461, 459, 401, 409) should actually be handled in the block above
         if rc.text == '':
             rc = {}
         else:
@@ -739,31 +797,38 @@ class Core(object):
             url = '{0}{1}.json'.format(card_info_url, base_id)
             return requests.get(url, timeout=self.timeout).json()
 
-    # def searchDefinition(self, asset_id, start=0, count=35):
-    #     """Return variations of the given asset id, e.g. IF cards.
-    #
-    #     :param asset_id: Asset id / Definition id.
-    #     :param start: (optional) Start page.
-    #     :param count: (optional) Number of definitions you want to request.
-    #     """
-    #     params = {
-    #         'defId': asset_id,
-    #         'start': start,
-    #         'type': 'player',
-    #         'count': count
-    #     }
-    #
-    #     rc = self.__get__(self.urls['fut']['Search'], params=params)
-    #     try:
-    #         return rc['itemData']
-    #     except:
-    #         raise UnknownError('Invalid definition response')
-    #     return rc
+    def searchDefinition(self, asset_id, start=0, count=46):
+        """Return variations of the given asset id, e.g. IF cards.
 
-    def searchAuctions(self, ctype, level=None, category=None, assetId=None, defId=None,
-                       min_price=None, max_price=None, min_buy=None, max_buy=None,
-                       league=None, club=None, position=None, nationality=None, rare=False,
-                       playStyle=None, start=0, page_size=16):
+        :param asset_id: Asset id / Definition id.
+        :param start: (optional) Start page.
+        :param count: (optional) Number of definitions you want to request.
+        """
+        method = 'GET'
+        url = 'defid'
+
+        base_id = baseId(asset_id)
+        if base_id not in self.players:
+            raise FutError(reason='Invalid player asset/definition id.')
+
+        params = {
+            'defId': base_id,
+            'start': start,
+            'type': 'player',
+            'count': count
+        }
+
+        rc = self.__request__(method, url, params=params)
+
+        try:
+            return [itemParse({'itemData': i}) for i in rc['itemData']]
+        except:
+            raise UnknownError('Invalid definition response')
+
+    def search(self, ctype, level=None, category=None, assetId=None, defId=None,
+               min_price=None, max_price=None, min_buy=None, max_buy=None,
+               league=None, club=None, position=None, zone=None, nationality=None, rare=False,
+               playStyle=None, start=0, page_size=16):
         """Prepare search request, send and return parsed data as a dict.
 
         :param ctype: [development / ? / ?] Card type.
@@ -794,15 +859,15 @@ class Core(object):
             events = [self.pin.event('page_view', 'Transfer Market Search')]
             self.pin.send(events)
 
-        if start > 0 and page_size == 16:
-            if not self.emulate:  # wbeapp
-                page_size = 12
-                if start == 16:  # second page
-                    start = 12
-            elif self.emulate and start == 16:  # emulating android/ios
-                start = 15
-        elif page_size > 50:  # server restriction
-            page_size = 50
+        # if start > 0 and page_size == 16:
+        #     if not self.emulate:  # wbeapp
+        #         page_size = 12
+        #         if start == 16:  # second page
+        #             start = 12
+        #     elif self.emulate and start == 16:  # emulating android/ios
+        #         start = 15
+        # elif page_size > 50:  # server restriction
+        #     page_size = 50
         params = {
             'start': start,
             'num': page_size,
@@ -819,11 +884,12 @@ class Core(object):
         if league:      params['leag'] = league
         if club:        params['team'] = club
         if position:    params['pos'] = position
+        if zone:        params['zone'] = zone
         if nationality: params['nat'] = nationality
         if rare:        params['rare'] = 'SP'
         if playStyle:   params['playStyle'] = playStyle
 
-        rc = self.__request__(method, url, params=params)
+        rc = self.__request__(method, url, params=params)  # TODO: catch 426 429 512 521 - temporary ban
 
         # pinEvents
         if start == 0:
@@ -831,6 +897,10 @@ class Core(object):
             self.pin.send(events)
 
         return [itemParse(i) for i in rc.get('auctionInfo', ())]
+
+    def searchAuctions(self, *args, **kwargs):
+        """Alias for search method, just to keep compatibility."""
+        return self.search(*args, **kwargs)
 
     def bid(self, trade_id, bid, fast=False):
         """Make a bid.
@@ -844,10 +914,14 @@ class Core(object):
 
         if not fast:
             rc = self.tradeStatus(trade_id)[0]
-            if rc['currentBid'] > bid or self.credits < bid:
+            # don't bid if current bid is equal or greater than our max bid
+            if rc['currentBid'] >= bid or self.credits < bid:
                 return False  # TODO: add exceptions
         data = {'bid': bid}
-        rc = self.__request__(method, url, data=json.dumps(data), params={'sku_a': self.sku_a})['auctionInfo'][0]
+        try:
+            rc = self.__request__(method, url, data=json.dumps(data), params={'sku_a': self.sku_a}, fast=fast)['auctionInfo'][0]
+        except PermissionDenied:  # too slow, somebody took it already :-(
+            return False
         if rc['bidState'] == 'highest' or (rc['tradeState'] == 'closed' and rc['bidState'] == 'buyNow'):  # checking 'tradeState' is required?
             return True
         else:
@@ -910,7 +984,7 @@ class Core(object):
         :params squad_id: Squad id.
         """
         method = 'GET'
-        url = 'quad/%s/user/%s' % (squad_id, persona_id or self.persona_id)
+        url = 'squad/%s/user/%s' % (squad_id, persona_id or self.persona_id)
 
         # pinEvents
         events = [self.pin.event('page_view', 'Hub - Squads')]
@@ -1066,7 +1140,11 @@ class Core(object):
 
         :params trade_id: Trade id.
         """
-        return self.__sendToPile__('watchlist', trade_id=trade_id)
+        method = 'PUT'
+        url = 'watchlist'
+
+        data = {'auctionInfo': [{'id': trade_id}]}
+        return self.__request__(method, url, data=json.dumps(data))
     #
     # def relist(self, clean=False):
     #     """Relist all tradepile. Returns True or number of deleted (sold) if clean was set.
@@ -1187,3 +1265,10 @@ class Core(object):
                 "usePreOrder": True}
         rc = self.__request__(method, url, data=json.dumps(data))
         return rc  # TODO: parse response
+
+    def sbsSets(self):
+        method = 'GET'
+        url = 'sbs/sets'
+
+        rc = self.__request__(method, url)
+        return rc  # TODO?: parse

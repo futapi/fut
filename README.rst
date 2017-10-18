@@ -11,11 +11,11 @@ fut
 .. image:: https://img.shields.io/pypi/pyversions/fut.svg
     :target: https://pypi.python.org/pypi/fut
 
-.. image:: https://travis-ci.org/oczkers/fut.png?branch=master
-    :target: https://travis-ci.org/oczkers/fut
+.. image:: https://travis-ci.org/futapi/fut.png?branch=master
+    :target: https://travis-ci.org/futapi/fut
 
-.. image:: https://codecov.io/github/oczkers/fut/coverage.svg?branch=master
-    :target: https://codecov.io/github/oczkers/fut
+.. image:: https://codecov.io/github/futapi/fut/coverage.svg?branch=master
+    :target: https://codecov.io/github/futapi/fut
     :alt: codecov.io
 
 .. image:: https://api.codacy.com/project/badge/Grade/f599808fba2447c98253cf44cca86a1b
@@ -88,7 +88,6 @@ Optional parameters:
 - min_buy: [int] Minimal buy now price.
 - max_buy: [int] Maximum buy now price.
 - level: ['bronze'/'silver'/gold'] Card level.
-- rare: [bool] False for non-rare only results.
 - start: [int] Start page number.
 - category: ['fitness'/'?'] Card category.
 - assetId: [int] assetId.
@@ -96,6 +95,7 @@ Optional parameters:
 - league: [int] League id.
 - club: [int] Club id.
 - position: [int?/str?] Position.
+- zone: ['attacker'/'?'] zone.
 - nationality: [int] Nation id.
 - rare: [boolean] True for searching special cards.
 - playStyle: [str?] playStyle.

@@ -11,9 +11,12 @@ This module implements the fut's pinEvents methods.
 import requests
 import re
 import json
+import time
+from random import random
 from datetime import datetime
 
 from fut.config import headers
+from fut.urls import pin_url, v
 from fut.exceptions import FutError
 
 
@@ -25,8 +28,6 @@ class Pin(object):
         self.persona_id = persona_id
         self.dob = dob
         self.platform = platform
-        rc = requests.get('https://www.easports.com/fifa/ultimate-team/web-app/config/config.json').text
-        self.url = re.search('"pinURL": "(.+?)",', rc).group(1)
         rc = requests.get('https://www.easports.com/fifa/ultimate-team/web-app/js/compiled_1.js').text
         self.taxv = re.search('PinManager.TAXONOMY_VERSION=([0-9\.]+?)', rc).group(1)
         self.tidt = re.search('PinManager.TITLE_ID_TYPE="(.+?)"', rc).group(1)
@@ -89,12 +90,13 @@ class Pin(object):
         return data
 
     def send(self, events):
+        time.sleep(0.5 + random() / 50)
         data = {"taxv": self.taxv,  # convert to float?
                 "tidt": self.tidt,
                 "tid": self.sku,
                 "rel": self.rel,
-                "v": "18.0.0",  # TODO: where is it from?
-                "ts_post": self.__ts(),  # TODO: random delay between event and post (0.5-2s?)
+                "v": v,
+                "ts_post": self.__ts(),
                 "sid": self.sid,
                 "gid": self.gid,  # convert to int?
                 "plat": self.plat,
@@ -103,7 +105,9 @@ class Pin(object):
                 "is_sess": self.sid != '',
                 "custom": self.custom,
                 "events": events}
-        rc = self.r.post(self.url, data=json.dumps(data)).json()
+        # print(data)  # DEBUG
+        self.r.options(pin_url)
+        rc = self.r.post(pin_url, data=json.dumps(data)).json()
         if rc['status'] != 'ok':
             raise FutError('PinEvent is NOT OK, probably they changed something.')
         return True

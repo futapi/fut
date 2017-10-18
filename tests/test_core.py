@@ -47,7 +47,7 @@ class FutCoreTestCase(unittest.TestCase):
     def testDatabase(self):
         responses.add(responses.GET,
                       messages_url,
-                      body=open(path[0] + '/tests/data/messages.en_US.xml', 'r').read())
+                      body=open(path[0] + '/tests/data/en_US.json', 'r').read())
         responses.add(responses.GET,
                       '{0}{1}.json'.format(card_info_url, 'players'),
                       json=json.loads(open(path[0] + '/tests/data/players.json', 'r').read()))  # load json to avoid encoding errors
@@ -56,26 +56,30 @@ class FutCoreTestCase(unittest.TestCase):
         self.db_leagues = core.leagues()
         self.db_teams = core.teams()
         self.db_stadiums = core.stadiums()
+        self.db_balls = core.balls()
         self.db_players = core.players()
         self.db_playstyles = core.playstyles()
 
         # TODO: drop re, use xmltodict
         # TODO: year in config
         year = 2018
-        rc = open(path[0] + '/tests/data/messages.en_US.xml', 'r', encoding='utf8').read()
-        for i in re.findall('<trans-unit resname="search.nationName.nation([0-9]+)">\n        <source>(.+)</source>', rc[:]):
+        rc = open(path[0] + '/tests/data/en_US.json', 'r', encoding='utf8').read()
+        for i in re.findall('"search.nationName.nation([0-9]+)": "(.+)"', rc[:]):
             self.assertEqual(self.db_nations[int(i[0])], i[1])
 
-        for i in re.findall('<trans-unit resname="global.leagueFull.%s.league([0-9]+)">\n        <source>(.+)</source>' % year, rc[:]):
+        for i in re.findall('"global.leagueFull.%s.league([0-9]+)": "(.+)"' % year, rc[:]):
             self.assertEqual(self.db_leagues[int(i[0])], i[1])
 
-        for i in re.findall('<trans-unit resname="global.teamFull.%steam([0-9]+)">\n        <source>(.+)</source>' % year, rc[:]):
+        for i in re.findall('"global.teamFull.%s.team([0-9]+)": "(.+)"' % year, rc[:]):
             self.assertEqual(self.db_teams[int(i[0])], i[1])
 
-        for i in re.findall('<trans-unit resname="global.stadiumFull.%sstadium([0-9]+)">\n        <source>(.+)</source>' % year, rc[:]):
+        for i in re.findall('"global.stadiumFull.%s.stadium([0-9]+)": "(.+)"' % year, rc[:]):
             self.assertEqual(self.db_stadiums[int(i[0])], i[1])
 
-        for i in re.findall('<trans-unit resname="playstyles.%splaystyle([0-9]+)">\n        <source>(.+)</source>' % year, rc[:]):
+        for i in re.findall('"BallName_([0-9]+)": "(.+)"', rc[:]):
+            self.assertEqual(self.db_balls[int(i[0])], i[1])
+
+        for i in re.findall('"playstyles.%s.playstyle([0-9]+)": "(.+)"' % year, rc[:]):
             self.assertEqual(self.db_playstyles[int(i[0])], i[1])
 
         rc = json.loads(open(path[0] + '/tests/data/players.json', 'r').read())
