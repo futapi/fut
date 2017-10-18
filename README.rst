@@ -95,6 +95,7 @@ Optional parameters:
 - league: [int] League id.
 - club: [int] Club id.
 - position: [int?/str?] Position.
+- zone: ['attacker'/'?'] zone.
 - nationality: [int] Nation id.
 - rare: [boolean] True for searching special cards.
 - playStyle: [str?] playStyle.
