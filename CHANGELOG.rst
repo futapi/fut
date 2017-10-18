@@ -4,7 +4,7 @@ Changelog
 ---------
 
 
-0.3.1 (2017-10-??)
+0.3.1 (2017-10-18)
 ^^^^^^^^^^^^^^^^^^
 
 * pinEvents: random timestamp with delay & option request before sending data
