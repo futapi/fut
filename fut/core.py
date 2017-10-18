@@ -828,8 +828,9 @@ class Core(object):
 
     def search(self, ctype, level=None, category=None, assetId=None, defId=None,
                min_price=None, max_price=None, min_buy=None, max_buy=None,
-               league=None, club=None, position=None, zone=None, nationality=None, rare=False,
-               playStyle=None, start=0, page_size=16):
+               league=None, club=None, position=None, zone=None, nationality=None,
+               rare=False, playStyle=None, start=0, page_size=16,
+               fast=False):
         """Prepare search request, send and return parsed data as a dict.
 
         :param ctype: [development / ? / ?] Card type.
@@ -858,7 +859,7 @@ class Core(object):
         # pinEvents
         if start == 0:
             events = [self.pin.event('page_view', 'Transfer Market Search')]
-            self.pin.send(events)
+            self.pin.send(events, fast=fast)
 
         # if start > 0 and page_size == 16:
         #     if not self.emulate:  # wbeapp
@@ -890,12 +891,12 @@ class Core(object):
         if rare:        params['rare'] = 'SP'
         if playStyle:   params['playStyle'] = playStyle
 
-        rc = self.__request__(method, url, params=params)  # TODO: catch 426 429 512 521 - temporary ban
+        rc = self.__request__(method, url, params=params, fast=fast)  # TODO: catch 426 429 512 521 - temporary ban
 
         # pinEvents
         if start == 0:
             events = [self.pin.event('page_view', 'Transfer Market Results - List View')]
-            self.pin.send(events)
+            self.pin.send(events, fast=fast)
 
         return [itemParse(i) for i in rc.get('auctionInfo', ())]
 

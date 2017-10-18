@@ -89,7 +89,7 @@ class Pin(object):
 
         return data
 
-    def send(self, events):
+    def send(self, events, fast=False):
         time.sleep(0.5 + random() / 50)
         data = {"taxv": self.taxv,  # convert to float?
                 "tidt": self.tidt,
@@ -106,7 +106,8 @@ class Pin(object):
                 "custom": self.custom,
                 "events": events}
         # print(data)  # DEBUG
-        self.r.options(pin_url)
+        if not fast:
+            self.r.options(pin_url)
         rc = self.r.post(pin_url, data=json.dumps(data)).json()
         if rc['status'] != 'ok':
             raise FutError('PinEvent is NOT OK, probably they changed something.')
