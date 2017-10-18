@@ -608,7 +608,7 @@ class Core(object):
             time.sleep(max(self.request_time - time.time() + random.randrange(self.delay[0], self.delay[1] + 1), 0))  # respect minimum delay
             self.r.options(url, params=params)
         else:
-            time.sleep(max(self.request_time - time.time() + 1, 0))  # respect 1s minimum delay between requests
+            time.sleep(max(self.request_time - time.time() + 1.2, 0))  # respect 1s minimum delay between requests
         self.request_time = time.time()  # save request time for delay calculations
         if method.upper() == 'GET':
             rc = self.r.get(url, data=data, params=params, timeout=self.timeout)
@@ -633,7 +633,6 @@ class Core(object):
                 raise Captcha()
             elif rc.status_code == 401 and rcj['reason'] == 'expired session':
                 raise ExpiredSession(rcj['code'], rcj['reason'], rcj['message'])
-
             # it makes sense to print headers, status_code, etc. only when we don't know what happened
             print(rc.headers)
             print(rc.status_code)

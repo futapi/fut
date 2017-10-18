@@ -14,8 +14,8 @@ fut
 .. image:: https://travis-ci.org/futapi/fut.png?branch=master
     :target: https://travis-ci.org/futapi/fut
 
-.. image:: https://codecov.io/github/oczkers/fut/coverage.svg?branch=master
-    :target: https://codecov.io/github/oczkers/fut
+.. image:: https://codecov.io/github/futapi/fut/coverage.svg?branch=master
+    :target: https://codecov.io/github/futapi/fut
     :alt: codecov.io
 
 .. image:: https://api.codacy.com/project/badge/Grade/f599808fba2447c98253cf44cca86a1b
