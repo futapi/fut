@@ -21,15 +21,15 @@ from fut.exceptions import FutError
 
 
 class Pin(object):
-    def __init__(self, sku='FIFA18WEB', sid='', nucleus_id=0, persona_id='', dob=False, platform=False):
-        self.sku = sku
+    def __init__(self, sku=None, sid='', nucleus_id=0, persona_id='', dob=False, platform=False):
         self.sid = sid
         self.nucleus_id = nucleus_id
         self.persona_id = persona_id
         self.dob = dob
         self.platform = platform
         rc = requests.get('https://www.easports.com/fifa/ultimate-team/web-app/js/compiled_1.js').text
-        self.taxv = re.search('PinManager.TAXONOMY_VERSION=([0-9\.]+?)', rc).group(1)
+        self.sku = sku or re.search('enums.SKU.FUT="(.+?)"', rc).group(1)
+        self.taxv = re.search('PinManager.TAXONOMY_VERSION=([0-9\.]+)', rc).group(1)
         self.tidt = re.search('PinManager.TITLE_ID_TYPE="(.+?)"', rc).group(1)
         self.rel = re.search('rel:"(.+?)"', rc).group(1)
         self.gid = re.search('gid:([0-9]+?)', rc).group(1)
@@ -105,7 +105,7 @@ class Pin(object):
                 "is_sess": self.sid != '',
                 "custom": self.custom,
                 "events": events}
-        # print(data)  # DEBUG
+        print(data)  # DEBUG
         self.r.options(pin_url)
         rc = self.r.post(pin_url, data=json.dumps(data)).json()
         if rc['status'] != 'ok':
