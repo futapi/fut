@@ -542,7 +542,7 @@ class Core(object):
         self.r.headers['Easw-Session-Data-Nucleus-Id'] = self.nucleus_id
         rc = self.r.get('https://%s/ut/game/fifa18/phishing/question' % self.fut_host, params={'_': self._}, timeout=self.timeout).json()
         self._ += 1
-        if rc.get('code') == 458:
+        if rc.get('code') == '458':
             raise Captcha()
         elif rc.get('string') != 'Already answered question':
             params = {'answer': secret_answer_hash}
