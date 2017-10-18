@@ -324,7 +324,7 @@ class Core(object):
             self.r.headers = headers_ios.copy()  # i'm ios phone now ;-)
         else:
             self.r.headers = headers.copy()  # i'm chrome browser now ;-)
-        if platform == 'pc':
+        if platform == 'pc':  # TODO: get this from shards
             game_sku = 'FFA18PCC'
         elif platform == 'xbox':
             game_sku = 'FFA18XBO'
@@ -334,7 +334,7 @@ class Core(object):
             game_sku = 'FFA18PS3'  # not tested
         elif platform == 'ps4':
             game_sku = 'FFA18PS4'
-            platform = 'ps3'  # ps4 not available?
+            # platform = 'ps3'  # ps4 not available in shards
         else:
             raise FutError(reason='Wrong platform. (Valid ones are pc/xbox/xbox360/ps3/ps4)')
         # if self.r.get(self.urls['main_site']+'/fifa/api/isUserLoggedIn', timeout=self.timeout).json()['isLoggedIn']:
@@ -467,6 +467,7 @@ class Core(object):
         self.fut_host = {
             'pc': 'utas.external.s2.fut.ea.com:443',
             'ps3': 'utas.external.s2.fut.ea.com:443',
+            'ps4': 'utas.external.s2.fut.ea.com:443',
             'xbox': 'utas.external.s3.fut.ea.com:443',
             # 'ios': 'utas.external.fut.ea.com:443',
             # 'and': 'utas.external.fut.ea.com:443'
