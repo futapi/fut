@@ -105,7 +105,7 @@ class Pin(object):
                 "is_sess": self.sid != '',
                 "custom": self.custom,
                 "events": events}
-        print(data)  # DEBUG
+        # print(data)  # DEBUG
         self.r.options(pin_url)
         rc = self.r.post(pin_url, data=json.dumps(data)).json()
         if rc['status'] != 'ok':
