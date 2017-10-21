@@ -621,7 +621,10 @@ class Core(object):
             rc = self.r.delete(url, data=data, params=params, timeout=self.timeout)
         self.logger.debug("response: {0}".format(rc.content))
         if not rc.ok:  # status != 200
-            rcj = rc.json()
+            try:
+                rcj = rc.json()
+            except:
+                pass
             if rc.status_code == 429:
                 raise FutError('429 Too many requests')
             elif rc.status_code == 426:
@@ -630,6 +633,8 @@ class Core(object):
                 raise FutError('512/521 Temporary ban or just too many requests.')
             elif rc.status_code == 461:
                 raise PermissionDenied(461)  # You are not allowed to bid on this trade TODO: add code, reason etc
+            elif rc.status_code == 460:
+                raise PermissionDenied(460)
             elif rc.status_code == 458:
                 raise Captcha()
             elif rc.status_code == 401 and rcj['reason'] == 'expired session':
