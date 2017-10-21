@@ -48,7 +48,7 @@ class Pin(object):
         self.custom = {"networkAccess": "W"}  # wifi?
         # TODO?: full boot process when there is no session (boot start)
 
-        self.custom['service_plat'] = platform
+        self.custom['service_plat'] = platform[:3]
         self.s = 4  # event id  |  3 before "was sent" without session/persona/nucleus id so we can probably omit
 
     def __ts(self):
