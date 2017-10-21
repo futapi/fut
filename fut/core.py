@@ -620,11 +620,13 @@ class Core(object):
         elif method.upper() == 'DELETE':
             rc = self.r.delete(url, data=data, params=params, timeout=self.timeout)
         self.logger.debug("response: {0}".format(rc.content))
+        if rc.text == '':
+            rcj = {}
+        else:
+            rcj = rc.json()
+            if 'credits' in rcj and rcj['credits']:
+                self.credits = rcj['credits']
         if not rc.ok:  # status != 200
-            try:
-                rcj = rc.json()
-            except:
-                pass
             if rc.status_code == 429:
                 raise FutError('429 Too many requests')
             elif rc.status_code == 426:
@@ -645,40 +647,6 @@ class Core(object):
             print(rc.cookies)
             print(rc.content)
             raise UnknownError(rc.content)
-        # this whole error handling section might be moot now since they no longer return status_code = 200 when there's an error
-        # TODO: determine which of the errors (500, 489, 465, 461, 459, 401, 409) should actually be handled in the block above
-        if rc.text == '':
-            rc = {}
-        else:
-            captcha_token = rc.headers.get('Proxy-Authorization', '').replace('captcha=', '')  # captcha token (always AAAA ?)
-            rc = rc.json()
-            # error control
-            if 'code' and 'reason' in rc:  # error
-                err_code = rc['code']
-                err_reason = rc['reason']
-                err_string = rc.get('string')  # "human readable" reason?
-                if err_reason == 'expired session':  # code?
-                    raise ExpiredSession(err_code, err_reason, err_string)
-                elif err_code == '500' or err_string == 'Internal Server Error (ut)':
-                    raise InternalServerError(err_code, err_reason, err_string)
-                elif err_code == '489' or err_string == 'Feature Disabled':
-                    raise FeatureDisabled(err_code, err_reason, err_string)
-                elif err_code == '465' or err_string == 'No User':
-                    raise NoUltimateTeam(err_code, err_reason, err_string)
-                elif err_code == '461' or err_string == 'Permission Denied':
-                    raise PermissionDenied(err_code, err_reason, err_string)
-                elif err_code == '459' or err_string == 'Captcha Triggered':
-                    # img = self.r.get(self.urls['fut_captcha_img'], params={'_': int(time.time()*1000), 'token': captcha_token}, timeout=self.timeout).content  # doesnt work - check headers
-                    img = None
-                    raise Captcha(err_code, err_reason, err_string, captcha_token, img)
-                elif err_code == '401' or err_string == 'Unauthorized':
-                    raise Unauthorized(err_code, err_reason, err_string)
-                elif err_code == '409' or err_string == 'Conflict':
-                    raise Conflict(err_code, err_reason, err_string)
-                else:
-                    raise UnknownError(rc.__str__())
-            if 'credits' in rc and rc['credits']:
-                self.credits = rc['credits']
         self.saveSession()
         return rc
 
