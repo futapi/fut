@@ -567,11 +567,6 @@ class Core(object):
         if self._usermassinfo['settings']['configs'][2]['value'] == 0:
             raise FutError(reason='Transfer market is probably disabled on this account.')  # if tradingEnabled = 0
 
-        # pinEvents - boot_end
-        events = [self.pin.event('connection'),
-                  self.pin.event('boot_end', end_reason='normal')]
-        self.pin.send(events)
-
         # size of piles
         piles = self.pileSize()
         self.tradepile_size = piles['tradepile']
@@ -581,6 +576,11 @@ class Core(object):
 
         # pinEvents - home screen
         events = [self.pin.event('page_view', 'Hub - Home')]
+        self.pin.send(events)
+
+        # pinEvents - boot_end
+        events = [self.pin.event('connection'),
+                  self.pin.event('boot_end', end_reason='normal')]
         self.pin.send(events)
 
         self.keepalive()  # credits
@@ -648,7 +648,7 @@ class Core(object):
             print(rc.content)
             raise UnknownError(rc.content)
         self.saveSession()
-        return rc
+        return rcj
 
     def __sendToPile__(self, pile, trade_id=None, item_id=None):
         """Send to pile.
