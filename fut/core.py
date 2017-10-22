@@ -609,7 +609,7 @@ class Core(object):
             time.sleep(max(self.request_time - time.time() + random.randrange(self.delay[0], self.delay[1] + 1), 0))  # respect minimum delay
             self.r.options(url, params=params)
         else:
-            time.sleep(max(self.request_time - time.time() + 1.1, 0))  # respect 1s minimum delay between requests
+            time.sleep(max(self.request_time - time.time() + 1.3, 0))  # respect 1s minimum delay between requests
         self.request_time = time.time()  # save request time for delay calculations
         if method.upper() == 'GET':
             rc = self.r.get(url, data=data, params=params, timeout=self.timeout)
@@ -620,12 +620,6 @@ class Core(object):
         elif method.upper() == 'DELETE':
             rc = self.r.delete(url, data=data, params=params, timeout=self.timeout)
         self.logger.debug("response: {0}".format(rc.content))
-        if rc.text == '':
-            rcj = {}
-        else:
-            rcj = rc.json()
-            if 'credits' in rcj and rcj['credits']:
-                self.credits = rcj['credits']
         if not rc.ok:  # status != 200
             if rc.status_code == 429:
                 raise FutError('429 Too many requests')
@@ -639,16 +633,23 @@ class Core(object):
                 raise PermissionDenied(460)
             elif rc.status_code == 458:
                 raise Captcha()
-            elif rc.status_code == 401 and rcj['reason'] == 'expired session':
-                raise ExpiredSession(rcj['code'], rcj['reason'], rcj['message'])
+            elif rc.status_code == 401:
+                print(rc.content)
+                raise ExpiredSession()
             # it makes sense to print headers, status_code, etc. only when we don't know what happened
             print(rc.headers)
             print(rc.status_code)
             print(rc.cookies)
             print(rc.content)
             raise UnknownError(rc.content)
+        if rc.text == '':
+            rc = {}
+        else:
+            rc = rc.json()
+            if 'credits' in rc and rc['credits']:
+                self.credits = rc['credits']
         self.saveSession()
-        return rcj
+        return rc
 
     def __sendToPile__(self, pile, trade_id=None, item_id=None):
         """Send to pile.
