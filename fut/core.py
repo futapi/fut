@@ -1038,12 +1038,12 @@ class Core(object):
 
         return [itemParse({'itemData': i}) for i in rc.get('itemData', ())]
 
-    def sell(self, item_id, bid, buy_now=10000, duration=3600):
+    def sell(self, item_id, bid, buy_now, duration=3600):
         """Start auction. Returns trade_id.
 
         :params item_id: Item id.
         :params bid: Stard bid.
-        :params buy_now: Buy now price (Default: 10000).
+        :params buy_now: Buy now price.
         :params duration: Auction duration in seconds (Default: 3600).
         """
         method = 'POST'
