@@ -53,7 +53,7 @@ class Pin(object):
 
     def __ts(self):
         # TODO: add ability to random something
-        ts = datetime.now()
+        ts = datetime.utcnow()
         ts = ts.strftime('%Y-%m-%dT%H:%M:%S.%f')[:-3] + 'Z'
         return ts
 
