@@ -1232,6 +1232,25 @@ class Core(object):
     #     url = '{0}/{1}'.format(self.urls['fut']['ActiveMessage'], message_id)
     #     self.__delete__(url)
 
+    def buyPack(self, pack_id, currency='COINS'):
+        # TODO: merge with openPack
+        method = 'POST'
+        url = 'purchased/items'
+
+        # pinEvents
+        events = [self.pin.event('page_view', 'Hub - Store')]
+        self.pin.send(events)
+
+        data = {'packId': pack_id,
+                'currency': currency}
+        rc = self.__request__(method, url, data=json.dumps(data))
+
+        # pinEvents
+        # events = [self.pin.event('page_view', 'Unassigned Items - List View')]
+        # self.pin.send(events)
+
+        return rc  # TODO: parse response
+
     def openPack(self, pack_id):
         method = 'POST'
         url = 'purchased/items'
