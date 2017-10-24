@@ -1272,3 +1272,11 @@ class Core(object):
         self.pin.send(events)
 
         return rc  # TODO?: parse
+
+    def objectives(self, scope='all'):
+        method = 'GET'
+        url = 'user/dynamicobjectives'
+
+        params = {'scope': scope}
+        rc = self.__request__(method, url, params=params)
+        return rc
