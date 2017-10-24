@@ -908,12 +908,14 @@ class Core(object):
         else:
             return False
 
-    def club(self, sort='desc', ctype='player', defId='', start=0, count=91):
+    def club(self, sort='desc', ctype='player', defId='', start=0, count=91, level=None):
         """Return items in your club, excluding consumables."""
         method = 'GET'
         url = 'club'
 
         params = {'sort': sort, 'type': ctype, 'defId': defId, 'start': start, 'count': count}
+        if level:
+            params['level'] = level
         rc = self.__request__(method, url, params=params)
 
         # pinEvent
