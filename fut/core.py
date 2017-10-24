@@ -122,6 +122,8 @@ def itemParse(item_data, full=True):
             'nation':           item_data['itemData'].get('nation'),  # nation_id?
             'year':             item_data['itemData'].get('resourceGameYear'),  # alias
             'resourceGameYear': item_data['itemData'].get('resourceGameYear'),
+            'marketDataMinPrice': item_data['itemData'].get('marketDataMinPrice'),
+            'marketDataMaxPrice': item_data['itemData'].get('marketDataMaxPrice'),
             'count':            item_data.get('count'),  # consumables only (?)
             'untradeableCount': item_data.get('untradeableCount'),  # consumables only (?)
         })
