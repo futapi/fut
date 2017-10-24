@@ -1266,4 +1266,9 @@ class Core(object):
         url = 'sbs/sets'
 
         rc = self.__request__(method, url)
+
+        # pinEvents
+        events = [self.pin.event('page_view', 'Hub - SBC')]
+        self.pin.send(events)
+
         return rc  # TODO?: parse
