@@ -1047,7 +1047,7 @@ class Core(object):
 
         return [itemParse({'itemData': i}) for i in rc.get('itemData', ())]
 
-    def sell(self, item_id, bid, buy_now, duration=3600):
+    def sell(self, item_id, bid, buy_now, duration=3600, fast=False):
         """Start auction. Returns trade_id.
 
         :params item_id: Item id.
@@ -1061,6 +1061,8 @@ class Core(object):
         # TODO: auto send to tradepile
         data = {'buyNowPrice': buy_now, 'startingBid': bid, 'duration': duration, 'itemData': {'id': item_id}}
         rc = self.__request__(method, url, data=json.dumps(data), params={'sku_a': self.sku_a})
+        if not fast:  # tradeStatus check like webapp do
+            self.tradeStatus(rc['id'])
         return rc['id']
 
     def quickSell(self, item_id):
