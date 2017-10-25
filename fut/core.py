@@ -635,6 +635,10 @@ class Core(object):
             elif rc.status_code == 460:
                 raise PermissionDenied(460)
             elif rc.status_code == 458:
+                print(rc.headers)
+                print(rc.status_code)
+                print(rc.cookies)
+                print(rc.content)
                 raise Captcha()
             elif rc.status_code == 401:
                 print(rc.content)
@@ -870,7 +874,7 @@ class Core(object):
         if rare:        params['rare'] = 'SP'
         if playStyle:   params['playStyle'] = playStyle
 
-        rc = self.__request__(method, url, params=params, fast=fast)  # TODO: catch 426 429 512 521 - temporary ban
+        rc = self.__request__(method, url, params=params, fast=fast)
 
         # pinEvents
         if start == 0:
@@ -1000,7 +1004,7 @@ class Core(object):
         if not isinstance(trade_id, (list, tuple)):
             trade_id = (trade_id,)
         trade_id = (str(i) for i in trade_id)
-        params = {'itemdata': 'true', 'tradeIds': ','.join(trade_id)}  # multiple trade_ids not tested
+        params = {'tradeIds': ','.join(trade_id)}  # multiple trade_ids not tested
         rc = self.__request__(method, url, params=params)
         return [itemParse(i, full=False) for i in rc['auctionInfo']]
 
