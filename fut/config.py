@@ -38,5 +38,6 @@ headers_ios = {
 
 
 cookies_file = 'cookies.txt'
-timeout = 15  # defaulf global timeout
+timeout = 30  # defaulf global timeout
 delay = (1, 3)  # default mininum delay between requests (random range)
+interval = 60 * 15  # 15 minutes - sleep time after max_requests are reached

@@ -26,7 +26,7 @@ except NameError:
     pass
 
 from .pin import Pin
-from .config import headers, headers_and, headers_ios, cookies_file, timeout, delay
+from .config import headers, headers_and, headers_ios, cookies_file, timeout, delay, interval
 from .log import logger
 from .urls import client_id, auth_url, card_info_url, messages_url
 from .exceptions import (FutError, ExpiredSession, InternalServerError,
@@ -272,13 +272,23 @@ def playstyles(year=2018, timeout=timeout):
 
 
 class Core(object):
-    def __init__(self, email, passwd, secret_answer, platform='pc', code=None, totp=None, sms=False, emulate=None, debug=False, cookies=cookies_file, timeout=timeout, delay=delay, proxies=None):
+    def __init__(self, email, passwd, secret_answer, platform='pc', code=None, totp=None, sms=False, emulate=None, debug=False, cookies=cookies_file, timeout=timeout, delay=delay, proxies=None, max_requests=200):
+        self.email = email
+        self.passwd = passwd
+        self.secret_answer = secret_answer
+        self.platform = platform
+        self.totp = totp
+        self.emulate = emulate
+        self.debug = debug
+        self.proxies = proxies
+
         self.credits = 0
         self.duplicates = []
         self.cookies_file = cookies  # TODO: map self.cookies to requests.Session.cookies?
         self.timeout = timeout
         self.delay = delay
         self.request_time = 0
+        self.max_requests = max_requests
         # db
         self._players = None
         self._nations = None
@@ -305,6 +315,7 @@ class Core(object):
         # TODO: check first if login is needed (https://www.easports.com/fifa/api/isUserLoggedIn)
         # TODO: get gamesku, url from shards !!
 
+        self.requests_n = 0  # number of requests made
         self.emulate = emulate
         secret_answer_hash = EAHashingAlgorithm().EAHash(secret_answer)
         # create session
@@ -603,6 +614,12 @@ class Core(object):
         """
         # TODO: update credtis?
         url = 'https://%s/ut/game/fifa18/%s' % (self.fut_host, url)
+
+        if self.max_requests is not None and self.requests_n >= self.max_requests:  # totp is required for this mode
+            print('\n\n>>> sleeping %s minutes after making requests: %s' % (interval / 60, self.requests_n))
+            time.sleep(interval)
+            self.__login__(email=self.email, passwd=self.passwd, secret_answer=self.secret_answer, platform=self.platform, totp=self.totp, emulate=self.emulate, proxies=self.proxies)
+        self.requests_n += 1
 
         self.logger.debug("request: {0} data={1};  params={2}".format(url, data, params))
         if method.upper() == 'GET':
