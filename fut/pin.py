@@ -49,7 +49,7 @@ class Pin(object):
         # TODO?: full boot process when there is no session (boot start)
 
         self.custom['service_plat'] = platform[:3]
-        self.s = 4  # event id  |  3 before "was sent" without session/persona/nucleus id so we can probably omit
+        self.s = 2  # event id  |  before "was sent" without session/persona/nucleus id so we can probably omit
 
     def __ts(self):
         # TODO: add ability to random something
@@ -85,6 +85,11 @@ class Pin(object):
             data['userid'] = self.persona_id
         elif en == 'page_view':
             data['type'] = 'menu'
+        elif en == 'error':
+            data['server_type'] = 'utas'
+            data['errid'] = 'server_error'
+            data['type'] = 'disconnect'
+            data['sid'] = self.sid
 
         self.s += 1  # bump event id
 
