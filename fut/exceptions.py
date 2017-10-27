@@ -41,6 +41,12 @@ class InternalServerError(FutError):
     """[500] Internal Server Error (ut). (invalid parameters?)"""
 
 
+class MarketLocked(FutError):
+    """[494] If this is a new account, you need to unlock the transfer market
+    by playing games and completing the starter objectives.
+    If this is an older account, you may be banned from using the transfer market on the web app."""
+
+
 '''
 class InvalidCookie(FutError):
     """[482] Invalid cookie."""

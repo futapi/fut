@@ -33,7 +33,7 @@ from .exceptions import (FutError, ExpiredSession, InternalServerError,
                          UnknownError, PermissionDenied, Captcha,
                          Conflict, MaxSessions, MultipleSession,
                          Unauthorized, FeatureDisabled, doLoginFail,
-                         NoUltimateTeam)
+                         NoUltimateTeam, MarketLocked)
 from .EAHashingAlgorithm import EAHashingAlgorithm
 
 
@@ -624,16 +624,14 @@ class Core(object):
             rc = self.r.delete(url, data=data, params=params, timeout=self.timeout)
         self.logger.debug("response: {0}".format(rc.content))
         if not rc.ok:  # status != 200
-            if rc.status_code == 429:
-                raise FutError('429 Too many requests')
+            if rc.status_code == 401:
+                # TODO?: send pinEvent https://gist.github.com/oczkers/7e5de70915b87262ddea961c49180fd6
+                print(rc.content)
+                raise ExpiredSession()
             elif rc.status_code == 426:
                 raise FutError('426 Too many requests')
-            elif rc.status_code in (512, 521):
-                raise FutError('512/521 Temporary ban or just too many requests.')
-            elif rc.status_code == 461:
-                raise PermissionDenied(461)  # You are not allowed to bid on this trade TODO: add code, reason etc
-            elif rc.status_code == 460:
-                raise PermissionDenied(460)
+            elif rc.status_code == 429:
+                raise FutError('429 Too many requests')
             elif rc.status_code == 458:
                 print(rc.headers)
                 print(rc.status_code)
@@ -643,10 +641,14 @@ class Core(object):
                 events = [self.pin.event('error')]
                 self.pin.send(events)
                 raise Captcha()
-            elif rc.status_code == 401:
-                # TODO?: send pinEvent https://gist.github.com/oczkers/7e5de70915b87262ddea961c49180fd6
-                print(rc.content)
-                raise ExpiredSession()
+            elif rc.status_code == 460:
+                raise PermissionDenied(460)
+            elif rc.status_code == 461:
+                raise PermissionDenied(461)  # You are not allowed to bid on this trade TODO: add code, reason etc
+            elif rc.status_code == 494:
+                raise MarketLocked()
+            elif rc.status_code in (512, 521):
+                raise FutError('512/521 Temporary ban or just too many requests.')
             # it makes sense to print headers, status_code, etc. only when we don't know what happened
             print(rc.headers)
             print(rc.status_code)
