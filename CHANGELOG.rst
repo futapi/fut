@@ -4,6 +4,19 @@ Changelog
 ---------
 
 
+0.3.5 (2017-10-26)
+^^^^^^^^^^^^^^^^^^
+
+* various pinEvents improvements
+* remove default buy now price for sell method to avoid mistakes
+* add buyPack
+* add objectives
+* add duplicates list
+* add level param to club method
+* correct tradeStatus params
+* check tradeStatus after selling item like webapp do
+* add marketDataMaxPrice & marketDataMinPrice to item data parser
+
 0.3.4 (2017-10-18)
 ^^^^^^^^^^^^^^^^^^
 

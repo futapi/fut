@@ -33,7 +33,7 @@ from .exceptions import (FutError, ExpiredSession, InternalServerError,
                          UnknownError, PermissionDenied, Captcha,
                          Conflict, MaxSessions, MultipleSession,
                          Unauthorized, FeatureDisabled, doLoginFail,
-                         NoUltimateTeam)
+                         NoUltimateTeam, MarketLocked)
 from .EAHashingAlgorithm import EAHashingAlgorithm
 
 
@@ -122,6 +122,8 @@ def itemParse(item_data, full=True):
             'nation':           item_data['itemData'].get('nation'),  # nation_id?
             'year':             item_data['itemData'].get('resourceGameYear'),  # alias
             'resourceGameYear': item_data['itemData'].get('resourceGameYear'),
+            'marketDataMinPrice': item_data['itemData'].get('marketDataMinPrice'),
+            'marketDataMaxPrice': item_data['itemData'].get('marketDataMaxPrice'),
             'count':            item_data.get('count'),  # consumables only (?)
             'untradeableCount': item_data.get('untradeableCount'),  # consumables only (?)
         })
@@ -272,6 +274,7 @@ def playstyles(year=2018, timeout=timeout):
 class Core(object):
     def __init__(self, email, passwd, secret_answer, platform='pc', code=None, totp=None, sms=False, emulate=None, debug=False, cookies=cookies_file, timeout=timeout, delay=delay, proxies=None):
         self.credits = 0
+        self.duplicates = []
         self.cookies_file = cookies  # TODO: map self.cookies to requests.Session.cookies?
         self.timeout = timeout
         self.delay = delay
@@ -567,11 +570,6 @@ class Core(object):
         if self._usermassinfo['settings']['configs'][2]['value'] == 0:
             raise FutError(reason='Transfer market is probably disabled on this account.')  # if tradingEnabled = 0
 
-        # pinEvents - boot_end
-        events = [self.pin.event('connection'),
-                  self.pin.event('boot_end', end_reason='normal')]
-        self.pin.send(events)
-
         # size of piles
         piles = self.pileSize()
         self.tradepile_size = piles['tradepile']
@@ -581,6 +579,11 @@ class Core(object):
 
         # pinEvents - home screen
         events = [self.pin.event('page_view', 'Hub - Home')]
+        self.pin.send(events)
+
+        # pinEvents - boot_end
+        events = [self.pin.event('connection'),
+                  self.pin.event('boot_end', end_reason='normal')]
         self.pin.send(events)
 
         self.keepalive()  # credits
@@ -609,7 +612,7 @@ class Core(object):
             time.sleep(max(self.request_time - time.time() + random.randrange(self.delay[0], self.delay[1] + 1), 0))  # respect minimum delay
             self.r.options(url, params=params)
         else:
-            time.sleep(max(self.request_time - time.time() + 1.1, 0))  # respect 1s minimum delay between requests
+            time.sleep(max(self.request_time - time.time() + 1.3, 0))  # respect 1s minimum delay between requests
         self.request_time = time.time()  # save request time for delay calculations
         if method.upper() == 'GET':
             rc = self.r.get(url, data=data, params=params, timeout=self.timeout)
@@ -621,59 +624,45 @@ class Core(object):
             rc = self.r.delete(url, data=data, params=params, timeout=self.timeout)
         self.logger.debug("response: {0}".format(rc.content))
         if not rc.ok:  # status != 200
-            rcj = rc.json()
-            if rc.status_code == 429:
-                raise FutError('429 Too many requests')
+            if rc.status_code == 401:
+                # TODO?: send pinEvent https://gist.github.com/oczkers/7e5de70915b87262ddea961c49180fd6
+                print(rc.content)
+                raise ExpiredSession()
             elif rc.status_code == 426:
                 raise FutError('426 Too many requests')
-            elif rc.status_code in (512, 521):
-                raise FutError('512/521 Temporary ban or just too many requests.')
+            elif rc.status_code == 429:
+                raise FutError('429 Too many requests')
+            elif rc.status_code == 458:
+                print(rc.headers)
+                print(rc.status_code)
+                print(rc.cookies)
+                print(rc.content)
+                # pinEvents
+                events = [self.pin.event('error')]
+                self.pin.send(events)
+                raise Captcha()
+            elif rc.status_code == 460:
+                raise PermissionDenied(460)
             elif rc.status_code == 461:
                 raise PermissionDenied(461)  # You are not allowed to bid on this trade TODO: add code, reason etc
-            elif rc.status_code == 458:
-                raise Captcha()
-            elif rc.status_code == 401 and rcj['reason'] == 'expired session':
-                raise ExpiredSession(rcj['code'], rcj['reason'], rcj['message'])
+            elif rc.status_code == 494:
+                raise MarketLocked()
+            elif rc.status_code in (512, 521):
+                raise FutError('512/521 Temporary ban or just too many requests.')
             # it makes sense to print headers, status_code, etc. only when we don't know what happened
             print(rc.headers)
             print(rc.status_code)
             print(rc.cookies)
             print(rc.content)
             raise UnknownError(rc.content)
-        # this whole error handling section might be moot now since they no longer return status_code = 200 when there's an error
-        # TODO: determine which of the errors (500, 489, 465, 461, 459, 401, 409) should actually be handled in the block above
         if rc.text == '':
             rc = {}
         else:
-            captcha_token = rc.headers.get('Proxy-Authorization', '').replace('captcha=', '')  # captcha token (always AAAA ?)
             rc = rc.json()
-            # error control
-            if 'code' and 'reason' in rc:  # error
-                err_code = rc['code']
-                err_reason = rc['reason']
-                err_string = rc.get('string')  # "human readable" reason?
-                if err_reason == 'expired session':  # code?
-                    raise ExpiredSession(err_code, err_reason, err_string)
-                elif err_code == '500' or err_string == 'Internal Server Error (ut)':
-                    raise InternalServerError(err_code, err_reason, err_string)
-                elif err_code == '489' or err_string == 'Feature Disabled':
-                    raise FeatureDisabled(err_code, err_reason, err_string)
-                elif err_code == '465' or err_string == 'No User':
-                    raise NoUltimateTeam(err_code, err_reason, err_string)
-                elif err_code == '461' or err_string == 'Permission Denied':
-                    raise PermissionDenied(err_code, err_reason, err_string)
-                elif err_code == '459' or err_string == 'Captcha Triggered':
-                    # img = self.r.get(self.urls['fut_captcha_img'], params={'_': int(time.time()*1000), 'token': captcha_token}, timeout=self.timeout).content  # doesnt work - check headers
-                    img = None
-                    raise Captcha(err_code, err_reason, err_string, captcha_token, img)
-                elif err_code == '401' or err_string == 'Unauthorized':
-                    raise Unauthorized(err_code, err_reason, err_string)
-                elif err_code == '409' or err_string == 'Conflict':
-                    raise Conflict(err_code, err_reason, err_string)
-                else:
-                    raise UnknownError(rc.__str__())
             if 'credits' in rc and rc['credits']:
                 self.credits = rc['credits']
+            if 'duplicateItemIdList' in rc:
+                self.duplicates = [i['itemId'] for i in rc['duplicateItemIdList']]
         self.saveSession()
         return rc
 
@@ -828,8 +817,9 @@ class Core(object):
 
     def search(self, ctype, level=None, category=None, assetId=None, defId=None,
                min_price=None, max_price=None, min_buy=None, max_buy=None,
-               league=None, club=None, position=None, zone=None, nationality=None, rare=False,
-               playStyle=None, start=0, page_size=16):
+               league=None, club=None, position=None, zone=None, nationality=None,
+               rare=False, playStyle=None, start=0, page_size=16,
+               fast=False):
         """Prepare search request, send and return parsed data as a dict.
 
         :param ctype: [development / ? / ?] Card type.
@@ -858,7 +848,7 @@ class Core(object):
         # pinEvents
         if start == 0:
             events = [self.pin.event('page_view', 'Transfer Market Search')]
-            self.pin.send(events)
+            self.pin.send(events, fast=fast)
 
         # if start > 0 and page_size == 16:
         #     if not self.emulate:  # wbeapp
@@ -890,12 +880,12 @@ class Core(object):
         if rare:        params['rare'] = 'SP'
         if playStyle:   params['playStyle'] = playStyle
 
-        rc = self.__request__(method, url, params=params)  # TODO: catch 426 429 512 521 - temporary ban
+        rc = self.__request__(method, url, params=params, fast=fast)
 
         # pinEvents
         if start == 0:
             events = [self.pin.event('page_view', 'Transfer Market Results - List View')]
-            self.pin.send(events)
+            self.pin.send(events, fast=fast)
 
         return [itemParse(i) for i in rc.get('auctionInfo', ())]
 
@@ -928,12 +918,14 @@ class Core(object):
         else:
             return False
 
-    def club(self, sort='desc', ctype='player', defId='', start=0, count=91):
+    def club(self, sort='desc', ctype='player', defId='', start=0, count=91, level=None):
         """Return items in your club, excluding consumables."""
         method = 'GET'
         url = 'club'
 
         params = {'sort': sort, 'type': ctype, 'defId': defId, 'start': start, 'count': count}
+        if level:
+            params['level'] = level
         rc = self.__request__(method, url, params=params)
 
         # pinEvent
@@ -1018,7 +1010,7 @@ class Core(object):
         if not isinstance(trade_id, (list, tuple)):
             trade_id = (trade_id,)
         trade_id = (str(i) for i in trade_id)
-        params = {'itemdata': 'true', 'tradeIds': ','.join(trade_id)}  # multiple trade_ids not tested
+        params = {'tradeIds': ','.join(trade_id)}  # multiple trade_ids not tested
         rc = self.__request__(method, url, params=params)
         return [itemParse(i, full=False) for i in rc['auctionInfo']]
 
@@ -1061,12 +1053,12 @@ class Core(object):
 
         return [itemParse({'itemData': i}) for i in rc.get('itemData', ())]
 
-    def sell(self, item_id, bid, buy_now=10000, duration=3600):
+    def sell(self, item_id, bid, buy_now, duration=3600, fast=False):
         """Start auction. Returns trade_id.
 
         :params item_id: Item id.
         :params bid: Stard bid.
-        :params buy_now: Buy now price (Default: 10000).
+        :params buy_now: Buy now price.
         :params duration: Auction duration in seconds (Default: 3600).
         """
         method = 'POST'
@@ -1075,6 +1067,8 @@ class Core(object):
         # TODO: auto send to tradepile
         data = {'buyNowPrice': buy_now, 'startingBid': bid, 'duration': duration, 'itemData': {'id': item_id}}
         rc = self.__request__(method, url, data=json.dumps(data), params={'sku_a': self.sku_a})
+        if not fast:  # tradeStatus check like webapp do
+            self.tradeStatus(rc['id'])
         return rc['id']
 
     def quickSell(self, item_id):
@@ -1257,6 +1251,25 @@ class Core(object):
     #     url = '{0}/{1}'.format(self.urls['fut']['ActiveMessage'], message_id)
     #     self.__delete__(url)
 
+    def buyPack(self, pack_id, currency='COINS'):
+        # TODO: merge with openPack
+        method = 'POST'
+        url = 'purchased/items'
+
+        # pinEvents
+        events = [self.pin.event('page_view', 'Hub - Store')]
+        self.pin.send(events)
+
+        data = {'packId': pack_id,
+                'currency': currency}
+        rc = self.__request__(method, url, data=json.dumps(data))
+
+        # pinEvents
+        # events = [self.pin.event('page_view', 'Unassigned Items - List View')]
+        # self.pin.send(events)
+
+        return rc  # TODO: parse response
+
     def openPack(self, pack_id):
         method = 'POST'
         url = 'purchased/items'
@@ -1272,4 +1285,17 @@ class Core(object):
         url = 'sbs/sets'
 
         rc = self.__request__(method, url)
+
+        # pinEvents
+        events = [self.pin.event('page_view', 'Hub - SBC')]
+        self.pin.send(events)
+
         return rc  # TODO?: parse
+
+    def objectives(self, scope='all'):
+        method = 'GET'
+        url = 'user/dynamicobjectives'
+
+        params = {'scope': scope}
+        rc = self.__request__(method, url, params=params)
+        return rc

@@ -8,6 +8,7 @@ fut.egg-info/
 coverage.xml
 cookies.txt
 test.py
+test_old.py
 testemu.py
 log.log
 content.log
