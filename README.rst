@@ -129,6 +129,7 @@ Optional parameters:
 .. code-block:: python
 
     >>>     session.sell(item['item_id'], 150)
+Before selling a newly-bought item, you have to send it to the tradpile. `session.sendToTradepile(item_id)`
 
 Quick sell
 ----------
@@ -158,7 +159,7 @@ Piles (Watchlist / Tradepile / Unassigned / Squad / Club)
     >>> items = session.squad()
     >>> items = session.club(count=10, level=10, type=1, start=0)
     >>> items = session.clubConsumablesDetails()
-    >>> session.sendToTradepile(trade_id, item_id)               # add card to tradepile
+    >>> session.sendToTradepile(item_id)                         # add card to tradepile
     >>> session.sendToClub(trade_id, item_id)                    # add card to club
     >>> session.sendToWatchlist(trade_id)                        # add card to watchlist
     >>> session.tradepileDelete(trade_id)                        # removes item from tradepile
