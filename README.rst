@@ -78,7 +78,7 @@ Optional parameters:
     >>> import fut
     >>> session = fut.Core('email', 'password', 'secret answer')
 
-Be sure to set `platform=` to your platform and `sms=True` if you use SMS for 2 Factor Authentication. 
+Be sure to set :code:`platform=` to your platform and :code:`sms=True` if you use SMS for 2 Factor Authentication. 
 
 Search
 ------
@@ -129,7 +129,7 @@ Optional parameters:
 .. code-block:: python
 
     >>>     session.sell(item['item_id'], 150)
-Before selling a newly-bought item, you have to send it to the tradpile. `session.sendToTradepile(item_id)`
+Before selling a newly-bought item, you have to send it to the tradpile. :code:`session.sendToTradepile(item_id)`
 
 Quick sell
 ----------
