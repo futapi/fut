@@ -78,6 +78,8 @@ Optional parameters:
     >>> import fut
     >>> session = fut.Core('email', 'password', 'secret answer')
 
+Be sure to set `platform=` to your platform and `sms=True` if you use SMS for 2 Factor Authentication. 
+
 Search
 ------
 
