@@ -321,6 +321,8 @@ Bans
 To avoid getting ban take a look at our little discussion/guide thread:
 https://github.com/oczkers/fut/issues/259
 
+Generally speaking, you should send no more than 500 requests per hour and 5000 requests per day. Be somewhat human. If you encounter a captcha, try to answer/solve it as soon as possible.
+
 Somehow i've sent card to full tradepile and it disappeared
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
