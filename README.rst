@@ -318,6 +318,17 @@ to be continued ;-)
 Problems
 --------
 
+Getting "requests.exceptions.SSLError:....'utas.mob.v4.fut.ea.com' doesn't match 'utas.mobapp.fut.ea.com'"?
+^^^^
+This is a new error, but here's a temporary fix to try:
+1. Re-download the api from github
+2. Go into fut/urls.py
+3. On line 7, change :code:`auth_url = rc['authURL']` to :code:`auth_url = 'utas.mobapp.fut.ea.com'`
+4. Run `python setup.py install`
+5. Try your script again
+6. **Please report in the Slack channel whether or not this worked!!**
+
+
 Bans
 ^^^^
 
