@@ -397,7 +397,7 @@ class Core(object):
             self.r.cookies = LWPCookieJar(self.cookies_file)
             try:
                 with open('token.txt', 'r') as f:
-                    self.token_type, self.access_token = f.readline().split(' ')
+                    self.token_type, self.access_token = f.readline().replace('\n', '').replace('\r', '').split(' ')  # removing \n \r just to make sure
             except FileNotFoundError:
                 self.__login__(email=email, passwd=passwd, totp=totp, sms=sms)
             try:
