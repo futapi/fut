@@ -50,6 +50,12 @@ Consumables database provided by koolaidjones: https://github.com/koolaidjones/F
 `Click here to get Slack invitation <https://gentle-everglades-93932.herokuapp.com>`_
 
 
+PHP ported version by InkedCurtis
+---------------------------------
+
+If You prefer php language, there is ported version made by InkedCurtis: https://github.com/InkedCurtis/FUT-API
+
+
 AutoBuyer GUI
 -------------
 
@@ -78,7 +84,7 @@ Optional parameters:
     >>> import fut
     >>> session = fut.Core('email', 'password', 'secret answer')
 
-Be sure to set :code:`platform=` to your platform and :code:`sms=True` if you use SMS for 2 Factor Authentication. 
+Be sure to set :code:`platform=` to your platform and :code:`sms=True` if you use SMS for 2 Factor Authentication.
 
 Search
 ------
