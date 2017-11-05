@@ -1292,6 +1292,18 @@ class Core(object):
 
         return rc  # TODO?: parse
 
+    def sbsSetChallenges(self, set_id):
+        method = 'GET'
+        url = 'sbs/setId/%s/challenges' % set_id
+
+        rc = self.__request__(method, url)
+
+        # pinEvents
+        events = [self.pin.event('page_view', 'Hub - SBC')]
+        self.pin.send(events)
+
+        return rc  # TODO?: parse
+
     def objectives(self, scope='all'):
         method = 'GET'
         url = 'user/dynamicobjectives'
