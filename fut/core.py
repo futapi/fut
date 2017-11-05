@@ -22,8 +22,9 @@ except ImportError:
 
 try:  # python2 compatibility
     input = raw_input
+    FileNotFoundError
 except NameError:
-    pass
+    FileNotFoundError = IOError
 
 from .pin import Pin
 from .config import headers, headers_and, headers_ios, cookies_file, timeout, delay
