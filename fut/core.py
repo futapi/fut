@@ -288,84 +288,10 @@ class Core(object):
         logger(save=debug)  # init root logger
         self.logger = logger(__name__)
         # TODO: validate fut request response (200 OK)
-        self.__login__(email, passwd, secret_answer, platform=platform, code=code, totp=totp, sms=sms, emulate=emulate, proxies=proxies)
+        self.__launch__(email, passwd, secret_answer, platform=platform, code=code, totp=totp, sms=sms, emulate=emulate, proxies=proxies)
 
-    def __login__(self, email, passwd, secret_answer, platform='pc', code=None, totp=None, sms=False, emulate=None, proxies=None):
-        """Log in.
-
-        :params email: Email.
-        :params passwd: Password.
-        :params secret_answer: Answer for secret question.
-        :params platform: (optional) [pc/xbox/xbox360/ps3/ps4] Platform.
-        :params code: (optional) Security code generated in origin or sent via mail/sms.
-        :params emulate: (optional) [and/ios] Emulate mobile device.
-        :params proxies: (optional) [dict] http/socks proxies in requests's format. http://docs.python-requests.org/en/master/user/advanced/#proxies
-        """
-        # TODO: split into smaller methods
-        # TODO: check first if login is needed (https://www.easports.com/fifa/api/isUserLoggedIn)
-        # TODO: get gamesku, url from shards !!
-
-        self.emulate = emulate
-        secret_answer_hash = EAHashingAlgorithm().EAHash(secret_answer)
-        # create session
-        self.r = requests.Session()  # init/reset requests session object
-        if proxies is not None:
-            self.r.proxies = proxies
-        # load saved cookies/session
-        if self.cookies_file:
-            self.r.cookies = LWPCookieJar(self.cookies_file)
-            try:
-                self.r.cookies.load(ignore_discard=True)  # is it good idea to load discarded cookies after long time?
-            except IOError:
-                pass
-                # self.r.cookies.save(ignore_discard=True)  # create empty file for cookies
-        if emulate == 'and':
-            raise FutError(reason='Emulate feature is currently disabled duo latest changes in login process, need more info')
-            self.r.headers = headers_and.copy()  # i'm android now ;-)
-        elif emulate == 'ios':
-            raise FutError(reason='Emulate feature is currently disabled duo latest changes in login process, need more info')
-            self.r.headers = headers_ios.copy()  # i'm ios phone now ;-)
-        else:
-            self.r.headers = headers.copy()  # i'm chrome browser now ;-)
-        if platform == 'pc':  # TODO: get this from shards
-            game_sku = 'FFA18PCC'
-        elif platform == 'xbox':
-            game_sku = 'FFA18XBO'
-        elif platform == 'xbox360':
-            game_sku = 'FFA18XBX'
-        elif platform == 'ps3':
-            game_sku = 'FFA18PS3'  # not tested
-        elif platform == 'ps4':
-            game_sku = 'FFA18PS4'
-            # platform = 'ps3'  # ps4 not available in shards
-        else:
-            raise FutError(reason='Wrong platform. (Valid ones are pc/xbox/xbox360/ps3/ps4)')
-        # if self.r.get(self.urls['main_site']+'/fifa/api/isUserLoggedIn', timeout=self.timeout).json()['isLoggedIn']:
-        #    return True  # no need to log in again
-        # emulate
-        if emulate == 'ios':
-            sku = 'FUT18IOS'
-            clientVersion = 21
-        elif emulate == 'and':
-            sku = 'FUT18AND'
-            clientVersion = 21
-#        TODO: need more info about log in procedure in game
-#        elif emulate == 'xbox':
-#            sku = 'FFA16XBX'  # FFA14CAP ?
-#            clientVersion = 1
-#        elif emulate == 'ps3':
-#            sku = 'FFA16PS3'  # FFA14KTL ?
-#            clientVersion = 1
-#        elif emulate == 'pc':
-#            sku = ''  # dunno
-#            clientVersion = 1
-        elif not emulate:
-            sku = 'FUT18WEB'
-            clientVersion = 1
-        else:
-            raise FutError(reason='Invalid emulate parameter. (Valid ones are and/ios).')  # pc/ps3/xbox/
-        self.sku = sku  # TODO: use self.sku in all class
-        self.sku_a = 'FFT18'
+    def __login__(self, email, passwd, totp=None, sms=False):
+        """Log in - needed only if we don't have access token or it's expired."""
         params = {'prompt': 'login',
                   'accessToken': 'null',
                   'client_id': client_id,
@@ -377,7 +303,7 @@ class Core(object):
         self.r.headers['Referer'] = 'https://www.easports.com/fifa/ultimate-team/web-app/'
         rc = self.r.get('https://accounts.ea.com/connect/auth', params=params, timeout=self.timeout)
         # TODO: validate (captcha etc.)
-        if rc.url != 'https://www.easports.com/fifa/ultimate-team/web-app/auth.html':  # redirect target  # TODO: move (only?) this to separate method - login and rename __login__ to launch
+        if rc.url != 'https://www.easports.com/fifa/ultimate-team/web-app/auth.html':  # redirect target  # this check is probably not needed
             self.r.headers['Referer'] = rc.url
             # origin required?
             data = {'email': email,
@@ -440,8 +366,92 @@ class Core(object):
                     # rc = rc.text
 
             rc = re.match('https://www.easports.com/fifa/ultimate-team/web-app/auth.html#access_token=(.+?)&token_type=(.+?)&expires_in=[0-9]+', rc.url)
-            access_token = rc.group(1)
-            token_type = rc.group(2)
+            self.access_token = rc.group(1)
+            self.token_type = rc.group(2)
+
+            self.saveSession()
+
+    def __launch__(self, email, passwd, secret_answer, platform='pc', code=None, totp=None, sms=False, emulate=None, proxies=None):
+        """Launch futweb
+
+        :params email: Email.
+        :params passwd: Password.
+        :params secret_answer: Answer for secret question.
+        :params platform: (optional) [pc/xbox/xbox360/ps3/ps4] Platform.
+        :params code: (optional) Security code generated in origin or sent via mail/sms.
+        :params emulate: (optional) [and/ios] Emulate mobile device.
+        :params proxies: (optional) [dict] http/socks proxies in requests's format. http://docs.python-requests.org/en/master/user/advanced/#proxies
+        """
+        # TODO: split into smaller methods
+        # TODO: check first if login is needed (https://www.easports.com/fifa/api/isUserLoggedIn)
+        # TODO: get gamesku, url from shards !!
+
+        self.emulate = emulate
+        secret_answer_hash = EAHashingAlgorithm().EAHash(secret_answer)
+        # create session
+        self.r = requests.Session()  # init/reset requests session object
+        if proxies is not None:
+            self.r.proxies = proxies
+        # load saved cookies/session
+        if self.cookies_file:
+            self.r.cookies = LWPCookieJar(self.cookies_file)
+            try:
+                with open('token.txt', 'r') as f:
+                    self.token_type, self.access_token = f.readline().split(' ')
+            except FileNotFoundError:
+                self.__login__(email=email, passwd=passwd, totp=totp, sms=sms)
+            try:
+                self.r.cookies.load(ignore_discard=True)  # is it good idea to load discarded cookies after long time?
+            except IOError:
+                pass
+                # self.r.cookies.save(ignore_discard=True)  # create empty file for cookies
+        if emulate == 'and':
+            raise FutError(reason='Emulate feature is currently disabled duo latest changes in login process, need more info')
+            self.r.headers = headers_and.copy()  # i'm android now ;-)
+        elif emulate == 'ios':
+            raise FutError(reason='Emulate feature is currently disabled duo latest changes in login process, need more info')
+            self.r.headers = headers_ios.copy()  # i'm ios phone now ;-)
+        else:
+            self.r.headers = headers.copy()  # i'm chrome browser now ;-)
+        if platform == 'pc':  # TODO: get this from shards
+            game_sku = 'FFA18PCC'
+        elif platform == 'xbox':
+            game_sku = 'FFA18XBO'
+        elif platform == 'xbox360':
+            game_sku = 'FFA18XBX'
+        elif platform == 'ps3':
+            game_sku = 'FFA18PS3'  # not tested
+        elif platform == 'ps4':
+            game_sku = 'FFA18PS4'
+            # platform = 'ps3'  # ps4 not available in shards
+        else:
+            raise FutError(reason='Wrong platform. (Valid ones are pc/xbox/xbox360/ps3/ps4)')
+        # if self.r.get(self.urls['main_site']+'/fifa/api/isUserLoggedIn', timeout=self.timeout).json()['isLoggedIn']:
+        #    return True  # no need to log in again
+        # emulate
+        if emulate == 'ios':
+            sku = 'FUT18IOS'
+            clientVersion = 21
+        elif emulate == 'and':
+            sku = 'FUT18AND'
+            clientVersion = 21
+#        TODO: need more info about log in procedure in game
+#        elif emulate == 'xbox':
+#            sku = 'FFA16XBX'  # FFA14CAP ?
+#            clientVersion = 1
+#        elif emulate == 'ps3':
+#            sku = 'FFA16PS3'  # FFA14KTL ?
+#            clientVersion = 1
+#        elif emulate == 'pc':
+#            sku = ''  # dunno
+#            clientVersion = 1
+        elif not emulate:
+            sku = 'FUT18WEB'
+            clientVersion = 1
+        else:
+            raise FutError(reason='Invalid emulate parameter. (Valid ones are and/ios).')  # pc/ps3/xbox/
+        self.sku = sku  # TODO: use self.sku in all class
+        self.sku_a = 'FFT18'
 
         # === launch futweb
         # TODO!: move to separate method __launch__, do not call login when not necessary
@@ -452,8 +462,8 @@ class Core(object):
         # TODO: config
         self.r.headers['Referer'] = 'https://www.easports.com/fifa/ultimate-team/web-app/'
         self.r.headers['Accept'] = 'application/json'
-        self.r.headers['Authorization'] = '%s %s' % (token_type, access_token)
-        rc = self.r.get('https://gateway.ea.com/proxy/identity/pids/me').json()
+        self.r.headers['Authorization'] = '%s %s' % (self.token_type, self.access_token)
+        rc = self.r.get('https://gateway.ea.com/proxy/identity/pids/me').json()  # TODO: validate response
         self.nucleus_id = rc['pid']['externalRefValue']  # or pidId
         self.dob = rc['pid']['dob']
         # tos_version = rc['tosVersion']
@@ -504,7 +514,7 @@ class Core(object):
         params = {'client_id': 'FOS-SERVER',  # i've seen in some js/json response but cannot find now
                   'redirect_uri': 'nucleus:rest',
                   'response_type': 'code',
-                  'access_token': access_token}
+                  'access_token': self.access_token}
         rc = self.r.get('https://accounts.ea.com/connect/auth', params=params).json()
         auth_code = rc['code']
 
@@ -695,6 +705,7 @@ class Core(object):
             self.logger.info("{0} (itemId: {1}) moved to {2} Pile".format(trade_id, item_id, pile))
         else:
             self.logger.error("{0} (itemId: {1}) NOT MOVED to {2} Pile. REASON: {3}".format(trade_id, item_id, pile, rc['itemData'][0]['reason']))
+            # if rc['itemData'][0]['reason'] == 'Duplicate Item Type' and rc['itemData'][0]['errorCode'] == 472:  # errorCode check is enought?
         return rc['itemData'][0]['success']
 
     def logout(self, save=True):
@@ -769,6 +780,8 @@ class Core(object):
         """Save cookies/session."""
         if self.cookies_file:
             self.r.cookies.save(ignore_discard=True)
+            with open('token.txt', 'w') as f:
+                f.write('%s %s' % (self.token_type, self.access_token))
 
     def baseId(self, *args, **kwargs):
         """Calculate base id and version from a resource id."""
