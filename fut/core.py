@@ -465,6 +465,9 @@ class Core(object):
         self.r.headers['Accept'] = 'application/json'
         self.r.headers['Authorization'] = '%s %s' % (self.token_type, self.access_token)
         rc = self.r.get('https://gateway.ea.com/proxy/identity/pids/me').json()  # TODO: validate response
+        if rc.get('error') == 'invalid_access_token':
+            self.__login__(email=email, passwd=passwd, totp=totp, sms=sms)
+            return self.__launch__(email=email, passwd=passwd, secret_answer=secret_answer, platform=platform, code=code, totp=totp, sms=sms, emulate=emulate, proxies=proxies)
         self.nucleus_id = rc['pid']['externalRefValue']  # or pidId
         self.dob = rc['pid']['dob']
         # tos_version = rc['tosVersion']
