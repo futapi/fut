@@ -369,6 +369,7 @@ class Core(object):
             rc = re.match('https://www.easports.com/fifa/ultimate-team/web-app/auth.html#access_token=(.+?)&token_type=(.+?)&expires_in=[0-9]+', rc.url)
             self.access_token = rc.group(1)
             self.token_type = rc.group(2)
+            # TODO?: refresh after expires_in
 
             self.saveSession()
 
@@ -466,6 +467,7 @@ class Core(object):
         self.r.headers['Authorization'] = '%s %s' % (self.token_type, self.access_token)
         rc = self.r.get('https://gateway.ea.com/proxy/identity/pids/me').json()  # TODO: validate response
         if rc.get('error') == 'invalid_access_token':
+            print('invalid token')
             self.__login__(email=email, passwd=passwd, totp=totp, sms=sms)
             return self.__launch__(email=email, passwd=passwd, secret_answer=secret_answer, platform=platform, code=code, totp=totp, sms=sms, emulate=emulate, proxies=proxies)
         self.nucleus_id = rc['pid']['externalRefValue']  # or pidId
@@ -588,6 +590,16 @@ class Core(object):
         piles = self.pileSize()
         self.tradepile_size = piles['tradepile']
         self.watchlist_size = piles['watchlist']
+
+        # refresh token
+        params = {'response_type': 'token',
+                  'redirect_uri': 'nucleus:rest',
+                  'prompt': 'none',
+                  'client_id': 'ORIGIN_JS_SDK'}
+        rc = self.r.get('https://accounts.ea.com/connect/auth', params=params).json()
+        self.access_token = rc['access_token']
+        self.token_type = rc['token_type']
+        # expired_in
 
         self.saveSession()
 
@@ -1129,6 +1141,14 @@ class Core(object):
         self.__request__(method, url)  # returns nothing
         # TODO: validate status code
         return True
+
+    def tradepileClear(self):
+        """Removes all sold items from tradepile."""
+        method = 'DELETE'
+        url = 'trade/sold'
+
+        self.__request__(method, url)
+        # return True
 
     def sendToTradepile(self, item_id, safe=True):
         """Send to tradepile (alias for __sendToPile__).
