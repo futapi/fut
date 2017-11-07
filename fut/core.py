@@ -1336,7 +1336,7 @@ class Core(object):
         rc = self.__request__(method, url)
 
         # pinEvents
-        events = [self.pin.event('page_view', 'Hub - SBC')]
+        events = [self.pin.event('page_view', 'SBC - Challenges')]
         self.pin.send(events)
 
         return rc  # TODO?: parse
