@@ -1341,6 +1341,25 @@ class Core(object):
 
         return rc  # TODO?: parse
 
+    def sbsSquad(self, challenge_id):
+        method = 'GET'
+        url = 'sbs/challenge/%s/squad' % challenge_id
+
+        rc = self.__request__(method, url)
+
+        # pinEvents
+        events = [self.pin.event('page_view', 'SBC - Squad')]
+        self.pin.send(events)
+
+        return rc
+
+    # def sbsSquad(self, challenge_id, item_id):
+    #     """Currenty only sending players to free space in squad."""
+    #     method = 'PUT'
+    #     url = 'sbs/challenge/%s/squad' % challenge_id
+    #
+    #     rc = self.__request__(method, url)
+
     def objectives(self, scope='all'):
         method = 'GET'
         url = 'user/dynamicobjectives'
