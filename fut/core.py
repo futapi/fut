@@ -1177,7 +1177,33 @@ class Core(object):
 
         data = {'auctionInfo': [{'id': trade_id}]}
         return self.__request__(method, url, data=json.dumps(data))
-    #
+
+    def sendToSbs(self, challenge_id, item_id):
+        """Send card to free slots in sbs squad."""
+        # TODO?: multiple item_ids
+        method = 'PUT'
+        url = 'sbs/challenge/%s/squad' % challenge_id
+
+        moved = False
+        n = 0
+        squad = self.sbsSquad(challenge_id)
+        players = []
+        for i in squad['squad']['players']:
+            if i['itemData']['id'] == 0 and not moved:
+                i['itemData']['id'] = item_id
+                moved = True
+            players.append({"index": n,
+                            "itemData": {"id": i['itemData']['id'],
+                                         "dream": False}})
+            n += 1
+        data = {'players': players}
+
+        if not moved:
+            return False
+        else:
+            self.__request__(method, url, data=json.dumps(data))
+            return True
+
     # def relist(self, clean=False):
     #     """Relist all tradepile. Returns True or number of deleted (sold) if clean was set.
     #
@@ -1352,13 +1378,6 @@ class Core(object):
         self.pin.send(events)
 
         return rc
-
-    # def sbsSquad(self, challenge_id, item_id):
-    #     """Currenty only sending players to free space in squad."""
-    #     method = 'PUT'
-    #     url = 'sbs/challenge/%s/squad' % challenge_id
-    #
-    #     rc = self.__request__(method, url)
 
     def objectives(self, scope='all'):
         method = 'GET'
