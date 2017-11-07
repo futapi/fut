@@ -291,7 +291,7 @@ class Core(object):
         # TODO: validate fut request response (200 OK)
         self.__launch__(email, passwd, secret_answer, platform=platform, code=code, totp=totp, sms=sms, emulate=emulate, proxies=proxies)
 
-    def __login__(self, email, passwd, totp=None, sms=False):
+    def __login__(self, email, passwd, code=None, totp=None, sms=False):
         """Log in - needed only if we don't have access token or it's expired."""
         params = {'prompt': 'login',
                   'accessToken': 'null',
@@ -401,7 +401,7 @@ class Core(object):
                 with open('token.txt', 'r') as f:
                     self.token_type, self.access_token = f.readline().replace('\n', '').replace('\r', '').split(' ')  # removing \n \r just to make sure
             except FileNotFoundError:
-                self.__login__(email=email, passwd=passwd, totp=totp, sms=sms)
+                self.__login__(email=email, passwd=passwd, code=code, totp=totp, sms=sms)
             try:
                 self.r.cookies.load(ignore_discard=True)  # is it good idea to load discarded cookies after long time?
             except IOError:
