@@ -1179,7 +1179,7 @@ class Core(object):
         return self.__request__(method, url, data=json.dumps(data))
 
     def sendToSbs(self, challenge_id, item_id):
-        """Send card to free slots in sbs squad."""
+        """Send card to first free slot in sbs squad."""
         # TODO?: multiple item_ids
         method = 'PUT'
         url = 'sbs/challenge/%s/squad' % challenge_id
