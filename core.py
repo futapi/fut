@@ -3,7 +3,7 @@
 """
 futmarket.core
 ~~~~~~~~~~~~~~~~~~~~~
-This module implements the fut's basic methods.
+This module implements the futmarket's basic methods.
 """
 
 # Imports
@@ -83,6 +83,8 @@ def active():
 ## Get names and attributes of team members, including last sale price
 
 def my_team():
+    sold()
+    not_sold()
     myclub = fut.club()
     my_auction = pd.DataFrame(myclub)
     my_auction = my_auction[my_auction['untradeable'] == False]
