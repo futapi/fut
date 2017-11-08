@@ -189,7 +189,8 @@ def my_market(depth=1, strategy=1):
 ## Put players on the block, send to tradepile and sell
 
 
-def list_player(min_value=300, strategy=1):
+def list_players(min_value=300, strategy=1):
+    my_market()
     print('Cleaning up tradepile...')
     sold()
     not_sold()
@@ -220,7 +221,7 @@ def list_player(min_value=300, strategy=1):
         for index, row in block.iterrows():
             fut.sendToTradepile(row['id'])
             sleep(2)
-            print('%s added to tradepile.' % (block[i]['name']))
+            print('%s added to tradepile.' % (row['name']))
         print('%s players successfully added to tradepile.' % (len(block)))
     # List players on market
     # Strategy 1: List at my value, buy now at market value.
