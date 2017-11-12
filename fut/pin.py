@@ -16,7 +16,7 @@ from random import random
 from datetime import datetime
 
 from fut.config import headers
-from fut.urls import pin_url, v
+from fut.urls import pin_url
 from fut.exceptions import FutError
 
 
@@ -36,6 +36,7 @@ class Pin(object):
         self.plat = re.search('plat:"(.+?)"', rc).group(1)
         self.et = re.search('et:"(.+?)"', rc).group(1)
         self.pidt = re.search('pidt:"(.+?)"', rc).group(1)
+        self.v = re.search('APP_VERSION="([0-9\.]+)"', rc).group(1)
 
         self.r = requests.Session()
         self.r.headers = headers
@@ -101,7 +102,7 @@ class Pin(object):
                 "tidt": self.tidt,
                 "tid": self.sku,
                 "rel": self.rel,
-                "v": v,
+                "v": self.v,
                 "ts_post": self.__ts(),
                 "sid": self.sid,
                 "gid": self.gid,  # convert to int?

@@ -127,6 +127,7 @@ def itemParse(item_data, full=True):
             'marketDataMaxPrice': item_data['itemData'].get('marketDataMaxPrice'),
             'count':            item_data.get('count'),  # consumables only (?)
             'untradeableCount': item_data.get('untradeableCount'),  # consumables only (?)
+            'loans':            item_data.get('loans'),
         })
         if 'item' in item_data:  # consumables only (?)
             return_data.update({
@@ -456,7 +457,18 @@ class Core(object):
         self.sku_a = 'FFT18'
 
         # === launch futweb
-        # TODO!: move to separate method __launch__, do not call login when not necessary
+        params = {'accessToken': self.access_token,
+                  'client_id': 'FIFA-18-WEBCLIENT',
+                  'response_type': 'token',
+                  'display': 'web2/login',
+                  'locale': 'en_US',
+                  'redirect_uri': 'https://www.easports.com/fifa/ultimate-team/web-app/auth.html',
+                  'scope': 'basic.identity offline signin'}
+        rc = self.r.get('https://accounts.ea.com/connect/auth', params=params)
+        rc = re.match('https://www.easports.com/fifa/ultimate-team/web-app/auth.html#access_token=(.+?)&token_type=(.+?)&expires_in=[0-9]+', rc.url)
+        self.access_token = rc.group(1)
+        self.token_type = rc.group(2)
+
         # self.r.headers['Referer'] = 'https://www.easports.com/fifa/ultimate-team/web-app/auth.html'
         rc = self.r.get('https://www.easports.com/fifa/ultimate-team/web-app/', timeout=self.timeout).text
         # year = re.search('fut_year = "([0-9]{4}])"', rc).group(1)  # use this to construct urls, sku etc.
@@ -553,11 +565,6 @@ class Core(object):
             raise UnknownError(rc.__str__())
         self.r.headers['X-UT-SID'] = self.sid = rc['sid']
 
-        # init pin
-        self.pin = Pin(sid=self.sid, nucleus_id=self.nucleus_id, persona_id=self.persona_id, dob=self.dob[:-3], platform=platform)
-        events = [self.pin.event('login', status='success')]
-        self.pin.send(events)
-
         # validate (secret question)
         self.r.headers['Easw-Session-Data-Nucleus-Id'] = self.nucleus_id
         rc = self.r.get('https://%s/ut/game/fifa18/phishing/question' % self.fut_host, params={'_': self._}, timeout=self.timeout).json()
@@ -578,6 +585,11 @@ class Core(object):
             self._ += 1
         self.r.headers['X-UT-PHISHING-TOKEN'] = self.token = rc['token']
 
+        # init pin
+        self.pin = Pin(sid=self.sid, nucleus_id=self.nucleus_id, persona_id=self.persona_id, dob=self.dob[:-3], platform=platform)
+        events = [self.pin.event('login', status='success')]
+        self.pin.send(events)
+
         # get basic user info
         # TODO: parse usermassinfo and change _usermassinfo to userinfo
         # TODO?: usermassinfo as separate method && ability to refresh piles etc.
@@ -592,13 +604,13 @@ class Core(object):
         self.watchlist_size = piles['watchlist']
 
         # refresh token
-        params = {'response_type': 'token',
-                  'redirect_uri': 'nucleus:rest',
-                  'prompt': 'none',
-                  'client_id': 'ORIGIN_JS_SDK'}
-        rc = self.r.get('https://accounts.ea.com/connect/auth', params=params).json()
-        self.access_token = rc['access_token']
-        self.token_type = rc['token_type']
+        # params = {'response_type': 'token',
+        #           'redirect_uri': 'nucleus:rest',
+        #           'prompt': 'none',
+        #           'client_id': 'ORIGIN_JS_SDK'}
+        # rc = self.r.get('https://accounts.ea.com/connect/auth', params=params).json()
+        # self.access_token = rc['access_token']
+        # self.token_type = rc['token_type']
         # expired_in
 
         self.saveSession()
@@ -638,7 +650,7 @@ class Core(object):
             time.sleep(max(self.request_time - time.time() + random.randrange(self.delay[0], self.delay[1] + 1), 0))  # respect minimum delay
             self.r.options(url, params=params)
         else:
-            time.sleep(max(self.request_time - time.time() + 1.3, 0))  # respect 1s minimum delay between requests
+            time.sleep(max(self.request_time - time.time() + 1.4, 0))  # respect 1s minimum delay between requests
         self.request_time = time.time()  # save request time for delay calculations
         if method.upper() == 'GET':
             rc = self.r.get(url, data=data, params=params, timeout=self.timeout)
