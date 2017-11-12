@@ -1007,7 +1007,7 @@ class Core(object):
         events = [self.pin.event('page_view', 'Club - Consumables - List View')]
         self.pin.send(events, fast=fast)
 
-        return rc['itemData']  # TODO?: parse
+        return [{itemParse(i) for i in rc.get('itemData', ())}]
 
     def squad(self, squad_id=0, persona_id=None):
         """Return a squad.
