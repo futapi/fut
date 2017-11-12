@@ -974,10 +974,12 @@ class Core(object):
         if start == 0:
             if ctype == 'player':
                 pgid = 'Club - Players - List View'
-            elif ctype == 'item':
+            elif ctype == 'staff':
+                pgid = 'Club - Staff - List View'
+            elif ctype in ('item', 'kit', 'ball', 'badge', 'stadium'):
                 pgid = 'Club - Club Items - List View'
-            else:  # TODO: THIS IS WRONG, detect all ctypes
-                pgid = 'Club - Club Items - List View'
+            # else:  # TODO: THIS IS probably WRONG, detect all ctypes
+            #     pgid = 'Club - Club Items - List View'
             events = [self.pin.event('page_view', pgid)]
             self.pin.send(events)
 
@@ -991,27 +993,21 @@ class Core(object):
         rc = self.__request__(method, url)
         return rc  # TODO?: parse
 
-    # def clubConsumables(self):
-    #     """Return all consumables stats in dictionary."""
-    #     rc = self.__get__(self.urls['fut']['ClubConsumableSearch'])  # or ClubConsumableStats?
-    #     consumables = {}
-    #     for i in rc:
-    #         if i['contextValue'] == 1:
-    #             level = 'gold'
-    #         elif i['contextValue'] == 2:
-    #             level = 'silver'
-    #         elif i['contextValue'] == 3:
-    #             level = 'bronze'
-    #         consumables[i['type']] = {'level': level,
-    #                                   'type': i['type'],  # need list of all types
-    #                                   'contextId': i['contextId'],  # dunno what is it
-    #                                   'count': i['typeValue']}
-    #     return consumables
+    def clubConsumables(self, fast=False):
+        """Return all consumables from club."""
+        method = 'GET'
+        url = 'club/consumables/development'
 
-    # def clubConsumablesDetails(self):
-    #     """Return all consumables details."""
-    #     rc = self.__get__('{0}{1}'.format(self.urls['fut']['ClubConsumableSearch'], '/development'))
-    #     return [{itemParse(i) for i in rc.get('itemData', ())}]
+        rc = self.__request__(method, url)
+
+        events = [self.pin.event('page_view', 'Hub - Club')]
+        self.pin.send(events, fast=fast)
+        events = [self.pin.event('page_view', 'Club - Consumables')]
+        self.pin.send(events, fast=fast)
+        events = [self.pin.event('page_view', 'Club - Consumables - List View')]
+        self.pin.send(events, fast=fast)
+
+        return rc['itemData']  # TODO?: parse
 
     def squad(self, squad_id=0, persona_id=None):
         """Return a squad.
