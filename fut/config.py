@@ -38,5 +38,6 @@ headers_ios = {
 
 
 cookies_file = 'cookies.txt'
+token_file = 'token.txt'
 timeout = 15  # defaulf global timeout
 delay = (1, 3)  # default mininum delay between requests (random range)

@@ -27,7 +27,7 @@ except NameError:
     FileNotFoundError = IOError
 
 from .pin import Pin
-from .config import headers, headers_and, headers_ios, cookies_file, timeout, delay
+from .config import headers, headers_and, headers_ios, cookies_file, token_file, timeout, delay
 from .log import logger
 from .urls import client_id, auth_url, card_info_url, messages_url
 from .exceptions import (FutError, ExpiredSession, InternalServerError,
@@ -274,10 +274,11 @@ def playstyles(year=2018, timeout=timeout):
 
 
 class Core(object):
-    def __init__(self, email, passwd, secret_answer, platform='pc', code=None, totp=None, sms=False, emulate=None, debug=False, cookies=cookies_file, timeout=timeout, delay=delay, proxies=None):
+    def __init__(self, email, passwd, secret_answer, platform='pc', code=None, totp=None, sms=False, emulate=None, debug=False, cookies=cookies_file, token=token_file, timeout=timeout, delay=delay, proxies=None):
         self.credits = 0
         self.duplicates = []
         self.cookies_file = cookies  # TODO: map self.cookies to requests.Session.cookies?
+        self.token_file = token
         self.timeout = timeout
         self.delay = delay
         self.request_time = 0
@@ -399,7 +400,7 @@ class Core(object):
         if self.cookies_file:
             self.r.cookies = LWPCookieJar(self.cookies_file)
             try:
-                with open('token.txt', 'r') as f:
+                with open(self.token_file, 'r') as f:
                     self.token_type, self.access_token = f.readline().replace('\n', '').replace('\r', '').split(' ')  # removing \n \r just to make sure
             except FileNotFoundError:
                 self.__login__(email=email, passwd=passwd, code=code, totp=totp, sms=sms)
@@ -808,7 +809,7 @@ class Core(object):
         """Save cookies/session."""
         if self.cookies_file:
             self.r.cookies.save(ignore_discard=True)
-            with open('token.txt', 'w') as f:
+            with open(self.token_file, 'w') as f:
                 f.write('%s %s' % (self.token_type, self.access_token))
 
     def baseId(self, *args, **kwargs):
