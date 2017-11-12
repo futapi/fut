@@ -16,9 +16,8 @@ rc = requests.get('https://www.easports.com/fifa/ultimate-team/web-app/content/B
 if rc['pin'] != {"b": True, "bf": 500, "bs": 10, "e": True, "r": 3, "rf": 300}:
     print('>>> WARNING: ping variables changed: %s' % rc['pin'])
 
-if rc['patch']['f'] != 1800000:
+if rc['patch']['f'] != 1800000:  # this is probably dead value
     print('>>> WARNING: patch version changed: %s' % rc['patch']['f'])
-v = '18.0.0'
 
 if rc['futweb_maintenance']:
     raise FutError('Futweb maintenance, please retry in few minutes.')

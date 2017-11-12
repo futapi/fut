@@ -50,6 +50,12 @@ Consumables database provided by koolaidjones: https://github.com/koolaidjones/F
 `Click here to get Slack invitation <https://gentle-everglades-93932.herokuapp.com>`_
 
 
+PHP ported version by InkedCurtis
+---------------------------------
+
+If You prefer php language, there is ported version made by InkedCurtis: https://github.com/InkedCurtis/FUT-API
+
+
 AutoBuyer GUI
 -------------
 
@@ -76,7 +82,9 @@ Optional parameters:
 .. code-block:: python
 
     >>> import fut
-    >>> fut = fut.Core('email', 'password', 'secret answer')
+    >>> session = fut.Core('email', 'password', 'secret answer')
+
+Be sure to set :code:`platform=` to your platform and :code:`sms=True` if you use SMS for 2 Factor Authentication.
 
 Search
 ------
@@ -103,7 +111,7 @@ Optional parameters:
 
 .. code-block:: python
 
-    >>> items = fut.searchAuctions('development')
+    >>> items = session.searchAuctions('development')
 
 Bid
 ---
@@ -114,7 +122,7 @@ Optional parameters:
 
 .. code-block:: python
 
-    >>> fut.bid(items[0]['trade_id'], 600)
+    >>> session.bid(items[0]['trade_id'], 600)
 
 Sell
 ----
@@ -126,7 +134,8 @@ Optional parameters:
 
 .. code-block:: python
 
-    >>>     fut.sell(item['item_id'], 150)
+    >>>     session.sell(item['item_id'], 150)
+Before selling a newly-bought item, you have to send it to the tradpile. :code:`session.sendToTradepile(item_id)`
 
 Quick sell
 ----------
@@ -136,14 +145,14 @@ single item:
 .. code-block:: python
 
     >>> item_id = 123456789
-    >>> fut.quickSell(item_id)
+    >>> session.quickSell(item_id)
 
 multiple items:
 
 .. code-block:: python
 
     >>> item_id = [123456789, 987654321]
-    >>> fut.quickSell(item_id)
+    >>> session.quickSell(item_id)
 
 Piles (Watchlist / Tradepile / Unassigned / Squad / Club)
 ---------------------------------------------------------
@@ -151,24 +160,24 @@ Piles (Watchlist / Tradepile / Unassigned / Squad / Club)
 
 .. code-block:: python
 
-    >>> items = fut.tradepile()
-    >>> items = fut.unassigned()
-    >>> items = fut.squad()
-    >>> items = fut.club(count=10, level=10, type=1, start=0)
-    >>> items = fut.clubConsumablesDetails()
-    >>> fut.sendToTradepile(trade_id, item_id)               # add card to tradepile
-    >>> fut.sendToClub(trade_id, item_id)                    # add card to club
-    >>> fut.sendToWatchlist(trade_id)                        # add card to watchlist
-    >>> fut.tradepileDelete(trade_id)                        # removes item from tradepile
-    >>> fut.watchlistDelete(trade_id)                        # removes item from watch list (you can pass single str/ing or list/tuple of ids - like in quickSell)
+    >>> items = session.tradepile()
+    >>> items = session.unassigned()
+    >>> items = session.squad()
+    >>> items = session.club(count=10, level=10, type=1, start=0)
+    >>> items = session.clubConsumablesDetails()
+    >>> session.sendToTradepile(item_id)                         # add card to tradepile
+    >>> session.sendToClub(trade_id, item_id)                    # add card to club
+    >>> session.sendToWatchlist(trade_id)                        # add card to watchlist
+    >>> session.tradepileDelete(trade_id)                        # removes item from tradepile
+    >>> session.watchlistDelete(trade_id)                        # removes item from watch list (you can pass single str/ing or list/tuple of ids - like in quickSell)
 
-    >>> fut.tradepile_size  # tradepile size (slots)
+    >>> session.tradepile_size  # tradepile size (slots)
     80
-    >> len(fut.tradepile())  # tradepile fulfilment (number of cards in tradepile)
+    >> len(session.tradepile())  # tradepile fulfilment (number of cards in tradepile)
     20
-    >>> fut.watchlist_size  # watchlist size (slots)
+    >>> session.watchlist_size  # watchlist size (slots)
     30
-    >> len(fut.watchlist())  # watchlist fulfilment (number of cards in watchlist)
+    >> len(session.watchlist())  # watchlist fulfilment (number of cards in watchlist)
     10
 
 Credits
@@ -178,7 +187,7 @@ It's cached on every request so if you want the most accurate info call fut.kepp
 
 .. code-block:: python
 
-    >>> fut.credits
+    >>> session.credits
     600
 
 Relist
@@ -188,7 +197,7 @@ Relists all expired cards in tradepile.
 
 .. code-block:: python
 
-    >>> fut.relist()  # relist all expired cards in tradepile
+    >>> session.relist()  # relist all expired cards in tradepile
 
 Apply consumable
 ----------------
@@ -200,7 +209,7 @@ Apply consumable on player.
 
 .. code-block:: python
 
-    >>> fut.applyConsumable(item_id, resource_id)
+    >>> session.applyConsumable(item_id, resource_id)
 
 Card stats and definiction IDs
 ------------------------------
@@ -209,7 +218,7 @@ Returns stats and definition IDs for each card variation.
 
 .. code-block:: python
 
-    >>> fut.searchDefinition(asset_id, start=0, count=35)
+    >>> session.searchDefinition(asset_id, start=0, count=35)
 
 Keepalive
 ---------
@@ -218,7 +227,7 @@ Sends keepalive ping and returns current credits amount (you have to make at lea
 
 .. code-block:: python
 
-    >>> fut.keepalive()
+    >>> session.keepalive()
     650
 
 Logout
@@ -228,7 +237,7 @@ Logs out nicely (like clicking on logout button).
 
 .. code-block:: python
 
-    >>> fut.logout()
+    >>> session.logout()
 
 
 Database
@@ -315,11 +324,25 @@ to be continued ;-)
 Problems
 --------
 
+Getting "requests.exceptions.SSLError:....'utas.mob.v4.fut.ea.com' doesn't match 'utas.mobapp.fut.ea.com'"?
+^^^^
+This is a new error, but here's a temporary fix to try:
+
+1. Re-download the api from github
+2. Go into fut/urls.py
+3. On line 7, change :code:`auth_url = rc['authURL']` to :code:`auth_url = 'utas.mobapp.fut.ea.com'`
+4. Run `python setup.py install`
+5. Try your script again
+6. **Please report in the Slack channel whether or not this worked!!**
+
+
 Bans
 ^^^^
 
 To avoid getting ban take a look at our little discussion/guide thread:
 https://github.com/oczkers/fut/issues/259
+
+Generally speaking, you should send no more than 500 requests per hour and 5000 requests per day. Be somewhat human. If you encounter a captcha, try to answer/solve it as soon as possible.
 
 Somehow i've sent card to full tradepile and it disappeared
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -328,7 +351,7 @@ Make space in tradepile and just call one command to restore it:
 
 .. code-block:: python
 
-    fut.sendToTradepile(-1, id)
+    session.sendToTradepile(-1, id)
 
 
 I've got card with None tradeId so cannot move/trade it
@@ -338,7 +361,7 @@ Make space in tradepile and just call one command to restore it:
 
 .. code-block:: python
 
-    fut.sendToTradepile(-1, id)
+    session.sendToTradepile(-1, id)
 
 
 PermissionDenied exceptions raises when trying to sell cards directly from watchlist

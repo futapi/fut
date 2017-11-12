@@ -7,6 +7,7 @@ fut.egg-info/
 .coverage
 coverage.xml
 cookies.txt
+token.txt
 test.py
 test_old.py
 testemu.py
@@ -18,3 +19,4 @@ test.log
 testemu.py
 screenlog.0
 codecov.yml
+club_players.txt

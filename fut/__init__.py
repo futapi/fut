@@ -9,11 +9,11 @@ fut is a simple library for managing Fifa Ultimate Team.
 Basic usage:
 
     >>> import fut
-    >>> fifa = fut.Core('email', 'password', 'secret_answer')
-    >>> items = fut.searchAuctions('development')
-    >>> fut.bid(items[0]['trade_id'], 600)
+    >>> session = fut.Core('email', 'password', 'secret_answer')
+    >>> items = session.searchAuctions('development')
+    >>> session.bid(items[0]['trade_id'], 600)
     True
-    >>> fut.sell(item['item_id'], 150)
+    >>> session.sell(item['item_id'], 150)
     1123321
 
 
@@ -23,7 +23,7 @@ Basic usage:
 """
 
 __title__ = 'fut'
-__version__ = '0.3.5'
+__version__ = '0.3.6'
 __author__ = 'Piotr Staroszczyk'
 __author_email__ = 'piotr.staroszczyk@get24.org'
 __license__ = 'GNU GPL v3'

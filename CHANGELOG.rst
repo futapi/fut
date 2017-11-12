@@ -4,6 +4,18 @@ Changelog
 ---------
 
 
+0.3.6 (2017-11-12)
+^^^^^^^^^^^^^^^^^^
+
+* add sbsSetChallenges (thanks to dan-gamble #330)
+* readme polish (thanks to syndac)
+* add tradepileClear
+* add sbsSquad
+* add sendToSbs
+* add clubConsumables
+* correct version param in pinevents
+* save token between logins (maybe cookies are not needed?)
+
 0.3.5 (2017-10-26)
 ^^^^^^^^^^^^^^^^^^
 

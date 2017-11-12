@@ -22,11 +22,12 @@ except ImportError:
 
 try:  # python2 compatibility
     input = raw_input
+    FileNotFoundError
 except NameError:
-    pass
+    FileNotFoundError = IOError
 
 from .pin import Pin
-from .config import headers, headers_and, headers_ios, cookies_file, timeout, delay
+from .config import headers, headers_and, headers_ios, cookies_file, token_file, timeout, delay
 from .log import logger
 from .urls import client_id, auth_url, card_info_url, messages_url
 from .exceptions import (FutError, ExpiredSession, InternalServerError,
@@ -126,6 +127,7 @@ def itemParse(item_data, full=True):
             'marketDataMaxPrice': item_data['itemData'].get('marketDataMaxPrice'),
             'count':            item_data.get('count'),  # consumables only (?)
             'untradeableCount': item_data.get('untradeableCount'),  # consumables only (?)
+            'loans':            item_data.get('loans'),
         })
         if 'item' in item_data:  # consumables only (?)
             return_data.update({
@@ -272,10 +274,11 @@ def playstyles(year=2018, timeout=timeout):
 
 
 class Core(object):
-    def __init__(self, email, passwd, secret_answer, platform='pc', code=None, totp=None, sms=False, emulate=None, debug=False, cookies=cookies_file, timeout=timeout, delay=delay, proxies=None):
+    def __init__(self, email, passwd, secret_answer, platform='pc', code=None, totp=None, sms=False, emulate=None, debug=False, cookies=cookies_file, token=token_file, timeout=timeout, delay=delay, proxies=None):
         self.credits = 0
         self.duplicates = []
         self.cookies_file = cookies  # TODO: map self.cookies to requests.Session.cookies?
+        self.token_file = token
         self.timeout = timeout
         self.delay = delay
         self.request_time = 0
@@ -288,84 +291,10 @@ class Core(object):
         logger(save=debug)  # init root logger
         self.logger = logger(__name__)
         # TODO: validate fut request response (200 OK)
-        self.__login__(email, passwd, secret_answer, platform=platform, code=code, totp=totp, sms=sms, emulate=emulate, proxies=proxies)
+        self.__launch__(email, passwd, secret_answer, platform=platform, code=code, totp=totp, sms=sms, emulate=emulate, proxies=proxies)
 
-    def __login__(self, email, passwd, secret_answer, platform='pc', code=None, totp=None, sms=False, emulate=None, proxies=None):
-        """Log in.
-
-        :params email: Email.
-        :params passwd: Password.
-        :params secret_answer: Answer for secret question.
-        :params platform: (optional) [pc/xbox/xbox360/ps3/ps4] Platform.
-        :params code: (optional) Security code generated in origin or sent via mail/sms.
-        :params emulate: (optional) [and/ios] Emulate mobile device.
-        :params proxies: (optional) [dict] http/socks proxies in requests's format. http://docs.python-requests.org/en/master/user/advanced/#proxies
-        """
-        # TODO: split into smaller methods
-        # TODO: check first if login is needed (https://www.easports.com/fifa/api/isUserLoggedIn)
-        # TODO: get gamesku, url from shards !!
-
-        self.emulate = emulate
-        secret_answer_hash = EAHashingAlgorithm().EAHash(secret_answer)
-        # create session
-        self.r = requests.Session()  # init/reset requests session object
-        if proxies is not None:
-            self.r.proxies = proxies
-        # load saved cookies/session
-        if self.cookies_file:
-            self.r.cookies = LWPCookieJar(self.cookies_file)
-            try:
-                self.r.cookies.load(ignore_discard=True)  # is it good idea to load discarded cookies after long time?
-            except IOError:
-                pass
-                # self.r.cookies.save(ignore_discard=True)  # create empty file for cookies
-        if emulate == 'and':
-            raise FutError(reason='Emulate feature is currently disabled duo latest changes in login process, need more info')
-            self.r.headers = headers_and.copy()  # i'm android now ;-)
-        elif emulate == 'ios':
-            raise FutError(reason='Emulate feature is currently disabled duo latest changes in login process, need more info')
-            self.r.headers = headers_ios.copy()  # i'm ios phone now ;-)
-        else:
-            self.r.headers = headers.copy()  # i'm chrome browser now ;-)
-        if platform == 'pc':  # TODO: get this from shards
-            game_sku = 'FFA18PCC'
-        elif platform == 'xbox':
-            game_sku = 'FFA18XBO'
-        elif platform == 'xbox360':
-            game_sku = 'FFA18XBX'
-        elif platform == 'ps3':
-            game_sku = 'FFA18PS3'  # not tested
-        elif platform == 'ps4':
-            game_sku = 'FFA18PS4'
-            # platform = 'ps3'  # ps4 not available in shards
-        else:
-            raise FutError(reason='Wrong platform. (Valid ones are pc/xbox/xbox360/ps3/ps4)')
-        # if self.r.get(self.urls['main_site']+'/fifa/api/isUserLoggedIn', timeout=self.timeout).json()['isLoggedIn']:
-        #    return True  # no need to log in again
-        # emulate
-        if emulate == 'ios':
-            sku = 'FUT18IOS'
-            clientVersion = 21
-        elif emulate == 'and':
-            sku = 'FUT18AND'
-            clientVersion = 21
-#        TODO: need more info about log in procedure in game
-#        elif emulate == 'xbox':
-#            sku = 'FFA16XBX'  # FFA14CAP ?
-#            clientVersion = 1
-#        elif emulate == 'ps3':
-#            sku = 'FFA16PS3'  # FFA14KTL ?
-#            clientVersion = 1
-#        elif emulate == 'pc':
-#            sku = ''  # dunno
-#            clientVersion = 1
-        elif not emulate:
-            sku = 'FUT18WEB'
-            clientVersion = 1
-        else:
-            raise FutError(reason='Invalid emulate parameter. (Valid ones are and/ios).')  # pc/ps3/xbox/
-        self.sku = sku  # TODO: use self.sku in all class
-        self.sku_a = 'FFT18'
+    def __login__(self, email, passwd, code=None, totp=None, sms=False):
+        """Log in - needed only if we don't have access token or it's expired."""
         params = {'prompt': 'login',
                   'accessToken': 'null',
                   'client_id': client_id,
@@ -377,7 +306,7 @@ class Core(object):
         self.r.headers['Referer'] = 'https://www.easports.com/fifa/ultimate-team/web-app/'
         rc = self.r.get('https://accounts.ea.com/connect/auth', params=params, timeout=self.timeout)
         # TODO: validate (captcha etc.)
-        if rc.url != 'https://www.easports.com/fifa/ultimate-team/web-app/auth.html':  # redirect target  # TODO: move (only?) this to separate method - login and rename __login__ to launch
+        if rc.url != 'https://www.easports.com/fifa/ultimate-team/web-app/auth.html':  # redirect target  # this check is probably not needed
             self.r.headers['Referer'] = rc.url
             # origin required?
             data = {'email': email,
@@ -440,11 +369,107 @@ class Core(object):
                     # rc = rc.text
 
             rc = re.match('https://www.easports.com/fifa/ultimate-team/web-app/auth.html#access_token=(.+?)&token_type=(.+?)&expires_in=[0-9]+', rc.url)
-            access_token = rc.group(1)
-            token_type = rc.group(2)
+            self.access_token = rc.group(1)
+            self.token_type = rc.group(2)
+            # TODO?: refresh after expires_in
+
+            self.saveSession()
+
+    def __launch__(self, email, passwd, secret_answer, platform='pc', code=None, totp=None, sms=False, emulate=None, proxies=None):
+        """Launch futweb
+
+        :params email: Email.
+        :params passwd: Password.
+        :params secret_answer: Answer for secret question.
+        :params platform: (optional) [pc/xbox/xbox360/ps3/ps4] Platform.
+        :params code: (optional) Security code generated in origin or sent via mail/sms.
+        :params emulate: (optional) [and/ios] Emulate mobile device.
+        :params proxies: (optional) [dict] http/socks proxies in requests's format. http://docs.python-requests.org/en/master/user/advanced/#proxies
+        """
+        # TODO: split into smaller methods
+        # TODO: check first if login is needed (https://www.easports.com/fifa/api/isUserLoggedIn)
+        # TODO: get gamesku, url from shards !!
+
+        self.emulate = emulate
+        secret_answer_hash = EAHashingAlgorithm().EAHash(secret_answer)
+        # create session
+        self.r = requests.Session()  # init/reset requests session object
+        if proxies is not None:
+            self.r.proxies = proxies
+        # load saved cookies/session
+        if self.cookies_file:
+            self.r.cookies = LWPCookieJar(self.cookies_file)
+            try:
+                with open(self.token_file, 'r') as f:
+                    self.token_type, self.access_token = f.readline().replace('\n', '').replace('\r', '').split(' ')  # removing \n \r just to make sure
+            except FileNotFoundError:
+                self.__login__(email=email, passwd=passwd, code=code, totp=totp, sms=sms)
+            try:
+                self.r.cookies.load(ignore_discard=True)  # is it good idea to load discarded cookies after long time?
+            except IOError:
+                pass
+                # self.r.cookies.save(ignore_discard=True)  # create empty file for cookies
+        if emulate == 'and':
+            raise FutError(reason='Emulate feature is currently disabled duo latest changes in login process, need more info')
+            self.r.headers = headers_and.copy()  # i'm android now ;-)
+        elif emulate == 'ios':
+            raise FutError(reason='Emulate feature is currently disabled duo latest changes in login process, need more info')
+            self.r.headers = headers_ios.copy()  # i'm ios phone now ;-)
+        else:
+            self.r.headers = headers.copy()  # i'm chrome browser now ;-)
+        if platform == 'pc':  # TODO: get this from shards
+            game_sku = 'FFA18PCC'
+        elif platform == 'xbox':
+            game_sku = 'FFA18XBO'
+        elif platform == 'xbox360':
+            game_sku = 'FFA18XBX'
+        elif platform == 'ps3':
+            game_sku = 'FFA18PS3'  # not tested
+        elif platform == 'ps4':
+            game_sku = 'FFA18PS4'
+            # platform = 'ps3'  # ps4 not available in shards
+        else:
+            raise FutError(reason='Wrong platform. (Valid ones are pc/xbox/xbox360/ps3/ps4)')
+        # if self.r.get(self.urls['main_site']+'/fifa/api/isUserLoggedIn', timeout=self.timeout).json()['isLoggedIn']:
+        #    return True  # no need to log in again
+        # emulate
+        if emulate == 'ios':
+            sku = 'FUT18IOS'
+            clientVersion = 21
+        elif emulate == 'and':
+            sku = 'FUT18AND'
+            clientVersion = 21
+#        TODO: need more info about log in procedure in game
+#        elif emulate == 'xbox':
+#            sku = 'FFA16XBX'  # FFA14CAP ?
+#            clientVersion = 1
+#        elif emulate == 'ps3':
+#            sku = 'FFA16PS3'  # FFA14KTL ?
+#            clientVersion = 1
+#        elif emulate == 'pc':
+#            sku = ''  # dunno
+#            clientVersion = 1
+        elif not emulate:
+            sku = 'FUT18WEB'
+            clientVersion = 1
+        else:
+            raise FutError(reason='Invalid emulate parameter. (Valid ones are and/ios).')  # pc/ps3/xbox/
+        self.sku = sku  # TODO: use self.sku in all class
+        self.sku_a = 'FFT18'
 
         # === launch futweb
-        # TODO!: move to separate method __launch__, do not call login when not necessary
+        params = {'accessToken': self.access_token,
+                  'client_id': 'FIFA-18-WEBCLIENT',
+                  'response_type': 'token',
+                  'display': 'web2/login',
+                  'locale': 'en_US',
+                  'redirect_uri': 'https://www.easports.com/fifa/ultimate-team/web-app/auth.html',
+                  'scope': 'basic.identity offline signin'}
+        rc = self.r.get('https://accounts.ea.com/connect/auth', params=params)
+        rc = re.match('https://www.easports.com/fifa/ultimate-team/web-app/auth.html#access_token=(.+?)&token_type=(.+?)&expires_in=[0-9]+', rc.url)
+        self.access_token = rc.group(1)
+        self.token_type = rc.group(2)
+
         # self.r.headers['Referer'] = 'https://www.easports.com/fifa/ultimate-team/web-app/auth.html'
         rc = self.r.get('https://www.easports.com/fifa/ultimate-team/web-app/', timeout=self.timeout).text
         # year = re.search('fut_year = "([0-9]{4}])"', rc).group(1)  # use this to construct urls, sku etc.
@@ -452,8 +477,12 @@ class Core(object):
         # TODO: config
         self.r.headers['Referer'] = 'https://www.easports.com/fifa/ultimate-team/web-app/'
         self.r.headers['Accept'] = 'application/json'
-        self.r.headers['Authorization'] = '%s %s' % (token_type, access_token)
-        rc = self.r.get('https://gateway.ea.com/proxy/identity/pids/me').json()
+        self.r.headers['Authorization'] = '%s %s' % (self.token_type, self.access_token)
+        rc = self.r.get('https://gateway.ea.com/proxy/identity/pids/me').json()  # TODO: validate response
+        if rc.get('error') == 'invalid_access_token':
+            print('invalid token')
+            self.__login__(email=email, passwd=passwd, totp=totp, sms=sms)
+            return self.__launch__(email=email, passwd=passwd, secret_answer=secret_answer, platform=platform, code=code, totp=totp, sms=sms, emulate=emulate, proxies=proxies)
         self.nucleus_id = rc['pid']['externalRefValue']  # or pidId
         self.dob = rc['pid']['dob']
         # tos_version = rc['tosVersion']
@@ -504,7 +533,7 @@ class Core(object):
         params = {'client_id': 'FOS-SERVER',  # i've seen in some js/json response but cannot find now
                   'redirect_uri': 'nucleus:rest',
                   'response_type': 'code',
-                  'access_token': access_token}
+                  'access_token': self.access_token}
         rc = self.r.get('https://accounts.ea.com/connect/auth', params=params).json()
         auth_code = rc['code']
 
@@ -537,11 +566,6 @@ class Core(object):
             raise UnknownError(rc.__str__())
         self.r.headers['X-UT-SID'] = self.sid = rc['sid']
 
-        # init pin
-        self.pin = Pin(sid=self.sid, nucleus_id=self.nucleus_id, persona_id=self.persona_id, dob=self.dob[:-3], platform=platform)
-        events = [self.pin.event('login', status='success')]
-        self.pin.send(events)
-
         # validate (secret question)
         self.r.headers['Easw-Session-Data-Nucleus-Id'] = self.nucleus_id
         rc = self.r.get('https://%s/ut/game/fifa18/phishing/question' % self.fut_host, params={'_': self._}, timeout=self.timeout).json()
@@ -562,6 +586,11 @@ class Core(object):
             self._ += 1
         self.r.headers['X-UT-PHISHING-TOKEN'] = self.token = rc['token']
 
+        # init pin
+        self.pin = Pin(sid=self.sid, nucleus_id=self.nucleus_id, persona_id=self.persona_id, dob=self.dob[:-3], platform=platform)
+        events = [self.pin.event('login', status='success')]
+        self.pin.send(events)
+
         # get basic user info
         # TODO: parse usermassinfo and change _usermassinfo to userinfo
         # TODO?: usermassinfo as separate method && ability to refresh piles etc.
@@ -574,6 +603,16 @@ class Core(object):
         piles = self.pileSize()
         self.tradepile_size = piles['tradepile']
         self.watchlist_size = piles['watchlist']
+
+        # refresh token
+        # params = {'response_type': 'token',
+        #           'redirect_uri': 'nucleus:rest',
+        #           'prompt': 'none',
+        #           'client_id': 'ORIGIN_JS_SDK'}
+        # rc = self.r.get('https://accounts.ea.com/connect/auth', params=params).json()
+        # self.access_token = rc['access_token']
+        # self.token_type = rc['token_type']
+        # expired_in
 
         self.saveSession()
 
@@ -612,7 +651,7 @@ class Core(object):
             time.sleep(max(self.request_time - time.time() + random.randrange(self.delay[0], self.delay[1] + 1), 0))  # respect minimum delay
             self.r.options(url, params=params)
         else:
-            time.sleep(max(self.request_time - time.time() + 1.3, 0))  # respect 1s minimum delay between requests
+            time.sleep(max(self.request_time - time.time() + 1.4, 0))  # respect 1s minimum delay between requests
         self.request_time = time.time()  # save request time for delay calculations
         if method.upper() == 'GET':
             rc = self.r.get(url, data=data, params=params, timeout=self.timeout)
@@ -695,6 +734,7 @@ class Core(object):
             self.logger.info("{0} (itemId: {1}) moved to {2} Pile".format(trade_id, item_id, pile))
         else:
             self.logger.error("{0} (itemId: {1}) NOT MOVED to {2} Pile. REASON: {3}".format(trade_id, item_id, pile, rc['itemData'][0]['reason']))
+            # if rc['itemData'][0]['reason'] == 'Duplicate Item Type' and rc['itemData'][0]['errorCode'] == 472:  # errorCode check is enought?
         return rc['itemData'][0]['success']
 
     def logout(self, save=True):
@@ -769,6 +809,8 @@ class Core(object):
         """Save cookies/session."""
         if self.cookies_file:
             self.r.cookies.save(ignore_discard=True)
+            with open(self.token_file, 'w') as f:
+                f.write('%s %s' % (self.token_type, self.access_token))
 
     def baseId(self, *args, **kwargs):
         """Calculate base id and version from a resource id."""
@@ -932,10 +974,12 @@ class Core(object):
         if start == 0:
             if ctype == 'player':
                 pgid = 'Club - Players - List View'
-            elif ctype == 'item':
+            elif ctype == 'staff':
+                pgid = 'Club - Staff - List View'
+            elif ctype in ('item', 'kit', 'ball', 'badge', 'stadium'):
                 pgid = 'Club - Club Items - List View'
-            else:  # TODO: THIS IS WRONG, detect all ctypes
-                pgid = 'Club - Club Items - List View'
+            # else:  # TODO: THIS IS probably WRONG, detect all ctypes
+            #     pgid = 'Club - Club Items - List View'
             events = [self.pin.event('page_view', pgid)]
             self.pin.send(events)
 
@@ -949,27 +993,21 @@ class Core(object):
         rc = self.__request__(method, url)
         return rc  # TODO?: parse
 
-    # def clubConsumables(self):
-    #     """Return all consumables stats in dictionary."""
-    #     rc = self.__get__(self.urls['fut']['ClubConsumableSearch'])  # or ClubConsumableStats?
-    #     consumables = {}
-    #     for i in rc:
-    #         if i['contextValue'] == 1:
-    #             level = 'gold'
-    #         elif i['contextValue'] == 2:
-    #             level = 'silver'
-    #         elif i['contextValue'] == 3:
-    #             level = 'bronze'
-    #         consumables[i['type']] = {'level': level,
-    #                                   'type': i['type'],  # need list of all types
-    #                                   'contextId': i['contextId'],  # dunno what is it
-    #                                   'count': i['typeValue']}
-    #     return consumables
+    def clubConsumables(self, fast=False):
+        """Return all consumables from club."""
+        method = 'GET'
+        url = 'club/consumables/development'
 
-    # def clubConsumablesDetails(self):
-    #     """Return all consumables details."""
-    #     rc = self.__get__('{0}{1}'.format(self.urls['fut']['ClubConsumableSearch'], '/development'))
-    #     return [{itemParse(i) for i in rc.get('itemData', ())}]
+        rc = self.__request__(method, url)
+
+        events = [self.pin.event('page_view', 'Hub - Club')]
+        self.pin.send(events, fast=fast)
+        events = [self.pin.event('page_view', 'Club - Consumables')]
+        self.pin.send(events, fast=fast)
+        events = [self.pin.event('page_view', 'Club - Consumables - List View')]
+        self.pin.send(events, fast=fast)
+
+        return [{itemParse(i) for i in rc.get('itemData', ())}]
 
     def squad(self, squad_id=0, persona_id=None):
         """Return a squad.
@@ -1113,6 +1151,14 @@ class Core(object):
         # TODO: validate status code
         return True
 
+    def tradepileClear(self):
+        """Removes all sold items from tradepile."""
+        method = 'DELETE'
+        url = 'trade/sold'
+
+        self.__request__(method, url)
+        # return True
+
     def sendToTradepile(self, item_id, safe=True):
         """Send to tradepile (alias for __sendToPile__).
 
@@ -1140,7 +1186,35 @@ class Core(object):
 
         data = {'auctionInfo': [{'id': trade_id}]}
         return self.__request__(method, url, data=json.dumps(data))
-    #
+
+    def sendToSbs(self, challenge_id, item_id):
+        """Send card FROM CLUB to first free slot in sbs squad."""
+        # TODO?: multiple item_ids
+        method = 'PUT'
+        url = 'sbs/challenge/%s/squad' % challenge_id
+
+        squad = self.sbsSquad(challenge_id)
+        players = []
+        moved = False
+        n = 0
+        for i in squad['squad']['players']:
+            if i['itemData']['id'] == item_id:  # item already in sbs  # TODO?: report reason
+                return False
+            if i['itemData']['id'] == 0 and not moved:
+                i['itemData']['id'] = item_id
+                moved = True
+            players.append({"index": n,
+                            "itemData": {"id": i['itemData']['id'],
+                                         "dream": False}})
+            n += 1
+        data = {'players': players}
+
+        if not moved:
+            return False
+        else:
+            self.__request__(method, url, data=json.dumps(data))
+            return True
+
     # def relist(self, clean=False):
     #     """Relist all tradepile. Returns True or number of deleted (sold) if clean was set.
     #
@@ -1291,6 +1365,30 @@ class Core(object):
         self.pin.send(events)
 
         return rc  # TODO?: parse
+
+    def sbsSetChallenges(self, set_id):
+        method = 'GET'
+        url = 'sbs/setId/%s/challenges' % set_id
+
+        rc = self.__request__(method, url)
+
+        # pinEvents
+        events = [self.pin.event('page_view', 'SBC - Challenges')]
+        self.pin.send(events)
+
+        return rc  # TODO?: parse
+
+    def sbsSquad(self, challenge_id):
+        method = 'GET'
+        url = 'sbs/challenge/%s/squad' % challenge_id
+
+        rc = self.__request__(method, url)
+
+        # pinEvents
+        events = [self.pin.event('page_view', 'SBC - Squad')]
+        self.pin.send(events)
+
+        return rc
 
     def objectives(self, scope='all'):
         method = 'GET'
