@@ -77,7 +77,7 @@ def itemParse(item_data, full=True):
         'tradeState':        item_data.get('tradeState'),
         'bidState':          item_data.get('bidState'),
         'startingBid':       item_data.get('startingBid'),
-        'id':                item_data['itemData']['id'],
+        'id':                item_data.get('itemData', {'id': None})['id'],
         'offers':            item_data.get('offers'),
         'currentBid':        item_data.get('currentBid'),
         'expires':           item_data.get('expires'),  # seconds left
@@ -667,6 +667,8 @@ class Core(object):
                 # TODO?: send pinEvent https://gist.github.com/oczkers/7e5de70915b87262ddea961c49180fd6
                 print(rc.content)
                 raise ExpiredSession()
+            elif rc.status_code == 409:
+                raise Conflict()
             elif rc.status_code == 426:
                 raise FutError('426 Too many requests')
             elif rc.status_code == 429:
