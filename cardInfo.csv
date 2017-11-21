@@ -1,0 +1,166 @@
+amount,assetid,subtypeid,pile,rareflag,rating,weightrare,year,resourceid,bronze,silver,gold,class,category,level,type
+0,7,201,7,0,50,0,2017,5001001,8,2,1,Player,Contract,Bronze,Non-Rare
+0,7,201,7,0,65,0,2017,5001002,10,10,8,Player,Contract,Silver,Non-Rare
+0,7,201,7,0,80,0,2017,5001003,15,11,13,Player,Contract,Gold,Non-Rare
+0,7,201,7,1,60,100,2017,5001004,15,6,3,Player,Contract,Bronze,Rare
+0,7,201,7,1,70,100,2017,5001005,20,24,18,Player,Contract,Silver,Rare
+0,7,201,7,1,90,100,2017,5001006,28,24,28,Player,Contract,Gold,Rare
+0,8,202,7,0,50,0,2017,5001007,8,2,1,Manager,Contract,Bronze,Non-Rare
+0,8,202,7,0,65,0,2017,5001008,8,10,8,Manager,Contract,Silver,Non-Rare
+0,8,202,7,0,80,0,2017,5001009,11,11,13,Manager,Contract,Gold,Non-Rare
+0,8,202,7,1,60,10,2017,5001010,15,6,3,Manager,Contract,Bronze,Rare
+0,8,202,7,1,70,10,2017,5001011,18,24,18,Manager,Contract,Silver,Rare
+0,8,202,7,1,90,10,2017,5001012,24,24,28,Manager,Contract,Gold,Rare
+0,7,201,7,1,90,0,2017,5001013,99,99,99,Player,Contract,Gold,Rare
+20,10,219,7,0,55,0,2017,5002001,0,0,0,Player,Fitness,Bronze,Player
+40,10,219,7,0,70,0,2017,5002002,0,0,0,Player,Fitness,Silver,Player
+60,10,219,7,0,80,0,2017,5002003,0,0,0,Player,Fitness,Gold,Player
+10,10,220,7,1,55,70,2017,5002004,0,0,0,Player,Fitness,Bronze,Squad
+20,10,220,7,1,70,70,2017,5002005,0,0,0,Player,Fitness,Silver,Squad
+30,10,220,7,1,80,70,2017,5002006,0,0,0,Player,Fitness,Gold,Squad
+1,9,211,7,0,55,0,2017,5002007,0,0,0,Player,Healing,Bronze,Head
+2,9,211,7,0,70,0,2017,5002008,0,0,0,Player,Healing,Silver,Head
+5,9,211,7,0,80,0,2017,5002009,0,0,0,Player,Healing,Gold,Head
+1,9,212,7,0,55,0,2017,5002010,0,0,0,Player,Healing,Bronze,UpperBody
+2,9,212,7,0,70,0,2017,5002011,0,0,0,Player,Healing,Silver,UpperBody
+5,9,212,7,0,80,0,2017,5002012,0,0,0,Player,Healing,Gold,UpperBody
+1,9,213,7,0,55,0,2017,5002013,0,0,0,Player,Healing,Bronze,Arm
+2,9,213,7,0,70,0,2017,5002014,0,0,0,Player,Healing,Silver,Arm
+5,9,213,7,0,80,0,2017,5002015,0,0,0,Player,Healing,Gold,Arm
+1,9,215,7,0,55,0,2017,5002019,0,0,0,Player,Healing,Bronze,Knee
+2,9,215,7,0,70,0,2017,5002020,0,0,0,Player,Healing,Silver,Knee
+5,9,215,7,0,80,0,2017,5002021,0,0,0,Player,Healing,Gold,Knee
+1,9,216,7,0,55,0,2017,5002022,0,0,0,Player,Healing,Bronze,Leg
+2,9,216,7,0,70,0,2017,5002023,0,0,0,Player,Healing,Silver,Leg
+5,9,216,7,0,80,0,2017,5002024,0,0,0,Player,Healing,Gold,Leg
+1,9,217,7,0,55,0,2017,5002025,0,0,0,Player,Healing,Bronze,Foot
+2,9,217,7,0,70,0,2017,5002026,0,0,0,Player,Healing,Silver,Foot
+5,9,217,7,0,80,0,2017,5002027,0,0,0,Player,Healing,Gold,Foot
+1,9,218,7,1,60,20,2017,5002028,0,0,0,Player,Healing,Bronze,All
+2,9,218,7,1,74,20,2017,5002029,0,0,0,Player,Healing,Silver,All
+4,9,218,7,1,85,20,2017,5002030,0,0,0,Player,Healing,Gold,All
+5,3,51,7,0,55,0,2017,5003001,0,0,0,GK,GKTraining,Bronze,DIV
+10,3,51,7,0,65,0,2017,5003002,0,0,0,GK,GKTraining,Silver,DIV
+15,3,51,7,0,85,0,2017,5003003,0,0,0,GK,GKTraining,Gold,DIV
+5,3,52,7,0,55,0,2017,5003004,0,0,0,GK,GKTraining,Bronze,HAN
+10,3,52,7,0,65,0,2017,5003005,0,0,0,GK,GKTraining,Silver,HAN
+15,3,52,7,0,85,0,2017,5003006,0,0,0,GK,GKTraining,Gold,HAN
+5,3,53,7,0,55,0,2017,5003007,0,0,0,GK,GKTraining,Bronze,KIC
+10,3,53,7,0,65,0,2017,5003008,0,0,0,GK,GKTraining,Silver,KIC
+15,3,53,7,0,85,0,2017,5003009,0,0,0,GK,GKTraining,Gold,KIC
+5,3,54,7,0,55,0,2017,5003010,0,0,0,GK,GKTraining,Bronze,SPD
+10,3,54,7,0,65,0,2017,5003011,0,0,0,GK,GKTraining,Silver,SPD
+15,3,54,7,0,85,0,2017,5003012,0,0,0,GK,GKTraining,Gold,SPD
+5,3,55,7,0,55,0,2017,5003013,0,0,0,GK,GKTraining,Bronze,POS
+10,3,55,7,0,65,0,2017,5003014,0,0,0,GK,GKTraining,Silver,POS
+15,3,55,7,0,85,0,2017,5003015,0,0,0,GK,GKTraining,Gold,POS
+5,3,56,7,0,55,0,2017,5003016,0,0,0,GK,GKTraining,Bronze,REF
+10,3,56,7,0,65,0,2017,5003017,0,0,0,GK,GKTraining,Silver,REF
+15,3,56,7,0,85,0,2017,5003018,0,0,0,GK,GKTraining,Gold,REF
+3,3,57,7,1,64,2,2017,5003019,0,0,0,GK,GKTraining,Bronze,ALL
+6,3,57,7,1,74,2,2017,5003020,0,0,0,GK,GKTraining,Silver,ALL
+10,3,57,7,1,95,2,2017,5003021,0,0,0,GK,GKTraining,Gold,ALL
+5,1,61,7,0,55,0,2017,5003022,0,0,0,Player,Training,Bronze,PAC
+10,1,61,7,0,65,0,2017,5003023,0,0,0,Player,Training,Silver,PAC
+15,1,61,7,0,85,0,2017,5003024,0,0,0,Player,Training,Gold,PAC
+5,1,62,7,0,55,0,2017,5003025,0,0,0,Player,Training,Bronze,SHO
+10,1,62,7,0,65,0,2017,5003026,0,0,0,Player,Training,Silver,SHO
+15,1,62,7,0,85,0,2017,5003027,0,0,0,Player,Training,Gold,SHO
+5,1,63,7,0,55,0,2017,5003028,0,0,0,Player,Training,Bronze,PAS
+10,1,63,7,0,65,0,2017,5003029,0,0,0,Player,Training,Silver,PAS
+15,1,63,7,0,85,0,2017,5003030,0,0,0,Player,Training,Gold,PAS
+5,1,64,7,0,55,0,2017,5003031,0,0,0,Player,Training,Bronze,DRI
+10,1,64,7,0,65,0,2017,5003032,0,0,0,Player,Training,Silver,DRI
+15,1,64,7,0,85,0,2017,5003033,0,0,0,Player,Training,Gold,DRI
+5,1,65,7,0,55,0,2017,5003034,0,0,0,Player,Training,Bronze,PHY
+10,1,65,7,0,65,0,2017,5003035,0,0,0,Player,Training,Silver,PHY
+15,1,65,7,0,85,0,2017,5003036,0,0,0,Player,Training,Gold,PHY
+5,1,66,7,0,55,0,2017,5003037,0,0,0,Player,Training,Bronze,DEF
+10,1,66,7,0,65,0,2017,5003038,0,0,0,Player,Training,Silver,DEF
+15,1,66,7,0,85,0,2017,5003039,0,0,0,Player,Training,Gold,DEF
+3,1,67,7,1,64,2,2017,5003040,0,0,0,Player,Training,Bronze,ALL
+6,1,67,7,1,74,2,2017,5003041,0,0,0,Player,Training,Silver,ALL
+10,1,67,7,1,95,2,2017,5003042,0,0,0,Player,Training,Gold,ALL
+0,34,91,7,1,95,10,2017,5003059,0,0,0,Player,Positioning,Gold,LWBLB
+0,34,92,7,1,90,20,2017,5003060,0,0,0,Player,Positioning,Gold,LBLWB
+0,34,93,7,1,95,10,2017,5003061,0,0,0,Player,Positioning,Gold,RWBRB
+0,34,94,7,1,90,20,2017,5003062,0,0,0,Player,Positioning,Gold,RBRWB
+0,34,95,7,1,95,20,2017,5003063,0,0,0,Player,Positioning,Gold,LMLW
+0,34,96,7,1,95,20,2017,5003064,0,0,0,Player,Positioning,Gold,RMRW
+0,34,97,7,1,95,20,2017,5003065,0,0,0,Player,Positioning,Gold,LWLM
+0,34,98,7,1,95,20,2017,5003066,0,0,0,Player,Positioning,Gold,RWRM
+0,34,99,7,1,90,10,2017,5003067,0,0,0,Player,Positioning,Gold,LWLF
+0,34,100,7,1,95,10,2017,5003068,0,0,0,Player,Positioning,Gold,RWRF
+0,34,101,7,1,90,10,2017,5003069,0,0,0,Player,Positioning,Gold,LFLW
+0,34,102,7,1,95,10,2017,5003070,0,0,0,Player,Positioning,Gold,RFRW
+0,34,103,7,1,90,20,2017,5003071,0,0,0,Player,Positioning,Gold,CMCAM
+0,34,104,7,1,95,20,2017,5003072,0,0,0,Player,Positioning,Gold,CAMCM
+0,34,105,7,1,95,20,2017,5003073,0,0,0,Player,Positioning,Gold,CDMCM
+0,34,106,7,1,90,20,2017,5003074,0,0,0,Player,Positioning,Gold,CMCDM
+0,34,107,7,1,95,10,2017,5003075,0,0,0,Player,Positioning,Gold,CAMCF
+0,34,108,7,1,95,10,2017,5003076,0,0,0,Player,Positioning,Gold,CFCAM
+0,34,109,7,1,95,20,2017,5003077,0,0,0,Player,Positioning,Gold,CFST
+0,34,110,7,1,95,20,2017,5003078,0,0,0,Player,Positioning,Gold,STCF
+0,50,250,7,0,75,0,2017,5003095,0,0,0,Player,Chemistry Style,Gold,BAS
+1,50,251,7,0,95,0,2017,5003096,0,0,0,Player,Chemistry Style,Gold,SNI
+1,50,252,7,0,95,0,2017,5003097,0,0,0,Player,Chemistry Style,Gold,FIN
+1,50,253,7,0,95,0,2017,5003098,0,0,0,Player,Chemistry Style,Gold,EYE
+1,50,254,7,0,95,0,2017,5003099,0,0,0,Player,Chemistry Style,Gold,MRK
+1,50,255,7,0,95,0,2017,5003100,0,0,0,Player,Chemistry Style,Gold,HWK
+2,50,256,7,0,95,0,2017,5003101,0,0,0,Player,Chemistry Style,Gold,ART
+2,50,257,7,0,95,0,2017,5003102,0,0,0,Player,Chemistry Style,Gold,ARC
+2,50,258,7,0,95,0,2017,5003103,0,0,0,Player,Chemistry Style,Gold,PWR
+2,50,259,7,0,95,0,2017,5003104,0,0,0,Player,Chemistry Style,Gold,MAE
+2,50,260,7,0,95,0,2017,5003105,0,0,0,Player,Chemistry Style,Gold,ENG
+3,50,261,7,0,95,0,2017,5003106,0,0,0,Player,Chemistry Style,Gold,SEN
+3,50,262,7,0,95,0,2017,5003107,0,0,0,Player,Chemistry Style,Gold,GRD
+3,50,263,7,0,95,0,2017,5003108,0,0,0,Player,Chemistry Style,Gold,GLA
+3,50,264,7,0,95,0,2017,5003109,0,0,0,Player,Chemistry Style,Gold,BAC
+3,50,265,7,0,95,0,2017,5003110,0,0,0,Player,Chemistry Style,Gold,ANC
+4,50,266,7,0,95,0,2017,5003111,0,0,0,Player,Chemistry Style,Gold,HUN
+4,50,267,7,0,95,0,2017,5003112,0,0,0,Player,Chemistry Style,Gold,CTA
+4,50,268,7,0,95,0,2017,5003113,0,0,0,Player,Chemistry Style,Gold,SHA
+5,51,269,7,0,95,0,2017,5003114,0,0,0,GK,GK Chemistry Style,Gold,WAL
+5,51,270,7,0,95,0,2017,5003115,0,0,0,GK,GK Chemistry Style,Gold,SLD
+5,51,271,7,0,95,0,2017,5003116,0,0,0,GK,GK Chemistry Style,Gold,CAT
+5,51,272,7,0,95,0,2017,5003117,0,0,0,GK,GK Chemistry Style,Gold,GLO
+5,51,273,7,0,75,0,2017,5003118,0,0,0,GK,GK Chemistry Style,Gold,BAS
+1,32,300,7,0,95,0,2017,5003119,0,0,0,Manager,Manager League,Gold,DEN1
+4,32,301,7,0,95,0,2017,5003120,0,0,0,Manager,Manager League,Gold,BEL1
+10,32,303,7,0,95,0,2017,5003122,0,0,0,Manager,Manager League,Gold,NED1
+13,32,304,7,1,95,15,2017,5003123,0,0,0,Manager,Manager League,Gold,ENG1
+14,32,305,7,0,95,0,2017,5003124,0,0,0,Manager,Manager League,Gold,ENG2
+16,32,306,7,1,95,15,2017,5003125,0,0,0,Manager,Manager League,Gold,FRA1
+17,32,307,7,0,95,0,2017,5003126,0,0,0,Manager,Manager League,Gold,FRA2
+19,32,308,7,1,95,15,2017,5003127,0,0,0,Manager,Manager League,Gold,GER1
+20,32,309,7,0,95,0,2017,5003128,0,0,0,Manager,Manager League,Gold,GER2
+31,32,310,7,1,95,15,2017,5003129,0,0,0,Manager,Manager League,Gold,ITA1
+32,32,311,7,0,95,0,2017,5003130,0,0,0,Manager,Manager League,Gold,ITA2
+39,32,312,7,1,95,15,2017,5003131,0,0,0,Manager,Manager League,Gold,MLS
+41,32,313,7,0,95,0,2017,5003132,0,0,0,Manager,Manager League,Gold,NOR1
+50,32,314,7,0,95,0,2017,5003133,0,0,0,Manager,Manager League,Gold,SPFL
+53,32,315,7,1,95,15,2017,5003134,0,0,0,Manager,Manager League,Gold,ESP1
+54,32,316,7,0,95,0,2017,5003135,0,0,0,Manager,Manager League,Gold,ESP2
+56,32,317,7,0,95,0,2017,5003136,0,0,0,Manager,Manager League,Gold,SWE1
+60,32,318,7,0,95,0,2017,5003137,0,0,0,Manager,Manager League,Gold,ENG3
+61,32,319,7,0,95,0,2017,5003138,0,0,0,Manager,Manager League,Gold,ENG4
+63,32,320,7,0,95,0,2017,5003139,0,0,0,Manager,Manager League,Gold,GRE1
+65,32,321,7,0,95,0,2017,5003140,0,0,0,Manager,Manager League,Gold,IRL1
+66,32,322,7,0,95,0,2017,5003141,0,0,0,Manager,Manager League,Gold,POL1
+67,32,323,7,0,95,0,2017,5003142,0,0,0,Manager,Manager League,Gold,RUS1
+68,32,324,7,0,95,0,2017,5003143,0,0,0,Manager,Manager League,Gold,TUR1
+80,32,325,7,0,95,0,2017,5003144,0,0,0,Manager,Manager League,Gold,AUT1
+83,32,326,7,0,95,0,2017,5003145,0,0,0,Manager,Manager League,Gold,KOR1
+189,32,327,7,0,95,0,2017,5003146,0,0,0,Manager,Manager League,Gold,SUI1
+308,32,328,7,0,95,0,2017,5003147,0,0,0,Manager,Manager League,Gold,POR1
+332,32,329,7,0,95,0,2017,5003148,0,0,0,Manager,Manager League,Gold,UKR1
+335,32,330,7,0,95,0,2017,5003149,0,0,0,Manager,Manager League,Gold,CHI1
+336,32,331,7,0,95,0,2017,5003150,0,0,0,Manager,Manager League,Gold,COL1
+341,32,332,7,0,95,0,2017,5003151,0,0,0,Manager,Manager League,Gold,MEX1
+347,32,333,7,0,95,0,2017,5003152,0,0,0,Manager,Manager League,Gold,RSA1
+350,32,334,7,0,95,0,2017,5003153,0,0,0,Manager,Manager League,Gold,SAU1
+351,32,335,7,0,95,0,2017,5003154,0,0,0,Manager,Manager League,Gold,AUS1
+353,32,336,7,0,95,0,2017,5003155,0,0,0,Manager,Manager League,Gold,ARG1
+2118,32,337,7,1,95,1,2017,5003156,0,0,0,Manager,Manager League,Gold,LGD
+322,32,338,7,0,95,0,2017,5003157,0,0,0,Manager,Manager League,Gold,FIN1
+349,32,339,7,0,95,0,2017,5003158,0,0,0,Manager,Manager League,Gold,JPN1
