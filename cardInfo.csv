@@ -1,4 +1,4 @@
-amount,cardassetid,cardsubtypeid,pile,rareflag,rating,weightrare,resourceGameYear,resourceId,bronze,silver,gold,class,category,level,type
+amount,assetid,subtypeid,pile,rareflag,rating,weightrare,resourceGameYear,resourceid,bronze,silver,gold,class,category,level,type
 ,7,201,7,0,50,0,2017,5001001,8,2,1,Player,Contract,Bronze,Non-Rare
 ,7,201,7,0,65,0,2017,5001002,10,10,8,Player,Contract,Silver,Non-Rare
 ,7,201,7,0,80,0,2017,5001003,15,11,13,Player,Contract,Gold,Non-Rare
