@@ -111,7 +111,7 @@ Optional parameters:
 
 .. code-block:: python
 
-    >>> items = session.searchAuctions('development')
+    >>> items = session.searchAuctions('player')
 
 Bid
 ---
@@ -122,7 +122,7 @@ Optional parameters:
 
 .. code-block:: python
 
-    >>> session.bid(items[0]['trade_id'], 600)
+    >>> session.bid(item['tradeId'], 600)
 
 Sell
 ----
@@ -134,7 +134,7 @@ Optional parameters:
 
 .. code-block:: python
 
-    >>>     session.sell(item['item_id'], 150)
+    >>>     session.sell(item['id'], 150)
 Before selling a newly-bought item, you have to send it to the tradpile. :code:`session.sendToTradepile(item_id)`
 
 Quick sell
