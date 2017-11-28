@@ -19,6 +19,7 @@ To log-in to the webapp and get your current coin count:
 [![](https://travis-ci.org/futapi/fut.png?branch=master?raw=true)](https://pypi.python.org/pypi/fut)
 [![](https://codecov.io/github/futapi/fut/coverage.svg?raw=true)](https://pypi.python.org/pypi/fut)
 [![](https://api.codacy.com/project/badge/Grade/f599808fba2447c98253cf44cca86a1b?raw=true)](https://pypi.python.org/pypi/fut)  
+
 [<img src="https://cdn.worldvectorlogo.com/logos/slack.svg" alt="alt text" width="70" height="50">](https://gentle-everglades-93932.herokuapp.com)
 
 fut is a simple Python library for managing Fifa Ultimate Team. The library enables programmatic access to the official [FUT Web App and FIFA Companion App](https://www.easports.com/fifa/ultimate-team/web-app/). If you prefer php language, there is ported version made by InkedCurtis available here: https://github.com/InkedCurtis/FUT-API.
