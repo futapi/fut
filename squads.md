@@ -1,4 +1,3 @@
-# fut
 ## Squads 
 ### Current State
 Below is the current state of functionality within the **Squads** category. 
