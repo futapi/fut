@@ -1,5 +1,3 @@
-# fut
-
 ## Index 
 ### Quick Example
 To log-in to the webapp and get your current coin count:
