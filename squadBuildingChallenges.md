@@ -6,7 +6,6 @@ There is one working method in this category that GETs Squad Building Challenge 
 
 <img src="https://i.imgur.com/hKWXzQ2.png" alt="Squads" height = "100px"/>
 
-### Methods (1)
 ##### fut.sbsSets()
 
 fut.sbsSets() returns a dictionary of a list of dictionaries of Squad Building Challenge categories, each containing active challenges with descriptions and other info. 
