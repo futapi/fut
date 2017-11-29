@@ -410,6 +410,8 @@ class Core(object):
             except IOError:
                 pass
                 # self.r.cookies.save(ignore_discard=True)  # create empty file for cookies
+        else:
+            self.__login__(email=email, passwd=passwd, code=code, totp=totp, sms=sms)
         if emulate == 'and':
             raise FutError(reason='Emulate feature is currently disabled duo latest changes in login process, need more info')
             self.r.headers = headers_and.copy()  # i'm android now ;-)
