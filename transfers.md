@@ -32,6 +32,7 @@ There are many arguments available to filter your search request:
 <summary>Search Arguments Table</summary><p>
 <!-- alternative placement of p shown above -->
 
+
 | argument    | type    | description                                                  |
 |-------------|---------|--------------------------------------------------------------|
 | ctype       | str     | card type (player, development, training)                    |
@@ -51,5 +52,6 @@ There are many arguments available to filter your search request:
 | playStyle   | int     | playStyleId (available in fut.playStyles)                    |
 | start       | int     | page to start on (indexed at 0) through the web app.         |
 | page_size   | str     | cards to show on one page (range between 16-50)              |
+
 
 </p></details>
