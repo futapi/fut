@@ -26,7 +26,8 @@ fut.search() returns a list of dictionaries that include the information for pla
    {u'index': 5, u'value': 86}],
   'bidState': u'none',
   ....
-  ````
+  ````  
+ 
 There are many arguments available to filter your search request:
 <details>
 <summary>Search Arguments Table</summary><p>
