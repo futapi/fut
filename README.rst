@@ -78,6 +78,7 @@ Optional parameters:
 - debug: [True/False] enables debug.
 - cookies: [filename] saves cookies after every request and load it from given file when restaring app (just like browser).
 - proxies: [dict] http/socks proxies in requests's format http://docs.python-requests.org/en/master/user/advanced/#proxies
+- anticaptcha_client_key: [str] API key for [Anti Captcha](https://anti-captcha.com/). Requires setting proxies. After you encounter Captcha exception while making a request you should reinitialize Core object (it will relaunch session and enter Captcha).
 
 .. code-block:: python
 

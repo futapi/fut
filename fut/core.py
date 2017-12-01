@@ -14,6 +14,7 @@ import random
 import time
 import json
 import pyotp
+from python_anticaptcha import AnticaptchaClient, FunCaptchaTask, Proxy
 # from datetime import datetime, timedelta
 try:
     from cookielib import LWPCookieJar
@@ -29,7 +30,7 @@ except NameError:
 from .pin import Pin
 from .config import headers, headers_and, headers_ios, cookies_file, token_file, timeout, delay
 from .log import logger
-from .urls import client_id, auth_url, card_info_url, messages_url
+from .urls import client_id, auth_url, card_info_url, messages_url, fun_captcha_public_key
 from .exceptions import (FutError, ExpiredSession, InternalServerError,
                          UnknownError, PermissionDenied, Captcha,
                          Conflict, MaxSessions, MultipleSession,
@@ -278,7 +279,7 @@ def playstyles(year=2018, timeout=timeout):
 
 
 class Core(object):
-    def __init__(self, email, passwd, secret_answer, platform='pc', code=None, totp=None, sms=False, emulate=None, debug=False, cookies=cookies_file, token=token_file, timeout=timeout, delay=delay, proxies=None):
+    def __init__(self, email, passwd, secret_answer, platform='pc', code=None, totp=None, sms=False, emulate=None, debug=False, cookies=cookies_file, token=token_file, timeout=timeout, delay=delay, proxies=None, anticaptcha_client_key=None):
         self.credits = 0
         self.duplicates = []
         self.cookies_file = cookies  # TODO: map self.cookies to requests.Session.cookies?
@@ -295,7 +296,7 @@ class Core(object):
         logger(save=debug)  # init root logger
         self.logger = logger(__name__)
         # TODO: validate fut request response (200 OK)
-        self.__launch__(email, passwd, secret_answer, platform=platform, code=code, totp=totp, sms=sms, emulate=emulate, proxies=proxies)
+        self.__launch__(email, passwd, secret_answer, platform=platform, code=code, totp=totp, sms=sms, emulate=emulate, proxies=proxies, anticaptcha_client_key=anticaptcha_client_key)
 
     def __login__(self, email, passwd, code=None, totp=None, sms=False):
         """Log in - needed only if we don't have access token or it's expired."""
@@ -379,7 +380,7 @@ class Core(object):
 
             self.saveSession()
 
-    def __launch__(self, email, passwd, secret_answer, platform='pc', code=None, totp=None, sms=False, emulate=None, proxies=None):
+    def __launch__(self, email, passwd, secret_answer, platform='pc', code=None, totp=None, sms=False, emulate=None, proxies=None, anticaptcha_client_key=None):
         """Launch futweb
 
         :params email: Email.
@@ -488,7 +489,7 @@ class Core(object):
         if rc.get('error') == 'invalid_access_token':
             print('invalid token')
             self.__login__(email=email, passwd=passwd, totp=totp, sms=sms)
-            return self.__launch__(email=email, passwd=passwd, secret_answer=secret_answer, platform=platform, code=code, totp=totp, sms=sms, emulate=emulate, proxies=proxies)
+            return self.__launch__(email=email, passwd=passwd, secret_answer=secret_answer, platform=platform, code=code, totp=totp, sms=sms, emulate=emulate, proxies=proxies, anticaptcha_client_key=anticaptcha_client_key)
         self.nucleus_id = rc['pid']['externalRefValue']  # or pidId
         self.dob = rc['pid']['dob']
         # tos_version = rc['tosVersion']
@@ -577,7 +578,27 @@ class Core(object):
         rc = self.r.get('https://%s/ut/game/fifa18/phishing/question' % self.fut_host, params={'_': self._}, timeout=self.timeout).json()
         self._ += 1
         if rc.get('code') == '458':
-            raise Captcha()
+            if anticaptcha_client_key:
+                if not proxies:
+                    raise FutError('FunCaptcha requires a proxy. Add proxies param.')
+                self.logger.debug('Solving FunCaptcha...')
+                anticaptcha = AnticaptchaClient(anticaptcha_client_key)
+                task = FunCaptchaTask(
+                    'https://www.easports.com',
+                    fun_captcha_public_key,
+                    proxy=Proxy.parse_url(proxies.get('http')),
+                    user_agent=self.r.headers['User-Agent']
+                )
+                job = anticaptcha.createTask(task)
+                job.join()
+                fun_captcha_token = job.get_token_response()
+                self.logger.debug('FunCaptcha solved: {}'.format(fun_captcha_token))
+                return self.__request__('POST', 'captcha/fun/validate', data=json.dumps({
+                    'funCaptchaToken': fun_captcha_token,
+                }))
+
+            else:
+                raise Captcha(code=rc.get('code'), string=rc.get('string'), reason=rc.get('reason'))
         elif rc.get('string') != 'Already answered question':
             params = {'answer': secret_answer_hash}
             rc = self.r.post('https://%s/ut/game/fifa18/phishing/validate' % self.fut_host, params=params, timeout=self.timeout).json()
