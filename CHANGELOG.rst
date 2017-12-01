@@ -4,6 +4,13 @@ Changelog
 ---------
 
 
+0.3.7 (2017-12-01)
+^^^^^^^^^^^^^^^^^^
+
+* allow init with None cookies (fix #345 by kirov)
+* fix clubConsumables (#347, #348)
+* remove path value check in remoteConfig
+
 0.3.6 (2017-11-12)
 ^^^^^^^^^^^^^^^^^^
 
