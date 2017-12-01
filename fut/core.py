@@ -943,6 +943,18 @@ class Core(object):
         """Alias for search method, just to keep compatibility."""
         return self.search(*args, **kwargs)
 
+    def searchAll(self, *args, **kwards):
+        """Generator for search method. (Temporary until search won't be a genetor)"""
+        n = 0
+        while True:
+            results = self.search(*args, **kwards, start=n)
+            # print(len(results))
+            if len(results) < 16:
+                return results
+            else:
+                n += 16
+                yield results
+
     def bid(self, trade_id, bid, fast=False):
         """Make a bid.
 
