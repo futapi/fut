@@ -943,7 +943,7 @@ class Core(object):
         """Alias for search method, just to keep compatibility."""
         return self.search(*args, **kwargs)
 
-    def searchAll(self, *args, **kwards):
+    def searchAll(self, *args, **kwargs):
         """Generator for search method. (Temporary until search won't be a genetor)"""
         n = 0
         while True:
