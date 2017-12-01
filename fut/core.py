@@ -71,6 +71,7 @@ def itemParse(item_data, full=True):
     """
     # TODO: object
     # TODO: dynamically parse all data
+    # TODO: make it less ugly
     return_data = {
         'tradeId':           item_data.get('tradeId'),
         'buyNowPrice':       item_data.get('buyNowPrice'),
