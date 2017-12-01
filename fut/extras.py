@@ -11,7 +11,7 @@ This module implements the fut's additional methods.
 import requests
 
 
-def futheadPrice(self, item_id, year=18, platform=None):
+def futheadPrice(item_id, year=18, platform=None):
     params = {'year': year,
               'id': item_id}
     rc = requests.get('http://www.futhead.com/prices/api/', params=params).json()
@@ -31,7 +31,7 @@ def futheadPrice(self, item_id, year=18, platform=None):
     return price
 
 
-def futbinPrice(self, item_id, platform=None):
+def futbinPrice(item_id, platform=None):
     rc = requests.get('https://www.futbin.com/18/playerPrices', params={'player': str(item_id)}).json()
     if not rc:
         return 0
