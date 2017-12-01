@@ -947,7 +947,7 @@ class Core(object):
         """Generator for search method. (Temporary until search won't be a genetor)"""
         n = 0
         while True:
-            results = self.search(*args, **kwards, start=n)
+            results = self.search(*args, **kwargs, start=n)
             # print(len(results))
             if len(results) < 16:
                 return results
