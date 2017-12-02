@@ -4,6 +4,12 @@ Changelog
 ---------
 
 
+0.3.8 (2017-12-?)
+^^^^^^^^^^^^^^^^^
+
+* add anti-captcha.com support (all credits go to kirov #353)
+* add futbinPrice, futheadPrice
+
 0.3.7 (2017-12-01)
 ^^^^^^^^^^^^^^^^^^
 
