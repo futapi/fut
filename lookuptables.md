@@ -71,3 +71,76 @@ The player info dict is returned by many functions. Below is an example with a h
 | year              | int     | 2018                                      |
 
   </p></details>
+  
+### Transfer Info Dict  
+The transfer info dict is returned by the tradepile and watchlist functions. Below is an example with a helpful table of return types.
+<details>
+<summary>Transfer Info Dict Code Example</summary><p>
+<!-- alternative placement of p shown above -->
+
+```python
+>>> #Get first player in my transfers
+>>> fut.tradepile()[0]
+{'tradeId': 16575379694, 'buyNowPrice': 1800, 'tradeState': 'closed'....}
+```
+</p></details>
+
+<details>
+<summary>Transfer Info Dict Return Types</summary><p>
+<!-- alternative placement of p shown above -->
+
+| field              | type        | description |
+|--------------------|-------------|-------------|
+| tradeId            | int         | NA          |
+| buNowPrice         | int         | NA          |
+| tradeState         | str         | NA          |
+| bidState           | str         | NA          |
+| startingBid        | int         | NA          |
+| id                 | int         | NA          |
+| offers             | int         | NA          |
+| currentBid         | int         | NA          |
+| expires            | int         | NA          |
+| sellerEstablished  | int         | NA          |
+| sellerId           | int         | NA          |
+| sellerName         | str         | NA          |
+| watched            | boolean     | NA          |
+| resourceId         | int         | NA          |
+| discardValue       | int         | NA          |
+| timestamp          | int         | NA          |
+| rating             | int         | NA          |
+| assetId            | int         | NA          |
+| itemState          | str         | NA          |
+| rareflag           | int         | NA          |
+| formation          | str         | NA          |
+| leagueId           | int         | NA          |
+| injuryType         | str         | NA          |
+| injuryGames        | int         | NA          |
+| lastSalePrice      | int         | NA          |
+| fitness            | int         | NA          |
+| training           | int         | NA          |
+| suspension         | int         | NA          |
+| contract           | int         | NA          |
+| position           | str         | NA          |
+| playStyle          | int         | NA          |
+| itemType           | str         | NA          |
+| cardType           | it          | NA          |
+| cardsubtypeid      | int         | NA          |
+| owners             | int         | NA          |
+| untradeable        | boolean     | NA          |
+| morale             | int         | NA          |
+| statsList          | list        | NA          |
+| lifetimeStats      | list        | NA          |
+| attributeList      | list(dicts) | NA          |
+| teamid             | int         | NA          |
+| assists            | int         | NA          |
+| lifetimeAssitss    | int         | NA          |
+| loyaltyBonus       | int         | NA          |
+| pile               | int         | NA          |
+| nation             | int         | NA          |
+| year               | int         | NA          |
+| resourceGameYear   | int         | NA          |
+| marketDataMinPrice | int         | NA          |
+| marketDataMaxPrice | int         | NA          |
+| loans              | int         | NA          |
+
+  </p></details>
