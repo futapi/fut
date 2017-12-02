@@ -593,7 +593,7 @@ class Core(object):
                 job.join()
                 fun_captcha_token = job.get_token_response()
                 self.logger.debug('FunCaptcha solved: {}'.format(fun_captcha_token))
-                return self.__request__('POST', 'captcha/fun/validate', data=json.dumps({
+                self.__request__('POST', 'captcha/fun/validate', data=json.dumps({
                     'funCaptchaToken': fun_captcha_token,
                 }))
 
