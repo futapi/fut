@@ -606,7 +606,7 @@ class Core(object):
                         }))
                         break
                     except AnticatpchaException as e:
-                        if e.code in ['ERROR_PROXY_CONNECT_REFUSED', 'ERROR_PROXY_CONNECT_TIMEOUT', 'ERROR_PROXY_READ_TIMEOUT', 'ERROR_PROXY_BANNED']:
+                        if e.error_code in ['ERROR_PROXY_CONNECT_REFUSED', 'ERROR_PROXY_CONNECT_TIMEOUT', 'ERROR_PROXY_READ_TIMEOUT', 'ERROR_PROXY_BANNED']:
                             self.logger.exception('AnticatpchaException ' + e.code)
                             time.sleep(10)
                             continue
