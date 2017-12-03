@@ -15,6 +15,7 @@ import time
 import json
 import pyotp
 from python_anticaptcha import AnticaptchaClient, FunCaptchaTask, Proxy
+from python_anticaptcha.exceptions import AnticatpchaException
 # from datetime import datetime, timedelta
 try:
     from cookielib import LWPCookieJar
@@ -583,19 +584,30 @@ class Core(object):
                     raise FutError('FunCaptcha requires a proxy. Add proxies param.')
                 self.logger.debug('Solving FunCaptcha...')
                 anticaptcha = AnticaptchaClient(anticaptcha_client_key)
-                task = FunCaptchaTask(
-                    'https://www.easports.com',
-                    fun_captcha_public_key,
-                    proxy=Proxy.parse_url(proxies.get('http')),
-                    user_agent=self.r.headers['User-Agent']
-                )
-                job = anticaptcha.createTask(task)
-                job.join()
-                fun_captcha_token = job.get_token_response()
-                self.logger.debug('FunCaptcha solved: {}'.format(fun_captcha_token))
-                self.__request__('POST', 'captcha/fun/validate', data=json.dumps({
-                    'funCaptchaToken': fun_captcha_token,
-                }))
+                for i in range(1, 6):
+                    try:
+                        self.logger.debug('Attempt #{}'.format(i))
+                        task = FunCaptchaTask(
+                            'https://www.easports.com',
+                            fun_captcha_public_key,
+                            proxy=Proxy.parse_url(proxies.get('http')),
+                            user_agent=self.r.headers['User-Agent']
+                        )
+                        job = anticaptcha.createTask(task)
+                        job.join()
+                        fun_captcha_token = job.get_token_response()
+                        self.logger.debug('FunCaptcha solved: {}'.format(fun_captcha_token))
+                        self.__request__('POST', 'captcha/fun/validate', data=json.dumps({
+                            'funCaptchaToken': fun_captcha_token,
+                        }))
+                        break
+                    except AnticatpchaException as e:
+                        if e.code in ['ERROR_PROXY_CONNECT_REFUSED', 'ERROR_PROXY_CONNECT_TIMEOUT', 'ERROR_PROXY_READ_TIMEOUT', 'ERROR_PROXY_BANNED']:
+                            self.logger.exception('AnticatpchaException ' + e.code)
+                            time.sleep(10)
+                            continue
+                        else:
+                            raise
 
             else:
                 raise Captcha(code=rc.get('code'), string=rc.get('string'), reason=rc.get('reason'))
