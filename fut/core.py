@@ -584,9 +584,13 @@ class Core(object):
                     raise FutError('FunCaptcha requires a proxy. Add proxies param.')
                 self.logger.debug('Solving FunCaptcha...')
                 anticaptcha = AnticaptchaClient(anticaptcha_client_key)
-                for i in range(1, 6):
+                attempt = 0
+                while True
+                    attempt += 1
+                    if attempt > 10:
+                        raise FutError('Can\'t send captcha.')
                     try:
-                        self.logger.debug('Attempt #{}'.format(i))
+                        self.logger.debug('Attempt #{}'.format(attempt))
                         task = FunCaptchaTask(
                             'https://www.easports.com',
                             fun_captcha_public_key,
