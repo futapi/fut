@@ -288,7 +288,9 @@ class Core(object):
         self.request_time = 0
         # db
         self._players = None
+        self._playstyles = None
         self._nations = None
+        self._stadiums = None
         self._leagues = {}
         self._teams = {}
         self._usermassinfo = {}
@@ -335,13 +337,12 @@ class Core(object):
             if 'var redirectUri' in rc.text:
                 rc = self.r.get(rc.url, params={'_eventId': 'end'})  # initref param was missing here
 
-            '''  # pops out only on first launch
-            if 'FIFA Ultimate Team</strong> needs to update your Account to help protect your gameplay experience.' in rc:  # request email/sms code
-                self.r.headers['Referer'] = rc.url  # s2
-                rc = self.r.post(rc.url.replace('s2', 's3'), {'_eventId': 'submit'}, timeout=self.timeout).content
-                self.r.headers['Referer'] = rc.url  # s3
-                rc = self.r.post(rc.url, {'twofactorType': 'EMAIL', 'country': 0, 'phoneNumber': '', '_eventId': 'submit'}, timeout=self.timeout)
-            '''
+            # pops out only on first launch
+            # if 'FIFA Ultimate Team</strong> needs to update your Account to help protect your gameplay experience.' in rc:  # request email/sms code
+            #     self.r.headers['Referer'] = rc.url  # s2
+            #     rc = self.r.post(rc.url.replace('s2', 's3'), {'_eventId': 'submit'}, timeout=self.timeout).content
+            #     self.r.headers['Referer'] = rc.url  # s3
+            #     rc = self.r.post(rc.url, {'twofactorType': 'EMAIL', 'country': 0, 'phoneNumber': '', '_eventId': 'submit'}, timeout=self.timeout)
 
             # click button to send code
             if 'Login Verification' in rc.text:  # click button to get code sent
@@ -660,13 +661,15 @@ class Core(object):
 #        return self.r.get(self.urls['shards'], params={'_': int(time.time()*1000)}, timeout=self.timeout).json()
 #        # self.r.headers['X-UT-Route'] = self.urls['fut_pc']
 
-    def __request__(self, method, url, data={}, params={}, fast=False):
+    def __request__(self, method, url, data=None, params=None, fast=False):
         """Prepare headers and sends request. Returns response as a json object.
 
         :params method: Rest method.
         :params url: Url.
         """
         # TODO: update credtis?
+        data = data or {}
+        params = params or {}
         url = 'https://%s/ut/game/fifa18/%s' % (self.fut_host, url)
 
         self.logger.debug("request: {0} data={1};  params={2}".format(url, data, params))
