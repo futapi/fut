@@ -585,7 +585,7 @@ class Core(object):
                 self.logger.debug('Solving FunCaptcha...')
                 anticaptcha = AnticaptchaClient(anticaptcha_client_key)
                 attempt = 0
-                while True
+                while True:
                     attempt += 1
                     if attempt > 10:
                         raise FutError('Can\'t send captcha.')
