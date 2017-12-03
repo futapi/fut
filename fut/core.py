@@ -164,13 +164,12 @@ def itemParse(item_data, full=True):
     return return_data
 
 
-'''  # different urls (platforms)
-def cardInfo(resource_id):
-    """Return card info."""
-    # TODO: add referer to headers (futweb)
-    url = '{0}{1}.json'.format(self.urls['card_info'], baseId(resource_id))
-    return requests.get(url, timeout=timeout).json()
-'''
+# different urls (platforms)
+# def cardInfo(resource_id):
+#     """Return card info."""
+#     # TODO: add referer to headers (futweb)
+#     url = '{0}{1}.json'.format(self.urls['card_info'], baseId(resource_id))
+#     return requests.get(url, timeout=timeout).json()
 
 
 # TODO: optimize messages (parse whole messages once!), xml parser might be faster
@@ -881,10 +880,11 @@ class Core(object):
 
         rc = self.__request__(method, url, params=params)
 
-        try:
-            return [itemParse({'itemData': i}) for i in rc['itemData']]
-        except:
-            raise UnknownError('Invalid definition response')
+        # try:
+        #     return [itemParse({'itemData': i}) for i in rc['itemData']]
+        # except:
+        #     raise UnknownError('Invalid definition response')
+        return [itemParse({'itemData': i}) for i in rc['itemData']]
 
     def search(self, ctype, level=None, category=None, assetId=None, defId=None,
                min_price=None, max_price=None, min_buy=None, max_buy=None,
@@ -935,21 +935,36 @@ class Core(object):
             'num': page_size,
             'type': ctype,  # "type" namespace is reserved in python
         }
-        if level:       params['lev'] = level
-        if category:    params['cat'] = category
-        if assetId:     params['maskedDefId'] = assetId
-        if defId:       params['definitionId'] = defId
-        if min_price:   params['micr'] = min_price
-        if max_price:   params['macr'] = max_price
-        if min_buy:     params['minb'] = min_buy
-        if max_buy:     params['maxb'] = max_buy
-        if league:      params['leag'] = league
-        if club:        params['team'] = club
-        if position:    params['pos'] = position
-        if zone:        params['zone'] = zone
-        if nationality: params['nat'] = nationality
-        if rare:        params['rare'] = 'SP'
-        if playStyle:   params['playStyle'] = playStyle
+        if level:
+            params['lev'] = level
+        if category:
+            params['cat'] = category
+        if assetId:
+            params['maskedDefId'] = assetId
+        if defId:
+            params['definitionId'] = defId
+        if min_price:
+            params['micr'] = min_price
+        if max_price:
+            params['macr'] = max_price
+        if min_buy:
+            params['minb'] = min_buy
+        if max_buy:
+            params['maxb'] = max_buy
+        if league:
+            params['leag'] = league
+        if club:
+            params['team'] = club
+        if position:
+            params['pos'] = position
+        if zone:
+            params['zone'] = zone
+        if nationality:
+            params['nat'] = nationality
+        if rare:
+            params['rare'] = 'SP'
+        if playStyle:
+            params['playStyle'] = playStyle
 
         rc = self.__request__(method, url, params=params, fast=fast)
 
@@ -1028,16 +1043,26 @@ class Core(object):
         url = 'club'
 
         params = {'sort': sort, 'type': ctype, 'defId': defId, 'start': start, 'count': count}
-        if level:       params['lev'] = level
-        if category:    params['cat'] = category
-        if assetId:     params['maskedDefId'] = assetId
-        if league:      params['leag'] = league
-        if club:        params['team'] = club
-        if position:    params['pos'] = position
-        if zone:        params['zone'] = zone
-        if nationality: params['nat'] = nationality
-        if rare:        params['rare'] = 'SP'
-        if playStyle:   params['playStyle'] = playStyle
+        if level:
+            params['lev'] = level
+        if category:
+            params['cat'] = category
+        if assetId:
+            params['maskedDefId'] = assetId
+        if league:
+            params['leag'] = league
+        if club:
+            params['team'] = club
+        if position:
+            params['pos'] = position
+        if zone:
+            params['zone'] = zone
+        if nationality:
+            params['nat'] = nationality
+        if rare:
+            params['rare'] = 'SP'
+        if playStyle:
+            params['playStyle'] = playStyle
         rc = self.__request__(method, url, params=params)
 
         # pinEvent

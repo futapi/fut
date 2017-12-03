@@ -9,6 +9,7 @@ This module implements the fut's additional methods.
 """
 
 import requests
+from json import JSONDecodeError
 
 
 def futheadPrice(item_id, year=18, platform=None):
@@ -32,15 +33,23 @@ def futheadPrice(item_id, year=18, platform=None):
 
 
 def futbinPrice(item_id, platform=None):
-    rc = requests.get('https://www.futbin.com/18/playerPrices', params={'player': str(item_id)}).json()
+    rc = requests.get('https://www.futbin.com/18/playerPrices', params={'player': str(item_id)})
+    try:
+        rc = rc.json()
+    except JSONDecodeError:
+        print('futbin response is not valid')
+        print(rc.status_code)
+        print(rc.url)
+        print(rc.content)
+        rc = {}
     if not rc:
         return 0
     rc = rc[str(item_id)]['prices']
-    if type(rc['xbox']['LCPrice']) == str:
+    if isinstance(rc['xbox']['LCPrice'], str):
         rc['xbox']['LCPrice'] = rc['xbox']['LCPrice'].replace(',', '')
-    if type(rc['ps']['LCPrice']) == str:
+    if isinstance(rc['ps']['LCPrice'], str):
         rc['ps']['LCPrice'] = rc['ps']['LCPrice'].replace(',', '')
-    if type(rc['pc']['LCPrice']) == str:
+    if isinstance(rc['pc']['LCPrice'], str):
         rc['pc']['LCPrice'] = rc['pc']['LCPrice'].replace(',', '')
     xbox = int(rc['xbox']['LCPrice'])
     ps = int(rc['ps']['LCPrice'])

@@ -9,6 +9,7 @@ Changelog
 
 * add anti-captcha.com support (all credits go to kirov #353)
 * add futbinPrice, futheadPrice
+* add missing params to club method (#351)
 
 0.3.7 (2017-12-01)
 ^^^^^^^^^^^^^^^^^^
