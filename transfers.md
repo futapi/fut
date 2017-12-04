@@ -9,6 +9,7 @@ The Transfers category contains many functions. We'll go through them in three s
 
 ### Search
 
+There are two functions in the search category: search() and searchDefinition(). 
 
 ### fut.search()
 
@@ -60,6 +61,22 @@ There are many arguments available to filter your search request:
 
 </p></details>
 
+### fut.searchDefinition()
+
+fut.searchDefinition() returns a list of dictionaries that include the information for specific varations of player cards by assetId. These are returned in descending order of rating. [A description of the returned dict of player info is linked here.](https://github.com/TrevorMcCormick/futmarket/blob/master/lookuptables.md#player-info-dict)  
+
+*Example*: 
+```python
+>>> # Get variations for Mats Hummels
+>>> fut.searchDefinition(178603)
+[{'tradeId': None,
+'buyNowPrice': None,
+'tradeState': None
+...}]
+``` 
+These are returned in descending order of rating. Card IDs are typically distinguished by the value of the *rarecard* field. [A table of card IDs are here.](https://github.com/TrevorMcCormick/futmarket/blob/master/lookuptables.md)  
+
+
 ### Transfer List
 
 ### fut.tradepile()
@@ -68,11 +85,13 @@ fut.tradepile() returns a list of dictionaries that include the transfer informa
 
 *Example*: 
 ```python
->>> fut.tradepile()[0]
+>>> fut.tradepile()
 [{'tradeId': 16575379694,
 'buyNowPrice': 1800,
 'tradeState': 'closed'...}]
 ``` 
+
+### Watch List
 
 ### fut.watchlist()
 
@@ -80,7 +99,7 @@ fut.watchlist() returns a list of dictionaries that include the transfer informa
 
 *Example*: 
 ```python
->>> fut.tradepile()[0]
+>>> fut.tradepile()
 [{'tradeId': 16656454826,
 'buyNowPrice': 5900000,
 'tradeState': 'active'...
