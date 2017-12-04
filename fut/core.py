@@ -615,7 +615,7 @@ class Core(object):
 
             else:
                 raise Captcha(code=rc.get('code'), string=rc.get('string'), reason=rc.get('reason'))
-        elif rc.get('string') != 'Already answered question':
+        if rc.get('string') != 'Already answered question':
             params = {'answer': secret_answer_hash}
             rc = self.r.post('https://%s/ut/game/fifa18/phishing/validate' % self.fut_host, params=params, timeout=self.timeout).json()
             if rc['string'] != 'OK':  # we've got an error
