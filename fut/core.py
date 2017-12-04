@@ -604,6 +604,8 @@ class Core(object):
                         self.__request__('POST', 'captcha/fun/validate', data=json.dumps({
                             'funCaptchaToken': fun_captcha_token,
                         }))
+                        rc = self.r.get('https://%s/ut/game/fifa18/phishing/question' % self.fut_host, params={'_': self._}, timeout=self.timeout).json()
+                        self._ += 1
                         break
                     except AnticatpchaException as e:
                         if e.error_code in ['ERROR_PROXY_CONNECT_REFUSED', 'ERROR_PROXY_CONNECT_TIMEOUT', 'ERROR_PROXY_READ_TIMEOUT', 'ERROR_PROXY_BANNED']:
