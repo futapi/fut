@@ -69,7 +69,20 @@ fut.tradepile() returns a list of dictionaries that include the transfer informa
 *Example*: 
 ```python
 >>> fut.tradepile()[0]
-{'tradeId': 16575379694,
+[{'tradeId': 16575379694,
 'buyNowPrice': 1800,
-'tradeState': 'closed'...}
+'tradeState': 'closed'...}]
 ``` 
+
+### fut.watchlist()
+
+fut.watchlist() returns a list of dictionaries that include the transfer information for players you've bid on on the transfer market. [A description of the returned dict of transfer info is linked here.](https://github.com/TrevorMcCormick/futmarket/blob/master/lookuptables.md#transfer-info-dict)  
+
+*Example*: 
+```python
+>>> fut.tradepile()[0]
+[{'tradeId': 16656454826,
+'buyNowPrice': 5900000,
+'tradeState': 'active'...
+``` 
+
