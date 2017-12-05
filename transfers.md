@@ -7,7 +7,7 @@ Below is the current state of functionality within the **Transfers** category. A
 
 The Transfers category contains many functions. We'll go through them in three sections: Search, Transfer List, and Transfer Targets.
 
-### Search
+## Search
 
 There are two functions in the search category: search() and searchDefinition(). 
 
@@ -76,8 +76,9 @@ fut.searchDefinition() returns a list of dictionaries that include the informati
 ``` 
 These are returned in descending order of rating. Card IDs are typically distinguished by the value of the *rarecard* field. [A table of card IDs are here.](https://github.com/TrevorMcCormick/futmarket/blob/master/lookuptables.md)  
 
+---
 
-### Transfer List
+## Transfer List
 
 ### fut.tradepile()
 
@@ -104,7 +105,9 @@ fut.tradeStatus() takes one argument (tradeId) and returns a list containing a c
 ...}]
 ```
 
-### Watch List
+---
+
+## Watch List
 
 ### fut.watchlist()
 
