@@ -144,3 +144,42 @@ The transfer info dict is returned by the tradepile and watchlist functions. Bel
 | loans              | int         | NA          |
 
   </p></details>
+  
+### Trade Status Dict
+The trade status dict returns basic info about a tradeId. 
+<details>
+<summary>Trade Status Dict Code Example</summary><p>
+<!-- alternative placement of p shown above -->
+
+```python
+>>> fut.tradeStatus(16575379694)
+[{'tradeId': 16575379694, 
+'buyNowPrice': 1800, 
+'tradeState': 'closed', 
+...}]
+```
+</p></details>
+
+<details>
+<summary>Trade Status Dict Return Types</summary><p>
+<!-- alternative placement of p shown above -->
+
+| field              | type        | description |
+|--------------------|-------------|-------------|
+| tradeId            | int         | NA          |
+| buNowPrice         | int         | NA          |
+| tradeState         | str         | NA          |
+| bidState           | str         | NA          |
+| startingBid        | int         | NA          |
+| id                 | int         | NA          |
+| offers             | int         | NA          |
+| currentBid         | int         | NA          |
+| expires            | int         | NA          |
+| sellerEstablished  | int         | NA          |
+| sellerId           | int         | NA          |
+| sellerName         | str         | NA          |
+| watched            | boolean     | NA          |
+| resourceId         | int         | NA          |
+| discardValue       | int         | NA          |
+
+  </p></details>
