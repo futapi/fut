@@ -107,6 +107,27 @@ fut.tradeStatus() takes one argument (tradeId) and returns a list containing a c
 ...}]
 ```
 
+### fut.sendToTradepile(item_id, safe=True)
+
+fut.sendToTradepile takes one argument (item_id) and has an optional argument (safe) that checks the length of your tradepile to make sure you have room to store another item. The item_id argument is the 'id' field in [player info dictionaries.](https://github.com/TrevorMcCormick/futmarket/blob/master/lookuptables.md#player-info-dict) A successful send will return `True`. An unsuccessful send will return `False`if you do not own the item you're trying to send to the tradepile, or `403` if the item you're trying to send is untradeable. 
+
+*Examples*: 
+```python
+>>> # Card I own where untradeable == False
+>>> fut.sendToTradepile(117860780888)
+True
+
+>>> # Card I don't own
+>>> fut.sendToTradepile(1)
+False
+
+>> # Card I own where untradeable == True
+>> fut.sendToTradepile(118360247419)
+{'Access-Control-Expose-Headers': 'Retry-After', 'Content-Length': '20', 'X-UnzippedLength': '0', 'Content-Encoding': 'gzip', 'Server': 'Jetty(8.0.0.M2)'}
+403
+...}
+```
+
 ---
 
 ## Watch List
