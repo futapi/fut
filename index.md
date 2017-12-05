@@ -26,13 +26,13 @@ fut is a simple Python library for managing Fifa Ultimate Team. The library enab
 
 ---
 
-#### Functionality
+### Functionality
 
 The fut library can perform 28 basic [REST](https://spring.io/understanding/REST) functions on your Fifa Ultimate Team. It also includes 6 properties that provide access to various FUT databases (nations, leagues, teams, stadiums, balls, players, playStyles).
 
 ---
 
-#### The FUT Web App
+### The FUT Web App
 
 The basic layout of the FUT Web App is below. There are 5 primary categories: Squads, Squad Building Challenge, Transfers, Store, and Club. You can perform several actions in each category with the methods available in the fut library, but not all actions in the Web App have yet been mapped out. **Click on a category below** to learn more about the methods currently available in the fut library. 
 
@@ -48,7 +48,7 @@ The basic layout of the FUT Web App is below. There are 5 primary categories: Sq
 
 ---
 
-#### Other FUT databases
+### Other FUT databases
 
 The fut library has the following databases inside of it. Click on one property below to see an example:  
 **players**  
