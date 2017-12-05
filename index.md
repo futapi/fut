@@ -4,7 +4,7 @@ To log-in to the webapp and get your current coin count:
 
 ```python
 >>> import fut
->>> fut = fut.Core('email', 'password', 'secret', 'platform')
+>>> fut = fut.Core(email='email', passwd='password', secret_answer='secret', platform='platform')
 >>> fut.keepalive()
 15594
 ```
