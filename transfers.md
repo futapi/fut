@@ -7,6 +7,8 @@ Below is the current state of functionality within the **Transfers** category. A
 
 The Transfers category contains many functions. We'll go through them in three sections: Search, Transfer List, and Transfer Targets.
 
+---
+
 ## Search
 
 There are two functions in the search category: search() and searchDefinition(). 
