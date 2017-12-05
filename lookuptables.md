@@ -14,7 +14,7 @@ The player info dict is returned by many functions. Below is an example with a h
 </p></details>
 
 <details>
-<summary>Player Info Dict Return Types</summary><p>
+<summary>Player Info Dict Lookup Table</summary><p>
 <!-- alternative placement of p shown above -->
 
 | field             | type    | description                               |
@@ -86,7 +86,7 @@ The transfer info dict is returned by the tradepile and watchlist functions. Bel
 </p></details>
 
 <details>
-<summary>Transfer Info Dict Return Types</summary><p>
+<summary>Transfer Info Dict Lookup Table</summary><p>
 <!-- alternative placement of p shown above -->
 
 | field              | type        | description |
@@ -161,7 +161,7 @@ The trade status dict returns basic info about a tradeId.
 </p></details>
 
 <details>
-<summary>Trade Status Dict Return Types</summary><p>
+<summary>Trade Status Dict Lookup Table</summary><p>
 <!-- alternative placement of p shown above -->
 
 | field              | type        | description |
