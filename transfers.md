@@ -91,6 +91,19 @@ fut.tradepile() returns a list of dictionaries that include the transfer informa
 'tradeState': 'closed'...}]
 ``` 
 
+### fut.tradeStatus(tradeId)
+
+fut.tradeStatus() takes one argument (tradeId) and returns a list containing a condensed dictionary for each tradeId. [The returned dictionary is linked here.](https://github.com/TrevorMcCormick/futmarket/blob/master/lookuptables.md#trade-status-dict)
+
+*Example*: 
+```python
+>>> fut.tradeStatus(16575379694)
+[{'tradeId': 16575379694, 
+'buyNowPrice': 1800, 
+'tradeState': 'closed', 
+...}]
+```
+
 ### Watch List
 
 ### fut.watchlist()
