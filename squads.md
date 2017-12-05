@@ -6,6 +6,8 @@ One method exists to return the players on your active squad, without managers o
 
 <img src="https://i.imgur.com/UcEzzTd.png" alt="Squads" style="height: 100px;"/>
 
+---
+
 ### fut.squad()
 > arguments: (self, squad_id=0, persona_id=None)  
 
