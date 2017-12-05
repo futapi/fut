@@ -109,7 +109,7 @@ fut.tradeStatus() takes one argument (tradeId) and returns a list containing a c
 
 ### fut.sendToTradepile(item_id, safe=True)
 
-fut.sendToTradepile takes one argument (item_id) and has an optional argument (safe) that checks the length of your tradepile to make sure you have room to store another item. The item_id argument is the 'id' field in [player info dictionaries.](https://github.com/TrevorMcCormick/futmarket/blob/master/lookuptables.md#player-info-dict) A successful send will return `True`. An unsuccessful send will return `False`if you do not own the item you're trying to send to the tradepile, or `403` if the item you're trying to send is untradeable. 
+fut.sendToTradepile() takes one argument (item_id) and has an optional argument (safe) that checks the length of your tradepile to make sure you have room to store another item. The item_id argument is the `id` field in [player info dictionaries.](https://github.com/TrevorMcCormick/futmarket/blob/master/lookuptables.md#player-info-dict) A successful send will return `True`. An unsuccessful send will return `False`if you do not own the item you're trying to send to the tradepile, or `403` if the item you're trying to send is untradeable. 
 
 *Examples*: 
 ```python
@@ -125,6 +125,27 @@ False
 >> fut.sendToTradepile(118360247419)
 {'Access-Control-Expose-Headers': 'Retry-After', 'Content-Length': '20', 'X-UnzippedLength': '0', 'Content-Encoding': 'gzip', 'Server': 'Jetty(8.0.0.M2)'}
 403
+...}
+```
+
+### fut.tradepileDelete(trade_id)
+
+fut.tradepileDelete() takes one argument (item_id). The item_id argument is the `id` field in [player info dictionaries.](https://github.com/TrevorMcCormick/futmarket/blob/master/lookuptables.md#player-info-dict) A successful delete will return `True`. An unsuccessful delete will return `fut.exceptions.Conflict`if the item you're trying to delete is in an active tradestate. You will receive a `410` error if you do not own the item you're trying to delete. 
+
+*Examples*: 
+```python
+>>> # Card in the tradepile that is not active
+>>> fut.tradepileDelete(16575379694)
+True
+
+>>> # Card in the tradepile that is active.
+>>> fut.tradepileDelete(16705837956)
+fut.exceptions.Conflict
+
+>> # Card I don't own
+>> fut.tradepileDelete(1)
+{'Content-Length': '20', 'X-UnzippedLength': '0', 'Content-Encoding': 'gzip', 'Access-Control-Expose-Headers': 'Retry-After', 'Server': 'Jetty(8.0.0.M2)'}
+410
 ...}
 ```
 
