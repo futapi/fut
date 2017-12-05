@@ -94,9 +94,9 @@ fut.tradepile() returns a list of dictionaries that include the transfer informa
 'tradeState': 'closed'...}]
 ``` 
 
-### fut.tradeStatus(tradeId)
+### fut.tradeStatus()
 
-fut.tradeStatus() takes one argument (tradeId) and returns a list containing a condensed dictionary for each tradeId. [The returned dictionary is linked here.](https://github.com/TrevorMcCormick/futmarket/blob/master/lookuptables.md#trade-status-dict)
+fut.tradeStatus() takes one argument (trade_id) and returns a list containing a condensed dictionary for each tradeId. [The returned dictionary is linked here.](https://github.com/TrevorMcCormick/futmarket/blob/master/lookuptables.md#trade-status-dict)
 
 *Example*: 
 ```python
@@ -107,7 +107,7 @@ fut.tradeStatus() takes one argument (tradeId) and returns a list containing a c
 ...}]
 ```
 
-### fut.sendToTradepile(item_id, safe=True)
+### fut.sendToTradepile()
 
 fut.sendToTradepile() takes one argument (item_id) and has an optional argument (safe) that checks the length of your tradepile to make sure you have room to store another item. The item_id argument is the `id` field in [player info dictionaries.](https://github.com/TrevorMcCormick/futmarket/blob/master/lookuptables.md#player-info-dict) A successful send will return `True`. An unsuccessful send will return `False`if you do not own the item you're trying to send to the tradepile, or `403` if the item you're trying to send is untradeable. 
 
@@ -128,7 +128,7 @@ False
 ...}
 ```
 
-### fut.tradepileDelete(trade_id)
+### fut.tradepileDelete()
 
 fut.tradepileDelete() takes one argument (item_id). The item_id argument is the `id` field in [player info dictionaries.](https://github.com/TrevorMcCormick/futmarket/blob/master/lookuptables.md#player-info-dict) A successful delete will return `True`. An unsuccessful delete will return `fut.exceptions.Conflict`if the item you're trying to delete is in an active tradestate. You will receive a `410` error if you do not own the item you're trying to delete. 
 
