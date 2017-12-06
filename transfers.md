@@ -149,6 +149,25 @@ fut.exceptions.Conflict
 ...}
 ```
 
+### fut.tradepileClear()
+
+fut.tradepileClear() takes zero arguments. It clears the `sold` items from your tradepile. It does not return anything for a successful clear, but it does return a `410` error if you don't have any `sold` items to clear from your tradepile.
+
+```python
+>>> # Check number of cards in tradepile
+>>> len(fut.tradepile())
+3
+>>> fut.tradepileClear()
+>>> len(fut.tradepile())
+2
+
+>>> # Already cleared sold cards. Trying to clear again...
+>>> fut.tradepileClear()
+{'Content-Length': '20', 'X-UnzippedLength': '0', 'Content-Encoding': 'gzip', 'Access-Control-Expose-Headers': 'Retry-After', 'Server': 'Jetty(8.0.0.M2)'}
+410
+```
+
+
 ---
 
 ## Watch List
