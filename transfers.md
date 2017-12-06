@@ -167,6 +167,14 @@ fut.tradepileClear() takes zero arguments. It clears the `sold` items from your 
 410
 ```
 
+### fut.relist()
+
+fut.relist() takes zero arguments. It relists the cards in your tradepile with the previous transfer parameters (`startingBid`, `buyNow`, `duration`). The function returns a dictionary with one key: `tradeIdList`. This contains a list of the tradeIds that were succesfully relisted.
+
+```python
+>>> fut.relist()
+{'tradeIdList': [16575379694]}
+```
 
 ---
 
