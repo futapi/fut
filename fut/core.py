@@ -14,6 +14,8 @@ import random
 import time
 import json
 import pyotp
+from python_anticaptcha import AnticaptchaClient, FunCaptchaTask, Proxy
+from python_anticaptcha.exceptions import AnticatpchaException
 # from datetime import datetime, timedelta
 try:
     from cookielib import LWPCookieJar
@@ -29,7 +31,7 @@ except NameError:
 from .pin import Pin
 from .config import headers, headers_and, headers_ios, cookies_file, token_file, timeout, delay
 from .log import logger
-from .urls import client_id, auth_url, card_info_url, messages_url
+from .urls import client_id, auth_url, card_info_url, messages_url, fun_captcha_public_key
 from .exceptions import (FutError, ExpiredSession, InternalServerError,
                          UnknownError, PermissionDenied, Captcha,
                          Conflict, MaxSessions, MultipleSession,
@@ -163,13 +165,12 @@ def itemParse(item_data, full=True):
     return return_data
 
 
-'''  # different urls (platforms)
-def cardInfo(resource_id):
-    """Return card info."""
-    # TODO: add referer to headers (futweb)
-    url = '{0}{1}.json'.format(self.urls['card_info'], baseId(resource_id))
-    return requests.get(url, timeout=timeout).json()
-'''
+# different urls (platforms)
+# def cardInfo(resource_id):
+#     """Return card info."""
+#     # TODO: add referer to headers (futweb)
+#     url = '{0}{1}.json'.format(self.urls['card_info'], baseId(resource_id))
+#     return requests.get(url, timeout=timeout).json()
 
 
 # TODO: optimize messages (parse whole messages once!), xml parser might be faster
@@ -278,7 +279,7 @@ def playstyles(year=2018, timeout=timeout):
 
 
 class Core(object):
-    def __init__(self, email, passwd, secret_answer, platform='pc', code=None, totp=None, sms=False, emulate=None, debug=False, cookies=cookies_file, token=token_file, timeout=timeout, delay=delay, proxies=None):
+    def __init__(self, email, passwd, secret_answer, platform='pc', code=None, totp=None, sms=False, emulate=None, debug=False, cookies=cookies_file, token=token_file, timeout=timeout, delay=delay, proxies=None, anticaptcha_client_key=None):
         self.credits = 0
         self.duplicates = []
         self.cookies_file = cookies  # TODO: map self.cookies to requests.Session.cookies?
@@ -288,14 +289,16 @@ class Core(object):
         self.request_time = 0
         # db
         self._players = None
+        self._playstyles = None
         self._nations = None
+        self._stadiums = None
         self._leagues = {}
         self._teams = {}
         self._usermassinfo = {}
         logger(save=debug)  # init root logger
         self.logger = logger(__name__)
         # TODO: validate fut request response (200 OK)
-        self.__launch__(email, passwd, secret_answer, platform=platform, code=code, totp=totp, sms=sms, emulate=emulate, proxies=proxies)
+        self.__launch__(email, passwd, secret_answer, platform=platform, code=code, totp=totp, sms=sms, emulate=emulate, proxies=proxies, anticaptcha_client_key=anticaptcha_client_key)
 
     def __login__(self, email, passwd, code=None, totp=None, sms=False):
         """Log in - needed only if we don't have access token or it's expired."""
@@ -335,13 +338,12 @@ class Core(object):
             if 'var redirectUri' in rc.text:
                 rc = self.r.get(rc.url, params={'_eventId': 'end'})  # initref param was missing here
 
-            '''  # pops out only on first launch
-            if 'FIFA Ultimate Team</strong> needs to update your Account to help protect your gameplay experience.' in rc:  # request email/sms code
-                self.r.headers['Referer'] = rc.url  # s2
-                rc = self.r.post(rc.url.replace('s2', 's3'), {'_eventId': 'submit'}, timeout=self.timeout).content
-                self.r.headers['Referer'] = rc.url  # s3
-                rc = self.r.post(rc.url, {'twofactorType': 'EMAIL', 'country': 0, 'phoneNumber': '', '_eventId': 'submit'}, timeout=self.timeout)
-            '''
+            # pops out only on first launch
+            # if 'FIFA Ultimate Team</strong> needs to update your Account to help protect your gameplay experience.' in rc:  # request email/sms code
+            #     self.r.headers['Referer'] = rc.url  # s2
+            #     rc = self.r.post(rc.url.replace('s2', 's3'), {'_eventId': 'submit'}, timeout=self.timeout).content
+            #     self.r.headers['Referer'] = rc.url  # s3
+            #     rc = self.r.post(rc.url, {'twofactorType': 'EMAIL', 'country': 0, 'phoneNumber': '', '_eventId': 'submit'}, timeout=self.timeout)
 
             # click button to send code
             if 'Login Verification' in rc.text:  # click button to get code sent
@@ -379,7 +381,7 @@ class Core(object):
 
             self.saveSession()
 
-    def __launch__(self, email, passwd, secret_answer, platform='pc', code=None, totp=None, sms=False, emulate=None, proxies=None):
+    def __launch__(self, email, passwd, secret_answer, platform='pc', code=None, totp=None, sms=False, emulate=None, proxies=None, anticaptcha_client_key=None):
         """Launch futweb
 
         :params email: Email.
@@ -488,7 +490,7 @@ class Core(object):
         if rc.get('error') == 'invalid_access_token':
             print('invalid token')
             self.__login__(email=email, passwd=passwd, totp=totp, sms=sms)
-            return self.__launch__(email=email, passwd=passwd, secret_answer=secret_answer, platform=platform, code=code, totp=totp, sms=sms, emulate=emulate, proxies=proxies)
+            return self.__launch__(email=email, passwd=passwd, secret_answer=secret_answer, platform=platform, code=code, totp=totp, sms=sms, emulate=emulate, proxies=proxies, anticaptcha_client_key=anticaptcha_client_key)
         self.nucleus_id = rc['pid']['externalRefValue']  # or pidId
         self.dob = rc['pid']['dob']
         # tos_version = rc['tosVersion']
@@ -577,8 +579,45 @@ class Core(object):
         rc = self.r.get('https://%s/ut/game/fifa18/phishing/question' % self.fut_host, params={'_': self._}, timeout=self.timeout).json()
         self._ += 1
         if rc.get('code') == '458':
-            raise Captcha()
-        elif rc.get('string') != 'Already answered question':
+            if anticaptcha_client_key:
+                if not proxies:
+                    raise FutError('FunCaptcha requires a proxy. Add proxies param.')
+                self.logger.debug('Solving FunCaptcha...')
+                anticaptcha = AnticaptchaClient(anticaptcha_client_key)
+                attempt = 0
+                while True:
+                    attempt += 1
+                    if attempt > 10:
+                        raise FutError('Can\'t send captcha.')
+                    try:
+                        self.logger.debug('Attempt #{}'.format(attempt))
+                        task = FunCaptchaTask(
+                            'https://www.easports.com',
+                            fun_captcha_public_key,
+                            proxy=Proxy.parse_url(proxies.get('http')),
+                            user_agent=self.r.headers['User-Agent']
+                        )
+                        job = anticaptcha.createTask(task)
+                        job.join()
+                        fun_captcha_token = job.get_token_response()
+                        self.logger.debug('FunCaptcha solved: {}'.format(fun_captcha_token))
+                        self.__request__('POST', 'captcha/fun/validate', data=json.dumps({
+                            'funCaptchaToken': fun_captcha_token,
+                        }))
+                        rc = self.r.get('https://%s/ut/game/fifa18/phishing/question' % self.fut_host, params={'_': self._}, timeout=self.timeout).json()
+                        self._ += 1
+                        break
+                    except AnticatpchaException as e:
+                        if e.error_code in ['ERROR_PROXY_CONNECT_REFUSED', 'ERROR_PROXY_CONNECT_TIMEOUT', 'ERROR_PROXY_READ_TIMEOUT', 'ERROR_PROXY_BANNED']:
+                            self.logger.exception('AnticatpchaException ' + e.error_code)
+                            time.sleep(10)
+                            continue
+                        else:
+                            raise
+
+            else:
+                raise Captcha(code=rc.get('code'), string=rc.get('string'), reason=rc.get('reason'))
+        if rc.get('string') != 'Already answered question':
             params = {'answer': secret_answer_hash}
             rc = self.r.post('https://%s/ut/game/fifa18/phishing/validate' % self.fut_host, params=params, timeout=self.timeout).json()
             if rc['string'] != 'OK':  # we've got an error
@@ -640,13 +679,15 @@ class Core(object):
 #        return self.r.get(self.urls['shards'], params={'_': int(time.time()*1000)}, timeout=self.timeout).json()
 #        # self.r.headers['X-UT-Route'] = self.urls['fut_pc']
 
-    def __request__(self, method, url, data={}, params={}, fast=False):
+    def __request__(self, method, url, data=None, params=None, fast=False):
         """Prepare headers and sends request. Returns response as a json object.
 
         :params method: Rest method.
         :params url: Url.
         """
         # TODO: update credtis?
+        data = data or {}
+        params = params or {}
         url = 'https://%s/ut/game/fifa18/%s' % (self.fut_host, url)
 
         self.logger.debug("request: {0} data={1};  params={2}".format(url, data, params))
@@ -860,10 +901,11 @@ class Core(object):
 
         rc = self.__request__(method, url, params=params)
 
-        try:
-            return [itemParse({'itemData': i}) for i in rc['itemData']]
-        except:
-            raise UnknownError('Invalid definition response')
+        # try:
+        #     return [itemParse({'itemData': i}) for i in rc['itemData']]
+        # except:
+        #     raise UnknownError('Invalid definition response')
+        return [itemParse({'itemData': i}) for i in rc['itemData']]
 
     def search(self, ctype, level=None, category=None, assetId=None, defId=None,
                min_price=None, max_price=None, min_buy=None, max_buy=None,
@@ -914,21 +956,36 @@ class Core(object):
             'num': page_size,
             'type': ctype,  # "type" namespace is reserved in python
         }
-        if level:       params['lev'] = level
-        if category:    params['cat'] = category
-        if assetId:     params['maskedDefId'] = assetId
-        if defId:       params['definitionId'] = defId
-        if min_price:   params['micr'] = min_price
-        if max_price:   params['macr'] = max_price
-        if min_buy:     params['minb'] = min_buy
-        if max_buy:     params['maxb'] = max_buy
-        if league:      params['leag'] = league
-        if club:        params['team'] = club
-        if position:    params['pos'] = position
-        if zone:        params['zone'] = zone
-        if nationality: params['nat'] = nationality
-        if rare:        params['rare'] = 'SP'
-        if playStyle:   params['playStyle'] = playStyle
+        if level:
+            params['lev'] = level
+        if category:
+            params['cat'] = category
+        if assetId:
+            params['maskedDefId'] = assetId
+        if defId:
+            params['definitionId'] = defId
+        if min_price:
+            params['micr'] = min_price
+        if max_price:
+            params['macr'] = max_price
+        if min_buy:
+            params['minb'] = min_buy
+        if max_buy:
+            params['maxb'] = max_buy
+        if league:
+            params['leag'] = league
+        if club:
+            params['team'] = club
+        if position:
+            params['pos'] = position
+        if zone:
+            params['zone'] = zone
+        if nationality:
+            params['nat'] = nationality
+        if rare:
+            params['rare'] = 'SP'
+        if playStyle:
+            params['playStyle'] = playStyle
 
         rc = self.__request__(method, url, params=params, fast=fast)
 
@@ -942,6 +999,18 @@ class Core(object):
     def searchAuctions(self, *args, **kwargs):
         """Alias for search method, just to keep compatibility."""
         return self.search(*args, **kwargs)
+
+    # def searchAll(self, *args, **kwargs):
+    #     """Generator for search method. (Temporary until search won't be a genetor)"""
+    #     n = 0
+    #     while True:
+    #         results = self.search(start=n, *args, **kwargs)
+    #         # print(len(results))
+    #         if len(results) < 16:
+    #             return results
+    #         else:
+    #             n += 16
+    #             yield results
 
     def bid(self, trade_id, bid, fast=False):
         """Make a bid.
@@ -968,14 +1037,53 @@ class Core(object):
         else:
             return False
 
-    def club(self, sort='desc', ctype='player', defId='', start=0, count=91, level=None):
-        """Return items in your club, excluding consumables."""
+    def club(self, sort='desc', ctype='player', defId='', start=0, count=91,
+             level=None, category=None, assetId=None, league=None, club=None,
+             position=None, zone=None, nationality=None, rare=False, playStyle=None):
+        """Return items in your club, excluding consumables.
+
+        :param ctype: [development / ? / ?] Card type.
+        :param level: (optional) [?/?/gold] Card level.
+        :param category: (optional) [fitness/?/?] Card category.
+        :param assetId: (optional) Asset id.
+        :param defId: (optional) Definition id.
+        :param min_price: (optional) Minimal price.
+        :param max_price: (optional) Maximum price.
+        :param min_buy: (optional) Minimal buy now price.
+        :param max_buy: (optional) Maximum buy now price.
+        :param league: (optional) League id.
+        :param club: (optional) Club id.
+        :param position: (optional) Position.
+        :param nationality: (optional) Nation id.
+        :param rare: (optional) [boolean] True for searching special cards.
+        :param playStyle: (optional) Play style.
+        :param start: (optional) Start page sent to server so it supposed to be 12/15, 24/30 etc. (default platform page_size*n)
+        :param page_size: (optional) Page size (items per page)
+        """
         method = 'GET'
         url = 'club'
 
         params = {'sort': sort, 'type': ctype, 'defId': defId, 'start': start, 'count': count}
         if level:
-            params['level'] = level
+            params['lev'] = level
+        if category:
+            params['cat'] = category
+        if assetId:
+            params['maskedDefId'] = assetId
+        if league:
+            params['leag'] = league
+        if club:
+            params['team'] = club
+        if position:
+            params['pos'] = position
+        if zone:
+            params['zone'] = zone
+        if nationality:
+            params['nat'] = nationality
+        if rare:
+            params['rare'] = 'SP'
+        if playStyle:
+            params['playStyle'] = playStyle
         rc = self.__request__(method, url, params=params)
 
         # pinEvent

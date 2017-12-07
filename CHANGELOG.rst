@@ -4,6 +4,14 @@ Changelog
 ---------
 
 
+0.3.8 (2017-12-07)
+^^^^^^^^^^^^^^^^^^
+
+* add anti-captcha.com support (all credits go to kirov #353)
+* add futbinPrice, futheadPrice
+* add missing params to club method (#351)
+* tidt & taxv moved to compiled_2.js
+
 0.3.7 (2017-12-01)
 ^^^^^^^^^^^^^^^^^^
 
