@@ -9,7 +9,7 @@ This module implements the fut's additional methods.
 """
 
 import requests
-from json import JSONDecodeError
+from simplejson.scanner import JSONDecodeError
 
 
 def futheadPrice(item_id, year=18, platform=None):

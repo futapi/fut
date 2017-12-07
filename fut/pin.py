@@ -29,14 +29,15 @@ class Pin(object):
         self.platform = platform
         rc = requests.get('https://www.easports.com/fifa/ultimate-team/web-app/js/compiled_1.js').text
         self.sku = sku or re.search('enums.SKU.FUT="(.+?)"', rc).group(1)
-        self.taxv = re.search('PinManager.TAXONOMY_VERSION=([0-9\.]+)', rc).group(1)
-        self.tidt = re.search('PinManager.TITLE_ID_TYPE="(.+?)"', rc).group(1)
         self.rel = re.search('rel:"(.+?)"', rc).group(1)
         self.gid = re.search('gid:([0-9]+?)', rc).group(1)
         self.plat = re.search('plat:"(.+?)"', rc).group(1)
         self.et = re.search('et:"(.+?)"', rc).group(1)
         self.pidt = re.search('pidt:"(.+?)"', rc).group(1)
         self.v = re.search('APP_VERSION="([0-9\.]+)"', rc).group(1)
+        rc = requests.get('https://www.easports.com/fifa/ultimate-team/web-app/js/compiled_2.js').text
+        self.taxv = re.search('PinManager.TAXONOMY_VERSION=([0-9\.]+)', rc).group(1)
+        self.tidt = re.search(',PinManager.TITLE_ID_TYPE="(.+?)"', rc).group(1)
 
         self.r = requests.Session()
         self.r.headers = headers
