@@ -15,6 +15,7 @@ import time
 import json
 import pyotp
 from python_anticaptcha import AnticaptchaClient, FunCaptchaTask, Proxy
+from python_anticaptcha.exceptions import AnticatpchaException
 # from datetime import datetime, timedelta
 try:
     from cookielib import LWPCookieJar
@@ -583,23 +584,40 @@ class Core(object):
                     raise FutError('FunCaptcha requires a proxy. Add proxies param.')
                 self.logger.debug('Solving FunCaptcha...')
                 anticaptcha = AnticaptchaClient(anticaptcha_client_key)
-                task = FunCaptchaTask(
-                    'https://www.easports.com',
-                    fun_captcha_public_key,
-                    proxy=Proxy.parse_url(proxies.get('http')),
-                    user_agent=self.r.headers['User-Agent']
-                )
-                job = anticaptcha.createTask(task)
-                job.join()
-                fun_captcha_token = job.get_token_response()
-                self.logger.debug('FunCaptcha solved: {}'.format(fun_captcha_token))
-                self.__request__('POST', 'captcha/fun/validate', data=json.dumps({
-                    'funCaptchaToken': fun_captcha_token,
-                }))
+                attempt = 0
+                while True:
+                    attempt += 1
+                    if attempt > 10:
+                        raise FutError('Can\'t send captcha.')
+                    try:
+                        self.logger.debug('Attempt #{}'.format(attempt))
+                        task = FunCaptchaTask(
+                            'https://www.easports.com',
+                            fun_captcha_public_key,
+                            proxy=Proxy.parse_url(proxies.get('http')),
+                            user_agent=self.r.headers['User-Agent']
+                        )
+                        job = anticaptcha.createTask(task)
+                        job.join()
+                        fun_captcha_token = job.get_token_response()
+                        self.logger.debug('FunCaptcha solved: {}'.format(fun_captcha_token))
+                        self.__request__('POST', 'captcha/fun/validate', data=json.dumps({
+                            'funCaptchaToken': fun_captcha_token,
+                        }))
+                        rc = self.r.get('https://%s/ut/game/fifa18/phishing/question' % self.fut_host, params={'_': self._}, timeout=self.timeout).json()
+                        self._ += 1
+                        break
+                    except AnticatpchaException as e:
+                        if e.error_code in ['ERROR_PROXY_CONNECT_REFUSED', 'ERROR_PROXY_CONNECT_TIMEOUT', 'ERROR_PROXY_READ_TIMEOUT', 'ERROR_PROXY_BANNED']:
+                            self.logger.exception('AnticatpchaException ' + e.error_code)
+                            time.sleep(10)
+                            continue
+                        else:
+                            raise
 
             else:
                 raise Captcha(code=rc.get('code'), string=rc.get('string'), reason=rc.get('reason'))
-        elif rc.get('string') != 'Already answered question':
+        if rc.get('string') != 'Already answered question':
             params = {'answer': secret_answer_hash}
             rc = self.r.post('https://%s/ut/game/fifa18/phishing/validate' % self.fut_host, params=params, timeout=self.timeout).json()
             if rc['string'] != 'OK':  # we've got an error
