@@ -192,3 +192,37 @@ fut.watchlist() returns a list of dictionaries that include the transfer informa
 'tradeState': 'active'...
 ``` 
 
+### fut.sendToWatchlist()
+
+fut.sendToWatchlist() takes one argument (trade_id). The trade_id argument is the `tradeId` field in the [transfer info dictionary.](https://github.com/TrevorMcCormick/futmarket/blob/master/lookuptables.md#transfer-info-dict) A successful send will return an empty dictionary (*needs to be fixed to return something*). An unsuccessful send will return `fut.exceptions.Conflict`if the card has expired from the transfer market, or `fut.exceptions.PermissionDenied: 461` if the `id` you've provided is not valid. 
+
+*Examples*: 
+```python
+>>> # Active card on transfer market
+>>> fut.sendToTradepile(117860780888)
+{}
+
+>> # Card that has expired or closed from transfer market
+>> fut.sendToTradepile(118360247419)
+fut.exceptions.Conflict
+
+>>> # Ineligible card
+>>> fut.sendToWatchlist(2)
+fut.exceptions.PermissionDenied: 461
+```
+
+### fut.watchlistDelete()
+
+fut.watchlistDelete() takes one argument (trade_id). The trade_id argument is the `tradeid` field in the [transfer info dictionary.](https://github.com/TrevorMcCormick/futmarket/blob/master/lookuptables.md#transfer-info-dict) A successful delete will return `True`. An unsuccessful delete will still return `True` (*needs to be updated*).
+
+*Examples*: 
+```python
+>>> # Card in my watchlist
+>>> fut.watchlistDelete(16746617493)
+True
+
+>>> # Card not in my watchlist
+>>> fut.tradepileDelete(1)
+True
+
+```
