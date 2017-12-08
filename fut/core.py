@@ -910,7 +910,7 @@ class Core(object):
     def search(self, ctype, level=None, category=None, assetId=None, defId=None,
                min_price=None, max_price=None, min_buy=None, max_buy=None,
                league=None, club=None, position=None, zone=None, nationality=None,
-               rare=False, playStyle=None, start=0, page_size=16,
+               rare=False, playStyle=None, start=0, page_size=36,
                fast=False):
         """Prepare search request, send and return parsed data as a dict.
 
