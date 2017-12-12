@@ -230,11 +230,11 @@ fut.sendToWatchlist() takes one argument (trade_id). The trade_id argument is th
 *Examples*: 
 ```python
 >>> # Active card on transfer market
->>> fut.sendToTradepile(trade_id=117860780888)
+>>> fut.sendToWatchlist(trade_id=117860780888)
 {}
 
 >> # Card that has expired or closed from transfer market
->> fut.sendToTradepile(trade_id=118360247419)
+>> fut.sendToWatchlist(trade_id=118360247419)
 fut.exceptions.Conflict
 
 >>> # Ineligible card
