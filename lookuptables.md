@@ -183,3 +183,56 @@ The trade status dict returns basic info about a tradeId.
 | discardValue       | int         | NA          |
 
   </p></details>
+
+### Rare Cards
+There are currently 41 confirmed types of rare cards.
+
+<details>
+<summary>Rare Card Lookup Table</summary><p>
+<!-- alternative placement of p shown above -->
+
+| Description  | ID |
+|--------------|----|
+| NONE         | 0  |
+| RARE         | 1  |
+| LOCK         | 2  |
+| TOTW         | 3  |
+| PURPLE       | 4  |
+| TOTY         | 5  |
+| RB           | 6  |
+| GREEN        | 7  |
+| ORANGE       | 8  |
+| PINK         | 9  |
+| TEAL         | 10 |
+| TOTS         | 11 |
+| LEGEND       | 12 |
+| WC           | 13 |
+| UNICEF       | 14 |
+| OLDIMOTM     | 15 |
+| FUTTY        | 16 |
+| STORYMODE    | 17 |
+| CHAMPION     | 18 |
+| CMOTM        | 19 |
+| IMOTM        | 20 |
+| OTW          | 21 |
+| HALLOWEEN    | 22 |
+| MOVEMBER     | 23 |
+| SBC          | 24 |
+| SBCP         | 25 |
+| PROMOA       | 26 |
+| PROMOB       | 27 |
+| AWARD        | 28 |
+| BDAY         | 30 |
+| UNITED       | 31 |
+| FUTMAS       | 32 |
+| RTRC         | 33 |
+| PTGS         | 34 |
+| FOF          | 35 |
+| MARQUEE      | 36 |
+| CHAMPIONSHIP | 37 |
+| EUMOTM       | 38 |
+| TOTT         | 39 |
+| RRC          | 40 |
+| RRR          | 41 |
+
+  </p></details>
