@@ -36,6 +36,234 @@ The player IDs are found through the property fut.players. [A full table is avai
 | 273 |  'GK BASIC'   |
 
   </p></details>
+  
+### Nation IDs
+
+<details>
+<summary>Nation ID Lookup Table</summary><p>
+<!-- alternative placement of p shown above -->
+
+
+| ID                            | Nation                    |
+|-------------------------------|---------------------------|
+| 1                             |  'Albania',               |
+| 2                             |  'Andorra',               |
+| 3                             |  'Armenia',               |
+| 4                             |  'Austria',               |
+| 5                             |  'Azerbaijan',            |
+| 6                             |  'Belarus',               |
+| 7                             |  'Belgium',               |
+| 8                             |  'Bosnia Herzegovina',    |
+| 9                             |  'Bulgaria',              |
+| 10                            |  'Croatia',               |
+| 11                            |  'Cyprus',                |
+| 12                            |  'Czech Republic',        |
+| 13                            |  'Denmark',               |
+| 14                            |  'England',               |
+| 15                            |  'Montenegro',            |
+| 16                            |  'Faroe Islands',         |
+| 17                            |  'Finland',               |
+| 18                            |  'France',                |
+| 19                            |  'FYR Macedonia',         |
+| 20                            |  'Georgia',               |
+| 21                            |  'Germany',               |
+| 22                            |  'Greece',                |
+| 23                            |  'Hungary',               |
+| 24                            |  'Iceland',               |
+| 25                            |  'Republic of Ireland',   |
+| 26                            |  'Israel',                |
+| 27                            |  'Italy',                 |
+| 28                            |  'Latvia',                |
+| 29                            |  'Liechtenstein',         |
+| 30                            |  'Lithuania',             |
+| 31                            |  'Luxemburg',             |
+| 32                            |  'Malta',                 |
+| 33                            |  'Moldova',               |
+| 34                            |  'Netherlands',           |
+| 35                            |  'Northern Ireland',      |
+| 36                            |  'Norway',                |
+| 37                            |  'Poland',                |
+| 38                            |  'Portugal',              |
+| 39                            |  'Romania',               |
+| 40                            |  'Russia',                |
+| 41                            |  'San Marino',            |
+| 42                            |  'Scotland',              |
+| 43                            |  'Slovakia',              |
+| 44                            |  'Slovenia',              |
+| 45                            |  'Spain',                 |
+| 46                            |  'Sweden',                |
+| 47                            |  'Switzerland',           |
+| 48                            |  'Turkey',                |
+| 49                            |  'Ukraine',               |
+| 50                            |  'Wales',                 |
+| 51                            |  'Serbia',                |
+| 52                            |  'Argentina',             |
+| 53                            |  'Bolivia',               |
+| 54                            |  'Brazil',                |
+| 55                            |  'Chile',                 |
+| 56                            |  'Colombia',              |
+| 57                            |  'Ecuador',               |
+| 58                            |  'Paraguay',              |
+| 59                            |  'Peru',                  |
+| 60                            |  'Uruguay',               |
+| 61                            |  'Venezuela',             |
+| 62                            |  'Anguilla',              |
+| 63                            |  'Antigua & Barbuda',     |
+| 64                            |  'Aruba',                 |
+| 65                            |  'Bahamas',               |
+| 66                            |  'Barbados',              |
+| 67                            |  'Belize',                |
+| 68                            |  'Bermuda',               |
+| 69                            |  'British Virgin Isles',  |
+| 70                            |  'Canada',                |
+| 71                            |  'Cayman Islands',        |
+| 72                            |  'Costa Rica',            |
+| 73                            |  'Cuba',                  |
+| 74                            |  'Dominica',              |
+| 75                            |  'International',         |
+| 76                            |  'El Salvador',           |
+| 77                            |  'Grenada',               |
+| 78                            |  'Guatemala',             |
+| 79                            |  'Guyana',                |
+| 80                            |  'Haiti',                 |
+| 81                            |  'Honduras',              |
+| 82                            |  'Jamaica',               |
+| 83                            |  'Mexico',                |
+| 84                            |  'Montserrat',            |
+| 85                            |  'Netherlands Antilles',  |
+| 86                            |  'Nicaragua',             |
+| 87                            |  'Panama',                |
+| 88                            |  'Puerto Rico',           |
+| 89                            |  'St Kitts Nevis',        |
+| 90                            |  'St Lucia',              |
+| 91                            |  'St Vincent Grenadine',  |
+| 92                            |  'Suriname',              |
+| 93                            |  'Trinidad & Tobago',     |
+| 94                            |  'Turks & Caicos',        |
+| 95                            |  'United States',         |
+| 96                            |  'US Virgin Islands',     |
+| 97                            |  'Algeria',               |
+| 98                            |  'Angola',                |
+| 99                            |  'Benin',                 |
+| 100                           |  'Botswana',              |
+| 101                           |  'Burkina Faso',          |
+| 102                           |  'Burundi',               |
+| 103                           |  'Cameroon',              |
+| 104                           |  'Cape Verde Islands',    |
+| 105                           |  'CAR',                   |
+| 106                           |  'Chad',                  |
+| 107                           |  'Congo',                 |
+| 108                           |  'Ivory Coast',           |
+| 109                           |  'Djibouti',              |
+| 110                           |  'DR Congo',              |
+| 111                           |  'Egypt',                 |
+| 112                           |  'Equatorial Guinea',     |
+| 113                           |  'Eritrea',               |
+| 114                           |  'Ethiopia',              |
+| 115                           |  'Gabon',                 |
+| 116                           |  'Gambia',                |
+| 117                           |  'Ghana',                 |
+| 118                           |  'Guinea',                |
+| 119                           |  'Guinea Bissau',         |
+| 120                           |  'Kenya',                 |
+| 121                           |  'Lesotho',               |
+| 122                           |  'Liberia',               |
+| 123                           |  'Libya',                 |
+| 124                           |  'Madagascar',            |
+| 125                           |  'Malawi',                |
+| 126                           |  'Mali',                  |
+| 127                           |  'Mauritania',            |
+| 128                           |  'Mauritius',             |
+| 129                           |  'Morocco',               |
+| 130                           |  'Mozambique',            |
+| 131                           |  'Namibia',               |
+| 132                           |  'Niger',                 |
+| 133                           |  'Nigeria',               |
+| 134                           |  'Rwanda',                |
+| 135                           |  'São Tomé & Príncipe',   |
+| 136                           |  'Senegal',               |
+| 137                           |  'Seychelles',            |
+| 138                           |  'Sierra Leone',          |
+| 139                           |  'Somalia',               |
+| 140                           |  'South Africa',          |
+| 141                           |  'Sudan',                 |
+| 142                           |  'Swaziland',             |
+| 143                           |  'Tanzania',              |
+| 144                           |  'Togo',                  |
+| 145                           |  'Tunisia',               |
+| 146                           |  'Uganda',                |
+| 147                           |  'Zambia',                |
+| 148                           |  'Zimbabwe',              |
+| 149                           |  'Afghanistan',           |
+| 150                           |  'Bahrain',               |
+| 151                           |  'Bangladesh',            |
+| 152                           |  'Bhutan',                |
+| 153                           |  'Brunei Darussalam',     |
+| 154                           |  'Cambodia',              |
+| 155                           |  'China PR',              |
+| 156                           |  'Chinese Taipei',        |
+| 157                           |  'Guam',                  |
+| 158                           |  'Hong Kong',             |
+| 159                           |  'India',                 |
+| 160                           |  'Indonesia',             |
+| 161                           |  'Iran',                  |
+| 162                           |  'Iraq',                  |
+| 163                           |  'Japan',                 |
+| 164                           |  'Jordan',                |
+| 165                           |  'Kazakhstan',            |
+| 166                           |  'Korea DPR',             |
+| 167                           |  'Korea Republic',        |
+| 168                           |  'Kuwait',                |
+| 169                           |  'Kyrgyzstan',            |
+| 170                           |  'Laos',                  |
+| 171                           |  'Lebanon',               |
+| 172                           |  'Macau',                 |
+| 173                           |  'Malaysia',              |
+| 174                           |  'Maldives',              |
+| 175                           |  'Mongolia',              |
+| 176                           |  'Myanmar',               |
+| 177                           |  'Nepal',                 |
+| 178                           |  'Oman',                  |
+| 179                           |  'Pakistan',              |
+| 180                           |  'Palestinian Authority', |
+| 181                           |  'Philippines',           |
+| 182                           |  'Qatar',                 |
+| 183                           |  'Saudi Arabia',          |
+| 184                           |  'Singapore',             |
+| 185                           |  'Sri Lanka',             |
+| 186                           |  'Syria',                 |
+| 187                           |  'Tajikistan',            |
+| 188                           |  'Thailand',              |
+| 189                           |  'Turkmenistan',          |
+| 190                           |  'United Arab Emirates',  |
+| 191                           |  'Uzbekistan',            |
+| 192                           |  'Vietnam',               |
+| 193                           |  'Yemen',                 |
+| 194                           |  'American Samoa',        |
+| 195                           |  'Australia',             |
+| 196                           |  'Cook Islands',          |
+| 197                           |  'Fiji',                  |
+| 198                           |  'New Zealand',           |
+| 199                           |  'Papua New Guinea',      |
+| 200                           |  'Samoa',                 |
+| 201                           |  'Solomon Islands',       |
+| 202                           |  'Tahiti',                |
+| 203                           |  'Tonga',                 |
+| 204                           |  'Vanuatu',               |
+| 205                           |  'Gibraltar',             |
+| 206                           |  'Greenland',             |
+| 207                           |  'Dominican Republic',    |
+| 208                           |  'Estonia',               |
+| 209                           |  'Created Players',       |
+| 210                           |  'Free Agents',           |
+| 211                           |  'Rest of World',         |
+| 212                           |  'Timor-Leste',           |
+| 213                           |  'Chinese Taipei',        |
+| 214                           |  'Comoros',               |
+| 215                           |  'New Caledonia',         |
+| 219                           |  'Kosovo'                 |
+
+  </p></details>
  
 ### Player Info Dict  
 The player info dict is returned by many functions. Below is an example with a helpful table of return types.
