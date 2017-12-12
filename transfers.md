@@ -255,5 +255,42 @@ True
 >>> # Card not in my watchlist
 >>> fut.tradepileDelete(1)
 True
+```
+### fut.bid()  
+
+fut.bid() takes three arguments: 
+* `trade_id` (int): the `tradeId` field in [transfer info dictionaries](https://github.com/TrevorMcCormick/futmarket/blob/master/lookuptables.md#transfer-info-dict)
+* `bid` (int): the amount of coins you're willing to bid on the specific item/player (*must be higher than `currentBid` and `startingBid` but there is no maximum value*)
+* `fast` (boolean): (default False) checks tradeStatus of item and your current coint count. this runs about 5x faster in the example for me below.
+
+A successful bid will return True, and this player/item will be available in your watchlist. An unsucessful bid could happen for a couple of reasons: either the transfer listing has expired or someone has outbid you.
+
+```python
+>>> # Successful bid
+>>> fut.sell(trade_id=16894052507, bid=150)
+True
+
+>>> # Unsuccessful bid because I bid less than the minimum amount
+>>> fut.sell(trade_id=16894052507, bid=100)
+False
+
+>>> # Unsuccessful bid because the item expired or someone outbid me
+>>> fut.sell(trade_id=16894049525, bid=200)
+False
+
+>>> # Checking how fast the fast-bid really is
+>>> # fast=True
+>>> start_time = time.time()
+>>> fut.bid(trade_id=16894205969, bid=150, fast=True)
+True
+>>> elapsed_time = time.time() - start_time
+>>> print(elapsed_time)
+0.5593163967132568
+>>> # fast=False
+>>> start_time = time.time()
+>>> fut.bid(trade_id=16894232971, bid=150, fast=False)
+>>> elapsed_time = time.time() - start_time
+>>> print(elapsed_time)
+2.7050693035125732
 
 ```
