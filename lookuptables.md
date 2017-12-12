@@ -1,3 +1,42 @@
+### Player IDs
+The player IDs are found through the property fut.players. [A full table is available at this Google Drive link.](https://docs.google.com/spreadsheets/d/1ufH7aLh6oUh4q_M4bRP-vpbt6YFclrfeNAlkE7z01iU/edit?usp=sharing)
+
+### PlayStyle IDs
+
+<details>
+<summary>PlayStyle ID Lookup Table</summary><p>
+<!-- alternative placement of p shown above -->
+
+
+| ID  | Description   |
+|-----|---------------|
+| 250 | 'BASIC'       |
+| 251 |  'SNIPER'     |
+| 252 |  'FINISHER'   |
+| 253 |  'DEADEYE'    |
+| 254 |  'MARKSMAN'   |
+| 255 |  'HAWK'       |
+| 256 |  'ARTIST'     |
+| 257 |  'ARCHITECT'  |
+| 258 |  'POWERHOUSE' |
+| 259 |  'MAESTRO'    |
+| 260 |  'ENGINE'     |
+| 261 |  'SENTINEL'   |
+| 262 |  'GUARDIAN'   |
+| 263 |  'GLADIATOR'  |
+| 264 |  'BACKBONE'   |
+| 265 |  'ANCHOR'     |
+| 266 |  'HUNTER'     |
+| 267 |  'CATALYST'   |
+| 268 |  'SHADOW'     |
+| 269 |  'WALL'       |
+| 270 |  'SHIELD'     |
+| 271 |  'CAT'        |
+| 272 |  'GLOVE'      |
+| 273 |  'GK BASIC'   |
+
+  </p></details>
+ 
 ### Player Info Dict  
 The player info dict is returned by many functions. Below is an example with a helpful table of return types.
 <details>
