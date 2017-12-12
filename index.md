@@ -67,6 +67,6 @@ The fut library has the following databases inside of it. Click on the link next
 * **stadiums** [Contents](https://github.com/TrevorMcCormick/futmarket/blob/master/lookuptables.md#stadium-ids)  
 
 
-A database for consumables (contracts, healing, fitness, training, position changes, chemistry styles, managers) has not been included in the library, but [a csv file including detailed consumables information by koolaidjones can be found here:](https://github.com/TrevorMcCormick/futmarket/blob/master/cookbook.md#retrieve-non-player-cards).
+A database for consumables (contracts, healing, fitness, training, position changes, chemistry styles, managers) has not been included in the library, but [a cookbook recipe to obtain detailed consumables information (catalogued by koolaidjones) can be found here.](https://github.com/TrevorMcCormick/futmarket/blob/master/cookbook.md#retrieve-non-player-cards).
 
 
