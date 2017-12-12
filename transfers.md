@@ -65,18 +65,18 @@ There are many arguments available to filter your search request:
 
 ### fut.searchDefinition()
 
-fut.searchDefinition() returns a list of dictionaries that include the information for specific varations of player cards by assetId. These are returned in descending order of rating. [A description of the returned dict of player info is linked here.](https://github.com/TrevorMcCormick/futmarket/blob/master/lookuptables.md#player-info-dict)  
+fut.searchDefinition() takes one argument (*it actually takes 3 but you only need one*), `assetId`, and it returns a list of dictionaries that include the information for specific varations of player cards by assetId. [A description of the returned dict of player info is linked here.](https://github.com/TrevorMcCormick/futmarket/blob/master/lookuptables.md#player-info-dict)  
 
 *Example*: 
 ```python
 >>> # Get variations for Mats Hummels
->>> fut.searchDefinition(178603)
+>>> fut.searchDefinition(item_id=178603)
 [{'tradeId': None,
 'buyNowPrice': None,
 'tradeState': None
 ...}]
 ``` 
-These are returned in descending order of rating. Card IDs are typically distinguished by the value of the *rarecard* field. [A table of card IDs are here.](https://github.com/TrevorMcCormick/futmarket/blob/master/lookuptables.md)  
+These are returned in descending order of rating. Card IDs are distinguished by the value of the *rarecard* field. [A table of card IDs are here.](https://github.com/TrevorMcCormick/futmarket/blob/master/lookuptables.md#rare-cards)  
 
 ---
 
@@ -100,7 +100,7 @@ fut.tradeStatus() takes one argument (trade_id) and returns a list containing a 
 
 *Example*: 
 ```python
->>> fut.tradeStatus(16575379694)
+>>> fut.tradeStatus(trade_id=16575379694)
 [{'tradeId': 16575379694, 
 'buyNowPrice': 1800, 
 'tradeState': 'closed', 
@@ -114,15 +114,15 @@ fut.sendToTradepile() takes one argument (item_id) and has an optional argument 
 *Examples*: 
 ```python
 >>> # Card I own where untradeable == False
->>> fut.sendToTradepile(117860780888)
+>>> fut.sendToTradepile(item_id=117860780888)
 True
 
 >>> # Card I don't own
->>> fut.sendToTradepile(1)
+>>> fut.sendToTradepile(item_id=1)
 False
 
 >> # Card I own where untradeable == True
->> fut.sendToTradepile(118360247419)
+>> fut.sendToTradepile(item_id=118360247419)
 {'Access-Control-Expose-Headers': 'Retry-After', 'Content-Length': '20', 'X-UnzippedLength': '0', 'Content-Encoding': 'gzip', 'Server': 'Jetty(8.0.0.M2)'}
 403
 ...}
@@ -135,15 +135,15 @@ fut.tradepileDelete() takes one argument (item_id). The item_id argument is the 
 *Examples*: 
 ```python
 >>> # Card in the tradepile that is not active
->>> fut.tradepileDelete(16575379694)
+>>> fut.tradepileDelete(item_id=16575379694)
 True
 
 >>> # Card in the tradepile that is active.
->>> fut.tradepileDelete(16705837956)
+>>> fut.tradepileDelete(item_id=16705837956)
 fut.exceptions.Conflict
 
 >> # Card I don't own
->> fut.tradepileDelete(1)
+>> fut.tradepileDelete(item_id=1)
 {'Content-Length': '20', 'X-UnzippedLength': '0', 'Content-Encoding': 'gzip', 'Access-Control-Expose-Headers': 'Retry-After', 'Server': 'Jetty(8.0.0.M2)'}
 410
 ...}
@@ -217,7 +217,7 @@ fut.watchlist() returns a list of dictionaries that include the transfer informa
 
 *Example*: 
 ```python
->>> fut.tradepile()
+>>> fut.watchlist()
 [{'tradeId': 16656454826,
 'buyNowPrice': 5900000,
 'tradeState': 'active'...
@@ -230,15 +230,15 @@ fut.sendToWatchlist() takes one argument (trade_id). The trade_id argument is th
 *Examples*: 
 ```python
 >>> # Active card on transfer market
->>> fut.sendToTradepile(117860780888)
+>>> fut.sendToTradepile(trade_id=117860780888)
 {}
 
 >> # Card that has expired or closed from transfer market
->> fut.sendToTradepile(118360247419)
+>> fut.sendToTradepile(trade_id=118360247419)
 fut.exceptions.Conflict
 
 >>> # Ineligible card
->>> fut.sendToWatchlist(2)
+>>> fut.sendToWatchlist(trade_id=2)
 fut.exceptions.PermissionDenied: 461
 ```
 
@@ -293,4 +293,33 @@ True
 >>> print(elapsed_time)
 2.7050693035125732
 
+```
+### fut.unassigned()  
+
+fut.unassigned() takes zero arguments. It provides player or item info for the `unassigned` items in your watchlist. These are typically items for which you paid the `buyNow` price. It returns the [player info dictionary.](https://github.com/TrevorMcCormick/futmarket/blob/master/lookuptables.md#player-info-dict)
+
+```python
+>>> # Unassigned items
+>>> fut.unassigned()
+[{'assetId': 230621,
+  'assists': 0,
+  'attributeList': [{u'index': 0, u'value': 88}
+  ...]}
+ >>> # Nothing unassigned
+ >>> fut.unassigned()
+ []
+```
+
+### fut.sendToClub()
+
+fut.sendToClub() takes one argument, `item_id`. The item_id argument is the `id` field in [player info dictionaries.](https://github.com/TrevorMcCormick/futmarket/blob/master/lookuptables.md#player-info-dict) A successful send will return `True`, and an unsuccessful send will return `False`.
+
+```python
+>>> # Item I own and want to send to my club
+>>> fut.sendToClub(item_id=119293105688)
+True
+
+>>> # Item I do not own
+>>> fut.sendToClub(item_id=2)
+False
 ```
