@@ -264,6 +264,116 @@ The player IDs are found through the property fut.players. [A full table is avai
 | 219                           |  'Kosovo'                 |
 
   </p></details>
+  
+### League IDs
+
+<details>
+<summary>League ID Lookup Table</summary><p>
+<!-- alternative placement of p shown above -->
+
+| ID    | League                                  |
+|-------|-----------------------------------------|
+| 1     |  'Alka Superliga'                       |
+| 4     |  'Belgium Pro League'                   |
+| 7     |  'Liga do Brasil'                       |
+| 10    |  'Eredivisie'                           |
+| 13    |  'Premier League'                       |
+| 14    |  'EFL Championship'                     |
+| 16    |  'Ligue 1 Conforama'                    |
+| 17    |  'Domino’s Ligue 2'                     |
+| 19    |  'Bundesliga'                           |
+| 20    |  'Bundesliga 2'                         |
+| 31    |  'Calcio A'                             |
+| 32    |  'Calcio B'                             |
+| 39    |  'Major League Soccer'                  |
+| 41    |  'Eliteserien'                          |
+| 50    |  'Scottish Premiership'                 |
+| 51    |  'Scotland League'                      |
+| 53    |  'LaLiga Santander'                     |
+| 54    |  'LaLiga 1 I 2 I 3'                     |
+| 56    |  'Allsvenskan'                          |
+| 57    |  'Colombia Apertura'                    |
+| 58    |  'Colombia Clausura'                    |
+| 60    |  'EFL League One'                       |
+| 61    |  'EFL League Two'                       |
+| 63    |  'Hellas Liga'                          |
+| 65    |  'SSE Airtricity League'                |
+| 66    |  'Ekstraklasa'                          |
+| 67    |  'Russian Football Premier League'      |
+| 68    |  'Süper Lig'                            |
+| 76    |  'Rest of World'                        |
+| 78    |  "Men's National"                       |
+| 80    |  'Österreichische   Fußball-Bundesliga' |
+| 83    |  'K LEAGUE Classic'                     |
+| 84    |  'Mexican Clausura'                     |
+| 85    |  'Mexican Apertura'                     |
+| 152   |  'Torneo de Primera'                    |
+| 153   |  'Torneo de Primera'                    |
+| 156   |  'Chile Apertura'                       |
+| 157   |  'Chile Clausura'                       |
+| 189   |  'Raiffeisen Super League'              |
+| 308   |  'Liga NOS'                             |
+| 319   |  'Česká Liga'                           |
+| 322   |  'Finnliiga'                            |
+| 332   |  'Ukrayina Liha'                        |
+| 335   |  'Campeonato Scotiabank'                |
+| 336   |  'Liga Dimayor'                         |
+| 341   |  'LIGA Bancomer MX'                     |
+| 347   |  'South African FL'                     |
+| 349   |  'Meiji Yasuda J1 League'               |
+| 350   |  'Dawry Jameel'                         |
+| 351   |  'Hyundai A-League'                     |
+| 353   |  'Primera División'                     |
+| 371   |  'Scotland League'                      |
+| 382   |  'Free Agents'                          |
+| 383   |  'Created Players League'               |
+| 384   |  'Creation Centre League'               |
+| 390   |  'MLS Cup'                              |
+| 993   |  'Asia Qualifier'                       |
+| 1003  |  'Copa Latinoamericana'                 |
+| 1004  |  'Colombia Apertura'                    |
+| 1005  |  'Colombia Finalización'                |
+| 1006  |  'Chile Apertura'                       |
+| 1007  |  'Chile Clausura'                       |
+| 1008  |  'Argentina Apertura'                   |
+| 1009  |  'Argentina Clausura'                   |
+| 2002  |  'Nacional B'                           |
+| 2012  |  'China Top League'                     |
+| 2025  |  'Liga do Brasil B'                     |
+| 2028  |  'World League'                         |
+| 2076  |  '3. Liga'                              |
+| 2096  |  'Special Teams'                        |
+| 2118  |  'Icons'                                |
+| 2136  |  "Women's National"                     |
+| 2138  |  'International Clubs'                  |
+| 2150  |  'REWARDS'                              |
+| 10001 |  'Denmark League 2'                     |
+| 10004 |  'Belgium League 2'                     |
+| 10007 |  'Liga do Brasil 1'                     |
+| 10010 |  'Holland League 2'                     |
+| 10017 |  'France League 3'                      |
+| 10020 |  'Germany League 3'                     |
+| 10032 |  'Italy League 3'                       |
+| 10041 |  'Norway League 2'                      |
+| 10050 |  'Scotland League 2'                    |
+| 10054 |  'Spain League 3'                       |
+| 10056 |  'Sweden League 2'                      |
+| 10061 |  'England League 5'                     |
+| 10065 |  'Ireland League 2'                     |
+| 10066 |  'Poland League 2'                      |
+| 10067 |  'Russia League 2'                      |
+| 10076 |  'Rest of World 2'                      |
+| 10080 |  'Austria League 2'                     |
+| 10083 |  'Korea League 2'                       |
+| 10189 |  'Switzerland League 2'                 |
+| 10308 |  'Portugal League 2'                    |
+| 10335 |  'Chile League 2'                       |
+| 10336 |  'Colombia League 2'                    |
+| 10341 |  'Mexico League 2'                      |
+| 10350 |  'Saudi League 2'                       |
+| 10353 |  'Argentina League 2'                   |
+
+</p></details>
  
 ### Player Info Dict  
 The player info dict is returned by many functions. Below is an example with a helpful table of return types.
