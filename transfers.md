@@ -176,6 +176,37 @@ fut.relist() takes zero arguments. It relists the cards in your tradepile with t
 {'tradeIdList': [16575379694]}
 ```
 
+### fut.sell()  
+
+fut.sell() takes five arguments: 
+* `item_id` (int): the `id` field in [player info dictionaries](https://github.com/TrevorMcCormick/futmarket/blob/master/lookuptables.md#player-info-dict)
+* `bid` (int): the amount of coins you're willing to place the specific item/player up for starting bid (*`marketDataMinPrice`<`bid` <`marketDataMaxPrice`*)
+* `buy_now` (int): the amount of coins you're willing to place the specific item/player up to buy now (*this must be higher than the starting bid*)
+* `duration` (int): the amount of seconds (default 3600) to place the item/player up for transfer. (*this must be in intervals available through the web app*)
+* `fast` (boolean): (default False) check the trade status of the item before listing on the transfer market 
+
+A successful listing will return the tradeId for your item.
+
+```python
+>>> # Successful listing of an item I own listed within parameters
+>>> fut.sell(item_id=119119825851, bid=1000, buy_now=100000, duration=3600)
+16895235756
+
+>>> # Unsuccessful listing of an item because I don't own it
+>>> fut.sell(item_id=2, bid=1000, buy_now=10000)
+PermissionDenied: 461
+
+>>> # Unsuccessful listing of an item because it is listed below marketDataMinPrice
+>>> fut.sell(item_id=119119825851, bid=200, buy_now=10000)
+PermissionDenied: 461
+
+>>> # Unsuccessful listing of an item because it is listed at a bad duration
+>>> fut.sell(item_id=119119825851, bid=1000, buy_now=100000, duration=3599)
+PermissionDenied: 460
+
+```
+
+
 ---
 
 ## Watch List
