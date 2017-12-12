@@ -2,7 +2,7 @@
 The player IDs are found through the property fut.players. [A full table is available at this Google Drive link.](https://docs.google.com/spreadsheets/d/1ufH7aLh6oUh4q_M4bRP-vpbt6YFclrfeNAlkE7z01iU/edit?usp=sharing)
 
 ### PlayStyle IDs
-
+PlayStyle IDs are found through the property fut.playstyles.
 <details>
 <summary>PlayStyle ID Lookup Table</summary><p>
 <!-- alternative placement of p shown above -->
@@ -38,7 +38,7 @@ The player IDs are found through the property fut.players. [A full table is avai
   </p></details>
   
 ### Nation IDs
-
+Nation IDs are found through the property fut.nations.
 <details>
 <summary>Nation ID Lookup Table</summary><p>
 <!-- alternative placement of p shown above -->
@@ -266,7 +266,7 @@ The player IDs are found through the property fut.players. [A full table is avai
   </p></details>
   
 ### League IDs
-
+Leagues are found through the property fut.leagues.
 <details>
 <summary>League ID Lookup Table</summary><p>
 <!-- alternative placement of p shown above -->
@@ -374,6 +374,202 @@ The player IDs are found through the property fut.players. [A full table is avai
 | 10353 |  'Argentina League 2'                   |
 
 </p></details>
+
+### Team IDs
+The team IDs are found through the property fut.teams. [A full table is available at this Google Drive link.](https://docs.google.com/spreadsheets/d/1_KdX2lYJOYyhdFkEYhyT8QZuCyznMVNtuBAJo4prHWs/edit?usp=sharing)
+
+
+### Stadium IDs
+Stadiums IDs are found through the property fut.stadiums.
+<details>
+<summary>Stadium ID Lookup Table</summary><p>
+<!-- alternative placement of p shown above -->
+
+| ID  | Stadium                                 |
+|-----|-----------------------------------------|
+| 1   | 'Old Trafford'                          |
+| 2   | 'Santiago Bernabéu'                     |
+| 4   | 'Stade Gerland'                         |
+| 5   | 'San Siro'                              |
+| 6   | 'Camp Nou'                              |
+| 8   | 'Stadio Delle Alpi'                     |
+| 9   | 'Signal Iduna Park'                     |
+| 10  | 'Estadio Mestalla'                      |
+| 13  | 'Anfield'                               |
+| 14  | 'Parc des Princes'                      |
+| 15  | 'Amsterdam ArenA'                       |
+| 16  | 'Stade Felix Bollaert'                  |
+| 17  | 'Constant Vanden Stock'                 |
+| 25  | 'Closed Square Style'                   |
+| 26  | 'Forest Park Stadium'                   |
+| 28  | 'Stamford Bridge'                       |
+| 29  | 'Orange Vélodrome'                      |
+| 30  | 'Veltins Arena'                         |
+| 32  | 'Crown Lane'                            |
+| 33  | 'Union Park Stadium'                    |
+| 34  | 'Town Park'                             |
+| 35  | 'Euro Park'                             |
+| 37  | 'Div 3 Euro Style'                      |
+| 38  | 'Urban Training'                        |
+| 39  | 'Rural Training'                        |
+| 41  | 'Volksparkstadion'                      |
+| 42  | 'Estadio Vicente Calderón'              |
+| 100 | "St. James' Park"                       |
+| 102 | 'José Alvalade'                         |
+| 104 | 'Estadio Azteca'                        |
+| 107 | 'Estádio da Luz'                        |
+| 108 | 'Seoul Sang-am Stadium'                 |
+| 110 | 'Daegu Stadium'                         |
+| 111 | 'Estádio do Dragão'                     |
+| 112 | 'Fratton Park'                          |
+| 113 | "St. Mary's Stadium"                    |
+| 115 | 'Villa Park'                            |
+| 116 | 'White Hart Lane'                       |
+| 124 | 'Small Olympic'                         |
+| 127 | 'Large Olympic'                         |
+| 129 | 'Large Square'                          |
+| 133 | 'Mercedes-Benz Arena'                   |
+| 134 | 'HDI Arena'                             |
+| 135 | 'Olympiastadion'                        |
+| 137 | 'Allianz Arena'                         |
+| 138 | 'Commerzbank Arena'                     |
+| 147 | 'Stadion Europa'                        |
+| 149 | 'Al Jayeed Stadium'                     |
+| 153 | 'Aloha Park'                            |
+| 155 | 'Wembley Stadium'                       |
+| 345 | 'King Abdullah Sports City'             |
+| 156 | 'Emirates Stadium'                      |
+| 157 | 'Stadio Olimpico'                       |
+| 158 | 'Estadio de las Artes'                  |
+| 161 | 'StubHub Center'                        |
+| 163 | 'Jalisco'                               |
+| 165 | 'Stade de Suisse'                       |
+| 172 | 'StadiumName_172_FIWC-Stadium_FullChar' |
+| 174 | 'Stadio Comunale'                       |
+| 175 | 'Arena del Centenario'                  |
+| 176 | 'Waldstadion'                           |
+| 177 | 'La Canchita'                           |
+| 178 | 'Stadion Neder'                         |
+| 179 | 'Stade Municipal'                       |
+| 180 | 'Ivy Lane'                              |
+| 181 | 'El Grandioso'                          |
+| 182 | 'Stadion 23. Maj'                       |
+| 183 | 'Estadio El Medio'                      |
+| 184 | 'North America'                         |
+| 185 | 'South America'                         |
+| 186 | 'Southern Europe'                       |
+| 187 | 'Eastern Europe'                        |
+| 188 | 'Central Europe'                        |
+| 189 | 'United Kingdom'                        |
+| 190 | 'Asia'                                  |
+| 192 | 'El Libertador'                         |
+| 193 | 'Stadio Classico'                       |
+| 194 | 'Eastpoint Arena'                       |
+| 195 | 'Stadion Olympik'                       |
+| 196 | 'Stadion Hanguk'                        |
+| 197 | 'O Dromo'                               |
+| 211 | 'Estadio Chamartin'                     |
+| 212 | 'Estadio Presidente G.Lopes'            |
+| 213 | 'Green Point Stadium'                   |
+| 214 | 'Durban Stadium'                        |
+| 215 | 'Ellis Park Stadium'                    |
+| 216 | 'Soccer City Stadium'                   |
+| 217 | 'Free State Stadium'                    |
+| 218 | 'Nelson Mandela Bay Stadium'            |
+| 219 | 'Mbombela Stadium'                      |
+| 220 | 'Peter Mokaba Stadium'                  |
+| 221 | 'Royal Bafokeng Stadium'                |
+| 222 | 'Loftus Versfeld Stadium'               |
+| 223 | 'Friður Stadium'                        |
+| 224 | 'Satta Stadium'                         |
+| 225 | 'Akaaroa Stadium'                       |
+| 226 | 'Hasiti Arena'                          |
+| 227 | 'Salam Stadium'                         |
+| 228 | 'Court Lane'                            |
+| 229 | "Arena D'Oro"                           |
+| 233 | 'Peuan Arena'                           |
+| 234 | 'Pyonghwa Stadium'                      |
+| 235 | 'Udugu Stadium'                         |
+| 236 | 'El Coloso'                             |
+| 238 | 'Africa'                                |
+| 246 | 'Etihad Stadium'                        |
+| 247 | 'Allianz Stadium'                       |
+| 248 | 'BC Place Stadium'                      |
+| 249 | 'Molton Road'                           |
+| 250 | 'Oceanic Arena'                         |
+| 253 | 'Olympic Stadium'                       |
+| 254 | 'Municipal Stadium Poznan'              |
+| 255 | 'National Stadium Warsaw'               |
+| 256 | 'Arena Gdansk'                          |
+| 257 | 'Municipal Stadium Wroclaw'             |
+| 258 | 'Metalist Stadium'                      |
+| 259 | 'Arena Lviv'                            |
+| 260 | 'Donbass Arena'                         |
+| 261 | 'Sanderson Park'                        |
+| 262 | 'King Fahd Stadium'                     |
+| 264 | 'La Bombonera'                          |
+| 265 | 'Goodison Park'                         |
+| 267 | 'Arena Amazonia'                        |
+| 268 | 'Arena da Baixada'                      |
+| 269 | 'Arena de Sao Paulo'                    |
+| 270 | 'Arena Fonte Nova'                      |
+| 271 | 'Arena Pantanal'                        |
+| 272 | 'Arena Pernambuco'                      |
+| 273 | 'Estadio Beira-Rio'                     |
+| 274 | 'Estadio Castelao'                      |
+| 275 | 'Estadio das Dunas'                     |
+| 276 | 'Estadio do Maracana'                   |
+| 277 | 'Estadio Mineirao'                      |
+| 278 | 'Estadio Nacional'                      |
+| 279 | 'Baba Yetu Stadium'                     |
+| 282 | 'Stade du 13 Octobre'                   |
+| 285 | 'Stade du Lukanga'                      |
+| 286 | 'Estadio de las Cascadas'               |
+| 287 | 'El Grandioso de las Pampas'            |
+| 288 | 'Singeom Stadium'                       |
+| 289 | 'Shibusaka Stadium'                     |
+| 290 | 'Gold Lake Stadium'                     |
+| 291 | 'Stadio San Dalla Pace'                 |
+| 316 | 'Training Centre'                       |
+| 325 | 'Boleyn Ground'                         |
+| 326 | 'Stadium of Light'                      |
+| 327 | 'The Hawthorns'                         |
+| 329 | 'Carrow Road'                           |
+| 330 | 'Selhurst Park'                         |
+| 331 | 'Stoke City FC Stadium'                 |
+| 332 | 'KCOM Stadium'                          |
+| 333 | 'Liberty Stadium'                       |
+| 335 | 'King Power Stadium'                    |
+| 336 | 'Turf Moor'                             |
+| 337 | 'Loftus Road'                           |
+| 340 | 'The Amex Stadium'                      |
+| 341 | 'CenturyLink Field'                     |
+| 343 | 'BORUSSIA-PARK'                         |
+| 344 | 'El Monumental'                         |
+| 345 | 'King Abdullah Sports City'             |
+| 347 | 'Vicarage Road'                         |
+| 348 | 'Vitality Stadium'                      |
+| 349 | 'Riverside Stadium'                     |
+| 353 | 'Training Ground'                       |
+| 354 | 'Suita City Football Stadium'           |
+| 355 | 'London Stadium'                        |
+| 358 | 'EA SPORTS FIFA Stadium'                |
+| 364 | 'Wanda Metropolitano'                   |
+| 372 | 'Luzhniki Stadium'                      |
+| 373 | 'Saint Petersburg Stadium'              |
+| 374 | 'Kazan Arena'                           |
+| 375 | 'Samara Arena'                          |
+| 376 | 'Fisht Stadium'                         |
+| 377 | 'Nizhny Novgorod Stadium'               |
+| 378 | 'Spartak Stadium'                       |
+| 379 | 'Rostov Arena'                          |
+| 380 | 'Ekaterinburg Arena'                    |
+| 381 | 'Mordovia Arena'                        |
+| 382 | 'Volgograd Arena'                       |
+| 383 | 'Kaliningrad Stadium'                   |
+| 384 | 'Kirklees Stadium'                      |
+ 
+</p></details> 
  
 ### Player Info Dict  
 The player info dict is returned by many functions. Below is an example with a helpful table of return types.
