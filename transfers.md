@@ -17,23 +17,6 @@ There are two functions in the search category: search() and searchDefinition().
 
 fut.search() returns a list of dictionaries that include the information for players on the transfer market. These are returned in ascending order of seconds until expiration. just like the Web App and the console experience. [A description of the returned dict of player info is linked here.](https://github.com/TrevorMcCormick/futmarket/blob/master/lookuptables.md#player-info-dict)  
 
-*Example*: 
-```python
->>> fut.search(ctype='player', level = 'gold')
-[{'assetId': 230621,
-  'assists': 0,
-  'attributeList': [{u'index': 0, u'value': 88},
-   {u'index': 1, u'value': 78},
-   {u'index': 2, u'value': 72},
-   {u'index': 3, u'value': 88},
-   {u'index': 4, u'value': 46},
-   {u'index': 5, u'value': 78}],
-  'bidState': None,
-  'buyNowPrice': None,
-  .....}]
-``` 
- 
- 
 There are many arguments available to filter your search request:
 <details>
 <summary>Search Arguments Table</summary><p>
@@ -61,7 +44,24 @@ There are many arguments available to filter your search request:
 | page_size   | str     | cards to show on one page (range between 16-50)              |
 
 
-</p></details>
+</p></details>  
+  
+*Example*: 
+```python
+>>> fut.search(ctype='player', level = 'gold')
+[{'assetId': 230621,
+  'assists': 0,
+  'attributeList': [{u'index': 0, u'value': 88},
+   {u'index': 1, u'value': 78},
+   {u'index': 2, u'value': 72},
+   {u'index': 3, u'value': 88},
+   {u'index': 4, u'value': 46},
+   {u'index': 5, u'value': 78}],
+  'bidState': None,
+  'buyNowPrice': None,
+  .....}]
+``` 
+ 
 
 ### fut.searchDefinition()
 
