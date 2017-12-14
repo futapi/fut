@@ -52,3 +52,24 @@ There are many arguments available to filter your club search request:
    {u'index': 5, u'value': 78}],
   .....}]
 ``` 
+
+### fut.clubStaff()
+
+fut.clubStaff() returns a dictionary of a list of dictionaries that includes the bonuses you receive from specific staff in your club. 
+[This will be documented later, but here is a helpful guide to Fifa 18 Staff cards.](https://www.fifauteam.com/fifa-18-staff-cards-guide/)  
+
+*Example*: 
+```python
+>>> fut.clubStaff()
+{'bonus': [{'type': 'dribbling', 'value': 10},
+  {'type': 'fitness', 'value': 5},
+  {'type': 'gkDiving', 'value': 15},
+  {'type': 'contract', 'value': 3},
+  {'type': 'managerTalk', 'value': 0},
+  {'type': 'physioArm', 'value': 5},
+  {'type': 'physioFoot', 'value': 15},
+  {'type': 'physioHip', 'value': 5}]}
+``` 
+
+
+
