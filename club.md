@@ -71,5 +71,98 @@ fut.clubStaff() returns a dictionary of a list of dictionaries that includes the
   {'type': 'physioHip', 'value': 5}]}
 ``` 
 
+### fut.clubConsumables()
+
+fut.clubConsumables() returns a list of dictionaries that includes the consumable cards and their details in your club. 
+[A table of all 2017 consumable IDs and information is available here. *2018 IDs have not yet been confirmed.*](https://docs.google.com/spreadsheets/d/1mzfX_quYxVhQ_kkmugO3gQtHwPSQnKTLVeDHiinI1jA/edit?usp=sharing)  
+
+*Example*: 
+```python
+>>> fut.clubConsumables()
+[{'bidState': None,
+  'bronze': 15,
+  'buyNowPrice': None,
+  'cardassetid': 7,
+  'consumables': None,
+  'consumablesContractManager': None,
+  'consumablesContractPlayer': None,
+  ...}]
+``` 
 
 
+### fut.quickSell
+
+fut.quickSell() discards an item (`id`) in your club for its `discardValue`. It returns `True` on a successful quickSell and returns `UnknownError: b''` for an unsuccessful quickSell. Untradeable cards can be discarded even though their `discardValue` is 0.
+
+
+*Example*: 
+```python
+>>> # Card I own where untradeable == False
+>>> fut.quickSell(item_id = 118917563073)
+True
+
+>>> # Card I do not own
+>>> fut.quickSell(item_id = 2)
+UnknownError: b''
+
+``` 
+
+### fut.applyConsumable
+
+fut.applyConsumable() takestwo arguemtns: a consumableId (`resourceId`) that you own, and a player item_id (`id`) that you own. It doesn't return anything for a successful consumable application, but it returns `UnknownError: b''` for an unsuccessful request. *There is currently not a method to apply a team consumable.*
+
+*Example*: 
+```python
+>>> # Card and Consumable I own
+>>> fut.applyConsumable(item_id = 119175722619, resource_id = 5001003)
+
+>>> # Card and Consumable I do not own
+>>> fut.applyConsumable(item_id = 119175722619, resource_id = 2)
+UnknownError: b''
+```
+
+### fut.keepalive()
+
+fut.keepalive() is a simple function that returns your coin count. It is also a useful API call that tells the Fifa Web App that your session is still active. 
+
+*Example*: 
+```python
+>>> # Return my coin count
+>>> fut.keepalive()
+1002231023 #just kidding!
+15598 
+```
+### fut.messages()
+
+fut.messages() returns any active messages if you have them. I don't have any examples of this but any messages that include new Kits would be in here.
+
+### fut.objectives()
+
+fut.objectives() returns a list of dictionaries containing your daily and weekly objectives. 
+
+*Example*: 
+```python
+>>> fut.objectives()
+{'coinsAutoClaimed': 0,
+ 'dailyObjectives': [{'currentProgress': 0,
+   'description': 'Get on the pitch today and play a game in Online Seasons mode',
+   'difficulty': 3,
+   'expiryTime': 1513414800
+   ...}],
+ 'dailyRewardsAutoClaimed': False,
+ 'itemsAutoClaimed': 0,
+ 'packsAutoClaimed': 0,
+ 'weeklyObjectives': [{'currentProgress': 0,
+   'description': 'Win three or more Squad Battles matches this week to earn the FUTmas Elf kit [Untradeable]',
+   'difficulty': 39,
+   'expiryTime': 1513965600
+   ...}],
+  'weeklyRewardsAutoClaimed': False}
+>>> # Let's say I want to see the names of all of my daily objectives
+>>> for i in fut.objectives().get('dailyObjectives'):
+>>>     print(i['name'])
+Becoming Seasoned
+Buy a Midfielder
+Use your Head
+Four the Bundesliga
+Get Fit
