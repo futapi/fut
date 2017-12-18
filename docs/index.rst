@@ -49,6 +49,8 @@ This is basic part of the documentation, it's about installation and importing.
    :maxdepth: 2
 
    user/introduction
+   user/changelog
+   user/install
 
 
 .. API Documentation
