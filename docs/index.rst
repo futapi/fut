@@ -7,19 +7,38 @@ Welcome to fut's documentation!
 ===============================
 
 Release v\ |version|. (:ref:`Installation <install>`)
-[![](https://img.shields.io/pypi/v/fut.svg?raw=true)](https://pypi.python.org/pypi/fut)
-[![](https://img.shields.io/pypi/l/fut.svg?raw=true)](https://pypi.python.org/pypi/fut)
-[![](https://img.shields.io/pypi/pyversions/fut.svg?raw=true)](https://pypi.python.org/pypi/fut)
-[![](https://travis-ci.org/futapi/fut.png?branch=master?raw=true)](https://pypi.python.org/pypi/fut)
-[![](https://codecov.io/github/futapi/fut/coverage.svg?raw=true)](https://pypi.python.org/pypi/fut)
-[![](https://api.codacy.com/project/badge/Grade/f599808fba2447c98253cf44cca86a1b?raw=true)](https://pypi.python.org/pypi/fut)
-[![](https://readthedocs.org/projects/pip/badge/?version=latest)](http://fut.readthedocs.io/en/latest/)
 
-[<img src="https://cdn.worldvectorlogo.com/logos/slack.svg" alt="slack" width="70" height="50">](https://gentle-everglades-93932.herokuapp.com)
+.. image:: https://img.shields.io/pypi/v/fut.svg
+   :target: https://pypi.python.org/pypi/fut
 
-fut is a simple Python library for managing Fifa Ultimate Team. The library enables programmatic access to the official [FUT Web App and FIFA Companion App](https://www.easports.com/fifa/ultimate-team/web-app/). If you prefer php language, there is ported version made by InkedCurtis available here: https://github.com/InkedCurtis/FUT-API.
+.. image:: https://img.shields.io/pypi/l/fut.svg
+   :target: https://pypi.python.org/pypi/fut
 
-The fut library can perform 28 basic [REST](https://spring.io/understanding/REST) functions on your Fifa Ultimate Team. It also includes 6 properties that provide access to various FUT databases (nations, leagues, teams, stadiums, balls, players, playStyles).
+.. image:: https://img.shields.io/pypi/pyversions/fut.svg
+   :target: https://pypi.python.org/pypi/fut
+
+.. image:: https://travis-ci.org/futapi/fut.png?branch=master
+   :target: https://travis-ci.org/futapi/fut
+
+.. image:: https://codecov.io/github/futapi/fut/coverage.svg?branch=master
+   :target: https://codecov.io/github/futapi/fut
+   :alt: codecov.io
+
+.. image:: https://api.codacy.com/project/badge/Grade/f599808fba2447c98253cf44cca86a1b
+   :target: https://www.codacy.com/app/oczkers/fut?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=oczkers/fut&amp;utm_campaign=Badge_Grade
+
+.. image:: https://cdn.worldvectorlogo.com/logos/slack.svg
+   :height: 20px
+   :target: https://gentle-everglades-93932.herokuapp.com/
+
+fut is a simple Python library for managing Fifa Ultimate Team. The library enables programmatic access to the official `FUT Web App and FIFA Companion App`_.
+If you prefer php language, there is ported version made by InkedCurtis available here: https://github.com/InkedCurtis/FUT-API.
+
+.. _FUT Web App and FIFA Companion App: https://www.easports.com/fifa/ultimate-team/web-app/
+
+The fut library can perform 28 basic `REST`_ functions on your Fifa Ultimate Team. It also includes 6 properties that provide access to various FUT databases (nations, leagues, teams, stadiums, balls, players, playStyles).
+
+.. _REST: https://spring.io/understanding/REST
 
 
 Feature Support
