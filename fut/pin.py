@@ -15,9 +15,9 @@ import time
 from random import random
 from datetime import datetime
 
-from fut.config import headers
-from fut.urls import pin_url
-from fut.exceptions import FutError
+from .config import headers
+from .urls import pin_url
+from .exceptions import FutError
 
 
 class Pin(object):

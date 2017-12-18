@@ -4,6 +4,13 @@ Changelog
 ---------
 
 
+0.3.9 (2017-12-18)
+^^^^^^^^^^^^^^^^^^
+
+* default page_size for search 16->36 (thanks to kirov #360)
+* add packs method to list all available packs
+* fix multiple item quicksell (thanks to farukuzun #366)
+
 0.3.8 (2017-12-07)
 ^^^^^^^^^^^^^^^^^^
 

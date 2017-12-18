@@ -15,7 +15,17 @@ from simplejson.scanner import JSONDecodeError
 def futheadPrice(item_id, year=18, platform=None):
     params = {'year': year,
               'id': item_id}
-    rc = requests.get('http://www.futhead.com/prices/api/', params=params).json()
+    rc = requests.get('http://www.futhead.com/prices/api/', params=params)
+    if rc.status_code == 524:  # connection timeout
+        return 0
+    try:
+        rc = rc.json()
+    except JSONDecodeError:
+        print('futhead response is not valid')
+        print(rc.status_code)
+        print(rc.url)
+        print(rc.content)
+        rc = {}
     if not rc:
         return 0
     rc = rc[str(item_id)]
