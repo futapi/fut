@@ -1233,7 +1233,7 @@ class Core(object):
         :params item_id: Item id.
         """
         method = 'DELETE'
-        url = 'item/%s' % item_id
+        url = 'item'
 
         if not isinstance(item_id, (list, tuple)):
             item_id = (item_id,)
