@@ -4,6 +4,12 @@ Changelog
 ---------
 
 
+0.3.9 (201?-??-??)
+^^^^^^^^^^^^^^^^^^
+
+* default page_size for search 16->36 (thanks to kirov #360)
+* add packs method to list all available packs
+
 0.3.8 (2017-12-07)
 ^^^^^^^^^^^^^^^^^^
 

@@ -711,6 +711,7 @@ class Core(object):
             rc = self.r.delete(url, data=data, params=params, timeout=self.timeout)
         self.logger.debug("response: {0}".format(rc.content))
         if not rc.ok:  # status != 200
+            # TODO: catch all error codes https://gist.github.com/oczkers/cebecbf4c6a4362a843424edb443ba59
             if rc.status_code == 401:
                 # TODO?: send pinEvent https://gist.github.com/oczkers/7e5de70915b87262ddea961c49180fd6
                 print(rc.content)
@@ -1442,6 +1443,14 @@ class Core(object):
     #     """
     #     url = '{0}/{1}'.format(self.urls['fut']['ActiveMessage'], message_id)
     #     self.__delete__(url)
+
+    def packs(self):
+        """List all (currently?) available packs."""
+        method = 'GET'
+        url = 'store/purchaseGroup/cardpack?ppInfo=true&_=1513603614891'
+
+        params = {'ppInfo': True}
+        return self.__request__(method, url, params=params)  # TODO: parse
 
     def buyPack(self, pack_id, currency='COINS'):
         # TODO: merge with openPack
