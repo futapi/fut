@@ -75,3 +75,29 @@ def futbinPrice(item_id, platform=None):
         price = max([xbox, ps, pc])
 
     return price
+
+
+# def futwizPrice(item_id, platform=None):  # item_id is different on this page
+#     if not platform or platform == 'xbox':
+#         rc = requests.get('https://www.futwiz.com/en/app/price_history_player', params={'p': item_id, 'h': '', 'c': 'xb'}).json()
+#         print(rc)
+#         if rc:
+#             xbox = rc[0][1]
+#         else:
+#             xbox = 0
+#     if not platform or platform == 'ps':
+#         rc = requests.get('https://www.futwiz.com/en/app/price_history_player', params={'p': item_id, 'h': '', 'c': 'ps'}).json()
+#         print(rc)
+#         if rc:
+#             ps = rc[0][1]
+#         else:
+#             ps = 0
+#
+#     if not platform:
+#         price = max([xbox, ps])
+#     elif platform == 'ps':
+#         price = ps
+#     elif platform == 'xbox':
+#         price = xbox
+#
+#     return price
