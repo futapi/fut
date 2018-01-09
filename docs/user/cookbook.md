@@ -1,3 +1,5 @@
+## Cookbook
+
 ### Retrieve Non-Player Cards
 The non-player cards are updated as of Fifa 2017 and are hosted as a csv on github.
 The function below uses the `pandas` library to provide a table of the non-player cards.
@@ -23,6 +25,6 @@ The function below uses the `pandas` library to provide a table of the non-playe
 1     5001002      10      10     8  Player  Contract  Silver  Non-Rare  
 2     5001003      15      11    13  Player  Contract    Gold  Non-Rare  
 3     5001004      15       6     3  Player  Contract  Bronze      Rare  
-4     5001005      20      24    18  Player  Contract  Silver      Rare 
+4     5001005      20      24    18  Player  Contract  Silver      Rare
 ```
 </p></details>

@@ -73,7 +73,11 @@ This is basic part of the documentation, it's about installation and importing.
    user/cookbook
    user/lookuptables
 
-API part, all methods descriptions can be found here.
+
+API Guide
+---------
+
+In this part You can find all methods descriptions.
 
 .. toctree::
    :maxdepth: 2
