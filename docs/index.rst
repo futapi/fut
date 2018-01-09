@@ -65,16 +65,24 @@ User Guide
 This is basic part of the documentation, it's about installation and importing.
 
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 1
 
    user/changelog
    user/install
    user/introduction
-   user/squads
-   user/squadBuildingChallenges
-   user/transfers
-   user/store
-   user/club
+   user/cookbook
+   user/lookuptables
+
+API part, all methods descriptions can be found here.
+
+.. toctree::
+   :maxdepth: 2
+
+   api/squads
+   api/squadBuildingChallenges
+   api/transfers
+   api/store
+   api/club
 
 
 .. API Documentation

@@ -1,5 +1,5 @@
 ## Squad Building Challenge
-### Current State
+#### Current State
 Below is the current state of functionality within the **Squad Building Challenge** category. In the [core.py file](https://github.com/futapi/fut/blob/master/fut/core.py), three more methods exist (sbsSetChallenges , sbsSquad , and sendToSbs) but do not currently work.
 
 There is one working method in this category that GETs Squad Building Challenge info.
@@ -10,7 +10,7 @@ There is one working method in this category that GETs Squad Building Challenge 
 
 ### fut.sbsSets()
 
-fut.sbsSets() returns a dictionary of a list of dictionaries of Squad Building Challenge categories, each containing active challenges with descriptions and other info. 
+fut.sbsSets() returns a dictionary of a list of dictionaries of Squad Building Challenge categories, each containing active challenges with descriptions and other info.
 
 
 ```python
@@ -43,4 +43,3 @@ BASIC 3
 2 League and Nation Basics
 10 Let's Keep Going
 ```
-

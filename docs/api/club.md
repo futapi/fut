@@ -1,8 +1,8 @@
 ## Club
-### Current State
-Below is the current state of functionality within the **Club** category. 
+#### Current State
+Below is the current state of functionality within the **Club** category.
 
-Eight method exist in the Club category. 
+Eight method exist in the Club category.
 
 <img src="https://i.imgur.com/vnSVPZE.png" alt="Club" style="height: 100px;"/>
 
@@ -10,7 +10,7 @@ Eight method exist in the Club category.
 
 ### fut.club()
 
-fut.club() returns a list of dictionaries that include the information for players in your club. 
+fut.club() returns a list of dictionaries that include the information for players in your club.
 [A description of the returned dict of player info is linked here.](https://github.com/TrevorMcCormick/futmarket/blob/master/lookuptables.md#player-info-dict)
 
 There are many arguments available to filter your club search request:
@@ -38,8 +38,8 @@ There are many arguments available to filter your club search request:
 
 
 </p></details>  
-  
-*Example*: 
+
+*Example*:
 ```python
 >>> fut.club()
 [{'assetId': 230621,
@@ -51,14 +51,14 @@ There are many arguments available to filter your club search request:
    {u'index': 4, u'value': 46},
    {u'index': 5, u'value': 78}],
   .....}]
-``` 
+```
 
 ### fut.clubStaff()
 
-fut.clubStaff() returns a dictionary of a list of dictionaries that includes the bonuses you receive from specific staff in your club. 
+fut.clubStaff() returns a dictionary of a list of dictionaries that includes the bonuses you receive from specific staff in your club.
 [This will be documented later, but here is a helpful guide to Fifa 18 Staff cards.](https://www.fifauteam.com/fifa-18-staff-cards-guide/)  
 
-*Example*: 
+*Example*:
 ```python
 >>> fut.clubStaff()
 {'bonus': [{'type': 'dribbling', 'value': 10},
@@ -69,14 +69,14 @@ fut.clubStaff() returns a dictionary of a list of dictionaries that includes the
   {'type': 'physioArm', 'value': 5},
   {'type': 'physioFoot', 'value': 15},
   {'type': 'physioHip', 'value': 5}]}
-``` 
+```
 
 ### fut.clubConsumables()
 
-fut.clubConsumables() returns a list of dictionaries that includes the consumable cards and their details in your club. 
+fut.clubConsumables() returns a list of dictionaries that includes the consumable cards and their details in your club.
 [A table of all 2017 consumable IDs and information is available here. *2018 IDs have not yet been confirmed.*](https://docs.google.com/spreadsheets/d/1mzfX_quYxVhQ_kkmugO3gQtHwPSQnKTLVeDHiinI1jA/edit?usp=sharing)  
 
-*Example*: 
+*Example*:
 ```python
 >>> fut.clubConsumables()
 [{'bidState': None,
@@ -87,7 +87,7 @@ fut.clubConsumables() returns a list of dictionaries that includes the consumabl
   'consumablesContractManager': None,
   'consumablesContractPlayer': None,
   ...}]
-``` 
+```
 
 
 ### fut.quickSell
@@ -95,7 +95,7 @@ fut.clubConsumables() returns a list of dictionaries that includes the consumabl
 fut.quickSell() discards an item (`id`) in your club for its `discardValue`. It returns `True` on a successful quickSell and returns `UnknownError: b''` for an unsuccessful quickSell. Untradeable cards can be discarded even though their `discardValue` is 0.
 
 
-*Example*: 
+*Example*:
 ```python
 >>> # Card I own where untradeable == False
 >>> fut.quickSell(item_id = 118917563073)
@@ -105,13 +105,13 @@ True
 >>> fut.quickSell(item_id = 2)
 UnknownError: b''
 
-``` 
+```
 
 ### fut.applyConsumable
 
 fut.applyConsumable() takestwo arguemtns: a consumableId (`resourceId`) that you own, and a player item_id (`id`) that you own. It doesn't return anything for a successful consumable application, but it returns `UnknownError: b''` for an unsuccessful request. *There is currently not a method to apply a team consumable.*
 
-*Example*: 
+*Example*:
 ```python
 >>> # Card and Consumable I own
 >>> fut.applyConsumable(item_id = 119175722619, resource_id = 5001003)
@@ -123,14 +123,14 @@ UnknownError: b''
 
 ### fut.keepalive()
 
-fut.keepalive() is a simple function that returns your coin count. It is also a useful API call that tells the Fifa Web App that your session is still active. 
+fut.keepalive() is a simple function that returns your coin count. It is also a useful API call that tells the Fifa Web App that your session is still active.
 
-*Example*: 
+*Example*:
 ```python
 >>> # Return my coin count
 >>> fut.keepalive()
 1002231023 #just kidding!
-15598 
+15598
 ```
 ### fut.messages()
 
@@ -138,9 +138,9 @@ fut.messages() returns any active messages if you have them. I don't have any ex
 
 ### fut.objectives()
 
-fut.objectives() returns a list of dictionaries containing your daily and weekly objectives. 
+fut.objectives() returns a list of dictionaries containing your daily and weekly objectives.
 
-*Example*: 
+*Example*:
 ```python
 >>> fut.objectives()
 {'coinsAutoClaimed': 0,

@@ -1,7 +1,7 @@
 
 ## Transfers
-### Current State
-Below is the current state of functionality within the **Transfers** category. All methods within the Transfers category are stable. 
+#### Current State
+Below is the current state of functionality within the **Transfers** category. All methods within the Transfers category are stable.
 
 <img src="https://i.imgur.com/YVVgg21.png" alt="Squads" style="height: 100px;"/>
 
@@ -11,7 +11,7 @@ The Transfers category contains many functions. We'll go through them in three s
 
 ## Search
 
-There are two functions in the search category: search() and searchDefinition(). 
+There are two functions in the search category: search() and searchDefinition().
 
 ### fut.search()
 
@@ -45,8 +45,8 @@ There are many arguments available to filter your search request:
 
 
 </p></details>  
-  
-*Example*: 
+
+*Example*:
 ```python
 >>> fut.search(ctype='player', level = 'gold')
 [{'assetId': 230621,
@@ -60,14 +60,14 @@ There are many arguments available to filter your search request:
   'bidState': None,
   'buyNowPrice': None,
   .....}]
-``` 
- 
+```
+
 
 ### fut.searchDefinition()
 
 fut.searchDefinition() takes one argument (*it actually takes 3 but you only need one*), `assetId`, and it returns a list of dictionaries that include the information for specific varations of player cards by assetId. [A description of the returned dict of player info is linked here.](https://github.com/TrevorMcCormick/futmarket/blob/master/lookuptables.md#player-info-dict)  
 
-*Example*: 
+*Example*:
 ```python
 >>> # Get variations for Mats Hummels
 >>> fut.searchDefinition(item_id=178603)
@@ -75,7 +75,7 @@ fut.searchDefinition() takes one argument (*it actually takes 3 but you only nee
 'buyNowPrice': None,
 'tradeState': None
 ...}]
-``` 
+```
 These are returned in descending order of rating. Card IDs are distinguished by the value of the *rarecard* field. [A table of card IDs are here.](https://github.com/TrevorMcCormick/futmarket/blob/master/lookuptables.md#rare-cards)  
 
 ---
@@ -86,32 +86,32 @@ These are returned in descending order of rating. Card IDs are distinguished by 
 
 fut.tradepile() returns a list of dictionaries that include the transfer information for players you've listed on the transfer market. [A description of the returned dict of transfer info is linked here.](https://github.com/TrevorMcCormick/futmarket/blob/master/lookuptables.md#transfer-info-dict)  
 
-*Example*: 
+*Example*:
 ```python
 >>> fut.tradepile()
 [{'tradeId': 16575379694,
 'buyNowPrice': 1800,
 'tradeState': 'closed'...}]
-``` 
+```
 
 ### fut.tradeStatus()
 
 fut.tradeStatus() takes one argument (trade_id) and returns a list containing a condensed dictionary for each tradeId. [The returned dictionary is linked here.](https://github.com/TrevorMcCormick/futmarket/blob/master/lookuptables.md#trade-status-dict)
 
-*Example*: 
+*Example*:
 ```python
 >>> fut.tradeStatus(trade_id=16575379694)
-[{'tradeId': 16575379694, 
-'buyNowPrice': 1800, 
-'tradeState': 'closed', 
+[{'tradeId': 16575379694,
+'buyNowPrice': 1800,
+'tradeState': 'closed',
 ...}]
 ```
 
 ### fut.sendToTradepile()
 
-fut.sendToTradepile() takes one argument (item_id) and has an optional argument (safe) that checks the length of your tradepile to make sure you have room to store another item. The item_id argument is the `id` field in [player info dictionaries.](https://github.com/TrevorMcCormick/futmarket/blob/master/lookuptables.md#player-info-dict) A successful send will return `True`. An unsuccessful send will return `False`if you do not own the item you're trying to send to the tradepile, or `403` if the item you're trying to send is untradeable. 
+fut.sendToTradepile() takes one argument (item_id) and has an optional argument (safe) that checks the length of your tradepile to make sure you have room to store another item. The item_id argument is the `id` field in [player info dictionaries.](https://github.com/TrevorMcCormick/futmarket/blob/master/lookuptables.md#player-info-dict) A successful send will return `True`. An unsuccessful send will return `False`if you do not own the item you're trying to send to the tradepile, or `403` if the item you're trying to send is untradeable.
 
-*Examples*: 
+*Examples*:
 ```python
 >>> # Card I own where untradeable == False
 >>> fut.sendToTradepile(item_id=117860780888)
@@ -130,9 +130,9 @@ False
 
 ### fut.tradepileDelete()
 
-fut.tradepileDelete() takes one argument (item_id). The item_id argument is the `id` field in [player info dictionaries.](https://github.com/TrevorMcCormick/futmarket/blob/master/lookuptables.md#player-info-dict) A successful delete will return `True`. An unsuccessful delete will return `fut.exceptions.Conflict`if the item you're trying to delete is in an active tradestate. You will receive a `410` error if you do not own the item you're trying to delete. 
+fut.tradepileDelete() takes one argument (item_id). The item_id argument is the `id` field in [player info dictionaries.](https://github.com/TrevorMcCormick/futmarket/blob/master/lookuptables.md#player-info-dict) A successful delete will return `True`. An unsuccessful delete will return `fut.exceptions.Conflict`if the item you're trying to delete is in an active tradestate. You will receive a `410` error if you do not own the item you're trying to delete.
 
-*Examples*: 
+*Examples*:
 ```python
 >>> # Card in the tradepile that is not active
 >>> fut.tradepileDelete(item_id=16575379694)
@@ -178,12 +178,12 @@ fut.relist() takes zero arguments. It relists the cards in your tradepile with t
 
 ### fut.sell()  
 
-fut.sell() takes five arguments: 
+fut.sell() takes five arguments:
 * `item_id` (int): the `id` field in [player info dictionaries](https://github.com/TrevorMcCormick/futmarket/blob/master/lookuptables.md#player-info-dict)
 * `bid` (int): the amount of coins you're willing to place the specific item/player up for starting bid (*`marketDataMinPrice`<`bid` <`marketDataMaxPrice`*)
 * `buy_now` (int): the amount of coins you're willing to place the specific item/player up to buy now (*this must be higher than the starting bid*)
 * `duration` (int): the amount of seconds (default 3600) to place the item/player up for transfer. (*this must be in intervals available through the web app*)
-* `fast` (boolean): (default False) check the trade status of the item before listing on the transfer market 
+* `fast` (boolean): (default False) check the trade status of the item before listing on the transfer market
 
 A successful listing will return the tradeId for your item.
 
@@ -215,19 +215,19 @@ PermissionDenied: 460
 
 fut.watchlist() returns a list of dictionaries that include the transfer information for players you've bid on on the transfer market. [A description of the returned dict of transfer info is linked here.](https://github.com/TrevorMcCormick/futmarket/blob/master/lookuptables.md#transfer-info-dict)  
 
-*Example*: 
+*Example*:
 ```python
 >>> fut.watchlist()
 [{'tradeId': 16656454826,
 'buyNowPrice': 5900000,
 'tradeState': 'active'...
-``` 
+```
 
 ### fut.sendToWatchlist()
 
-fut.sendToWatchlist() takes one argument (trade_id). The trade_id argument is the `tradeId` field in the [transfer info dictionary.](https://github.com/TrevorMcCormick/futmarket/blob/master/lookuptables.md#transfer-info-dict) A successful send will return an empty dictionary (*needs to be fixed to return something*). An unsuccessful send will return `fut.exceptions.Conflict`if the card has expired from the transfer market, or `fut.exceptions.PermissionDenied: 461` if the `id` you've provided is not valid. 
+fut.sendToWatchlist() takes one argument (trade_id). The trade_id argument is the `tradeId` field in the [transfer info dictionary.](https://github.com/TrevorMcCormick/futmarket/blob/master/lookuptables.md#transfer-info-dict) A successful send will return an empty dictionary (*needs to be fixed to return something*). An unsuccessful send will return `fut.exceptions.Conflict`if the card has expired from the transfer market, or `fut.exceptions.PermissionDenied: 461` if the `id` you've provided is not valid.
 
-*Examples*: 
+*Examples*:
 ```python
 >>> # Active card on transfer market
 >>> fut.sendToWatchlist(trade_id=117860780888)
@@ -246,7 +246,7 @@ fut.exceptions.PermissionDenied: 461
 
 fut.watchlistDelete() takes one argument (trade_id). The trade_id argument is the `tradeid` field in the [transfer info dictionary.](https://github.com/TrevorMcCormick/futmarket/blob/master/lookuptables.md#transfer-info-dict) A successful delete will return `True`. An unsuccessful delete will still return `True` (*needs to be updated*).
 
-*Examples*: 
+*Examples*:
 ```python
 >>> # Card in my watchlist
 >>> fut.watchlistDelete(16746617493)
@@ -258,7 +258,7 @@ True
 ```
 ### fut.bid()  
 
-fut.bid() takes three arguments: 
+fut.bid() takes three arguments:
 * `trade_id` (int): the `tradeId` field in [transfer info dictionaries](https://github.com/TrevorMcCormick/futmarket/blob/master/lookuptables.md#transfer-info-dict)
 * `bid` (int): the amount of coins you're willing to bid on the specific item/player (*must be higher than `currentBid` and `startingBid` but there is no maximum value*)
 * `fast` (boolean): (default False) checks tradeStatus of item and your current coint count. this runs about 5x faster in the example for me below.

@@ -1,8 +1,8 @@
 ## Store
-### Current State
-Below is the current state of functionality within the **Store** category. 
+#### Current State
+Below is the current state of functionality within the **Store** category.
 
-Two methods exist in the Store category 
+Two methods exist in the Store category
 
 <img src="https://i.imgur.com/0ZIHL3q.png" alt="Store" style="height: 100px;"/>
 
@@ -10,7 +10,7 @@ Two methods exist in the Store category
 
 ### fut.buyPack()
 
-fut.buyPack() takes two arguments: `pack_id` and `currency` (default: 'COINS'). We're still working on a list of pack_ids. 
+fut.buyPack() takes two arguments: `pack_id` and `currency` (default: 'COINS'). We're still working on a list of pack_ids.
 Until then, this function is lacking documentation.  
 
 ### fut.openPack()

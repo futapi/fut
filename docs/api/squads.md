@@ -1,8 +1,8 @@
-## Squads 
-### Current State
-Below is the current state of functionality within the **Squads** category. 
+## Squads
+#### Current State
+Below is the current state of functionality within the **Squads** category.
 
-One method exists to return the players on your active squad, without managers or other items. Squad management and TOTW are not included yet in the fut library. 
+One method exists to return the players on your active squad, without managers or other items. Squad management and TOTW are not included yet in the fut library.
 
 <img src="https://i.imgur.com/UcEzzTd.png" alt="Squads" style="height: 100px;"/>
 
@@ -11,9 +11,9 @@ One method exists to return the players on your active squad, without managers o
 ### fut.squad()
 > arguments: (self, squad_id=0, persona_id=None)  
 
-fut.squad() returns a list of dictionaries, each containing information about one player in your active squad. [The **player info dict** is linked here.](#player_info_dict) 
+fut.squad() returns a list of dictionaries, each containing information about one player in your active squad. [The **player info dict** is linked here.](#player_info_dict)
 
-*Example*: 
+*Example*:
 ```python
 >>> len(fut.squad())
 23
