@@ -65,7 +65,7 @@ User Guide
 This is basic part of the documentation, it's about installation and importing.
 
 .. toctree::
-   :maxdepth: 1
+   :maxdepth: 2
 
    user/changelog
    user/install
@@ -76,7 +76,7 @@ This is basic part of the documentation, it's about installation and importing.
 API part, all methods descriptions can be found here.
 
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 3
 
    api/squads
    api/squadBuildingChallenges

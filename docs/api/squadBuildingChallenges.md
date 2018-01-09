@@ -1,5 +1,4 @@
 ## Squad Building Challenge
-#### Current State
 Below is the current state of functionality within the **Squad Building Challenge** category. In the [core.py file](https://github.com/futapi/fut/blob/master/fut/core.py), three more methods exist (sbsSetChallenges , sbsSquad , and sendToSbs) but do not currently work.
 
 There is one working method in this category that GETs Squad Building Challenge info.

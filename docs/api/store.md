@@ -1,5 +1,4 @@
 ## Store
-#### Current State
 Below is the current state of functionality within the **Store** category.
 
 Two methods exist in the Store category

@@ -1,5 +1,4 @@
 ## Club
-#### Current State
 Below is the current state of functionality within the **Club** category.
 
 Eight method exist in the Club category.

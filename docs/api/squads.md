@@ -1,5 +1,4 @@
 ## Squads
-#### Current State
 Below is the current state of functionality within the **Squads** category.
 
 One method exists to return the players on your active squad, without managers or other items. Squad management and TOTW are not included yet in the fut library.

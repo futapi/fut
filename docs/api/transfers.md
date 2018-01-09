@@ -1,6 +1,5 @@
 
 ## Transfers
-#### Current State
 Below is the current state of functionality within the **Transfers** category. All methods within the Transfers category are stable.
 
 <img src="https://i.imgur.com/YVVgg21.png" alt="Squads" style="height: 100px;"/>
