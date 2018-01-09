@@ -76,7 +76,7 @@ This is basic part of the documentation, it's about installation and importing.
 API part, all methods descriptions can be found here.
 
 .. toctree::
-   :maxdepth: 3
+   :maxdepth: 2
 
    api/squads
    api/squadBuildingChallenges

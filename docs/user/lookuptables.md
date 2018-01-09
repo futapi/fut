@@ -1,3 +1,6 @@
+## IDs (object structures?)
+List of ids is available below:
+
 ### Consumable IDs
 Consumable IDs have been added by [Koolaidjones](https://github.com/koolaidjones/FUT-Consumables-Resource-IDs). They are updated through 2017, so some IDs may be slightly off. [The full table is availalbe at this Google Drive link.](https://docs.google.com/spreadsheets/d/1mzfX_quYxVhQ_kkmugO3gQtHwPSQnKTLVeDHiinI1jA/edit?usp=sharing)
 
@@ -227,7 +230,7 @@ PlayStyle IDs are found through the property fut.playstyles.
 | 273 |  'GK BASIC'   |
 
   </p></details>
-  
+
 ### Nation IDs
 Nation IDs are found through the property fut.nations.
 <details>
@@ -455,7 +458,7 @@ Nation IDs are found through the property fut.nations.
 | 219                           |  'Kosovo'                 |
 
   </p></details>
-  
+
 
 ### Rare Cards
 There are currently 41 confirmed types of rare cards.
@@ -699,25 +702,25 @@ Stadiums IDs are found through the property fut.stadiums.
 | 382 | 'Volgograd Arena'                       |
 | 383 | 'Kaliningrad Stadium'                   |
 | 384 | 'Kirklees Stadium'                      |
- 
-</p></details> 
- 
- 
+
+</p></details>
+
+
 ### Team IDs
 The team IDs are found through the property fut.teams. [A full table is available at this Google Drive link.](https://docs.google.com/spreadsheets/d/1_KdX2lYJOYyhdFkEYhyT8QZuCyznMVNtuBAJo4prHWs/edit?usp=sharing)
 
 
 ### Trade Status Dict
-The trade status dict returns basic info about a tradeId. 
+The trade status dict returns basic info about a tradeId.
 <details>
 <summary>Trade Status Dict Code Example</summary><p>
 <!-- alternative placement of p shown above -->
 
 ```python
 >>> fut.tradeStatus(16575379694)
-[{'tradeId': 16575379694, 
-'buyNowPrice': 1800, 
-'tradeState': 'closed', 
+[{'tradeId': 16575379694,
+'buyNowPrice': 1800,
+'tradeState': 'closed',
 ...}]
 ```
 </p></details>
@@ -747,7 +750,7 @@ The trade status dict returns basic info about a tradeId.
   </p></details>
 
 
-  
+
 ### Transfer Info Dict  
 The transfer info dict is returned by the tradepile and watchlist functions. Below is an example with a helpful table of return types.
 <details>
@@ -820,4 +823,3 @@ The transfer info dict is returned by the tradepile and watchlist functions. Bel
 | loans              | int         | NA          |
 
   </p></details>
-  
