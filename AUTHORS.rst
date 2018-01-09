@@ -6,6 +6,12 @@ Development Lead
 - Piotr Staroszczyk <piotr.staroszczyk@get24.org>
 
 
+Documentation mainteiner
+------------------------
+
+- Trevor McCormick @TrevorMcCormick
+
+
 EAHashingAlgorithm
 ``````````````````
 
@@ -30,3 +36,4 @@ Patches and Suggestions
 - LasseRegin
 - kirov
 - jsarasti
+- Trevor McCormick @TrevorMcCormick
