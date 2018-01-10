@@ -595,7 +595,7 @@ class Core(object):
                         task = FunCaptchaTask(
                             'https://www.easports.com',
                             fun_captcha_public_key,
-                            proxy=Proxy.parse_url(proxies.get('http')),
+                            proxy=Proxy.parse_url(proxies.get('http') or proxies.get('https')),
                             user_agent=self.r.headers['User-Agent']
                         )
                         job = anticaptcha.createTask(task)
