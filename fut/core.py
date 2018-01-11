@@ -777,6 +777,8 @@ class Core(object):
         # else:
         #     # unassigned item
         #     data = {"itemData": [{"pile": pile, "id": str(item_id)}]}
+        if not isinstance(item_id, (list, tuple)):
+            item_id = (item_id,)
         data = {"itemData": [{'pile': pile, 'id': str(i)} for i in item_id]}
 
         rc = self.__request__(method, url, data=json.dumps(data))
