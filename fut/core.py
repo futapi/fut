@@ -759,13 +759,12 @@ class Core(object):
     def __sendToPile__(self, pile, trade_id=None, item_id=None):
         """Send to pile.
 
-        :params trade_id: Trade id.
-        :params item_id: (optional) Iteam id.
+        :params trade_id: (optional?) Trade id.
+        :params item_id: Iteam id.
         """
         method = 'PUT'
         url = 'item'
 
-        # TODO: accept multiple trade_ids (just extend list below)
         # if pile == 'watchlist':
         #     params = {'tradeId': trade_id}
         #     data = {'auctionInfo': [{'id': trade_id}]}
@@ -778,7 +777,7 @@ class Core(object):
         # else:
         #     # unassigned item
         #     data = {"itemData": [{"pile": pile, "id": str(item_id)}]}
-        data = {"itemData": [{"pile": pile, "id": str(item_id)}]}
+        data = {"itemData": [{'pile': pile, 'id': str(i)} for i in item_id]}
 
         rc = self.__request__(method, url, data=json.dumps(data))
         if rc['itemData'][0]['success']:
