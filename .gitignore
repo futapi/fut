@@ -21,3 +21,4 @@ screenlog.0
 codecov.yml
 club_players.txt
 database.db
+relist.py
