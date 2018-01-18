@@ -727,11 +727,12 @@ class Core(object):
                 print(rc.status_code)
                 print(rc.cookies)
                 print(rc.content)
-                # pinEvents
-                events = [self.pin.event('error')]
-                self.pin.send(events)
-                self.logout()
-                raise Captcha()
+                if url != 'https://%s/ut/auth' % self.fut_host:
+                    # pinEvents
+                    events = [self.pin.event('error')]
+                    self.pin.send(events)
+                    self.logout()
+                    raise Captcha()
             elif rc.status_code == 460:
                 raise PermissionDenied(460)
             elif rc.status_code == 461:
@@ -741,6 +742,9 @@ class Core(object):
             elif rc.status_code in (512, 521):
                 raise FutError('512/521 Temporary ban or just too many requests.')
             # it makes sense to print headers, status_code, etc. only when we don't know what happened
+            print(rc.url)
+            print(data)
+            print(params)
             print(rc.headers)
             print(rc.status_code)
             print(rc.cookies)
@@ -795,11 +799,11 @@ class Core(object):
 
         :params save: False if You don't want to save cookies.
         """
-        self.r.get('https://www.easports.com/signout', params={'ct': self._})
-        self.r.get('https://accounts.ea.com/connect/clearsid', params={'ct': self._})
-        self.r.get('https://beta.www.origin.com/views/logout.html', params={'ct': self._})
-        self.r.get('https://help.ea.com/community/logout/', params={'ct': self._})
-        # self.r.delete('https://%s/ut/auth' % self.fut_host, timeout=self.timeout)
+        # self.r.get('https://www.easports.com/signout', params={'ct': self._})
+        # self.r.get('https://accounts.ea.com/connect/clearsid', params={'ct': self._})
+        # self.r.get('https://beta.www.origin.com/views/logout.html', params={'ct': self._})
+        # self.r.get('https://help.ea.com/community/logout/', params={'ct': self._})
+        self.r.delete('https://%s/ut/auth' % self.fut_host, timeout=self.timeout)
         if save:
             self.saveSession()
         # needed? https://accounts.ea.com/connect/logout?client_id=FIFA-18-WEBCLIENT&redirect_uri=https://www.easports.com/fifa/ultimate-team/web-app/auth.html
