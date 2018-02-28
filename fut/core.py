@@ -642,7 +642,7 @@ class Core(object):
         # TODO?: usermassinfo as separate method && ability to refresh piles etc.
         self._usermassinfo = self.r.get('https://%s/ut/game/fifa18/usermassinfo' % self.fut_host, params={'_': self._}, timeout=self.timeout).json()
         self._ += 1
-        if self._usermassinfo['settings']['configs'][2]['value'] == 0:
+        if self._usermassinfo['userInfo']['feature']['trade'] == 0:
             raise FutError(reason='Transfer market is probably disabled on this account.')  # if tradingEnabled = 0
 
         # size of piles
