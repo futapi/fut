@@ -502,7 +502,8 @@ class Core(object):
         self.r.headers['Easw-Session-Data-Nucleus-Id'] = self.nucleus_id
 
         # shards
-        self._ = int(time.time() * 1000)
+        self.base_time = int(time.time() * 1000)
+        self._ = self.base_time
         rc = self.r.get('https://%s/ut/shards/v2' % auth_url, data={'_': self._}).json()  # TODO: parse this
         self._ += 1
         self.fut_host = {
@@ -865,6 +866,9 @@ class Core(object):
         if not self._stadiums:
             self._stadiums = stadiums()
         return self._stadiums
+
+    def get_number_of_requests(self):
+        return {'start_time': self.base_time, 'requests': self._ - self.base_time}
 
     def saveSession(self):
         """Save cookies/session."""
