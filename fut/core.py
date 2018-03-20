@@ -1081,7 +1081,7 @@ class Core(object):
 
         params = {'sort': sort, 'type': ctype, 'defId': defId, 'start': start, 'count': count}
         if level:
-            params['lev'] = level
+            params['level'] = level
         if category:
             params['cat'] = category
         if assetId:
