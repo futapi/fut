@@ -4,6 +4,16 @@ Changelog
 ---------
 
 
+0.3.11 (2018-04-22)
+^^^^^^^^^^^^^^^^^^^
+
+* simple fixes for futbin and futhead
+* add ability to send multiple items to pile (#383)
+* correct transfer market status check (#392)
+* track the number of requests that have been made (thanks to flipdazed #402)
+* fix level value when searching club (thanks to Krato123)
+* no more nationalities in players
+
 0.3.10 (2017-12-22)
 ^^^^^^^^^^^^^^^^^^^
 
