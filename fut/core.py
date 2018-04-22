@@ -259,8 +259,7 @@ def players(timeout=timeout):
                             'firstname': i['f'],
                             'lastname': i['l'],
                             'surname': i.get('c'),
-                            'rating': i['r'],
-                            'nationality': i['n']}  # replace with nationality object when created
+                            'rating': i['r']}
     return players
 
 
