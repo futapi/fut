@@ -287,6 +287,7 @@ class Core(object):
         self.timeout = timeout
         self.delay = delay
         self.request_time = 0
+        self.n = 0  # number of requests made so far
         # db
         self._players = None
         self._playstyles = None
@@ -687,6 +688,7 @@ class Core(object):
         :params url: Url.
         """
         # TODO: update credtis?
+        self.n += 1
         data = data or {}
         params = params or {}
         url = 'https://%s/ut/game/fifa18/%s' % (self.fut_host, url)
