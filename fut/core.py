@@ -36,7 +36,7 @@ from .exceptions import (FutError, ExpiredSession, InternalServerError, Timeout,
                          UnknownError, PermissionDenied, Captcha,
                          Conflict, MaxSessions, MultipleSession,
                          Unauthorized, FeatureDisabled, doLoginFail,
-                         NoUltimateTeam, MarketLocked)
+                         NoUltimateTeam, MarketLocked, NoTradeExistingError)
 from .EAHashingAlgorithm import EAHashingAlgorithm
 
 
@@ -448,16 +448,16 @@ class Core(object):
         elif emulate == 'and':
             sku = 'FUT18AND'
             clientVersion = 21
-#        TODO: need more info about log in procedure in game
-#        elif emulate == 'xbox':
-#            sku = 'FFA16XBX'  # FFA14CAP ?
-#            clientVersion = 1
-#        elif emulate == 'ps3':
-#            sku = 'FFA16PS3'  # FFA14KTL ?
-#            clientVersion = 1
-#        elif emulate == 'pc':
-#            sku = ''  # dunno
-#            clientVersion = 1
+        #        TODO: need more info about log in procedure in game
+        #        elif emulate == 'xbox':
+        #            sku = 'FFA16XBX'  # FFA14CAP ?
+        #            clientVersion = 1
+        #        elif emulate == 'ps3':
+        #            sku = 'FFA16PS3'  # FFA14KTL ?
+        #            clientVersion = 1
+        #        elif emulate == 'pc':
+        #            sku = ''  # dunno
+        #            clientVersion = 1
         elif not emulate:
             sku = 'FUT18WEB'
             clientVersion = 1
@@ -674,12 +674,12 @@ class Core(object):
 
         self.keepalive()  # credits
 
-#    def __shards__(self):
-#        """Returns shards info."""
-#        # TODO: headers
-#        self.r.headers['X-UT-Route'] = self.urls['fut_base']
-#        return self.r.get(self.urls['shards'], params={'_': int(time.time()*1000)}, timeout=self.timeout).json()
-#        # self.r.headers['X-UT-Route'] = self.urls['fut_pc']
+    #    def __shards__(self):
+    #        """Returns shards info."""
+    #        # TODO: headers
+    #        self.r.headers['X-UT-Route'] = self.urls['fut_base']
+    #        return self.r.get(self.urls['shards'], params={'_': int(time.time()*1000)}, timeout=self.timeout).json()
+    #        # self.r.headers['X-UT-Route'] = self.urls['fut_pc']
 
     def __request__(self, method, url, data=None, params=None, fast=False):
         """Prepare headers and sends request. Returns response as a json object.
@@ -746,6 +746,8 @@ class Core(object):
                 raise MarketLocked()
             elif rc.status_code in (512, 521):
                 raise FutError('512/521 Temporary ban or just too many requests.')
+            elif rc.status_code == 478:
+                raise NoTradeExistingError()
             # it makes sense to print headers, status_code, etc. only when we don't know what happened
             print(rc.url)
             print(data)
