@@ -29,7 +29,7 @@ except NameError:
     FileNotFoundError = IOError
 
 from .pin import Pin
-from .config import headers, headers_and, headers_ios, cookies_file, token_file, timeout, delay
+from .config import headers, headers_and, headers_ios, cookies_file, token_file, timeout, delay, request_count_file
 from .log import logger
 from .urls import client_id, auth_url, card_info_url, messages_url, fun_captcha_public_key
 from .exceptions import (FutError, ExpiredSession, InternalServerError, Timeout,
@@ -279,7 +279,7 @@ def playstyles(year=2018, timeout=timeout):
 
 
 class Core(object):
-    def __init__(self, email, passwd, secret_answer, platform='pc', code=None, totp=None, sms=False, emulate=None, debug=False, cookies=cookies_file, token=token_file, timeout=timeout, delay=delay, proxies=None, anticaptcha_client_key=None):
+    def __init__(self, email, passwd, secret_answer, platform='pc', code=None, totp=None, sms=False, emulate=None, debug=False, cookies=cookies_file, token=token_file, timeout=timeout, delay=delay, proxies=None, anticaptcha_client_key=None, request_file=request_count_file):
         self.credits = 0
         self.duplicates = []
         self.cookies_file = cookies  # TODO: map self.cookies to requests.Session.cookies?
@@ -288,6 +288,19 @@ class Core(object):
         self.delay = delay
         self.request_time = 0
         self.n = 0  # number of requests made so far
+
+        self.request_count_file = request_file
+        try:
+            self.request_count_data = json.load(open(self.request_count_file))  # loading request count data
+            print("Loaded request data, this day: {}/5000, "
+                             "this hour: {}/500".format(self.request_count_data["day_count"],
+                                                        self.request_count_data["hour_count"]), 1)
+        except FileNotFoundError:
+            self.request_count_data = {"end_hour": self.calc_next_hour(), "end_day": self.calc_next_day(),
+                                       "hour_count": 0, "day_count": 0}  # creating request count data
+            with open(self.request_count_file, 'w') as outfile:
+                json.dump(self.request_count_data, outfile)
+            print("Created request count file")
         # db
         self._players = None
         self._playstyles = None
@@ -300,6 +313,78 @@ class Core(object):
         self.logger = logger(__name__)
         # TODO: validate fut request response (200 OK)
         self.__launch__(email, passwd, secret_answer, platform=platform, code=code, totp=totp, sms=sms, emulate=emulate, proxies=proxies, anticaptcha_client_key=anticaptcha_client_key)
+
+    def calc_next_hour(self, next_full_hour=False):
+        if next_full_hour:
+            t = int(time.time())
+            minuite = int(datetime.datetime.fromtimestamp(t).strftime('%M'))
+            second = int(datetime.datetime.fromtimestamp(t).strftime('%S'))
+            return ((60 - minuite) * 60) + t - second
+        else:
+            t = time.time()
+            return t + 3600
+
+    def calc_next_day(self, next_full_day=False):
+        if next_full_day:
+            t = int(time.time())
+            hour = 24 - int(datetime.datetime.fromtimestamp(t).strftime('%H'))
+            minuite = 60 * int(datetime.datetime.fromtimestamp(t).strftime('%M'))
+            second = int(datetime.datetime.fromtimestamp(t).strftime('%S'))
+            return (3600 * hour) + t - minuite - second
+        else:
+            t = time.time()
+            return t + 3600 * 24
+
+    def get_hourly_requests(self):
+        return self.request_count_data["hour_count"]
+
+    def get_daily_requests(self):
+        return self.request_count_data["day_count"]
+
+    def count_request(self, debug=False, increment=1, write_file=True):  # is called every time a request is made
+        t = int(time.time())
+        day_save = False
+        hour_save = False
+        if t > self.request_count_data["end_day"]:  # reset request count data if day has passed
+            self.request_count_data["end_day"] = self.calc_next_day()
+            self.request_count_data["end_hour"] = self.calc_next_hour()
+            self.request_count_data["day_count"] = 0
+            self.request_count_data["hour_count"] = 0
+            day_save = True
+            hour_save = True
+        elif t > self.request_count_data["end_hour"]:  # reset request count data if hour has passed
+            self.request_count_data["end_hour"] = self.calc_next_hour()
+            self.request_count_data["hour_count"] = 0
+            hour_save = True
+
+        self.request_count_data["day_count"] += increment
+        self.request_count_data["hour_count"] += increment
+
+        if debug:
+            print("Current request count: {}/500, {}/5000".format(self.request_count_data["hour_count"],
+                                                                             self.request_count_data["day_count"]), 1)
+        if write_file:
+            with open(self.request_count_file, 'w') as outfile:
+                json.dump(self.request_count_data, outfile)  # save request count data to file
+
+        if not day_save:
+            if self.request_count_data["day_count"] + 1 >= 5000:  # sleep until next day if limit is reached
+                print("Reached 5000 requests this day!")
+                t = int(time.time())
+                sleeptime = int(self.request_count_data["end_day"]) - t
+                if sleeptime > 0:
+                    print(
+                        "Sleeping now for {} seconds/ {} minuites/ {} hours".format(sleeptime, sleeptime / 60,
+                                                                                    sleeptime / 3600))
+                    time.sleep(sleeptime)
+        if not hour_save:
+            if self.request_count_data["hour_count"] + 1 >= 500:  # sleep until next hour if limit is reached
+                print("Reached 500 requests this hour!")
+                t = int(time.time())
+                sleeptime = int(self.request_count_data["end_hour"]) - t
+                if sleeptime > 0:
+                    print("Sleeping now for {} seconds/ {} minuites".format(sleeptime, sleeptime / 60))
+                    time.sleep(sleeptime)
 
     def __login__(self, email, passwd, code=None, totp=None, sms=False):
         """Log in - needed only if we don't have access token or it's expired."""
@@ -689,6 +774,7 @@ class Core(object):
         """
         # TODO: update credtis?
         self.n += 1
+        self.count_request(write_file=not fast)
         data = data or {}
         params = params or {}
         url = 'https://%s/ut/game/fifa18/%s' % (self.fut_host, url)
