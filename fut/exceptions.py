@@ -9,6 +9,12 @@ This module contains the set of fut's exceptions.
 """
 # TODO: add few exceptions for login
 
+from requests.exceptions import Timeout as BaseTimeout
+
+
+class Timeout(BaseTimeout):
+    """Request timeout, looks like ea servers are down."""
+
 
 class FutError(RuntimeError):
     """There was an ambiguous exception that occurred while handling
@@ -22,10 +28,6 @@ class FutError(RuntimeError):
 class UnknownError(FutError):
     """Unknown error, please report full log at
     https://github.com/oczkers/fut/issues/24"""
-
-
-class Timeout(FutError):
-    """Request timeout, looks like ea servers are down."""
 
 
 class ExpiredSession(FutError):

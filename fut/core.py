@@ -32,7 +32,7 @@ from .pin import Pin
 from .config import headers, headers_and, headers_ios, cookies_file, token_file, timeout, delay
 from .log import logger
 from .urls import client_id, auth_url, card_info_url, messages_url, fun_captcha_public_key
-from .exceptions import (FutError, ExpiredSession, InternalServerError,
+from .exceptions import (FutError, ExpiredSession, InternalServerError, Timeout,
                          UnknownError, PermissionDenied, Captcha,
                          Conflict, MaxSessions, MultipleSession,
                          Unauthorized, FeatureDisabled, doLoginFail,
@@ -701,14 +701,17 @@ class Core(object):
         else:
             time.sleep(max(self.request_time - time.time() + 1.4, 0))  # respect 1s minimum delay between requests
         self.request_time = time.time()  # save request time for delay calculations
-        if method.upper() == 'GET':
-            rc = self.r.get(url, data=data, params=params, timeout=self.timeout)
-        elif method.upper() == 'POST':
-            rc = self.r.post(url, data=data, params=params, timeout=self.timeout)
-        elif method.upper() == 'PUT':
-            rc = self.r.put(url, data=data, params=params, timeout=self.timeout)
-        elif method.upper() == 'DELETE':
-            rc = self.r.delete(url, data=data, params=params, timeout=self.timeout)
+        try:
+            if method.upper() == 'GET':
+                rc = self.r.get(url, data=data, params=params, timeout=self.timeout)
+            elif method.upper() == 'POST':
+                rc = self.r.post(url, data=data, params=params, timeout=self.timeout)
+            elif method.upper() == 'PUT':
+                rc = self.r.put(url, data=data, params=params, timeout=self.timeout)
+            elif method.upper() == 'DELETE':
+                rc = self.r.delete(url, data=data, params=params, timeout=self.timeout)
+        except requests.exceptions.Timeout as e:
+            raise Timeout(e)
         self.logger.debug("response: {0}".format(rc.content))
         if not rc.ok:  # status != 200
             # TODO: catch all error codes https://gist.github.com/oczkers/cebecbf4c6a4362a843424edb443ba59
