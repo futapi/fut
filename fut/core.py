@@ -8,14 +8,19 @@ This module implements the fut's basic methods.
 
 """
 
-import requests
-import re
-import random
-import time
 import json
+import random
+import re
+import time
+
 import pyotp
+import requests
 from python_anticaptcha import AnticaptchaClient, FunCaptchaTask, Proxy
-from python_anticaptcha.exceptions import AnticatpchaException
+
+try:
+    from python_anticaptcha.exceptions import AnticaptchaException
+except ImportError:
+    from python_anticaptcha.exceptions import AnticatpchaException as AnticaptchaException  # Older versions
 # from datetime import datetime, timedelta
 try:
     from cookielib import LWPCookieJar
@@ -35,8 +40,8 @@ from .urls import client_id, auth_url, card_info_url, messages_url, fun_captcha_
 from .exceptions import (FutError, ExpiredSession, InternalServerError, Timeout,
                          UnknownError, PermissionDenied, Captcha,
                          Conflict, MaxSessions, MultipleSession,
-                         Unauthorized, FeatureDisabled, DoLoginFail,
-                         NoUltimateTeam, MarketLocked, NoTradeExistingError)
+                         DoLoginFail,
+                         MarketLocked, NoTradeExistingError)
 from .EAHashingAlgorithm import EAHashingAlgorithm
 
 
@@ -76,90 +81,91 @@ def itemParse(item_data, full=True):
     # TODO: make it less ugly
     # ItemRareType={NONE:0,RARE:1,LOCK:2,TOTW:3,PURPLE:4,TOTY:5,RB:6,GREEN:7,ORANGE:8,PINK:9,TEAL:10,TOTS:11,LEGEND:12,WC:13,UNICEF:14,OLDIMOTM:15,FUTTY:16,STORYMODE:17,CHAMPION:18,CMOTM:19,IMOTM:20,OTW:21,HALLOWEEN:22,MOVEMBER:23,SBC:24,SBCP:25,PROMOA:26,PROMOB:27,AWARD:28,BDAY:30,UNITED:31,FUTMAS:32,RTRC:33,PTGS:34,FOF:35,MARQUEE:36,CHAMPIONSHIP:37,EUMOTM:38,TOTT:39,RRC:40,RRR:41}
     return_data = {
-        'tradeId':           item_data.get('tradeId'),
-        'buyNowPrice':       item_data.get('buyNowPrice'),
-        'tradeState':        item_data.get('tradeState'),
-        'bidState':          item_data.get('bidState'),
-        'startingBid':       item_data.get('startingBid'),
-        'id':                item_data.get('itemData', {'id': None})['id'] or item_data.get('item', {'id': None})['id'],
-        'offers':            item_data.get('offers'),
-        'currentBid':        item_data.get('currentBid'),
-        'expires':           item_data.get('expires'),  # seconds left
+        'tradeId': item_data.get('tradeId'),
+        'buyNowPrice': item_data.get('buyNowPrice'),
+        'tradeState': item_data.get('tradeState'),
+        'bidState': item_data.get('bidState'),
+        'startingBid': item_data.get('startingBid'),
+        'id': item_data.get('itemData', {'id': None})['id'] or item_data.get('item', {'id': None})['id'],
+        'offers': item_data.get('offers'),
+        'currentBid': item_data.get('currentBid'),
+        'expires': item_data.get('expires'),  # seconds left
         'sellerEstablished': item_data.get('sellerEstablished'),
-        'sellerId':          item_data.get('sellerId'),
-        'sellerName':        item_data.get('sellerName'),
-        'watched':           item_data.get('watched'),
-        'resourceId':        item_data.get('resourceId'),  # consumables only?
-        'discardValue':      item_data.get('discardValue'),  # consumables only?
+        'sellerId': item_data.get('sellerId'),
+        'sellerName': item_data.get('sellerName'),
+        'watched': item_data.get('watched'),
+        'resourceId': item_data.get('resourceId'),  # consumables only?
+        'discardValue': item_data.get('discardValue'),  # consumables only?
     }
     if full:
         if 'itemData' in item_data:
             return_data.update({
-                'timestamp':        item_data['itemData'].get('timestamp'),  # auction start
-                'rating':           item_data['itemData'].get('rating'),
-                'assetId':          item_data['itemData'].get('assetId'),
-                'resourceId':       item_data['itemData'].get('resourceId'),
-                'itemState':        item_data['itemData'].get('itemState'),
-                'rareflag':         item_data['itemData'].get('rareflag'),
-                'formation':        item_data['itemData'].get('formation'),
-                'leagueId':         item_data['itemData'].get('leagueId'),
-                'injuryType':       item_data['itemData'].get('injuryType'),
-                'injuryGames':      item_data['itemData'].get('injuryGames'),
-                'lastSalePrice':    item_data['itemData'].get('lastSalePrice'),
-                'fitness':          item_data['itemData'].get('fitness'),
-                'training':         item_data['itemData'].get('training'),
-                'suspension':       item_data['itemData'].get('suspension'),
-                'contract':         item_data['itemData'].get('contract'),
-                'position':         item_data['itemData'].get('preferredPosition'),
-                'playStyle':        item_data['itemData'].get('playStyle'),  # used only for players
-                'discardValue':     item_data['itemData'].get('discardValue'),
-                'itemType':         item_data['itemData'].get('itemType'),
-                'cardType':         item_data['itemData'].get('cardsubtypeid'),  # alias
-                'cardsubtypeid':    item_data['itemData'].get('cardsubtypeid'),  # used only for cards
-                'owners':           item_data['itemData'].get('owners'),
-                'untradeable':      item_data['itemData'].get('untradeable'),
-                'morale':           item_data['itemData'].get('morale'),
-                'statsList':        item_data['itemData'].get('statsList'),  # what is this?
-                'lifetimeStats':    item_data['itemData'].get('lifetimeStats'),
-                'attributeList':    item_data['itemData'].get('attributeList'),
-                'teamid':           item_data['itemData'].get('teamid'),
-                'assists':          item_data['itemData'].get('assists'),
-                'lifetimeAssists':  item_data['itemData'].get('lifetimeAssists'),
-                'loyaltyBonus':     item_data['itemData'].get('loyaltyBonus'),
-                'pile':             item_data['itemData'].get('pile'),
-                'nation':           item_data['itemData'].get('nation'),  # nation_id?
-                'year':             item_data['itemData'].get('resourceGameYear'),  # alias
+                'timestamp': item_data['itemData'].get('timestamp'),  # auction start
+                'rating': item_data['itemData'].get('rating'),
+                'assetId': item_data['itemData'].get('assetId'),
+                'resourceId': item_data['itemData'].get('resourceId'),
+                'itemState': item_data['itemData'].get('itemState'),
+                'rareflag': item_data['itemData'].get('rareflag'),
+                'formation': item_data['itemData'].get('formation'),
+                'leagueId': item_data['itemData'].get('leagueId'),
+                'injuryType': item_data['itemData'].get('injuryType'),
+                'injuryGames': item_data['itemData'].get('injuryGames'),
+                'lastSalePrice': item_data['itemData'].get('lastSalePrice'),
+                'fitness': item_data['itemData'].get('fitness'),
+                'training': item_data['itemData'].get('training'),
+                'suspension': item_data['itemData'].get('suspension'),
+                'contract': item_data['itemData'].get('contract'),
+                'position': item_data['itemData'].get('preferredPosition'),
+                'playStyle': item_data['itemData'].get('playStyle'),  # used only for players
+                'discardValue': item_data['itemData'].get('discardValue'),
+                'itemType': item_data['itemData'].get('itemType'),
+                'cardType': item_data['itemData'].get('cardsubtypeid'),  # alias
+                'cardsubtypeid': item_data['itemData'].get('cardsubtypeid'),  # used only for cards
+                'owners': item_data['itemData'].get('owners'),
+                'untradeable': item_data['itemData'].get('untradeable'),
+                'morale': item_data['itemData'].get('morale'),
+                'statsList': item_data['itemData'].get('statsList'),  # what is this?
+                'lifetimeStats': item_data['itemData'].get('lifetimeStats'),
+                'attributeList': item_data['itemData'].get('attributeList'),
+                'teamid': item_data['itemData'].get('teamid'),
+                'assists': item_data['itemData'].get('assists'),
+                'lifetimeAssists': item_data['itemData'].get('lifetimeAssists'),
+                'loyaltyBonus': item_data['itemData'].get('loyaltyBonus'),
+                'pile': item_data['itemData'].get('pile'),
+                'nation': item_data['itemData'].get('nation'),  # nation_id?
+                'year': item_data['itemData'].get('resourceGameYear'),  # alias
                 'resourceGameYear': item_data['itemData'].get('resourceGameYear'),
                 'marketDataMinPrice': item_data['itemData'].get('marketDataMinPrice'),
                 'marketDataMaxPrice': item_data['itemData'].get('marketDataMaxPrice'),
-                'loans':            item_data.get('loans'),
+                'loans': item_data.get('loans'),
             })
         elif 'item' in item_data:  # consumables only (?)
             return_data.update({
-                'cardassetid':  item_data['item'].get('cardassetid'),
-                'weightrare':   item_data['item'].get('weightrare'),
-                'gold':         item_data['item'].get('gold'),
-                'silver':       item_data['item'].get('silver'),
-                'bronze':       item_data['item'].get('bronze'),
-                'consumablesContractPlayer':    item_data['item'].get('consumablesContractPlayer'),
-                'consumablesContractManager':    item_data['item'].get('consumablesContractManager'),
-                'consumablesFormationPlayer':    item_data['item'].get('consumablesFormationPlayer'),
-                'consumablesFormationManager':    item_data['item'].get('consumablesFormationManager'),
-                'consumablesPosition':    item_data['item'].get('consumablesPosition'),
-                'consumablesTraining':    item_data['item'].get('consumablesTraining'),
-                'consumablesTrainingPlayer':    item_data['item'].get('consumablesTrainingPlayer'),
-                'consumablesTrainingManager':    item_data['item'].get('consumablesTrainingManager'),
-                'consumablesTrainingGk':    item_data['item'].get('consumablesTrainingGk'),
-                'consumablesTrainingPlayerPlayStyle':    item_data['item'].get('consumablesTrainingPlayerPlayStyle'),
-                'consumablesTrainingGkPlayStyle':    item_data['item'].get('consumablesTrainingGkPlayStyle'),
-                'consumablesTrainingManagerLeagueModifier':    item_data['item'].get('consumablesTrainingManagerLeagueModifier'),
-                'consumablesHealing':    item_data['item'].get('consumablesHealing'),
-                'consumablesTeamTalksPlayer':    item_data['item'].get('consumablesTeamTalksPlayer'),
-                'consumablesTeamTalksTeam':    item_data['item'].get('consumablesTeamTalksTeam'),
-                'consumablesFitnessPlayer':    item_data['item'].get('consumablesFitnessPlayer'),
-                'consumablesFitnessTeam':    item_data['item'].get('consumablesFitnessTeam'),
-                'consumables':    item_data['item'].get('consumables'),
-                'count':            item_data.get('count'),  # consumables only (?)
+                'cardassetid': item_data['item'].get('cardassetid'),
+                'weightrare': item_data['item'].get('weightrare'),
+                'gold': item_data['item'].get('gold'),
+                'silver': item_data['item'].get('silver'),
+                'bronze': item_data['item'].get('bronze'),
+                'consumablesContractPlayer': item_data['item'].get('consumablesContractPlayer'),
+                'consumablesContractManager': item_data['item'].get('consumablesContractManager'),
+                'consumablesFormationPlayer': item_data['item'].get('consumablesFormationPlayer'),
+                'consumablesFormationManager': item_data['item'].get('consumablesFormationManager'),
+                'consumablesPosition': item_data['item'].get('consumablesPosition'),
+                'consumablesTraining': item_data['item'].get('consumablesTraining'),
+                'consumablesTrainingPlayer': item_data['item'].get('consumablesTrainingPlayer'),
+                'consumablesTrainingManager': item_data['item'].get('consumablesTrainingManager'),
+                'consumablesTrainingGk': item_data['item'].get('consumablesTrainingGk'),
+                'consumablesTrainingPlayerPlayStyle': item_data['item'].get('consumablesTrainingPlayerPlayStyle'),
+                'consumablesTrainingGkPlayStyle': item_data['item'].get('consumablesTrainingGkPlayStyle'),
+                'consumablesTrainingManagerLeagueModifier': item_data['item'].get(
+                    'consumablesTrainingManagerLeagueModifier'),
+                'consumablesHealing': item_data['item'].get('consumablesHealing'),
+                'consumablesTeamTalksPlayer': item_data['item'].get('consumablesTeamTalksPlayer'),
+                'consumablesTeamTalksTeam': item_data['item'].get('consumablesTeamTalksTeam'),
+                'consumablesFitnessPlayer': item_data['item'].get('consumablesFitnessPlayer'),
+                'consumablesFitnessTeam': item_data['item'].get('consumablesFitnessTeam'),
+                'consumables': item_data['item'].get('consumables'),
+                'count': item_data.get('count'),  # consumables only (?)
                 'untradeableCount': item_data.get('untradeableCount'),  # consumables only (?)
             })
 
@@ -279,7 +285,9 @@ def playstyles(year=2018, timeout=timeout):
 
 
 class Core(object):
-    def __init__(self, email, passwd, secret_answer, platform='pc', code=None, totp=None, sms=False, emulate=None, debug=False, cookies=cookies_file, token=token_file, timeout=timeout, delay=delay, proxies=None, anticaptcha_client_key=None, request_file=request_count_file):
+    def __init__(self, email, passwd, secret_answer, platform='pc', code=None, totp=None, sms=False, emulate=None,
+                 debug=False, cookies=cookies_file, token=token_file, timeout=timeout, delay=delay, proxies=None,
+                 anticaptcha_client_key=None, request_file=request_count_file):
         self.credits = 0
         self.duplicates = []
         self.cookies_file = cookies  # TODO: map self.cookies to requests.Session.cookies?
@@ -293,8 +301,8 @@ class Core(object):
         try:
             self.request_count_data = json.load(open(self.request_count_file))  # loading request count data
             print("Loaded request data, this day: {}/5000, "
-                             "this hour: {}/500".format(self.request_count_data["day_count"],
-                                                        self.request_count_data["hour_count"]), 1)
+                  "this hour: {}/500".format(self.request_count_data["day_count"],
+                                             self.request_count_data["hour_count"]), 1)
         except FileNotFoundError:
             self.request_count_data = {"end_hour": self.calc_next_hour(), "end_day": self.calc_next_day(),
                                        "hour_count": 0, "day_count": 0}  # creating request count data
@@ -312,7 +320,8 @@ class Core(object):
         logger(save=debug)  # init root logger
         self.logger = logger(__name__)
         # TODO: validate fut request response (200 OK)
-        self.__launch__(email, passwd, secret_answer, platform=platform, code=code, totp=totp, sms=sms, emulate=emulate, proxies=proxies, anticaptcha_client_key=anticaptcha_client_key)
+        self.__launch__(email, passwd, secret_answer, platform=platform, code=code, totp=totp, sms=sms, emulate=emulate,
+                        proxies=proxies, anticaptcha_client_key=anticaptcha_client_key)
 
     def calc_next_hour(self, next_full_hour=False):
         if next_full_hour:
@@ -362,7 +371,7 @@ class Core(object):
 
         if debug:
             print("Current request count: {}/500, {}/5000".format(self.request_count_data["hour_count"],
-                                                                             self.request_count_data["day_count"]), 1)
+                                                                  self.request_count_data["day_count"]), 1)
         if write_file:
             with open(self.request_count_file, 'w') as outfile:
                 json.dump(self.request_count_data, outfile)  # save request count data to file
@@ -452,22 +461,28 @@ class Core(object):
                 self.r.headers['Referer'] = url = rc.url
                 # self.r.headers['Upgrade-Insecure-Requests'] = '1'  # ?
                 # self.r.headers['Origin'] = 'https://signin.ea.com'
-                rc = self.r.post(url.replace('s3', 's4'), {'oneTimeCode': code, '_trustThisDevice': 'on', 'trustThisDevice': 'on', '_eventId': 'submit'}, timeout=self.timeout)
+                rc = self.r.post(url.replace('s3', 's4'),
+                                 {'oneTimeCode': code, '_trustThisDevice': 'on', 'trustThisDevice': 'on',
+                                  '_eventId': 'submit'}, timeout=self.timeout)
                 # rc = rc.text
                 if 'Incorrect code entered' in rc.text or 'Please enter a valid security code' in rc.text:
                     raise FutError(reason='Error during login process - provided code is incorrect.')
                 if 'Set Up an App Authenticator' in rc.text:  # may we drop this?
-                    rc = self.r.post(url.replace('s3', 's4'), {'_eventId': 'cancel', 'appDevice': 'IPHONE'}, timeout=self.timeout)
+                    rc = self.r.post(url.replace('s3', 's4'), {'_eventId': 'cancel', 'appDevice': 'IPHONE'},
+                                     timeout=self.timeout)
                     # rc = rc.text
 
-            rc = re.match('https://www.easports.com/fifa/ultimate-team/web-app/auth.html#access_token=(.+?)&token_type=(.+?)&expires_in=[0-9]+', rc.url)
+            rc = re.match(
+                'https://www.easports.com/fifa/ultimate-team/web-app/auth.html#access_token=(.+?)&token_type=(.+?)&expires_in=[0-9]+',
+                rc.url)
             self.access_token = rc.group(1)
             self.token_type = rc.group(2)
             # TODO?: refresh after expires_in
 
             self.saveSession()
 
-    def __launch__(self, email, passwd, secret_answer, platform='pc', code=None, totp=None, sms=False, emulate=None, proxies=None, anticaptcha_client_key=None):
+    def __launch__(self, email, passwd, secret_answer, platform='pc', code=None, totp=None, sms=False, emulate=None,
+                   proxies=None, anticaptcha_client_key=None):
         """Launch futweb
 
         :params email: Email.
@@ -493,7 +508,8 @@ class Core(object):
             self.r.cookies = LWPCookieJar(self.cookies_file)
             try:
                 with open(self.token_file, 'r') as f:
-                    self.token_type, self.access_token = f.readline().replace('\n', '').replace('\r', '').split(' ')  # removing \n \r just to make sure
+                    self.token_type, self.access_token = f.readline().replace('\n', '').replace('\r', '').split(
+                        ' ')  # removing \n \r just to make sure
             except FileNotFoundError:
                 self.__login__(email=email, passwd=passwd, code=code, totp=totp, sms=sms)
             try:
@@ -504,10 +520,12 @@ class Core(object):
         else:
             self.__login__(email=email, passwd=passwd, code=code, totp=totp, sms=sms)
         if emulate == 'and':
-            raise FutError(reason='Emulate feature is currently disabled duo latest changes in login process, need more info')
+            raise FutError(
+                reason='Emulate feature is currently disabled duo latest changes in login process, need more info')
             self.r.headers = headers_and.copy()  # i'm android now ;-)
         elif emulate == 'ios':
-            raise FutError(reason='Emulate feature is currently disabled duo latest changes in login process, need more info')
+            raise FutError(
+                reason='Emulate feature is currently disabled duo latest changes in login process, need more info')
             self.r.headers = headers_ios.copy()  # i'm ios phone now ;-)
         else:
             self.r.headers = headers.copy()  # i'm chrome browser now ;-)
@@ -560,7 +578,9 @@ class Core(object):
                   'redirect_uri': 'https://www.easports.com/fifa/ultimate-team/web-app/auth.html',
                   'scope': 'basic.identity offline signin'}
         rc = self.r.get('https://accounts.ea.com/connect/auth', params=params)
-        rc = re.match('https://www.easports.com/fifa/ultimate-team/web-app/auth.html#access_token=(.+?)&token_type=(.+?)&expires_in=[0-9]+', rc.url)
+        rc = re.match(
+            'https://www.easports.com/fifa/ultimate-team/web-app/auth.html#access_token=(.+?)&token_type=(.+?)&expires_in=[0-9]+',
+            rc.url)
         self.access_token = rc.group(1)
         self.token_type = rc.group(2)
 
@@ -576,7 +596,9 @@ class Core(object):
         if rc.get('error') == 'invalid_access_token':
             print('invalid token')
             self.__login__(email=email, passwd=passwd, totp=totp, sms=sms)
-            return self.__launch__(email=email, passwd=passwd, secret_answer=secret_answer, platform=platform, code=code, totp=totp, sms=sms, emulate=emulate, proxies=proxies, anticaptcha_client_key=anticaptcha_client_key)
+            return self.__launch__(email=email, passwd=passwd, secret_answer=secret_answer, platform=platform,
+                                   code=code, totp=totp, sms=sms, emulate=emulate, proxies=proxies,
+                                   anticaptcha_client_key=anticaptcha_client_key)
         self.nucleus_id = rc['pid']['externalRefValue']  # or pidId
         self.dob = rc['pid']['dob']
         # tos_version = rc['tosVersion']
@@ -645,7 +667,8 @@ class Core(object):
                                    'redirectUrl': 'nucleus:rest'}}
         params = {'sku_b': self.sku_b,
                   '': int(time.time() * 1000)}
-        rc = self.r.post('https://%s/ut/auth' % self.fut_host, data=json.dumps(data), params=params, timeout=self.timeout)
+        rc = self.r.post('https://%s/ut/auth' % self.fut_host, data=json.dumps(data), params=params,
+                         timeout=self.timeout)
         if rc.status_code == 401:  # and rc.text == 'multiple session'
             raise FutError('multiple session')
         if rc.status_code == 500:
@@ -663,7 +686,8 @@ class Core(object):
 
         # validate (secret question)
         self.r.headers['Easw-Session-Data-Nucleus-Id'] = self.nucleus_id
-        rc = self.r.get('https://%s/ut/game/fifa18/phishing/question' % self.fut_host, params={'_': self._}, timeout=self.timeout).json()
+        rc = self.r.get('https://%s/ut/game/fifa18/phishing/question' % self.fut_host, params={'_': self._},
+                        timeout=self.timeout).json()
         self._ += 1
         if rc.get('code') == '458':
             if anticaptcha_client_key:
@@ -691,12 +715,14 @@ class Core(object):
                         self.__request__('POST', 'captcha/fun/validate', data=json.dumps({
                             'funCaptchaToken': fun_captcha_token,
                         }))
-                        rc = self.r.get('https://%s/ut/game/fifa18/phishing/question' % self.fut_host, params={'_': self._}, timeout=self.timeout).json()
+                        rc = self.r.get('https://%s/ut/game/fifa18/phishing/question' % self.fut_host,
+                                        params={'_': self._}, timeout=self.timeout).json()
                         self._ += 1
                         break
-                    except AnticatpchaException as e:
-                        if e.error_code in ['ERROR_PROXY_CONNECT_REFUSED', 'ERROR_PROXY_CONNECT_TIMEOUT', 'ERROR_PROXY_READ_TIMEOUT', 'ERROR_PROXY_BANNED']:
-                            self.logger.exception('AnticatpchaException ' + e.error_code)
+                    except AnticaptchaException as e:
+                        if e.error_code in ['ERROR_PROXY_CONNECT_REFUSED', 'ERROR_PROXY_CONNECT_TIMEOUT',
+                                            'ERROR_PROXY_READ_TIMEOUT', 'ERROR_PROXY_BANNED']:
+                            self.logger.exception('AnticaptchaException ' + e.error_code)
                             time.sleep(10)
                             continue
                         else:
@@ -706,7 +732,8 @@ class Core(object):
                 raise Captcha(code=rc.get('code'), string=rc.get('string'), reason=rc.get('reason'))
         if rc.get('string') != 'Already answered question':
             params = {'answer': secret_answer_hash}
-            rc = self.r.post('https://%s/ut/game/fifa18/phishing/validate' % self.fut_host, params=params, timeout=self.timeout).json()
+            rc = self.r.post('https://%s/ut/game/fifa18/phishing/validate' % self.fut_host, params=params,
+                             timeout=self.timeout).json()
             if rc['string'] != 'OK':  # we've got an error
                 # Known reasons:
                 # * invalid secret answer
@@ -714,19 +741,22 @@ class Core(object):
                 raise FutError(reason='Error during login process (%s).' % (rc['reason']))
             self.r.headers['X-UT-PHISHING-TOKEN'] = self.token = rc['token']
             # ask again for question to refresh(?) token, i'm just doing what webapp is doing
-            rc = self.r.get('https://%s/ut/game/fifa18/phishing/question' % self.fut_host, params={'_': self._}, timeout=self.timeout).json()
+            rc = self.r.get('https://%s/ut/game/fifa18/phishing/question' % self.fut_host, params={'_': self._},
+                            timeout=self.timeout).json()
             self._ += 1
         self.r.headers['X-UT-PHISHING-TOKEN'] = self.token = rc['token']
 
         # init pin
-        self.pin = Pin(sid=self.sid, nucleus_id=self.nucleus_id, persona_id=self.persona_id, dob=self.dob[:-3], platform=platform)
+        self.pin = Pin(sid=self.sid, nucleus_id=self.nucleus_id, persona_id=self.persona_id, dob=self.dob[:-3],
+                       platform=platform)
         events = [self.pin.event('login', status='success')]
         self.pin.send(events)
 
         # get basic user info
         # TODO: parse usermassinfo and change _usermassinfo to userinfo
         # TODO?: usermassinfo as separate method && ability to refresh piles etc.
-        self._usermassinfo = self.r.get('https://%s/ut/game/fifa18/usermassinfo' % self.fut_host, params={'_': self._}, timeout=self.timeout).json()
+        self._usermassinfo = self.r.get('https://%s/ut/game/fifa18/usermassinfo' % self.fut_host, params={'_': self._},
+                                        timeout=self.timeout).json()
         self._ += 1
         if self._usermassinfo['userInfo']['feature']['trade'] == 0:
             raise FutError(reason='Transfer market is probably disabled on this account.')  # if tradingEnabled = 0
@@ -784,7 +814,8 @@ class Core(object):
             params['_'] = self._  # only for get(?)
             self._ += 1
         if not fast:  # TODO: refactorization
-            time.sleep(max(self.request_time - time.time() + random.randrange(self.delay[0], self.delay[1] + 1), 0))  # respect minimum delay
+            time.sleep(max(self.request_time - time.time() + random.randrange(self.delay[0], self.delay[1] + 1),
+                           0))  # respect minimum delay
             self.r.options(url, params=params)
         else:
             time.sleep(max(self.request_time - time.time() + 1.4, 0))  # respect 1s minimum delay between requests
@@ -883,7 +914,9 @@ class Core(object):
         if rc['itemData'][0]['success']:
             self.logger.info("{0} (itemId: {1}) moved to {2} Pile".format(trade_id, item_id, pile))
         else:
-            self.logger.error("{0} (itemId: {1}) NOT MOVED to {2} Pile. REASON: {3}".format(trade_id, item_id, pile, rc['itemData'][0]['reason']))
+            self.logger.error("{0} (itemId: {1}) NOT MOVED to {2} Pile. REASON: {3}".format(trade_id, item_id, pile,
+                                                                                            rc['itemData'][0][
+                                                                                                'reason']))
             # if rc['itemData'][0]['reason'] == 'Duplicate Item Type' and rc['itemData'][0]['errorCode'] == 472:  # errorCode check is enought?
         return rc['itemData'][0]['success']
 
@@ -1137,10 +1170,12 @@ class Core(object):
                 return False  # TODO: add exceptions
         data = {'bid': bid}
         try:
-            rc = self.__request__(method, url, data=json.dumps(data), params={'sku_b': self.sku_b}, fast=fast)['auctionInfo'][0]
+            rc = self.__request__(method, url, data=json.dumps(data), params={'sku_b': self.sku_b}, fast=fast)[
+                'auctionInfo'][0]
         except PermissionDenied:  # too slow, somebody took it already :-(
             return False
-        if rc['bidState'] == 'highest' or (rc['tradeState'] == 'closed' and rc['bidState'] == 'buyNow'):  # checking 'tradeState' is required?
+        if rc['bidState'] == 'highest' or (
+                rc['tradeState'] == 'closed' and rc['bidState'] == 'buyNow'):  # checking 'tradeState' is required?
             return True
         else:
             return False
@@ -1389,7 +1424,8 @@ class Core(object):
         :params item_id: Item id.
         :params safe: (optional) False to disable tradepile free space check.
         """
-        if safe and len(self.tradepile()) >= self.tradepile_size:  # TODO?: optimization (don't parse items in tradepile)
+        if safe and len(
+                self.tradepile()) >= self.tradepile_size:  # TODO?: optimization (don't parse items in tradepile)
             return False
         return self.__sendToPile__('trade', item_id=item_id)
 
@@ -1489,6 +1525,7 @@ class Core(object):
         rc = self._usermassinfo['pileSizeClientData']['entries']
         return {'tradepile': rc[0]['value'],
                 'watchlist': rc[2]['value']}
+
     #
     # def stats(self):
     #     """Return all stats."""
@@ -1541,6 +1578,7 @@ class Core(object):
         # except:
         #     raise UnknownError('Invalid activeMessage response')  # is it even possible?
         return rc['activeMessage']
+
     #
     # def messageDelete(self, message_id):
     #     """Delete the specified message, by id.
