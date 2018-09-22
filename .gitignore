@@ -6,9 +6,9 @@ fut.egg-info/
 .cache/
 .coverage
 coverage.xml
-cookies.txt
-token.txt
-*request_count.json
+*cookies.txt
+*token.txt
+*stats.json
 test.py
 test_old.py
 testemu.py
