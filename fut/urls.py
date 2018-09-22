@@ -11,7 +11,7 @@ fun_captcha_public_key = rc['funCaptchaPublicKey']
 
 
 # remote config - should be refresh every x seconds
-rc = requests.get('https://www.easports.com/fifa/ultimate-team/web-app/content/B1BA185F-AD7C-4128-8A64-746DE4EC5A82/2018/fut/config/companion/remoteConfig.json').json()
+rc = requests.get('https://www.easports.com/fifa/ultimate-team/web-app/content/7D49A6B1-760B-4491-B10C-167FBC81D58A/2019/fut/config/companion/remoteConfig.json').json()
 
 if rc['pin'] != {"b": True, "bf": 500, "bs": 10, "e": True, "r": 3, "rf": 300}:
     print('>>> WARNING: ping variables changed: %s' % rc['pin'])
@@ -19,12 +19,12 @@ if rc['pin'] != {"b": True, "bf": 500, "bs": 10, "e": True, "r": 3, "rf": 300}:
 if rc['futweb_maintenance']:
     raise FutError('Futweb maintenance, please retry in few minutes.')
 
-# TODO: parse itemsPerPage
-# "itemsPerPage": {
-# 	"club" : 45,
-# 	"transferMarket" : 15
-# },
+itemsPerPage = dict()
+itemsPerPage = rc['itemsPerPage']
 
+# TODO: read sku's from https://utas.mob.v1.fut.ea.com/ut/shards/v2
 
+# TODO: card info url not found yet
 card_info_url = 'https://fifa18.content.easports.com/fifa/fltOnlineAssets/B1BA185F-AD7C-4128-8A64-746DE4EC5A82/2018/fut/items/web/'  # TODO: get hash from somewhere, dynamic year
-messages_url = 'https://www.easports.com/fifa/ultimate-team/web-app/loc/en_US.json'
+# TODO: could be nice to add locals on startup
+messages_url = 'https://www.easports.com/fifa/ultimate-team/web-app/loc/en_US.json'  # TODO: needs to base64 decoded.
