@@ -1,3 +1,5 @@
+.. warning:: This is very experimental version, it might not work correctly AND THERE IS VERY BIG CHANCE OF GETTING BANNED. Please wait few days for stable release or at least until this warning disappears.
+
 ===
 fut
 ===
