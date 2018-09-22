@@ -15,7 +15,10 @@ import time
 import json
 import pyotp
 from python_anticaptcha import AnticaptchaClient, FunCaptchaTask, Proxy
-from python_anticaptcha.exceptions import AnticatpchaException
+try:
+    from python_anticaptcha.exceptions import AnticaptchaException
+except ImportError:
+    from python_anticaptcha.exceptions import AnticatpchaException as AnticaptchaException  # Older versions
 # from datetime import datetime, timedelta
 try:
     from cookielib import LWPCookieJar
@@ -609,9 +612,9 @@ class Core(object):
                         rc = self.r.get('https://%s/ut/game/fifa18/phishing/question' % self.fut_host, params={'_': self._}, timeout=self.timeout).json()
                         self._ += 1
                         break
-                    except AnticatpchaException as e:
+                    except AnticaptchaException as e:
                         if e.error_code in ['ERROR_PROXY_CONNECT_REFUSED', 'ERROR_PROXY_CONNECT_TIMEOUT', 'ERROR_PROXY_READ_TIMEOUT', 'ERROR_PROXY_BANNED']:
-                            self.logger.exception('AnticatpchaException ' + e.error_code)
+                            self.logger.exception('AnticaptchaException ' + e.error_code)
                             time.sleep(10)
                             continue
                         else:
