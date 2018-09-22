@@ -35,7 +35,7 @@ from .urls import client_id, auth_url, card_info_url, messages_url, fun_captcha_
 from .exceptions import (FutError, ExpiredSession, InternalServerError, Timeout,
                          UnknownError, PermissionDenied, Captcha,
                          Conflict, MaxSessions, MultipleSession,
-                         Unauthorized, FeatureDisabled, doLoginFail,
+                         Unauthorized, FeatureDisabled, DoLoginFail,
                          NoUltimateTeam, MarketLocked, NoTradeExistingError)
 from .EAHashingAlgorithm import EAHashingAlgorithm
 
@@ -656,7 +656,7 @@ class Core(object):
         elif rc.get('reason') == 'max sessions':
             raise MaxSessions
         elif rc.get('reason') == 'doLogin: doLogin failed':
-            raise doLoginFail
+            raise DoLoginFail
         elif rc.get('reason'):
             raise UnknownError(rc.__str__())
         self.r.headers['X-UT-SID'] = self.sid = rc['sid']

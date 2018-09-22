@@ -19,6 +19,7 @@ class Timeout(BaseTimeout):
 class FutError(RuntimeError):
     """There was an ambiguous exception that occurred while handling
     your request."""
+
     def __init__(self, code=None, reason=None, string=None):
         self.code = code
         self.reason = reason
@@ -60,6 +61,11 @@ class InvalidCookie(FutError):
 '''
 
 
+class NoTradeExistingError(FutError):
+    """[478] NO_TRADE_EXISTS (fut)
+    when u bid on an item that has already been sold or the trade id isn't valid."""
+
+
 class FeatureDisabled(FutError):
     """[480] Feature Disabled."""
 
@@ -74,6 +80,7 @@ class PermissionDenied(FutError):
 
 class Captcha(FutError):
     """[459] Captcha Triggered."""
+
     def __init__(self, code=None, reason=None, string=None, token=None, img=None):
         self.code = code
         self.reason = reason
@@ -95,5 +102,5 @@ class MultipleSession(Unauthorized):
 
 
 # class doLoginFail(Forbidden):
-class doLoginFail(Unauthorized):
+class DoLoginFail(Unauthorized):
     """[403] Forbidden (ut)."""
