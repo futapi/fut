@@ -61,11 +61,6 @@ class InvalidCookie(FutError):
 '''
 
 
-class NoTradeExistingError(FutError):
-    """[478] NO_TRADE_EXISTS (fut)
-    when u bid on an item that has already been sold or the trade id isn't valid."""
-
-
 class FeatureDisabled(FutError):
     """[480] Feature Disabled."""
 

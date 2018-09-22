@@ -23,6 +23,7 @@ headers_and = {
     'X-Requested-With': 'com.ea.fifaultimate_row',  # ultimate app identifier?
 }
 
+
 # safari 7 (ios phone)
 headers_ios = {
     'User-Agent': 'Mozilla/5.0 (iPhone; CPU iPhone OS 7_0 like Mac OS X) AppleWebKit/537.51.1 (KHTML, like Gecko) Version/7.0 Mobile/11A465 Safari/9537.53',
@@ -39,6 +40,5 @@ headers_ios = {
 
 cookies_file = 'cookies.txt'
 token_file = 'token.txt'
-request_count_file = 'request_count.json'
 timeout = 15  # defaulf global timeout
 delay = (1, 3)  # default mininum delay between requests (random range)
