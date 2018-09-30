@@ -331,6 +331,7 @@ class Core(object):
                   'display': 'web2/login',
                   'locale': 'en_US',
                   'redirect_uri': 'https://www.easports.com/fifa/ultimate-team/web-app/auth.html',
+                  'release_type': 'prod',
                   'scope': 'basic.identity offline signin'}
         self.r.headers['Referer'] = 'https://www.easports.com/fifa/ultimate-team/web-app/'
         rc = self.r.get('https://accounts.ea.com/connect/auth', params=params, timeout=self.timeout)
@@ -389,7 +390,8 @@ class Core(object):
                 # self.r.headers['Upgrade-Insecure-Requests'] = '1'  # ?
                 # self.r.headers['Origin'] = 'https://signin.ea.com'
                 rc = self.r.post(url.replace('s3', 's4'),
-                                 {'oneTimeCode': code, '_trustThisDevice': 'on', 'trustThisDevice': 'on',
+                                 {'oneTimeCode': code,
+                                  '_trustThisDevice': 'on',
                                   '_eventId': 'submit'}, timeout=self.timeout)
                 # rc = rc.text
                 if 'Incorrect code entered' in rc.text or 'Please enter a valid security code' in rc.text:
