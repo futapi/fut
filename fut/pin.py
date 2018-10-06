@@ -79,7 +79,7 @@ class Pin(object):
         self.r.headers['x-ea-game-id-type'] = self.tidt
         self.r.headers['x-ea-taxv'] = self.taxv
 
-        self.custom = {"networkAccess": "W"}  # wifi?
+        self.custom = {"networkAccess": "G"}  # wifi?
         # TODO?: full boot process when there is no session (boot start)
 
         self.custom['service_plat'] = platform[:3]
