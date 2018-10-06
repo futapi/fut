@@ -1189,6 +1189,8 @@ class Core(object):
             # else:  # TODO: THIS IS probably WRONG, detect all ctypes
             #     pgid = 'Club - Club Items - List View'
             events = [self.pin.event('page_view', pgid)]
+            if rc['itemData']:
+                events.append(self.pin.event('page_view', 'Item - Detail View'))
             self.pin.send(events)
 
         return [itemParse({'itemData': i}) for i in rc['itemData']]
@@ -1233,7 +1235,7 @@ class Core(object):
         rc = self.__request__(method, url)
 
         # pinEvents
-        events = [self.pin.event('page_view', 'Squads - Squad Overview')]
+        events = [self.pin.event('page_view', 'Squad Details'), self.pin.event('page_view', 'Squads - Squad Overview')]
         self.pin.send(events)
 
         return [itemParse(i) for i in rc.get('players', ())]
@@ -1269,6 +1271,8 @@ class Core(object):
 
         # pinEvents
         events = [self.pin.event('page_view', 'Transfer List - List View')]
+        if rc.get('auctionInfo'):
+            events.append(self.pin.event('page_view', 'Item - Detail View'))
         self.pin.send(events)
 
         return [itemParse(i) for i in rc.get('auctionInfo', ())]
@@ -1282,6 +1286,8 @@ class Core(object):
 
         # pinEvents
         events = [self.pin.event('page_view', 'Transfer Targets - List View')]
+        if rc.get('auctionInfo'):
+            events.append(self.pin.event('page_view', 'Item - Detail View'))
         self.pin.send(events)
 
         return [itemParse(i) for i in rc.get('auctionInfo', ())]
@@ -1295,6 +1301,8 @@ class Core(object):
 
         # pinEvents
         events = [self.pin.event('page_view', 'Unassigned Items - List View')]
+        if rc.get('itemData'):
+                events.append(self.pin.event('page_view', 'Item - Detail View'))
         self.pin.send(events)
 
         return [itemParse({'itemData': i}) for i in rc.get('itemData', ())]
