@@ -63,15 +63,13 @@ class Pin(object):
 
     def event(self, en, pgid=False, status=False, source=False, end_reason=False):  # type=False
         data = {
-            0: {
-                "core": {
-                    "en": en,
-                    "pid": self.persona_id,
-                    "pidm": {"nucleus": self.nucleus_id},
-                    "pidt": self.pidt,
-                    "s": self.s,
-                    "ts_event": self.__ts()
-                }
+            "core": {
+                "en": en,
+                "pid": self.persona_id,
+                "pidm": {"nucleus": self.nucleus_id},
+                "pidt": self.pidt,
+                "s": self.s,
+                "ts_event": self.__ts()
             }
         }
         if self.dob:  # date of birth yyyy-mm
