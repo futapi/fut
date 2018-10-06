@@ -730,10 +730,10 @@ class Core(object):
         events = [self.pin.event('page_view', 'Hub - Home')]
         self.pin.send(events)
 
-        # pinEvents - boot_end
-        events = [self.pin.event('connection'),
-                  self.pin.event('boot_end', end_reason='normal')]
-        self.pin.send(events)
+        # pinEvents - boot_end  # boot_end is connected with "connection" and pops only after browser window loses focus
+        # events = [self.pin.event('connection'),
+        #           self.pin.event('boot_end', end_reason='normal')]
+        # self.pin.send(events)
 
         self.keepalive()  # credits
 
@@ -1081,7 +1081,7 @@ class Core(object):
 
         # pinEvents
         if start == 0:
-            events = [self.pin.event('page_view', 'Transfer Market Results - List View')]
+            events = [self.pin.event('page_view', 'Transfer Market Results - List View'), self.pin.event('page_view', 'Item - Detail View')]
             self.pin.send(events, fast=fast)
 
         return [itemParse(i) for i in rc.get('auctionInfo', ())]
