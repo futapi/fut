@@ -9,10 +9,17 @@ This module contains the set of fut's exceptions.
 """
 # TODO: add few exceptions for login
 
+from requests.exceptions import Timeout as BaseTimeout
+
+
+class Timeout(BaseTimeout):
+    """Request timeout, looks like ea servers are down."""
+
 
 class FutError(RuntimeError):
     """There was an ambiguous exception that occurred while handling
     your request."""
+
     def __init__(self, code=None, reason=None, string=None):
         self.code = code
         self.reason = reason
@@ -24,8 +31,9 @@ class UnknownError(FutError):
     https://github.com/oczkers/fut/issues/24"""
 
 
-class Timeout(FutError):
-    """Request timeout, looks like ea servers are down."""
+class NoTradeExistingError(FutError):
+    """[478] NO_TRADE_EXISTS (fut)
+    when u bid on an item that has already been sold or the trade id isn't valid."""
 
 
 class ExpiredSession(FutError):
@@ -67,6 +75,7 @@ class PermissionDenied(FutError):
 
 class Captcha(FutError):
     """[459] Captcha Triggered."""
+
     def __init__(self, code=None, reason=None, string=None, token=None, img=None):
         self.code = code
         self.reason = reason
@@ -88,5 +97,5 @@ class MultipleSession(Unauthorized):
 
 
 # class doLoginFail(Forbidden):
-class doLoginFail(Unauthorized):
+class DoLoginFail(Unauthorized):
     """[403] Forbidden (ut)."""

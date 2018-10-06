@@ -23,6 +23,7 @@ headers_and = {
     'X-Requested-With': 'com.ea.fifaultimate_row',  # ultimate app identifier?
 }
 
+
 # safari 7 (ios phone)
 headers_ios = {
     'User-Agent': 'Mozilla/5.0 (iPhone; CPU iPhone OS 7_0 like Mac OS X) AppleWebKit/537.51.1 (KHTML, like Gecko) Version/7.0 Mobile/11A465 Safari/9537.53',

@@ -1,3 +1,7 @@
+================================================================================================================================================
+WARNING: I've review requests and this version looks as safe as stable versions for fifa18 but i might have miss something so please be careful.
+================================================================================================================================================
+
 ===
 fut
 ===
@@ -35,7 +39,7 @@ It is written entirely in Python.
 Documentation
 =============
 
-Documentation will be available soon at http://fut.readthedocs.org/.
+Documentation is available at http://fut.readthedocs.org/.
 
 Players database: https://www.easports.com/uk/fifa/ultimate-team/fut/database
 
@@ -325,8 +329,21 @@ to be continued ;-)
 Problems
 --------
 
+How to report bug/attach logs?
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+1. enable debug
+
+.. code-block:: python
+
+  session = fut.Core('email', 'password', 'secret answer')
+
+2. reproduce error - for example if there is bug when searching market, just search market with enabled debug
+3. open fut.log, search for password/login and remove it
+4. publish fut.log to help us find root cause of a bug
+
 Getting "requests.exceptions.SSLError:....'utas.mob.v4.fut.ea.com' doesn't match 'utas.mobapp.fut.ea.com'"?
-^^^^
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 This is a new error, but here's a temporary fix to try:
 
 1. Re-download the api from github

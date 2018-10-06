@@ -1,3 +1,3 @@
 requests>=2.2.1
 pyotp
-python-anticaptcha==0.1.1
+python-anticaptcha==0.3.1

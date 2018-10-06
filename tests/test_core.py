@@ -89,8 +89,7 @@ class FutCoreTestCase(unittest.TestCase):
                               'firstname': i['f'],
                               'lastname': i['l'],
                               'surname': i.get('c'),
-                              'rating': i['r'],
-                              'nationality': i['n']})
+                              'rating': i['r']})
 
     def testInvalidAccount(self):
         #  TODO: responses

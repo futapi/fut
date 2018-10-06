@@ -8,16 +8,17 @@ This module implements the fut's pinEvents methods.
 
 """
 
-import requests
-import re
 import json
+import re
 import time
-from random import random
 from datetime import datetime
+from random import random
+
+import requests
 
 from .config import headers
-from .urls import pin_url
 from .exceptions import FutError
+from .urls import pin_url
 
 
 class Pin(object):
@@ -28,16 +29,17 @@ class Pin(object):
         self.dob = dob
         self.platform = platform
         rc = requests.get('https://www.easports.com/fifa/ultimate-team/web-app/js/compiled_1.js').text
+
+        self.taxv = re.search('taxv:"(.+?)"', rc).group(1)
+        self.tidt = re.search('tidt:"(.+?)"', rc).group(1)
+
         self.sku = sku or re.search('enums.SKU.FUT="(.+?)"', rc).group(1)
         self.rel = re.search('rel:"(.+?)"', rc).group(1)
         self.gid = re.search('gid:([0-9]+?)', rc).group(1)
-        self.plat = re.search('plat:"(.+?)"', rc).group(1)
+        self.plat = 'web'  # where is it? WEB:?
         self.et = re.search('et:"(.+?)"', rc).group(1)
         self.pidt = re.search('pidt:"(.+?)"', rc).group(1)
         self.v = re.search('APP_VERSION="([0-9\.]+)"', rc).group(1)
-        rc = requests.get('https://www.easports.com/fifa/ultimate-team/web-app/js/compiled_2.js').text
-        self.taxv = re.search('PinManager.TAXONOMY_VERSION=([0-9\.]+)', rc).group(1)
-        self.tidt = re.search(',PinManager.TITLE_ID_TYPE="(.+?)"', rc).group(1)
 
         self.r = requests.Session()
         self.r.headers = headers
@@ -47,7 +49,7 @@ class Pin(object):
         self.r.headers['x-ea-game-id-type'] = self.tidt
         self.r.headers['x-ea-taxv'] = self.taxv
 
-        self.custom = {"networkAccess": "W"}  # wifi?
+        self.custom = {"networkAccess": "G"}  # wifi?
         # TODO?: full boot process when there is no session (boot start)
 
         self.custom['service_plat'] = platform[:3]
@@ -60,13 +62,16 @@ class Pin(object):
         return ts
 
     def event(self, en, pgid=False, status=False, source=False, end_reason=False):  # type=False
-        data = {"core": {"s": self.s,
-                         "pidt": self.pidt,
-                         "pid": self.persona_id,
-                         "pidm": {"nucleus": self.nucleus_id},
-                         "didm": {"uuid": "0"},  # what is it?
-                         "ts_event": self.__ts(),
-                         "en": en}}
+        data = {
+            "core": {
+                "en": en,
+                "pid": self.persona_id,
+                "pidm": {"nucleus": self.nucleus_id},
+                "pidt": self.pidt,
+                "s": self.s,
+                "ts_event": self.__ts()
+            }
+        }
         if self.dob:  # date of birth yyyy-mm
             data['core']['dob'] = self.dob
         if pgid:
@@ -99,20 +104,22 @@ class Pin(object):
 
     def send(self, events, fast=False):
         time.sleep(0.5 + random() / 50)
-        data = {"taxv": self.taxv,  # convert to float?
-                "tidt": self.tidt,
-                "tid": self.sku,
-                "rel": self.rel,
-                "v": self.v,
-                "ts_post": self.__ts(),
-                "sid": self.sid,
-                "gid": self.gid,  # convert to int?
-                "plat": self.plat,
-                "et": self.et,
-                "loc": "en_US",
-                "is_sess": self.sid != '',
-                "custom": self.custom,
-                "events": events}
+        data = {
+            "custom": self.custom,
+            "et": self.et,
+            "events": events,
+            "gid": self.gid,  # convert to int?
+            "is_sess": self.sid != '',
+            "loc": "en_US",
+            "plat": self.plat,
+            "rel": self.rel,
+            "sid": self.sid,
+            "taxv": self.taxv,  # convert to float?
+            "tid": self.sku,
+            "tidt": self.tidt,
+            "ts_post": self.__ts(),
+            "v": self.v
+        }
         # print(data)  # DEBUG
         if not fast:
             self.r.options(pin_url)
