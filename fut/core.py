@@ -589,7 +589,8 @@ class Core(object):
         params = {'client_id': 'FOS-SERVER',  # i've seen in some js/json response but cannot find now
                   'redirect_uri': 'nucleus:rest',
                   'response_type': 'code',
-                  'access_token': self.access_token}
+                  'access_token': self.access_token,
+                  'release_type': 'prod'}
         rc = self.r.get('https://accounts.ea.com/connect/auth', params=params).json()
         auth_code = rc['code']
 
