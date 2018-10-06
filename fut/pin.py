@@ -51,24 +51,6 @@ class Pin(object):
         self.pidt = re.search('pidt:"(.+?)"', rc).group(1)
         self.v = re.search('APP_VERSION="([0-9\.]+)"', rc).group(1)
 
-        rc = requests.get('https://www.easports.com/fifa/ultimate-team/web-app/js/compiled_2.js').text
-
-        if not taxv:
-            taxv = re.search('PinManager.TAXONOMY_VERSION=([0-9\.]+)', rc)
-            if taxv:
-                taxv = taxv.group(1)
-            else:
-                print('>>>>>>>>> warining we should check if ea changed smth')
-                taxv = '1.1'
-
-        if not tidt:
-            tidt = re.search('PinManager.TAXONOMY_VERSION=([0-9\.]+)', rc)
-            if tidt:
-                tidt = tidt.group(1)
-            else:
-                print('>>>>>>>>> warining we should check if ea changed smth')
-                tidt = 'easku'
-
         self.taxv = taxv
         self.tidt = tidt
         self.r = requests.Session()
