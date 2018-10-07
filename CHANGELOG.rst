@@ -4,6 +4,18 @@ Changelog
 ---------
 
 
+0.4.1 (2018-10-07)
+^^^^^^^^^^^^^^^^^^
+
+* add more pinevents (Hub)
+* update card_info_url
+* bump user agent
+
+0.4.0 (2018-10-06)
+^^^^^^^^^^^^^^^^^^
+
+* first fifa19 stable release
+
 0.3.11 (2018-04-22)
 ^^^^^^^^^^^^^^^^^^^
 
