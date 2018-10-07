@@ -968,7 +968,7 @@ class Core(object):
             url = '{0}{1}.json'.format(card_info_url, base_id)
             return requests.get(url, timeout=self.timeout).json()
 
-    def searchDefinition(self, asset_id, start=0, count=itemsPerPage['transferMarket']):
+    def searchDefinition(self, asset_id, start=0, page_size=itemsPerPage['transferMarket'], count=None):
         """Return variations of the given asset id, e.g. IF cards.
 
         :param asset_id: Asset id / Definition id.
@@ -978,6 +978,9 @@ class Core(object):
         method = 'GET'
         url = 'defid'
 
+        if count:  # backward compatibility, will be removed in future
+            page_size = count
+
         base_id = baseId(asset_id)
         if base_id not in self.players:
             raise FutError(reason='Invalid player asset/definition id.')
@@ -986,7 +989,7 @@ class Core(object):
             'defId': base_id,
             'start': start,
             'type': 'player',
-            'count': count
+            'count': page_size
         }
 
         rc = self.__request__(method, url, params=params)
@@ -1120,7 +1123,7 @@ class Core(object):
         else:
             return False
 
-    def club(self, sort='desc', ctype='player', defId='', start=0, count=itemsPerPage['club'],
+    def club(self, sort='desc', ctype='player', defId='', start=0, count=None, page_size=itemsPerPage['club'],
              level=None, category=None, assetId=None, league=None, club=None,
              position=None, zone=None, nationality=None, rare=False, playStyle=None):
         """Return items in your club, excluding consumables.
@@ -1146,7 +1149,10 @@ class Core(object):
         method = 'GET'
         url = 'club'
 
-        params = {'sort': sort, 'type': ctype, 'defId': defId, 'start': start, 'count': count}
+        if count:  # backward compatibility, will be removed in future
+            page_size = count
+
+        params = {'sort': sort, 'type': ctype, 'defId': defId, 'start': start, 'count': page_size}
         if level:
             params['level'] = level
         if category:

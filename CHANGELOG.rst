@@ -4,6 +4,11 @@ Changelog
 ---------
 
 
+0.4.2 (2018-10-??)
+^^^^^^^^^^^^^^^^^^
+
+* correct page_size/count values (thanks to derSoerrn95 #427)
+
 0.4.1 (2018-10-07)
 ^^^^^^^^^^^^^^^^^^
 
