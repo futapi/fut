@@ -201,7 +201,7 @@ def nations(timeout=timeout):
     return nations
 
 
-def leagues(year=2018, timeout=timeout):
+def leagues(year=2019, timeout=timeout):
     """Return all leagues in dict {id0: league0, id1: legaue1}.
 
     :params year: Year.
@@ -216,7 +216,7 @@ def leagues(year=2018, timeout=timeout):
     return leagues
 
 
-def teams(year=2018, timeout=timeout):
+def teams(year=2019, timeout=timeout):
     """Return all teams in dict {id0: team0, id1: team1}.
 
     :params year: Year.
@@ -231,7 +231,7 @@ def teams(year=2018, timeout=timeout):
     return teams
 
 
-def stadiums(year=2018, timeout=timeout):
+def stadiums(year=2019, timeout=timeout):
     """Return all stadium in dict {id0: stadium0, id1: stadium1}.
 
     :params year: Year.
@@ -273,7 +273,7 @@ def players(timeout=timeout):
     return players
 
 
-def playstyles(year=2018, timeout=timeout):
+def playstyles(year=2019, timeout=timeout):
     """Return all playstyles in dict {id0: playstyle0, id1: playstyle1}.
 
     :params year: Year.
