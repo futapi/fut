@@ -37,3 +37,5 @@ Patches and Suggestions
 - kirov
 - jsarasti
 - Trevor McCormick @TrevorMcCormick
+- derSoerrn95
+- TheYellowKrato
