@@ -10,7 +10,8 @@ This module implements the fut's additional methods.
 
 import requests
 import time
-from simplejson.scanner import JSONDecodeError
+#from simplejson.scanner import JSONDecodeError
+from json import JSONDecodeError
 
 # python2 fix
 try:
