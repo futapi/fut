@@ -21,6 +21,9 @@ if rc['futweb_maintenance']:
 
 itemsPerPage = dict()
 itemsPerPage = rc['itemsPerPage']
+# nasty hack but it's better than parsing big js file
+itemsPerPage['transferMarket'] += 1
+itemsPerPage['club'] = 91  # ea, please don't troll us :-)
 
 # TODO: read sku's from https://utas.mob.v1.fut.ea.com/ut/shards/v2
 
