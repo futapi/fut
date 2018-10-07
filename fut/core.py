@@ -1029,7 +1029,7 @@ class Core(object):
 
         # pinEvents
         if start == 0:
-            events = [self.pin.event('page_view', 'Transfer Market Search')]
+            events = [self.pin.event('page_view', 'Hub - Transfers'), self.pin.event('page_view', 'Transfer Market Search')]
             self.pin.send(events, fast=fast)
 
         # if start > 0 and page_size == 16:
@@ -1188,7 +1188,7 @@ class Core(object):
                 pgid = 'Club - Club Items - List View'
             # else:  # TODO: THIS IS probably WRONG, detect all ctypes
             #     pgid = 'Club - Club Items - List View'
-            events = [self.pin.event('page_view', pgid)]
+            events = [self.pin.event('page_view', 'Hub - Club'), self.pin.event('page_view', pgid)]
             if rc['itemData']:
                 events.append(self.pin.event('page_view', 'Item - Detail View'))
             self.pin.send(events)
@@ -1270,7 +1270,7 @@ class Core(object):
         rc = self.__request__(method, url)
 
         # pinEvents
-        events = [self.pin.event('page_view', 'Transfer List - List View')]
+        events = [self.pin.event('page_view', 'Hub - Transfers'), self.pin.event('page_view', 'Transfer List - List View')]
         if rc.get('auctionInfo'):
             events.append(self.pin.event('page_view', 'Item - Detail View'))
         self.pin.send(events)
@@ -1285,7 +1285,7 @@ class Core(object):
         rc = self.__request__(method, url)
 
         # pinEvents
-        events = [self.pin.event('page_view', 'Transfer Targets - List View')]
+        events = [self.pin.event('page_view', 'Hub - Transfers'), self.pin.event('page_view', 'Transfer Targets - List View')]
         if rc.get('auctionInfo'):
             events.append(self.pin.event('page_view', 'Item - Detail View'))
         self.pin.send(events)
