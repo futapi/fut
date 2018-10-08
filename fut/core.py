@@ -703,11 +703,13 @@ class Core(object):
         # get basic user info
         # TODO: parse usermassinfo and change _usermassinfo to userinfo
         # TODO?: usermassinfo as separate method && ability to refresh piles etc.
-        self._usermassinfo = self.r.get('https://%s/%s/usermassinfo' % (self.fut_host, self.gameUrl),
-                                        params={'_': self._}, timeout=self.timeout).json()
+        self._usermassinfo = self.r.get('https://%s/%s/usermassinfo' % (self.fut_host, self.gameUrl), timeout=self.timeout).json()
         self._ += 1
         if self._usermassinfo['userInfo']['feature']['trade'] == 0:
             raise FutError(reason='Transfer market is probably disabled on this account.')  # if tradingEnabled = 0
+
+        # settings, not used, not necesary, just to make it less detectable # TODO: repeat every 10 minutes
+        self.r.get('https://%s/%s/settings' % (self.fut_host, self.gameUrl), params={'_': self._}, timeout=self.timeout)
 
         # size of piles
         piles = self.pileSize()
