@@ -39,3 +39,4 @@ Patches and Suggestions
 - Trevor McCormick @TrevorMcCormick
 - derSoerrn95
 - TheYellowKrato
+- kmiloflorez2

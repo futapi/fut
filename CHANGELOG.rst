@@ -4,9 +4,11 @@ Changelog
 ---------
 
 
-0.4.2 (2018-10-??)
+0.4.2 (2018-10-22)
 ^^^^^^^^^^^^^^^^^^
 
+* add missing release_type in auth (possible fix #434)
+* fix release_type detection thanks to kmiloflorez2 and kirov #432 #436
 * correct page_size/count values (thanks to derSoerrn95 #427)
 
 0.4.1 (2018-10-07)
