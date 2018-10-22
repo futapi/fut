@@ -18,7 +18,7 @@ import requests
 
 from .config import headers
 from .exceptions import FutError
-from .urls import pin_url
+from .urls import pin_url, release_type
 
 
 class Pin(object):
