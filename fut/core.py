@@ -507,6 +507,7 @@ class Core(object):
         params = {'accessToken': self.access_token,
                   'client_id': client_id,
                   'response_type': 'token',
+                  'release_type': 'prod',
                   'display': 'web2/login',
                   'locale': 'en_US',
                   'redirect_uri': 'https://www.easports.com/fifa/ultimate-team/web-app/auth.html',
@@ -546,12 +547,8 @@ class Core(object):
         self.r.headers['Easw-Session-Data-Nucleus-Id'] = self.nucleus_id
 
         # shards
-        self.base_time = int(time.time() * 1000)
-        self._ = self.base_time
-
         # TODO: parse this and use above
-        rc = self.r.get('https://%s/ut/shards/v2' % auth_url, data={'_': self._}).json()
-        self._ += 1
+        rc = self.r.get('https://%s/ut/shards/v2' % auth_url).json()
         self.fut_host = {
             'pc': 'utas.external.s2.fut.ea.com:443',
             'ps3': 'utas.external.s2.fut.ea.com:443',
@@ -565,10 +562,8 @@ class Core(object):
         # personas
         data = {'filterConsoleLogin': 'true',
                 'sku': self.sku,
-                'returningUserGameYear': '2018',  # allways year-1? or maybe current release year
-                '_': self._}
+                'returningUserGameYear': '2018'}  # allways year-1? or maybe current release year
         rc = self.r.get('https://%s/%s/user/accountinfo' % (self.fut_host, self.gameUrl), params=data).json()
-        self._ += 1
         # pick persona (first valid for given game_sku)
         personas = rc['userAccountInfo']['personas']
         for p in personas:
@@ -605,9 +600,7 @@ class Core(object):
                 'priorityLevel': 4,
                 'identification': {'authCode': auth_code,
                                    'redirectUrl': 'nucleus:rest'}}
-        params = {'sku_b': self.sku_b,
-                  '': int(time.time() * 1000)}
-        rc = self.r.post('https://%s/ut/auth' % self.fut_host, data=json.dumps(data), params=params,
+        rc = self.r.post('https://%s/ut/auth' % self.fut_host, data=json.dumps(data),
                          timeout=self.timeout)
         if rc.status_code == 401:  # and rc.text == 'multiple session'
             raise FutError('multiple session')
@@ -626,9 +619,8 @@ class Core(object):
 
         # validate (secret question)
         self.r.headers['Easw-Session-Data-Nucleus-Id'] = self.nucleus_id
-        rc = self.r.get('https://%s/%s/phishing/question' % (self.fut_host, self.gameUrl), params={'_': self._},
+        rc = self.r.get('https://%s/%s/phishing/question' % (self.fut_host, self.gameUrl),
                         timeout=self.timeout).json()
-        self._ += 1
         if rc.get('code') == '458':
             if anticaptcha_client_key:
                 if not proxies:
@@ -655,9 +647,7 @@ class Core(object):
                         self.__request__('POST', 'captcha/fun/validate', data=json.dumps({
                             'funCaptchaToken': fun_captcha_token,
                         }))
-                        rc = self.r.get('https://%s/%s/phishing/question' % (self.fut_host, self.gameUrl),
-                                        params={'_': self._}, timeout=self.timeout).json()
-                        self._ += 1
+                        rc = self.r.get('https://%s/%s/phishing/question' % (self.fut_host, self.gameUrl), timeout=self.timeout).json()
                         break
                     except AnticaptchaException as e:
                         if e.error_code in ['ERROR_PROXY_CONNECT_REFUSED', 'ERROR_PROXY_CONNECT_TIMEOUT',
@@ -686,9 +676,7 @@ class Core(object):
                 raise FutError(reason='Error during login process (%s).' % (rc['reason']))
             self.r.headers['X-UT-PHISHING-TOKEN'] = self.token = rc['token']
             # ask again for question to refresh(?) token, i'm just doing what webapp is doing
-            rc = self.r.get('https://%s/%s/phishing/question' % (self.fut_host, self.gameUrl), params={'_': self._},
-                            timeout=self.timeout).json()
-            self._ += 1
+            rc = self.r.get('https://%s/%s/phishing/question' % (self.fut_host, self.gameUrl), timeout=self.timeout).json()
 
             # TODO: maybe needs to set later. But in current webapp the phishing token is not needed
             # for requests after login
@@ -704,11 +692,12 @@ class Core(object):
         # TODO: parse usermassinfo and change _usermassinfo to userinfo
         # TODO?: usermassinfo as separate method && ability to refresh piles etc.
         self._usermassinfo = self.r.get('https://%s/%s/usermassinfo' % (self.fut_host, self.gameUrl), timeout=self.timeout).json()
-        self._ += 1
         if self._usermassinfo['userInfo']['feature']['trade'] == 0:
             raise FutError(reason='Transfer market is probably disabled on this account.')  # if tradingEnabled = 0
 
         # settings, not used, not necesary, just to make it less detectable # TODO: repeat every 10 minutes
+        self.base_time = int(time.time() * 1000)
+        self._ = self.base_time
         self.r.get('https://%s/%s/settings' % (self.fut_host, self.gameUrl), params={'_': self._}, timeout=self.timeout)
 
         # size of piles
@@ -761,9 +750,9 @@ class Core(object):
         url = 'https://%s/%s/%s' % (self.fut_host, self.gameUrl, url)
 
         self.logger.debug("request: {0} data={1};  params={2}".format(url, data, params))
-        if method.upper() == 'GET':
-            params['_'] = self._  # only for get(?)
-            self._ += 1
+        # if method.upper() == 'GET':
+        #     params['_'] = self._  # only for get(?)
+        #     self._ += 1
         if not fast:  # TODO: refactorization
             # respect minimum delay
             time.sleep(max(self.request_time - time.time() + random.randrange(self.delay[0], self.delay[1] + 1), 0))
@@ -943,8 +932,8 @@ class Core(object):
             self._stadiums = stadiums()
         return self._stadiums
 
-    def get_number_of_requests(self):
-        return {'start_time': self.base_time, 'requests': self._ - self.base_time}
+    # def get_number_of_requests(self):  # _ is no longer sent on get requests so this is not working  # TODO?: rewrite based on self.n
+    #     return {'start_time': self.base_time, 'requests': self._ - self.base_time}
 
     def saveSession(self):
         """Save cookies/session."""
