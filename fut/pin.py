@@ -34,7 +34,7 @@ class Pin(object):
         self.tidt = re.search('tidt:"(.+?)"', rc).group(1)
 
         self.sku = sku or re.search('enums.SKU.FUT="(.+?)"', rc).group(1)
-        self.rel = re.search('rel:"(.+?)"', rc).group(1)
+        self.rel = release_type
         self.gid = re.search('gid:([0-9]+?)', rc).group(1)
         self.plat = 'web'  # where is it? WEB:?
         self.et = re.search('et:"(.+?)"', rc).group(1)

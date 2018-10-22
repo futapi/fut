@@ -7,6 +7,7 @@ rc = requests.get('https://www.easports.com/fifa/ultimate-team/web-app/config/co
 auth_url = rc['authURL']
 pin_url = rc['pinURL']  # TODO: urls in dict?
 client_id = rc['eadpClientId']
+release_type = rc['releaseType']
 fun_captcha_public_key = rc['funCaptchaPublicKey']
 
 
